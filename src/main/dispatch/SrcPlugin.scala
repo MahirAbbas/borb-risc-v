@@ -48,19 +48,24 @@ case class IMM(instruction: Bits) extends Area {
 
 object SrcPlugin extends AreaObject {
   val RS1, RS2 = Payload(Bits(64 bits))
+  val IMMED = Payload(Bits(64 bits))
+  
 
 }
 case class SrcPlugin(stage: CtrlLink) extends Area {
+  val wasReset = Reg(Bool()) init False
+  // when(ClockDomain.isResetActive) {
+  //   wasReset := True
+  // }
   import SrcPlugin._
 
   import spinal.core.sim._
 
-  val IMM = Payload(Bits(64 bits))
   val immsel = new stage.Area {
     val sext = Bits(64 bits).simPublic()
     sext.assignDontCare()
     val imm = new IMM(borb.frontend.Decoder.INSTRUCTION)
-    when(up.isFiring) {
+    // when(up.isFiring) {
       sext := up(IMMSEL)
         .muxDc(
           Imm_Select.I_IMM -> imm.i_sext,
@@ -70,37 +75,39 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
           Imm_Select.J_IMM -> imm.j_sext
         )
         .asBits
-    }
+    // }
   }
 
   import borb.frontend.REGFILE._
 
-  val regfile = new IntRegFile(dataWidth = 64)
 
-  val rs1Reader = master(new RegFileRead())
-  val rs2Reader = master(new RegFileRead())
+  val rs1Reader = (new RegFileRead())
+  val rs2Reader = (new RegFileRead())
 
   val regfileread = new stage.Area {
     val regfile = new IntRegFile(dataWidth = 64)
-    rs1Reader <> regfile.io.reader
-    rs2Reader <> regfile.io.reader
 
-    rs1Reader.valid.assignDontCare()
-    rs2Reader.valid.assignDontCare()
-    when(RS1TYPE === RSTYPE.RS_INT) {
-      rs1Reader.valid := True
-    }
-    when(RS2TYPE === RSTYPE.RS_INT) {
-      rs2Reader.valid := True
-    }
+    rs1Reader.valid := (RS1TYPE === RSTYPE.RS_INT && up(VALID) === True)
+    rs2Reader.valid := (RS2TYPE === RSTYPE.RS_INT && up(VALID) === True)
     rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
     rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
+    
+
+    regfile.io.readerRS1.address := rs1Reader.address
+    regfile.io.readerRS1.valid := rs1Reader.valid
+    rs1Reader.data := regfile.io.readerRS1.data
+    
+    regfile.io.readerRS2.address := rs2Reader.address
+    regfile.io.readerRS2.valid := rs2Reader.valid
+    rs2Reader.data := regfile.io.readerRS2.data
+    
+
   }
 
   val rs = new stage.Area {
     RS1.assignDontCare()
     RS2.assignDontCare()
-    IMM.assignDontCare()
+    IMMED.assignDontCare()
 
     down(RS1) := up(RS1TYPE).muxDc(
       RDTYPE.RD_INT -> rs1Reader.data
@@ -108,6 +115,6 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     down(RS2) := up(RS2TYPE).muxDc(
       RDTYPE.RD_INT -> rs2Reader.data
     )
-    IMM := immsel.sext
+    IMMED := immsel.sext
   }
 }

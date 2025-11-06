@@ -208,9 +208,9 @@ object DecodeTable {
               //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
     //                 List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT,  N, I_IMM, uopADD,   N, N  X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
 
-  // SLLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopsll , N, N, N, N),
-  // SRLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopsrl , N, N, N, N),
-//SRAI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopsra , N, N, N, N),
+  SLLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLLI , N, N, N, N),
+  SRLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSRLI , N, N, N, N),
+  SRAI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSRAI , N, N, N, N),
                                                                                                                                    
   ADDIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopADDW, N, Y, N, N),
   SLLIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLLW, N, Y, N, N),
@@ -239,12 +239,12 @@ object DecodeTable {
 
   LUI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopLUI , N, N, N, N),
 
-  ADDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopADD , N, N, N, N),
-  ANDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopAND , N, N, N, N),
-  ORI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopOR  , N, N, N, N),
-  XORI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopXOR , N, N, N, N),
-  SLTI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLT , N, N, N, N),
-  SLTIU      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLTU, N, N, N, N),
+  ADDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopADDI , N, N, N, N),
+  ANDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopANDI , N, N, N, N),
+  ORI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopORI  , N, N, N, N),
+  XORI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopXORI , N, N, N, N),
+  SLTI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLTI , N, N, N, N),
+  SLTIU      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLTIU, N, N, N, N),
                                                
   SLL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSLL , N, N, N, N),
   ADD        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopADD , N, N, N, N),

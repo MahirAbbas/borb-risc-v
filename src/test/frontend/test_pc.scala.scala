@@ -18,7 +18,7 @@ object PC_formal_increment extends App {
           val pipeline = new StageCtrlPipeline
           val stage = pipeline.ctrl(0)
           val read_stage = pipeline.ctrl(1)
-          val pc = new borb.fetch.PC(stage)
+          val pc = new borb.fetch.PC(stage, addressWidth = 32)
 
           // Expose PC output
           pc.exception.setIdle()
@@ -45,15 +45,15 @@ object PCTest extends App {
       import borb.fetch._
 
       val io = new Bundle {
-        val in_jump = in(Flow(JumpCmd()))
-        val in_flush = in(Flow(FlushCmd()))
-        val in_exception = in(Flow(ExceptionCmd()))
+        val in_jump = in(Flow(JumpCmd(addressWidth = 32)))
+        val in_flush = in(Flow(FlushCmd(addressWidth = 32)))
+        val in_exception = in(Flow(ExceptionCmd(addressWidth = 32)))
       }
 
       val pipeline = new StageCtrlPipeline
       val stage = pipeline.ctrl(0)
       // val read_stage = pipeline.ctrl(1)
-      val pc = new PC(stage)
+      val pc = new PC(stage, addressWidth = 32)
 
       // Expose PC output
       val pc_out = out(UInt(64 bits))

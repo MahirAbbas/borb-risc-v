@@ -13,10 +13,10 @@ import borb.frontend.Decoder.INSTRUCTION
 
 case class frontEnd() extends Component {
   val pipeline = new StageCtrlPipeline()
-  val pc = new PC(pipeline.ctrl(0))
+  val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
   // pc.PC_cur.simPublic()
-  val fetch = Fetch(pipeline.ctrl(1), addressWidth = 64, dataWidth = 32)
-  val ram = new UnifiedRam(addressWidth = 64, dataWidth = 32, idWidth = 16)
+  val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+  val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
   val readStage = pipeline.ctrl(2)
   val readHere = new readStage.Area {
     val instr = up(INSTRUCTION)
@@ -28,9 +28,10 @@ case class frontEnd() extends Component {
   pc.exception.setIdle()
   pc.jump.setIdle()
   pc.flush.setIdle()
-  ram.io.reads.cmd << fetch.io.readCmd.cmd
+  // ram.io.reads.cmd << fetch.io.readCmd.cmd
   fetch.io.readCmd.simPublic
-  ram.io.reads.rsp >> fetch.io.readCmd.rsp
+  // ram.io.reads.rsp >> fetch.io.readCmd.rsp
+  ram.io.reads <> fetch.io.readCmd
   fetch.io.readCmd.simPublic()
   pipeline.build()
 }

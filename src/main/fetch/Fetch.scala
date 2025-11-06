@@ -11,7 +11,8 @@ import borb.memory._
 import spinal.core.sim._
 
 object Fetch extends AreaObject {
-  val PC_delayed = Payload(UInt(64 bits))
+  val addressWidth = 32
+  val PC_delayed = Payload(UInt(addressWidth bits))
 }
 
 case class Fetch(stage: CtrlLink,addressWidth: Int,dataWidth: Int) extends Area {
@@ -22,7 +23,7 @@ case class Fetch(stage: CtrlLink,addressWidth: Int,dataWidth: Int) extends Area 
 
   // val waitingForRsp = Reg(Bool()) init False
   val logic = new stage.Area {
-    val pcReg = Reg(UInt(64 bits))
+    val pcReg = Reg(UInt(addressWidth bits))
     pcReg.simPublic()
     pcReg := PC.PC
     io.readCmd.cmd.valid := False
@@ -31,8 +32,6 @@ case class Fetch(stage: CtrlLink,addressWidth: Int,dataWidth: Int) extends Area 
     INSTRUCTION.assignDontCare()
     PC_delayed.assignDontCare()
 
-    val isUpValid = stage.isValid
-    val isUpReady = stage.isReady
 
     val pcVal = stage(PC.PC)
     val instr = stage(INSTRUCTION)
@@ -49,6 +48,7 @@ case class Fetch(stage: CtrlLink,addressWidth: Int,dataWidth: Int) extends Area 
     when(io.readCmd.rsp.valid) {
       // waitingForRsp := False
       INSTRUCTION := io.readCmd.rsp.data
+      // INSTRUCTION := B(0).resized
       PC_delayed := pcReg
 
     }

@@ -9,16 +9,24 @@ case class RamFetchCmd(addressWidth: Int, idWidth: Int) extends Bundle {
   val address = UInt(addressWidth bits)
   val id = UInt(idWidth bits)
 }
-case class RamFetchRsp(dataWidth: Int, addressWidth: Int, idWidth: Int)
-    extends Bundle {
+case class RamFetchRsp(dataWidth: Int, addressWidth: Int, idWidth: Int) extends Bundle {
   val data = Bits(dataWidth bits)
   val address = UInt(addressWidth bits)
   val id = UInt(idWidth bits)
 }
-case class RamFetchBus(addressWidth: Int, dataWidth: Int, idWidth: Int)
-    extends Bundle {
-  val cmd = master(Stream(RamFetchCmd(addressWidth, idWidth)))
-  val rsp = slave(Stream(RamFetchRsp(dataWidth, addressWidth, idWidth)))
+case class RamFetchBus(addressWidth: Int, dataWidth: Int, idWidth: Int) extends Bundle with IMasterSlave{
+  val cmd = Stream(RamFetchCmd(addressWidth, idWidth))
+  val rsp = Flow(RamFetchRsp(dataWidth, addressWidth, idWidth))
+  
+  def <>(that: RamFetchBus) {
+    this.cmd <> that.cmd
+    this.rsp <> that.rsp
+
+  }
+  override def asMaster() = {
+    master(cmd)
+    slave(rsp)
+  }
 }
 case class RamWriteCmd(addressWidth: Int, dataWidth: Int) extends Bundle {
   val address = UInt(addressWidth bits)
@@ -42,6 +50,7 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
 
   val io = new Bundle {
     val reads = new RamFetchBus(addressWidth, dataWidth, idWidth)
+    reads.setAsSlave()
     // val writes = new RamWriteBus(addressWidth, dataWidth)
   }
 

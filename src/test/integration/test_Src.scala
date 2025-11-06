@@ -11,19 +11,27 @@ import borb.memory._
 import borb.fetch.PC
 import borb.frontend.Decoder._
 import borb.frontend.Decoder
+import borb.dispatch._
+import borb.dispatch.Dispatch.SENDTOALU
+import borb.execute.IntAlu
+import borb.dispatch.SrcPlugin._
 
-case class front() extends Component {
+case class src() extends Component {
   val pipeline = new StageCtrlPipeline()
   val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
   val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
   val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
   val decode = new Decoder(pipeline.ctrl(2))
-  
+  val srcPlugin = new SrcPlugin(pipeline.ctrl(3))
+  val hazardRange = Array(3, 4, 5, 6).map(e => pipeline.ctrl(e)).toSeq
+  val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
+  val intalu = new IntAlu(pipeline.ctrl(5))
 
 
   
-  val readStage = pipeline.ctrl(3)
+  val readStage = pipeline.ctrl(6)
   val readHere = new readStage.Area {
+    import borb.execute.IntAlu._
     // val pc = up(Fetch.PC_delayed)
     // pc.simPublic()
     val valid          = up(VALID)
@@ -40,12 +48,23 @@ case class front() extends Component {
     val is_w           = up(IS_W)
     val use_ldq        = up(USE_LDQ)
     val use_stq        = up(USE_STQ)
+    
+    val SelALU         = up(SENDTOALU)
+    val result         = up(RESULT).data
+    val rdaddr         = up(RD_ADDR)
+    
+    val src1           = up(RS1)
+    val src2           = up(RS2)
+    
 
    val signals = Seq(valid, legal,is_fp,execution_unit,rdtype,rs1type,rs2type,fsr3en,immsel,
-     microcode,is_br,is_w,use_ldq,use_stq)
+     microcode,is_br,is_w,use_ldq,use_stq, SelALU, result, rdaddr, src1, src2)
 
   signals.foreach(e => e.simPublic())
   }
+  srcPlugin.regfileread.regfile.io.simPublic()
+  srcPlugin.rs1Reader.simPublic()
+  srcPlugin.rs2Reader.simPublic()
 
   pc.exception.setIdle()
   pc.jump.setIdle()
@@ -58,8 +77,8 @@ case class front() extends Component {
 }
 
 
-object test_frontend extends App {
-  SimConfig.withWave.compile(new front()).doSim { dut =>
+object test_Src extends App {
+  SimConfig.withWave.compile(new src()).doSim { dut =>
     dut.clockDomain.forkStimulus(period = 10)
 
 
@@ -67,8 +86,8 @@ object test_frontend extends App {
       dut.ram.memory.setBigInt(i, (BigInt("00000000", 16)))
     }
     // Pre-load RAM with some data
-/*     val instructions: List[(Long, BigInt)] = List(
-      (0,  BigInt("002082b3", 16)),     // add 
+    /* val instructions: List[(Long, BigInt)] = List(
+      (0,  BigInt("002082b3",16)),      //add 
       (4,  BigInt("40110333",16 )),     //sub 
       (8,  BigInt("003093b3",16 )),     //sll 
       (12, BigInt("0011a433",16 )),     //slt 
@@ -78,9 +97,10 @@ object test_frontend extends App {
       (28, BigInt("4011d633",16 )),     //sra
       (32, BigInt("0030e6b3",16 )),     //or 
       (36, BigInt("00327733",16 )),     //and
-    )
- */
+    ) */
+    
 
+    
     val instructions: List[(Long, BigInt)] = List(
       (0,  BigInt("00500093", 16)),     // add 
       (4,  BigInt("00a00113",16 )),     //sub 
@@ -89,6 +109,7 @@ object test_frontend extends App {
       (16, BigInt("000092b3",16 )),     //sltu
       (20, BigInt("0020c333",16 )),     //xor
     )
+
     for ((address, data) <- instructions) {
       dut.ram.memory.setBigInt(address.toLong, data)
     }
@@ -101,7 +122,9 @@ object test_frontend extends App {
     for(i <- 0 to 20) {
       dut.clockDomain.waitSampling(1)
       // println(dut.readHere.valid.toBoolean)
-      println(dut.readHere.microcode.toEnum.toString)
+      // println(s"Microcode: ${dut.readHere.microcode.toEnum.toString}, LEGAL ${dut.readHere.valid.toBoolean}, ALU ${dut.readHere.SelALU.toBoolean}, RESULT: ${dut.readHere.result.toBigInt}, RD: ${dut.readHere.rdaddr.toBigInt}, SRC1: ${dut.readHere.src1.toBigInt}, SRC2: ${dut.readHere.src2.toBigInt}")
+      println(s"regfile valid: ${dut.srcPlugin.regfileread.regfile.io.readerRS1.valid.toBoolean}, srcPlugin valid: ${dut.srcPlugin.rs1Reader.valid.toBoolean}")
+      // println(s"${dut.readHere.valid.toBoolean}")
       
       // println(dut.fetch.io.readCmd.cmd.payload.address.toBigInt)
       // println(dut.fetch.io.readCmd.cmd.valid.toBoolean)
@@ -109,7 +132,7 @@ object test_frontend extends App {
       // println(dut.fetch.io.readCmd.rsp.payload.data.toBigInt)
       // println(dut.fetch.io.readCmd.rsp.valid.toBoolean)
       // println(dut.readHere.legal.toEnum.toString)
-    }
+      }
     }
   }
 

@@ -7,35 +7,36 @@ import spinal.lib.misc.plugin._
 
 import scala.collection.mutable.ArrayBuffer
 
-case class JumpCmd() extends Bundle {
-  val target = UInt(64 bits)
+case class JumpCmd(addressWidth: Int) extends Bundle {
+  val target = UInt(addressWidth bits)
   val is_jump = Bool()
   val is_branch = Bool()
 }
 
-case class FlushCmd() extends Bundle {
-  val address = UInt(64 bits)
+case class FlushCmd(addressWidth: Int) extends Bundle {
+  val address = UInt(addressWidth bits)
 }
 
-case class ExceptionCmd() extends Bundle {
-  val vector = UInt(64 bits)
+case class ExceptionCmd(addressWidth: Int) extends Bundle {
+  val vector = UInt(addressWidth bits)
 }
 
 object PC extends AreaObject {
-  val PC = Payload(UInt(64 bits))
+  val addressWidth =32 
+  val PC = Payload(UInt(addressWidth bits))
   val FLUSH = Payload(Bool())
 }
 
-case class PC(stage: CtrlLink, withCompressed: Boolean = false) extends Area {
+case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = false) extends Area {
 
-  val jump = Flow(JumpCmd())
-  val flush = Flow(FlushCmd())
-  val exception = Flow(ExceptionCmd())
+  val jump = Flow(JumpCmd(addressWidth))
+  val flush = Flow(FlushCmd(addressWidth))
+  val exception = Flow(ExceptionCmd(addressWidth))
 
   // allows for future support of 'C' extension
   val fetch_offset = withCompressed generate in(UInt(3 bits))
 
-  val PC_cur = Reg(UInt(64 bits)).init(0)
+  val PC_cur = Reg(UInt(addressWidth bits)).init(0)
 
   // Control flow change interfaces
 
@@ -53,13 +54,13 @@ case class PC(stage: CtrlLink, withCompressed: Boolean = false) extends Area {
       sequentialNextPc := jump.payload.target
     }
 
-    PC.PC := PC_cur
+    // PC.PC := PC_cur
     val isDownReady = stage.isReady
     val isDownValid = stage.isValid
-    when(down.isReady) {
+    // when(down.isMoving) {
       PC_cur := PC_cur + 4
       down(PC.PC) := PC_cur
-    }
+    // }
 
 
     // PC.FLUSH := jump.valid || flush.valid || exception.valid

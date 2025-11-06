@@ -11,6 +11,10 @@ import borb.frontend.Decoder
 import borb.frontend.ExecutionUnitEnum
 // import borb.frontend.AluOp
 import borb.LsuL1.PC
+import spinal.core.sim._
+import scala.collection.immutable.LazyList.cons
+import borb.execute.IntAlu.RESULT
+import scala.collection.mutable.ArrayBuffer
 
 // object Dispatch extends AreaObject {
 //   val alu_valid = Payload(Bool())
@@ -39,62 +43,54 @@ How to detect RD->RSx hazards for a given candidate:
 
  */
 
-case class HazardChecker(hzRange: Seq[CtrlLink]) extends Area {
-  // RAW Hazards
-  // WAW hazard
-  // Control hazards (branch not yet resolved)
-  // Structural hazard
+// case class HazardChecker(hzRange: Seq[CtrlLink]) extends Area {
+//   // RAW Hazards
+//   // WAW hazard
+//   // Control hazards (branch not yet resolved)
+//   // Structural hazard
 
-  // hzRange = rfRead -> rfWriteback
+//   // hzRange = rfRead -> rfWriteback
 
-  // WAR hazard
-  // intended : write RD after reading RS
+//   // WAR hazard
+//   // intended : write RD after reading RS
 
-  // something like
-  // takes in range
-  // gets Stage(1), Stage(2)
-  // checks if RD /RS is same
-  // then call functionally on whole range
-  // if match, stallIt/Upper until hazard fixed
+//   // something like
+//   // takes in range
+//   // gets Stage(1), Stage(2)
+//   // checks if RD /RS is same
+//   // then call functionally on whole range
+//   // if match, stallIt/Upper until hazard fixed
 
-  // RAW hazard
-  // if RD is hzRange(0) === RSx in hzRange(1 .. n-1)
+//   // RAW hazard
+//   // if RD is hzRange(0) === RSx in hzRange(1 .. n-1)
 
-  // hzRange.head(RD)
-  // val rs1Hazard = for (stage <- hzRange.tail) {
+//   // hzRange.head(RD)
+//   // val rs1Hazard = for (stage <- hzRange.tail) {
 
-  // }
+//   // }
 
-  val isRs1Haz = hzRange.tail.map(e =>
-    (hzRange.head(RS1_ADDR) =/= 0) &&
-      (hzRange.head(RS1_ADDR) === e(RD_ADDR)) &&
-      e.up(
-        borb.frontend.Decoder.RDTYPE
-      ) === (borb.frontend.REGFILE.RDTYPE.RD_INT)
-  )
+//   val isRs1Haz = hzRange.tail.map(e =>(hzRange.head(RS1_ADDR) =/= 0) &&(hzRange.head(RS1_ADDR) === e(RD_ADDR)) && e.up(borb.frontend.Decoder.RDTYPE) === (borb.frontend.REGFILE.RDTYPE.RD_INT))
+//   isRs1Haz.foreach(e => e.simPublic())
+//   // isRs1Haz.simPublic()
+  
+//   // val isRS1Haz = hzRange.tail.map(e => hzRange.head(RS1_ADDR) === e(RD_ADDR)).orR
 
-  isRs1Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
-  hzRange.head.haltWhen(isRs1Haz.reduce(_ || _)).simPublic()
-  when (isRs1Haz.reduce(_ || _).simPublic()) {
-  hzRange.head.haltIt()
-  hzRange.head.isReady := False
-  }
+//   // isRs1Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
+//   // hzRange.head.haltWhen(isRs1Haz.reduce(_ || _)).simPublic()
+//   // when (isRs1Haz.reduce(_ || _).simPublic()) {
+//   //   hzRange.head.haltIt()
+//   //   // hzRange.head.isReady := False
+//   // }
 
-  val isRs2Haz = hzRange.tail.map(e =>
-    (hzRange.head(RS2_ADDR) =/= 0) &&
-      (hzRange.head(RS2_ADDR) === e(RD_ADDR)) &&
-      e.up(
-        borb.frontend.Decoder.RDTYPE
-      ) === (borb.frontend.REGFILE.RDTYPE.RD_INT)
-  )
+//   val isRs2Haz = hzRange.tail.map(e => (hzRange.head(RS2_ADDR) =/= 0) && (hzRange.head(RS2_ADDR) === e(RD_ADDR)) &&e.up(borb.frontend.Decoder.RDTYPE) === (borb.frontend.REGFILE.RDTYPE.RD_INT))
 
-  isRs2Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
+//   // isRs2Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
 
-  when(isRs2Haz.reduce(_ || _).simPublic()) {
-    hzRange.head.haltIt()
-  }
+//   // when(isRs2Haz.reduce(_ || _).simPublic()) {
+//   //   hzRange.head.haltIt()
+//   // }
 
-}
+// }
 
 /*
 How to check if a instruction can schedule :
@@ -116,7 +112,7 @@ object Dispatch extends AreaObject {
   val SENDTOAGU = Payload(Bool())
 }
 
-case class Dispatch(dispatchNode: CtrlLink) extends Area {
+case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: StageCtrlPipeline) extends Area {
 
   // import borb.decode.Decoder._
   import Dispatch._
@@ -144,6 +140,104 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
     }
 
   }
+ case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32) extends Area {
+
+    // ===============================================================
+    // 1. The "scoreboard": one bit per register to indicate busy
+    // ===============================================================
+    val regBusy = RegInit(Bits(regCount bits)) init(0)
+
+    // ===============================================================
+    // 2. Each cycle, update busy bits based on writes in pipeline
+    // ===============================================================
+
+    // Step 1: detect writes (set busy)
+    // for (stage <- hzRange) {
+    //   val valid = stage(Decoder.VALID)
+    //   val rd    = stage(Decoder.RD_ADDR)
+    //   // val writes = stage == hzRange.last // or use a .writesResult flag if earlier stages also write
+
+    //   when(valid && (rd =/= 0) && stage.up.isMoving) {
+    //     regBusy(rd.asUInt) := True
+    //   }
+    // }
+    val writes = new dispatchNode.Area {
+      // val stage = dispatchNode
+      val valid = up(Decoder.VALID)
+      val rd    = up(Decoder.RD_ADDR)
+
+      when(valid && (rd =/= 0)) {
+        regBusy(rd.asUInt) := True
+      }
+      
+      val wbStage = hzRange.last
+      val wbValid = wbStage(RESULT).valid
+      val wbRd    = wbStage(RESULT).address
+
+      when(wbValid && (wbRd =/= 0)) {
+        regBusy(wbRd) := False
+      }
+
+      // val stage = hzRange.head
+      val rs1   = up(Decoder.RS1_ADDR)
+      val rs2   = up(Decoder.RS2_ADDR)
+
+      val rs1Busy = regBusy(rs1.asUInt)
+      val rs2Busy = regBusy(rs2.asUInt)
+      val hazard  = valid && (rs1Busy || rs2Busy)
+      
+      // pipeline.ctrl(5).haltIt()
+    }
+
+    // Step 2: detect completions (clear busy)
+    import borb.execute.IntAlu._
+
+    // ===============================================================
+    // 3. For each consumer stage, stall if its sources are busy
+    // ===============================================================
+    // val hazards = RegInit(Bits(hzRange.size bits)) init(0)
+    // for ((stage,i) <- hzRange.zipWithIndex) {
+    //   val valid = stage(Decoder.VALID)
+    //   val rs1   = stage(Decoder.RS1_ADDR)
+    //   val rs2   = stage(Decoder.RS2_ADDR)
+
+    //   val rs1Busy = regBusy(rs1.asUInt)
+    //   val rs2Busy = regBusy(rs2.asUInt)
+    //   val hazard  = valid && (rs1Busy || rs2Busy)
+    //   hazards(i) := valid && (rs1Busy || rs2Busy)
+
+    //   // hzRange.head.haltWhen(hazard)
+    // }
+    // hzRange.head.haltWhen(hazards.orR)
+    
+
+
+    val hazards = RegInit(Bits(hzRange.size bits)) init(0)
+
+      val stall = new Area {
+
+        // stage.haltWhen(hazard)
+        // hzRange.take(2).tail.head.haltWhen(hazard)
+        //TODO: NEED HALT DISPATCH. CANDIDATES AND SLOT architecture
+    }
+
+    val init = Counter(1 to 5)
+    when(init =/= 5) {
+      init.increment()
+      regBusy.clearAll()
+      // hazards.clearAll()
+    }
+    regBusy.simPublic()
+    val inValue = init.value
+    inValue.simPublic()
+  }
+  val hcs = new HazardChecker(hzRange, 32)
+
+
+
+  
+  // val hazards = HazardChecker(hzRange)
+
 
   // logic?
   // for each EU check if UOP maps.
@@ -175,3 +269,52 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
   // when not hazard, and EU free
 
 }
+
+
+// case class HazardChecker(hazardStages: Seq[StageCtrl],
+//                          forwardingMatrix: Seq[Seq[Bool]] = Seq.empty  // optional: forwardingMatrix(i)(j) true if stage i can forward from stage j
+//                         ) extends Area {
+
+//   // Wrap StageCtrls into StageViews so we can attach usesRs1/2 flags if needed
+//   val views = hazardStages.map(new StageView(_))
+
+//   // helper: check equality but guard against rd==0
+//   def regConflict(rd: Bits, rs: Bits): Bool = {
+//     (rd =/= 0) && (rd === rs)
+//   }
+
+//   // For each consumer stage i, compute hazards with any later stage j
+//   for (i <- views.indices) {
+//     val consumer = views(i)
+
+//     // accumulate hazard reasons from all later stages
+//     var hazardFromLater: Bool = False
+
+//     for (j <- (i + 1) until views.length) {
+//       val producer = views(j)
+
+//       // RAW checks (consumer reads a reg written by producer)
+//       val rs1Conflict = consumer.usesRs1 && regConflict(producer.rd, consumer.rs1) && consumer.valid && producer.valid
+//       val rs2Conflict = consumer.usesRs2 && regConflict(producer.rd, consumer.rs2) && consumer.valid && producer.valid
+
+//       var conflict = rs1Conflict || rs2Conflict
+
+//       // If a forwarding matrix was provided, allow bypassing:
+//       // forwardingMatrix(i)(j) = true means stage i can get forwarded value from stage j
+//       if (forwardingMatrix.nonEmpty) {
+//         val canForward = forwardingMatrix(i)(j) // user-supplied Bool
+//         // If forwarding is available from producer j to consumer i, don't treat it as a conflict.
+//         conflict = conflict && !canForward
+//       }
+
+//       hazardFromLater = hazardFromLater || conflict
+//     }
+
+//     // Stall only the consumer stage when there is a hazard
+//     // This localizes the stall to the stage where the consumer resides.
+//     consumer.stageCtrl.arbitration.haltItWhen(hazardFromLater)
+//   }
+
+//   // optional debug outputs
+//   val anyHazard = views.indices.map(i => views(i).stageCtrl.arbitration.isStuck).fold(False)(_ || _)
+// }

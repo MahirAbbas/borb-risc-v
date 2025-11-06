@@ -6,7 +6,6 @@ import spinal.lib.misc.pipeline._
 import borb.LsuL1.PC
 import borb.LsuL1.JumpCmd
 // import borb.dispatch.SrcPlugin.IMMED
-import borb.execute.Execute.RESULT
 import borb.frontend.ExecutionUnitEnum
 import borb.LsuL1.Jumper
 

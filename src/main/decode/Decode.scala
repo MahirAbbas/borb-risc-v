@@ -11,6 +11,9 @@ import spinal.lib.cpu.riscv.impl.Alu
 import spinal.lib.logic.Symplify
 import _root_.borb.common
 
+case class uop() extends Bundle {
+  
+}
 object Decoder extends AreaObject {
 
   val INSTRUCTION = Payload(Bits(32 bits))
@@ -47,7 +50,7 @@ object REGFILE {
   object RDTYPE extends SpinalEnum {
     val RD_INT, RD_FP, RD_VEC, RD_NA = newElement()
   }
-  object RSTYPE extends SpinalEnum {
+  object RSTYPE extends SpinalEnum() {
     val RS_INT, RS_FP, RS_VEC, IMMED, RS_NA = newElement()
   }
 }
@@ -109,12 +112,12 @@ case class Decoder(stage: CtrlLink) extends Area {
   val trap = new stage.Area {}
 
   val decodeLane = new stage.Area {
-    VALID := Symplify(INSTRUCTION, all)
+      VALID := Symplify(INSTRUCTION, all)
     for (spec <- specs) {
-      down(spec._2).assignDontCare()
-      when(up.isFiring) {
+      // down(spec._2).assignDontCare()
+      // when(up.isFiring) {
         down(spec._2).assignFromBits(spec._1.build(up(INSTRUCTION), all).asBits)
-      }
+      // }
     }
 
   }
@@ -123,7 +126,6 @@ case class Decoder(stage: CtrlLink) extends Area {
     down(Decoder.RD_ADDR) := up(Decoder.INSTRUCTION)(11 downto 7)
     down(Decoder.RS1_ADDR) := up(Decoder.INSTRUCTION)(19 downto 15)
     down(Decoder.RS2_ADDR) := up(Decoder.INSTRUCTION)(24 downto 20)
-
   }
 }
 
