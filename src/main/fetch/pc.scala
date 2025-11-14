@@ -54,13 +54,11 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
       sequentialNextPc := jump.payload.target
     }
 
-    // PC.PC := PC_cur
-    val isDownReady = stage.isReady
-    val isDownValid = stage.isValid
-    // when(down.isMoving) {
+    PC.PC := PC_cur
+    when(down.isFiring) {
       PC_cur := PC_cur + 4
       down(PC.PC) := PC_cur
-    // }
+    }
 
 
     // PC.FLUSH := jump.valid || flush.valid || exception.valid

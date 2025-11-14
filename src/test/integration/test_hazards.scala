@@ -54,6 +54,7 @@ case class test_hazards() extends Component {
     // srcPlugin.wasReset.simPublic()
     // val hazardChecker = new HazardChecker(hazardRange)
     val intalu = new IntAlu(pipeline.ctrl(5))
+    
 
 
     
@@ -122,6 +123,7 @@ case class test_hazards() extends Component {
     pipeline.ctrl(5).haltIt()
 
     pipeline.build()
+
   }
 
 }
