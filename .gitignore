@@ -47,6 +47,9 @@ bin/
 *.json
 *.vcd
 !tester/src/test/resources/*.vhd
+!bug_waves/
+!bug_waves/*.vcd
+
 
 
 simWorkspace/
