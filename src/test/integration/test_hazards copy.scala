@@ -48,21 +48,11 @@ case class test_hazards_cop() extends Component {
     val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
     val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
     val decode = new Decoder(pipeline.ctrl(2))
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(3))
-    srcPlugin.wasReset.simPublic()
     val hazardRange = Array(3, 4, 5, 6).map(e => pipeline.ctrl(e)).toSeq
-    val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
-    // val hazardChecker = new HazardChecker(hazardRange)
+    val dispatcher = new Dispatch(pipeline.ctrl(3), hazardRange, pipeline)
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(4))
     val intalu = new IntAlu(pipeline.ctrl(5))
 
-    // pipeline.ctrl(4).haltIt()
-    // val pcpc = pipeline.ctrl(0)
-    // val readpc = new pcpc.Area {
-    //   val pc = down(PC.PC)
-    //   pc.simPublic()
-    // }
-
-    
     val write = pipeline.ctrl(6)
 
     val writeback = new write.Area {
@@ -86,8 +76,8 @@ case class test_hazards_cop() extends Component {
     }
     val readStage = pipeline.ctrl(6)
     val readHere = new readStage.Area {
-      val pc = up(Fetch.PC_delayed)
-      pc.simPublic()
+      // val pc = up(Fetch.PC_delayed)
+      // pc.simPublic()
       val valid          = up(VALID) 
       val legal          = up(LEGAL)
       val is_fp          = up(IS_FP)
@@ -208,7 +198,8 @@ object test_hazards_cop_app extends App {
 
     for(i <- 0 to 30) {
       dut.coreClockDomain.waitSampling(1)
-      println(s"VALID Result: ${dut.coreArea.writeback.valid.toBoolean}, address: ${dut.coreArea.writeback.address.toBigInt} data: ${dut.coreArea.writeback.data.toBigInt}")
+      // println(s"VALID Result: ${dut.coreArea.writeback.valid.toBoolean}, address: ${dut.coreArea.writeback.address.toBigInt} data: ${dut.coreArea.writeback.data.toBigInt}")
+      println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean} ")
       // println(s"rs1Read address: ${dut.coreArea.srcPlugin.rs1Reader.address.toBigInt}, rs1Read data: ${dut.coreArea.srcPlugin.rs1Reader.data.toBigInt}")
       // println(s"rs2Read address: ${dut.coreArea.srcPlugin.rs2Reader.address.toBigInt}, rs2Read data: ${dut.coreArea.srcPlugin.rs2Reader.data.toBigInt}")
       // println(s"clearPending: ${dut.coreArea.dispatcher.hcs.clearPending.toBoolean}, clearRegAddr: ${dut.coreArea.dispatcher.hcs.clearRegAddr.toBigInt}")

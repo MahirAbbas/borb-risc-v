@@ -31,7 +31,7 @@ case class test_hazards() extends Component {
     clockEnable = io.clkEnable,
     config = ClockDomainConfig(
       clockEdge = RISING,
-      resetKind = ASYNC,
+      resetKind = SYNC,
       resetActiveLevel = HIGH 
 
     ))
@@ -44,6 +44,9 @@ case class test_hazards() extends Component {
     //   wasReset := True
     // }
     // wasReset.simPublic()
+    
+      
+
     val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
     val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
     val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
@@ -75,7 +78,8 @@ case class test_hazards() extends Component {
     val readStage = pipeline.ctrl(6)
     val readHere = new readStage.Area {
       // val pc = up(Fetch.PC_delayed)
-      // pc.simPublic()
+      val peecee = up(PC.PC)
+      peecee.simPublic()
       val valid          = up(VALID) 
       val legal          = up(LEGAL)
       val is_fp          = up(IS_FP)
@@ -120,10 +124,7 @@ case class test_hazards() extends Component {
     ram.io.reads.rsp >> fetch.io.readCmd.rsp
     fetch.io.readCmd.simPublic()
 
-    pipeline.ctrl(5).haltIt()
-
     pipeline.build()
-
   }
 
 }
@@ -197,12 +198,14 @@ object test_hazards_app extends App {
 
 
 
-    for(i <- 0 to 25) {
+    for(i <- 0 to 45) {
       dut.coreClockDomain.waitSampling(1)
       // println(s"${dut.readHere.valid.toBoolean}")
       
       // println(s"${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse}")
-      println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean}, UOP: ${dut.coreArea.readHere.microcode.toEnum}")
+      // println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean}, UOP: ${dut.coreArea.readHere.microcode.toEnum}")
+      println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean} ")
+      // println(dut.coreArea.readHere.peecee.toBigInt)
       // println(dut.hazardChecker.isRs1Haz(2).toBoolean)
     }
     // println(dut.srcPlugin.wasReset.toBoolean)

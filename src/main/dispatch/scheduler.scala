@@ -155,12 +155,13 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
     // for (stage <- hzRange) {
     //   val valid = stage(Decoder.VALID)
     //   val rd    = stage(Decoder.RD_ADDR)
-    //   // val writes = stage == hzRange.last // or use a .writesResult flag if earlier stages also write
+    // //   // val writes = stage == hzRange.last // or use a .writesResult flag if earlier stages also write
 
-    //   when(valid && (rd =/= 0) && stage.up.isMoving) {
+    //   when(valid && (rd =/= 0)) {
     //     regBusy(rd.asUInt) := True
     //   }
     // }
+    // Step 2: detect completions (clear busy)
     val writes = new dispatchNode.Area {
       // val stage = dispatchNode
       val valid = up(Decoder.VALID)
@@ -185,8 +186,8 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       val rs1Busy = regBusy(rs1.asUInt)
       val rs2Busy = regBusy(rs2.asUInt)
       val hazard  = valid && (rs1Busy || rs2Busy)
+      hzRange.head.haltWhen(hazard)
       
-      // pipeline.ctrl(5).haltIt()
     }
 
     // Step 2: detect completions (clear busy)
@@ -232,11 +233,6 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
     inValue.simPublic()
   }
   val hcs = new HazardChecker(hzRange, 32)
-
-
-
-  
-  // val hazards = HazardChecker(hzRange)
 
 
   // logic?
