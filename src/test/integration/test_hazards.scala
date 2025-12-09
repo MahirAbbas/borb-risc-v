@@ -48,22 +48,23 @@ case class test_hazards() extends Component {
       
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
-    val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+    val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
     val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
-    val decode = new Decoder(pipeline.ctrl(2))
-    val hazardRange = Array(3, 4, 5, 6).map(e => pipeline.ctrl(e)).toSeq
-    val dispatcher = new Dispatch(pipeline.ctrl(3),hazardRange, pipeline )
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(4))
+    val decode = new Decoder(pipeline.ctrl(3))
+    val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
+    val dispatcher = new Dispatch(pipeline.ctrl(4),hazardRange, pipeline)
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     // srcPlugin.wasReset.simPublic()
     // val hazardChecker = new HazardChecker(hazardRange)
-    val intalu = new IntAlu(pipeline.ctrl(5))
+    val intalu = new IntAlu(pipeline.ctrl(6))
     
 
 
     
-    val write = pipeline.ctrl(6)
+    val write = pipeline.ctrl(7)
 
     val writeback = new write.Area {
+      down.ready := True
       srcPlugin.regfileread.regfile.io.writer.address := RESULT.address
       srcPlugin.regfileread.regfile.io.writer.data := RESULT.data
       srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid
@@ -75,7 +76,7 @@ case class test_hazards() extends Component {
       // uop := up(MicroCode)
 
     }
-    val readStage = pipeline.ctrl(6)
+    val readStage = pipeline.ctrl(7)
     val readHere = new readStage.Area {
       // val pc = up(Fetch.PC_delayed)
       val peecee = up(PC.PC)
@@ -146,11 +147,11 @@ object test_hazards_app extends App {
       (0,  BigInt("00500093",16 )),  // addi x1, x0, 5          # x1 = 5
       (4,  BigInt("00300113",16 )),  // addi x2, x0, 3          # x2 = 3
       (8,  BigInt("002081b3",16 )),  // add  x3, x1, x2         # x3 = 8
-      (12,  BigInt("00118233",16 )),  // add  x4, x3, x1         # DEPENDS on x3 immediately
-      (16,  BigInt("402202b3",16 )),  // sub  x5, x4, x2         # DEPENDS on x4 immediately
-      (20,  BigInt("0032f333",16 )),  // and  x6, x5, x3         # DEPENDS on x5
-      (24,  BigInt("004363b3",16 )),  // or   x7, x6, x4         # DEPENDS on x6
-      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7
+      (12,  BigInt("00118233",16 )),  // add  x4, x3, x1         # DEPENDS on x3 immediately # x4 = 13
+      (16,  BigInt("402202b3",16 )),  // sub  x5, x4, x2         # DEPENDS on x4 immediately # x5 = 10
+      (20,  BigInt("0032f333",16 )),  // and  x6, x5, x3         # DEPENDS on x5 # x6 = 8
+      (24,  BigInt("004363b3",16 )),  // or   x7, x6, x4         # DEPENDS on x6 # x7 = 13
+      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7 # x8 = 5
       
                                     // # ----------------------------
                                     // # Mixed dependency patterns
@@ -202,11 +203,9 @@ object test_hazards_app extends App {
       dut.coreClockDomain.waitSampling(1)
       // println(s"${dut.readHere.valid.toBoolean}")
       
-      // println(s"${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse}")
-      // println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean}, UOP: ${dut.coreArea.readHere.microcode.toEnum}")
+      println(s"RegBusy: ${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse} is hazard ${dut.coreArea.dispatcher.hcs.writes.hazard.toBoolean}")
       println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean} ")
-      // println(dut.coreArea.readHere.peecee.toBigInt)
-      // println(dut.hazardChecker.isRs1Haz(2).toBoolean)
+      
     }
     // println(dut.srcPlugin.wasReset.toBoolean)
     // println(dut.wasReset.toBoolean)

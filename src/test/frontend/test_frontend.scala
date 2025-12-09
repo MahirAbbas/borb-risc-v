@@ -15,14 +15,14 @@ import borb.frontend.Decoder
 case class front() extends Component {
   val pipeline = new StageCtrlPipeline()
   val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
-  val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+  val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
   val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
-  val decode = new Decoder(pipeline.ctrl(2))
+  val decode = new Decoder(pipeline.ctrl(3))
   
 
 
   
-  val readStage = pipeline.ctrl(3)
+  val readStage = pipeline.ctrl(4)
   val readHere = new readStage.Area {
     // val pc = up(Fetch.PC_delayed)
     // pc.simPublic()

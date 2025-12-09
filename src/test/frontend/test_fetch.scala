@@ -15,9 +15,9 @@ case class frontEnd() extends Component {
   val pipeline = new StageCtrlPipeline()
   val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
   // pc.PC_cur.simPublic()
-  val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+  val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
   val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
-  val readStage = pipeline.ctrl(2)
+  val readStage = pipeline.ctrl(3)
   val readHere = new readStage.Area {
     val instr = up(INSTRUCTION)
     // val pc = up(Fetch.PC_delayed)

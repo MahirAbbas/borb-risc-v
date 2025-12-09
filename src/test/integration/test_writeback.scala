@@ -37,15 +37,15 @@ case class test_writeback() extends Component {
   val coreArea = new ClockingArea(coreClockDomain) {
     val pipeline = new StageCtrlPipeline()
     val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
-    val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+    val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
     val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
-    val decode = new Decoder(pipeline.ctrl(2))
-    val hazardRange = Array(3, 4, 5, 6).map(e => pipeline.ctrl(e)).toSeq
-    val dispatcher = new Dispatch(pipeline.ctrl(3),hazardRange, pipeline )
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(4))
-    val intalu = new IntAlu(pipeline.ctrl(5))
+    val decode = new Decoder(pipeline.ctrl(3))
+    val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
+    val dispatcher = new Dispatch(pipeline.ctrl(4),hazardRange, pipeline )
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
+    val intalu = new IntAlu(pipeline.ctrl(6))
     
-    val write = pipeline.ctrl(6)
+    val write = pipeline.ctrl(7)
 
 
     val writeback = new write.Area {
@@ -60,7 +60,7 @@ case class test_writeback() extends Component {
       // uop := up(MicroCode)
 
     }
-    val readStage = pipeline.ctrl(6)
+    val readStage = pipeline.ctrl(7)
     val readHere = new readStage.Area {
       // val pc = up(Fetch.PC_delayed)
       // pc.simPublic()

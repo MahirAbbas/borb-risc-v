@@ -14,40 +14,46 @@ object Fetch extends AreaObject {
   val addressWidth = 32
 }
 
-case class Fetch(stage: CtrlLink,addressWidth: Int,dataWidth: Int) extends Area {
+case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, dataWidth: Int) extends Area {
   import Fetch._
   val io = new Bundle {
     val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
   }
 
-  val waitingForRsp = Reg(Bool()) init False
-  val logic = new stage.Area {
-    val pcReg = Reg(UInt(addressWidth bits))
-    pcReg.simPublic()
-    pcReg := PC.PC
-    // io.readCmd.cmd.valid := False
-    io.readCmd.cmd.payload.address.assignDontCare()
+  val fifo = StreamFifo(Bits(dataWidth bits), depth = 8)
+  
+  // Connect memory response to FIFO
+  fifo.io.push.valid := io.readCmd.rsp.valid
+  fifo.io.push.payload := io.readCmd.rsp.data
+  
+  // Track inflight requests to prevent FIFO overflow
+  val inflight = RegInit(U(0, 4 bits))
+  val cmdFire = io.readCmd.cmd.fire
+  val rspFire = io.readCmd.rsp.valid
+  inflight := inflight + U(cmdFire) - U(rspFire)
 
-    INSTRUCTION.assignDontCare()
-
-
-    val pcVal = stage(PC.PC)
-    val instr = stage(INSTRUCTION)
-
-      io.readCmd.cmd.address := up(PC.PC)
-      io.readCmd.cmd.valid := stage.up.isValid
-      when((io.readCmd.cmd.valid && io.readCmd.cmd.ready)) {
-        waitingForRsp := True
-      }
-      haltWhen(waitingForRsp)
-
-      when(io.readCmd.rsp.valid) {
-        waitingForRsp := False
-      }
-
-    when(io.readCmd.rsp.valid && stage.down.isFiring) {
-      INSTRUCTION := io.readCmd.rsp.data
-
+  val cmdArea = new cmdStage.Area {
+    val reqSent = RegInit(False)
+    when(cmdStage.down.isFiring) {
+      reqSent := False
     }
+    when(io.readCmd.cmd.fire) {
+      reqSent := True
+    }
+
+    // Only send request if we haven't sent it yet and there is space in FIFO (accounting for inflight)
+    io.readCmd.cmd.valid := cmdStage.up.isValid && !reqSent && (fifo.io.availability > inflight)
+    io.readCmd.cmd.payload.address := cmdStage(PC.PC)
+    io.readCmd.cmd.payload.id.assignDontCare()
+    
+    // Halt if we haven't successfully sent the request yet
+    haltWhen(!reqSent && !io.readCmd.cmd.fire)
+  }
+
+  val rspArea = new rspStage.Area {
+    // Wait for data in FIFO
+    haltWhen(!fifo.io.pop.valid)
+    INSTRUCTION := fifo.io.pop.payload
+    fifo.io.pop.ready := rspStage.down.isFiring
   }
 }

@@ -166,8 +166,8 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       // val stage = dispatchNode
       val valid = up(Decoder.VALID)
       val rd    = up(Decoder.RD_ADDR)
-
-      when(valid && (rd =/= 0)) {
+      
+      when(up.isFiring && (rd =/= 0)) {
         regBusy(rd.asUInt) := True
       }
       
@@ -182,12 +182,13 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       // val stage = hzRange.head
       val rs1   = up(Decoder.RS1_ADDR)
       val rs2   = up(Decoder.RS2_ADDR)
+       val rs1Busy = regBusy(rs1.asUInt)
+       val rs2Busy = regBusy(rs2.asUInt)
 
-      val rs1Busy = regBusy(rs1.asUInt)
-      val rs2Busy = regBusy(rs2.asUInt)
-      val hazard  = valid && (rs1Busy || rs2Busy)
-      hzRange.head.haltWhen(hazard)
-      
+       val hazard = valid && (rs1Busy || rs2Busy)
+       hazard.simPublic()
+       
+       haltWhen(hazard)
     }
 
     // Step 2: detect completions (clear busy)

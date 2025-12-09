@@ -19,17 +19,17 @@ import borb.dispatch.SrcPlugin._
 case class src() extends Component {
   val pipeline = new StageCtrlPipeline()
   val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
-  val fetch = Fetch(pipeline.ctrl(1), addressWidth = 32, dataWidth = 32)
+  val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
   val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
-  val decode = new Decoder(pipeline.ctrl(2))
-  val srcPlugin = new SrcPlugin(pipeline.ctrl(3))
-  val hazardRange = Array(3, 4, 5, 6).map(e => pipeline.ctrl(e)).toSeq
-  val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
-  val intalu = new IntAlu(pipeline.ctrl(5))
+  val decode = new Decoder(pipeline.ctrl(3))
+  val srcPlugin = new SrcPlugin(pipeline.ctrl(4))
+  val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
+  val dispatcher = new Dispatch(pipeline.ctrl(5), hazardRange, pipeline)
+  val intalu = new IntAlu(pipeline.ctrl(6))
 
 
   
-  val readStage = pipeline.ctrl(6)
+  val readStage = pipeline.ctrl(7)
   val readHere = new readStage.Area {
     import borb.execute.IntAlu._
     // val pc = up(Fetch.PC_delayed)

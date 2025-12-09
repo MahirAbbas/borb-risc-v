@@ -49,7 +49,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
     // Priority: exception > flush > jump > sequential
 
     PC.PC := PC_cur
-    when(down.isMoving) {
+    when(down.isReady) {
       PC_cur := PC_cur + 4
       when(exception.valid) {
         PC_cur := exception.payload.vector
