@@ -22,6 +22,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
 
   val fifo = StreamFifo(Bits(dataWidth bits), depth = 8)
   
+  
   // Connect memory response to FIFO
   fifo.io.push.valid := io.readCmd.rsp.valid
   fifo.io.push.payload := io.readCmd.rsp.data
@@ -34,11 +35,11 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
 
   val cmdArea = new cmdStage.Area {
     val reqSent = RegInit(False)
-    when(cmdStage.down.isFiring) {
-      reqSent := False
-    }
     when(io.readCmd.cmd.fire) {
       reqSent := True
+    }
+    when(cmdStage.down.isFiring) {
+      reqSent := False
     }
 
     // Only send request if we haven't sent it yet and there is space in FIFO (accounting for inflight)

@@ -199,7 +199,7 @@ object test_hazards_app extends App {
 
 
 
-    for(i <- 0 to 45) {
+    for(i <- 0 to 65) {
       dut.coreClockDomain.waitSampling(1)
       // println(s"${dut.readHere.valid.toBoolean}")
       
