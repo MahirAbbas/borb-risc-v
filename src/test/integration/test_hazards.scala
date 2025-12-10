@@ -203,7 +203,7 @@ object test_hazards_app extends App {
       dut.coreClockDomain.waitSampling(1)
       // println(s"${dut.readHere.valid.toBoolean}")
       
-      println(s"RegBusy: ${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse} is hazard ${dut.coreArea.dispatcher.hcs.writes.hazard.toBoolean}")
+      //println(s"RegBusy: ${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse} is hazard ${dut.coreArea.dispatcher.hcs.writes.hazard.toBoolean}")
       println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean} ")
       
     }
