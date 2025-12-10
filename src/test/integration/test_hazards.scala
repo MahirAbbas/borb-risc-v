@@ -63,7 +63,6 @@ case class test_hazards() extends Component {
     
     val write = pipeline.ctrl(7)
 
-
     val writeback = new write.Area {
       down.ready := True
       srcPlugin.regfileread.regfile.io.writer.address := RESULT.address
@@ -145,45 +144,44 @@ object test_hazards_app extends App {
                                       // # ----------------------------
                                       // # RAW Hazards (Back-to-Back)
                                       // # ----------------------------
-      (0,   BigInt("00500093",16 )),  // addi x1, x0, 5          # x1 = 5
-      (4,   BigInt("00300113",16 )),  // addi x2, x0, 3          # x2 = 3
-      (8,   BigInt("002081b3",16 )),  // add  x3, x1, x2         # x3 = 8
+      (0,  BigInt("00500093",16 )),  // addi x1, x0, 5          # x1 = 5
+      (4,  BigInt("00300113",16 )),  // addi x2, x0, 3          # x2 = 3
+      (8,  BigInt("002081b3",16 )),  // add  x3, x1, x2         # x3 = 8
       (12,  BigInt("00118233",16 )),  // add  x4, x3, x1         # DEPENDS on x3 immediately # x4 = 13
       (16,  BigInt("402202b3",16 )),  // sub  x5, x4, x2         # DEPENDS on x4 immediately # x5 = 10
       (20,  BigInt("0032f333",16 )),  // and  x6, x5, x3         # DEPENDS on x5 # x6 = 8
       (24,  BigInt("004363b3",16 )),  // or   x7, x6, x4         # DEPENDS on x6 # x7 = 13
-      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7 # x8 = 7
+      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7 # x8 = 5
       
                                     // # ----------------------------
                                     // # Mixed dependency patterns
                                     // # ----------------------------
-                                    // x10 = 16, x4 = 13, add x11, x10, x4 = 29
-      (32,  BigInt("002084b3",16 )),  // add  x9, x1, x2         # x9 = 8 (fresh) # x9 = 8
-      (36,  BigInt("00348533",16 )),  // add  x10, x9, x3        # depends on x9 # x10 = 16
-      (40,  BigInt("004505b3",16 )),  // add  x11, x10, x4       # depends on x10 # x11 = 29
-      (44,  BigInt("00558633",16 )),  // add  x12, x11, x5       # chain dependency # x12 = 39
+      (32,  BigInt("002084b3",16 )),  // add  x9, x1, x2         # x9 = 8 (fresh)
+      (36,  BigInt("00348533",16 )),  // add  x10, x9, x3        # depends on x9
+      (40,  BigInt("004505b3",16 )),  // add  x11, x10, x4       # depends on x10
+      (44,  BigInt("00558633",16 )),   // add  x12, x11, x5       # chain dependency
      
                                    // # ----------------------------
                                    // # One-source dependencies
                                    // # ----------------------------
-      (48,  BigInt("00200693",16 )),  // addi x13, x0, 2         # independent # x13 = 2
-      (52,  BigInt("00c68733",16 )),  // add  x14, x13, x12      # depends only on x12 # x14 = 41
-      (56,  BigInt("401707b3",16 )),  // sub  x15, x14, x1       # depends on x14 # x15 = 36
+      (48,  BigInt("00200693",16 )), // addi x13, x0, 2         # independent
+      (52,  BigInt("00c68733",16 )), // add  x14, x13, x12      # depends only on x12
+      (56,  BigInt("401707b3",16 )), // sub  x15, x14, x1       # depends on x14
     
                                    // # ----------------------------
                                    // # Forwarding test (cross reuse)
                                    // # ----------------------------
-      (60,  BigInt("00208833",16 )),  // add  x16, x1, x2        # produces x16 # x16 = 8
-      (64,  BigInt("003808b3",16 )),  // add  x17, x16, x3       # uses x16 immediately # x17 = 16
-      (68,  BigInt("00488933",16 )),  // add  x18, x17, x4       # uses x17 immediately # x18 = 29
-      (72,  BigInt("005909b3",16 )),  // add  x19, x18, x5       # uses x18 immediately # x19 = 8
+      (60,  BigInt("00208833",16 )), // add  x16, x1, x2        # produces x16
+      (64,  BigInt("003808b3",16 )), // add  x17, x16, x3       # uses x16 immediately
+      (68,  BigInt("00488933",16 )), // add  x18, x17, x4       # uses x17 immediately
+      (72,  BigInt("005909b3",16 )), // add  x19, x18, x5       # uses x18 immediately
    
                                     // # ----------------------------
                                     // # Delayed dependency (stall test)
                                     // # ----------------------------
       (76,  BigInt("00208a33",16 )),  // add  x20, x1, x2        # x20 = 8
-      (80,  BigInt("00418ab3",16 )),  // add  x21, x3, x4        # unrelated, should not stall # x21 = 21:w
-      (84,  BigInt("015a0b33",16 )),  // add  x22, x20, x21      # depends on x20, tests correct stall or bypass timing # x22 = 29
+      (80,  BigInt("00418ab3",16 )),  // add  x21, x3, x4        # unrelated, should not stall
+      (84,  BigInt("015a0b33",16 )),  // add  x22, x20, x21      # depends on x20, tests correct stall or bypass timing
 
   )
     for ((address, data) <- instructions) {
@@ -205,37 +203,28 @@ object test_hazards_app extends App {
       dut.coreClockDomain.waitSampling(1)
       // println(s"${dut.readHere.valid.toBoolean}")
       
-      //println(s"RegBusy: ${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse} is hazard ${dut.coreArea.dispatcher.hcs.writes.hazard.toBoolean}")
+      println(s"RegBusy: ${dut.coreArea.dispatcher.hcs.regBusy.toBigInt.toString(2).reverse.padTo(32, '0').reverse} is hazard ${dut.coreArea.dispatcher.hcs.writes.hazard.toBoolean}")
       println(s"RESULT.valid ${dut.coreArea.readHere.valid_result.toBoolean}, RESULT.address ${dut.coreArea.readHere.rdaddr.toLong}, RESULT.data ${dut.coreArea.readHere.result.toLong}, IMMED: ${dut.coreArea.readHere.immed.toLong},SENDTOALU: ${dut.coreArea.readHere.sendtoalu.toBoolean}, VALID: ${dut.coreArea.readHere.valid.toBoolean} ")
       
     }
     // println(dut.srcPlugin.wasReset.toBoolean)
     // println(dut.wasReset.toBoolean)
 
-    println(s"x1 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(1).toLong}")
-    println(s"x2 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(2).toLong}")
-    println(s"x3 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(3).toLong}")
-    println(s"x4 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(4).toLong}")
-    println(s"x5 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(5).toLong}")
-    println(s"x6 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(6).toLong}")
-    println(s"x7 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(7).toLong}")
-    println(s"x8 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(8).toLong}")
-    println(s"x9 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(9).toLong}")
-    println(s"x10 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(10).toLong}")
-    println(s"x11 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(11).toLong}")
-    println(s"x12 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(12).toLong}")
-    println(s"x13 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(13).toLong}")
-    println(s"x14 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(14).toLong}")
-    println(s"x15 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(15).toLong}")
-    println(s"x16 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(16).toLong}")
-    println(s"x17 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(17).toLong}")
-    println(s"x18 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(18).toLong}")
-    println(s"x19 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(19).toLong}")
-    println(s"x20 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(20).toLong}")
-    println(s"x21 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(21).toLong}")
-    println(s"x22 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(22).toLong}")
-    println(s"x23 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(23).toLong}")
-    println(s"x24 = ${dut.coreArea.srcPlugin.regfileread.regfile.mem.getBigInt(24).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(1).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(2).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(3).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(4).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(5).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(6).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(7).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(8).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(9).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(10).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(11).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(12).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(13).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(14).toLong}")
+    // println(s"${dut.srcPlugin.regfileread.regfile.mem.getBigInt(15).toLong}")
   }
 }
 
