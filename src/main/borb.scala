@@ -51,7 +51,6 @@ class Borb extends Component {
     val op = borb.frontend.Decoder.MicroCode
     uop := up(op)
 
-    val valid = (borb.frontend.Decoder.VALID)
 
     // uop := up(MicroCode)
 

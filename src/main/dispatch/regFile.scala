@@ -4,6 +4,7 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import spinal.lib.misc.plugin._
+import spinal.core.sim._
 import scala.collection.mutable.ArrayBuffer
 
 case class RegFileWrite() extends Bundle with IMasterSlave {
@@ -54,6 +55,7 @@ case class IntRegFile(dataWidth: Int) extends Component {
     val readerRS2 = slave(new RegFileRead())
     val writer = slave(new RegFileWrite())
   }
+  io.simPublic()
   val mem = Mem.fill(32)(Bits(dataWidth bits)) init(Seq.fill(32)(B(0)))
 
   // io.readerRS1.data := mem.readSync(address = io.readerRS1.address, enable = io.readerRS1.valid)

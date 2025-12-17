@@ -15,6 +15,7 @@ import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
 import borb.execute.IntAlu.RESULT
 import scala.collection.mutable.ArrayBuffer
+import borb.common.MicroCode.uopADDI
 
 // object Dispatch extends AreaObject {
 //   val alu_valid = Payload(Bool())
@@ -182,15 +183,16 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       // val stage = hzRange.head
       val rs1   = up(Decoder.RS1_ADDR)
       val rs2   = up(Decoder.RS2_ADDR)
-       val rs1Busy = regBusy(rs1.asUInt)
-       val rs2Busy = regBusy(rs2.asUInt)
+      val rs1Busy = regBusy(rs1.asUInt)
+      val rs2Busy = regBusy(rs2.asUInt)
 
-       val hazard = valid && (rs1Busy || rs2Busy)
-       hazard.simPublic()
-       
-       haltWhen(hazard)
+      val hazard = valid && (rs1Busy || rs2Busy)
+      hazard.simPublic()
+      
+
+      //down(Decoder.VALID) := (!hazard)
+      haltWhen(hazard)
     }
-
     // Step 2: detect completions (clear busy)
     import borb.execute.IntAlu._
 
