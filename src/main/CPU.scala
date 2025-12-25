@@ -64,13 +64,21 @@ case class CPU() extends Component {
     val intalu = new IntAlu(pipeline.ctrl(6))
     
     val write = pipeline.ctrl(7)
+    val dispCtrl = pipeline.ctrl(4)
+    //dispCtrl.down.ready := True
 
+    //write.down.ready := True
+
+  
     val writeback = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
       fetch.io.readCmd.simPublic()
       pc.PC_cur.simPublic()
       down.ready := True
+      //forgetOneWhen(dispatcher.hcs.writes.hazard)
+      
+      //down.ready := !dispatcher.hcs.writes.hazard
       //when(dispatcher.hcs.writes.hazard) {
       //  down.ready := False
       //}
@@ -90,10 +98,11 @@ case class CPU() extends Component {
         valid_result.simPublic()
         rdaddr.simPublic()
       }
+
       
       srcPlugin.regfileread.regfile.io.writer.address := RESULT.address
       srcPlugin.regfileread.regfile.io.writer.data := RESULT.data
-      srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid
+      srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring
       //srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring
       // val uop = borb.common.MicroCode()
       // val op = borb.frontend.Decoder.MicroCode

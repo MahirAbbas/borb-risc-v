@@ -92,44 +92,44 @@ object test_cpu_integration_app extends App {
                                       // # ----------------------------
                                       // # RAW Hazards (Back-to-Back)
                                       // # ----------------------------
-      (0,  BigInt("00500093",16 )),  // addi x1, x0, 5          # x1 = 5
-      (4,  BigInt("00300113",16 )),  // addi x2, x0, 3          # x2 = 3
-      (8,  BigInt("002081b3",16 )),  // add  x3, x1, x2         # x3 = 8
+      (0,   BigInt("00500093",16 )),  // addi x1, x0, 5          # x1 = 5
+      (4,   BigInt("00300113",16 )),  // addi x2, x0, 3          # x2 = 3
+      (8,   BigInt("002081b3",16 )),  // add  x3, x1, x2         # x3 = 8
       (12,  BigInt("00118233",16 )),  // add  x4, x3, x1         # DEPENDS on x3 immediately # x4 = 13
       (16,  BigInt("402202b3",16 )),  // sub  x5, x4, x2         # DEPENDS on x4 immediately # x5 = 10
       (20,  BigInt("0032f333",16 )),  // and  x6, x5, x3         # DEPENDS on x5 # x6 = 8
       (24,  BigInt("004363b3",16 )),  // or   x7, x6, x4         # DEPENDS on x6 # x7 = 13
-      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7 # x8 = 5
+      (28,  BigInt("0053c433",16 )),  // xor  x8, x7, x5         # DEPENDS on x7 # x8 = 7
       
                                     // # ----------------------------
                                     // # Mixed dependency patterns
                                     // # ----------------------------
-      (32,  BigInt("002084b3",16 )),  // add  x9, x1, x2         # x9 = 8 (fresh)
-      (36,  BigInt("00348533",16 )),  // add  x10, x9, x3        # depends on x9
-      (40,  BigInt("004505b3",16 )),  // add  x11, x10, x4       # depends on x10
-      (44,  BigInt("00558633",16 )),   // add  x12, x11, x5       # chain dependency
+      (32,  BigInt("002084b3",16 )),  // add  x9, x1, x2         # x9 = 8 (fresh) 
+      (36,  BigInt("00348533",16 )),  // add  x10, x9, x3        # depends on x9 # x10 = 16
+      (40,  BigInt("004505b3",16 )),  // add  x11, x10, x4       # depends on x10 # x11 = 29
+      (44,  BigInt("00558633",16 )),  // add  x12, x11, x5       # chain dependency # x12 = 39
      
                                    // # ----------------------------
                                    // # One-source dependencies
                                    // # ----------------------------
-      (48,  BigInt("00200693",16 )), // addi x13, x0, 2         # independent
-      (52,  BigInt("00c68733",16 )), // add  x14, x13, x12      # depends only on x12
-      (56,  BigInt("401707b3",16 )), // sub  x15, x14, x1       # depends on x14
+      (48,  BigInt("00200693",16 )), // addi x13, x0, 2         # independent # x13 = 2
+      (52,  BigInt("00c68733",16 )), // add  x14, x13, x12      # depends only on x12 # x14 = 41
+      (56,  BigInt("401707b3",16 )), // sub  x15, x14, x1       # depends on x14 # x15 = 36
     
                                    // # ----------------------------
                                    // # Forwarding test (cross reuse)
                                    // # ----------------------------
-      (60,  BigInt("00208833",16 )), // add  x16, x1, x2        # produces x16
-      (64,  BigInt("003808b3",16 )), // add  x17, x16, x3       # uses x16 immediately
-      (68,  BigInt("00488933",16 )), // add  x18, x17, x4       # uses x17 immediately
-      (72,  BigInt("005909b3",16 )), // add  x19, x18, x5       # uses x18 immediately
+      (60,  BigInt("00208833",16 )), // add  x16, x1, x2        # produces x16 # x16 = 8
+      (64,  BigInt("003808b3",16 )), // add  x17, x16, x3       # uses x16 immediately # x17 = 16
+      (68,  BigInt("00488933",16 )), // add  x18, x17, x4       # uses x17 immediately # x18 = 29
+      (72,  BigInt("005909b3",16 )), // add  x19, x18, x5       # uses x18 immediately # x19 = 39
    
                                     // # ----------------------------
                                     // # Delayed dependency (stall test)
                                     // # ----------------------------
       (76,  BigInt("00208a33",16 )),  // add  x20, x1, x2        # x20 = 8
-      (80,  BigInt("00418ab3",16 )),  // add  x21, x3, x4        # unrelated, should not stall
-      (84,  BigInt("015a0b33",16 )),  // add  x22, x20, x21      # depends on x20, tests correct stall or bypass timing
+      (80,  BigInt("00418ab3",16 )),  // add  x21, x3, x4        # unrelated, should not stall # x21 = 21
+      (84,  BigInt("015a0b33",16 )),  // add  x22, x20, x21      # depends on x20, tests correct stall or bypass timing # x22 = 29
 
   )
     for ((address, data) <- instructions) {
@@ -140,7 +140,7 @@ object test_cpu_integration_app extends App {
     // We need to wait for clock edges. Since we generate clock manually, we can just sleep period.
     // Or we can use `dut.testClockDomain.waitSampling` if we exposed the clock domain appropriately, but easier to just loop and sleep.
     
-    for(i <- 0 to 65) {
+    for(i <- 0 to 75) {
        // Wait one clock cycle
        sleep(period)
        

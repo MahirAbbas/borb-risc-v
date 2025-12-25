@@ -176,7 +176,8 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       val wbValid = wbStage(RESULT).valid
       val wbRd    = wbStage(RESULT).address
 
-      when(wbValid && (wbRd =/= 0)) {
+      // Only clear busy when writeback actually commits (fires)
+      when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {
         regBusy(wbRd) := False
       }
 
@@ -192,6 +193,10 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
 
       //down(Decoder.VALID) := (!hazard)
       haltWhen(hazard)
+      
+      
+      //pipeline.links.last.down.ready := !hazard
+
     }
     // Step 2: detect completions (clear busy)
     import borb.execute.IntAlu._
