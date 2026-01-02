@@ -48,6 +48,14 @@ case class CPU() extends Component {
     // 5: SrcPlugin
     // 6: IntAlu
     // 7: Writeback
+    // Define Stages ... 
+    // Defaults for Execution Stages: LANE_SEL is False if not propagated (Bubble)
+    import borb.common.Common._
+    pipeline.ctrls.filter(_._1 >= 5).foreach { case (id, ctrl) =>
+      // "insertNode" like logic if we had one, but here we just init the register for stages > Dispatch(4)
+      ctrl.up(LANE_SEL).setAsReg().init(False)
+    }
+
     val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
     pc.jump.setIdle()
     pc.exception.setIdle()
@@ -60,7 +68,6 @@ case class CPU() extends Component {
     val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
     val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
-    val n5 = pipeline.ctrl(5)
     val intalu = new IntAlu(pipeline.ctrl(6))
     
     val write = pipeline.ctrl(7)
@@ -71,6 +78,12 @@ case class CPU() extends Component {
 
   
     val writeback = new write.Area {
+      import borb.common.Common._
+      // Initialize TRAP to False (no traps implemented yet) and derive COMMIT
+      // COMMIT is valid only if valid lane and no trap
+      up(TRAP) := False
+      up(COMMIT) := !up(TRAP) && up(LANE_SEL)
+
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
       fetch.io.readCmd.simPublic()
@@ -90,6 +103,8 @@ case class CPU() extends Component {
         val result         = up(borb.execute.IntAlu.RESULT).data
         val valid_result   = up(borb.execute.IntAlu.RESULT).valid
         val rdaddr         = up(borb.execute.IntAlu.RESULT).address
+        val lane_sel       = up(LANE_SEL)
+        val commit         = up(COMMIT)
         
         valid.simPublic()
         immed.simPublic()
@@ -97,12 +112,15 @@ case class CPU() extends Component {
         result.simPublic()
         valid_result.simPublic()
         rdaddr.simPublic()
+        lane_sel.simPublic()
+        commit.simPublic()
       }
 
       
       srcPlugin.regfileread.regfile.io.writer.address := RESULT.address
       srcPlugin.regfileread.regfile.io.writer.data := RESULT.data
-      srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring
+      // Gated by COMMIT and LANE_SEL
+      srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring && up(COMMIT) && up(LANE_SEL)
       //srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring
       // val uop = borb.common.MicroCode()
       // val op = borb.frontend.Decoder.MicroCode

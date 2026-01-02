@@ -124,22 +124,35 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
   // set EU to fire
 
   val logic = new dispatchNode.Area {
+    import borb.common.Common._
+    down(LANE_SEL) := False
+    
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)
     // }
     down(SENDTOALU) := False
     down(SENDTOBRANCH) := False
     down(SENDTOAGU) := False
+    
+    // Logic to select an execution lane implies LANE_SEL is true
+    // Crucially, it must only be True if we are actually firing (not stalled by hazard)
+    // LANE_SEL acts as the valid bit for the lane.
+    val firing = up.isFiring
+    
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
       down(SENDTOALU) := True
+      down(LANE_SEL) := firing
     }
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
       down(SENDTOBRANCH) := True
+      down(LANE_SEL) := firing
     }
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU) {
       down(SENDTOAGU) := True
+      down(LANE_SEL) := firing
     }
-
+    
+    // Explicitly handle invalid/bubble case if needed, but default False covers it.
   }
  case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32) extends Area {
 
