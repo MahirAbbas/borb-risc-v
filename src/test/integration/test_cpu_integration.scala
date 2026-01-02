@@ -165,7 +165,7 @@ object test_cpu_integration_app extends App {
        val cmd_ready = dut.cpu.coreArea.fetch.io.readCmd.cmd.ready.toBoolean
        val rsp_valid = dut.cpu.coreArea.fetch.io.readCmd.rsp.valid.toBoolean
        
-       val rh = dut.cpu.coreArea.writeback.readHere
+       val rh = dut.cpu.coreArea.wbArea.readHere
        //println(s"PC: $pc CMD: v=$cmd_valid r=$cmd_ready RSP: v=$rsp_valid | RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, SENDTOALU: ${rh.sendtoalu.toBoolean}, VALID: ${rh.valid.toBoolean}")
        println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, WRITE_VALID: ${valid_result}")
     }

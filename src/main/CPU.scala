@@ -77,26 +77,16 @@ case class CPU() extends Component {
     //write.down.ready := True
 
   
-    val writeback = new write.Area {
-      import borb.common.Common._
-      // Initialize TRAP to False (no traps implemented yet) and derive COMMIT
-      // COMMIT is valid only if valid lane and no trap
-      up(TRAP) := False
-      up(COMMIT) := !up(TRAP) && up(LANE_SEL)
-
+    import borb.execute.WriteBack
+    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writer)
+    val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
       fetch.io.readCmd.simPublic()
       pc.PC_cur.simPublic()
-      down.ready := True
-      //forgetOneWhen(dispatcher.hcs.writes.hazard)
-      
-      //down.ready := !dispatcher.hcs.writes.hazard
-      //when(dispatcher.hcs.writes.hazard) {
-      //  down.ready := False
-      //}
 
       val readHere = new Area {
+        import borb.common.Common._
         val valid          = up(borb.frontend.Decoder.VALID) 
         val immed          = up(borb.dispatch.SrcPlugin.IMMED)
         val sendtoalu      = up(borb.dispatch.Dispatch.SENDTOALU)
@@ -115,17 +105,8 @@ case class CPU() extends Component {
         lane_sel.simPublic()
         commit.simPublic()
       }
-
-      
-      srcPlugin.regfileread.regfile.io.writer.address := RESULT.address
-      srcPlugin.regfileread.regfile.io.writer.data := RESULT.data
-      // Gated by COMMIT and LANE_SEL
-      srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring && up(COMMIT) && up(LANE_SEL)
-      //srcPlugin.regfileread.regfile.io.writer.valid := RESULT.valid && down.isFiring
-      // val uop = borb.common.MicroCode()
-      // val op = borb.frontend.Decoder.MicroCode
-      // uop := up(op)
     }
+
 
     // Connect Fetch to External Memory Bus
     io.iBus.cmd << fetch.io.readCmd.cmd
