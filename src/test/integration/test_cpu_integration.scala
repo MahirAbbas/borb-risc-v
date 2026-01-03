@@ -51,7 +51,7 @@ case class TestCpuIntegration() extends Component {
   )
   
   val ramArea = new ClockingArea(testClockDomain) {
-    val ram = new UnifiedRam(addressWidth = 32, dataWidth = 32, idWidth = 16)
+    val ram = new UnifiedRam(addressWidth = 64, dataWidth = 64, idWidth = 16)
     //ram.io.reads.cmd << cpu.io.iBus.cmd
     //ram.io.reads.rsp >> cpu.io.iBus.rsp
     ram.io.reads <> cpu.io.iBus
@@ -160,14 +160,17 @@ object test_cpu_integration_app extends App {
        val rdaddr = dut.cpu.coreArea.srcPlugin.regfileread.regfile.io.writer.address.toLong
        val result = dut.cpu.coreArea.srcPlugin.regfileread.regfile.io.writer.data.toLong
        
-       val pc = dut.cpu.coreArea.pc.PC_cur.toLong
+       val pc = dut.cpu.coreArea.pc.PC_cur.toBigInt.toLong
        val cmd_valid = dut.cpu.coreArea.fetch.io.readCmd.cmd.valid.toBoolean
        val cmd_ready = dut.cpu.coreArea.fetch.io.readCmd.cmd.ready.toBoolean
        val rsp_valid = dut.cpu.coreArea.fetch.io.readCmd.rsp.valid.toBoolean
        
        val rh = dut.cpu.coreArea.wbArea.readHere
        //println(s"PC: $pc CMD: v=$cmd_valid r=$cmd_ready RSP: v=$rsp_valid | RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, SENDTOALU: ${rh.sendtoalu.toBoolean}, VALID: ${rh.valid.toBoolean}")
-       println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, WRITE_VALID: ${valid_result}")
+       if(rh.commit.toBoolean == true){
+        println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, WRITE_VALID: ${valid_result}")
+
+       }
     }
   }
 }

@@ -20,7 +20,7 @@ case class CPU() extends Component {
     val clk = in port Bool()
     val clkEnable = in port Bool()
     val reset = in port Bool()
-    val iBus = master(new RamFetchBus(addressWidth = 32, dataWidth = 32, idWidth = 16))
+    val iBus = master(new RamFetchBus(addressWidth = 64, dataWidth = 64, idWidth = 16))
   }
 
   // We use a ClockingArea to handle the provided clock/reset
@@ -56,11 +56,11 @@ case class CPU() extends Component {
       ctrl.up(LANE_SEL).setAsReg().init(False)
     }
 
-    val pc = new PC(pipeline.ctrl(0), addressWidth = 32)
+    val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
     pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
-    val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
+    val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 64, dataWidth = 64)
     // RAM is external (via io.iBus)
     
     val decode = new Decoder(pipeline.ctrl(3))

@@ -22,7 +22,7 @@ case class ExceptionCmd(addressWidth: Int) extends Bundle {
 }
 
 object PC extends AreaObject {
-  val addressWidth = 32
+  val addressWidth = 64
   val PC = Payload(UInt(addressWidth bits))
   val FLUSH = Payload(Bool())
 }
@@ -37,7 +37,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
   // allows for future support of 'C' extension
   // val fetch_offset = withCompressed generate in(UInt(3 bits))
 
-  val PC_cur = Reg(UInt(addressWidth bits)).init(0)
+  val PC_cur = Reg(UInt(addressWidth bits)).init(U(0, addressWidth bits))
 
   // Control flow change interfaces
 
