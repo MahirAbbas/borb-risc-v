@@ -69,6 +69,7 @@ case class CPU() extends Component {
     val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
+    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
     
     val write = pipeline.ctrl(7)
     val dispCtrl = pipeline.ctrl(4)

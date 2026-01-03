@@ -11,6 +11,7 @@ import borb.frontend.ExecutionUnitEnum.ALU
 
 import borb.dispatch._
 import borb.common.MicroCode._
+import borb.common.Common._
 
 object IntAlu extends AreaObject {
   val RESULT = Payload(new RegFileWrite())
@@ -63,20 +64,15 @@ case class IntAlu(aluNode : CtrlLink) extends Area {
           uopSRLW     -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
           uopSUBW     -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
 
-          uopLUI      -> (SRC2.asBits),
-          uopAUIPC    -> (SRC2.asUInt + PCVal).asBits
+          uopLUI      -> (SRC2.asBits)
         )
       }
-
-
-      down(RESULT).address.assignDontCare()
-      down(RESULT).data.assignDontCare()
       down(RESULT).valid := False
+      down(RESULT).address := 0
+      down(RESULT).data := 0
 
 
-      
-      when(VALID === True) {
-        // down(RESULT) := result.asBits
+      when(up(borb.dispatch.Dispatch.SENDTOALU) === True && up(LANE_SEL)) {
         down(RESULT).data := result.asBits
         down(RESULT).address := up(RD_ADDR).asUInt
         down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)

@@ -3,73 +3,78 @@ package borb.execute
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
-import borb.LsuL1.PC
-import borb.LsuL1.JumpCmd
-// import borb.dispatch.SrcPlugin.IMMED
+import borb.fetch.PC
+import borb.fetch.JumpCmd
+import borb.frontend.Decoder._
 import borb.frontend.ExecutionUnitEnum
-import borb.LsuL1.Jumper
+import borb.common.Common._
+import borb.common.MicroCode._
+import borb.dispatch.SrcPlugin._
+import borb.dispatch.Dispatch._
+import borb.execute.IntAlu.RESULT
+import borb.frontend.YESNO
 
-// case class CtrlHazardThrowPipeline(decodeNode : CtrlLink, hzRange : Seq[CtrlLink], pc : PC) extends Area {
-//   val logic = new decodeNode.Area {
-//     when(up(borb.decode.Decoder.ALUOP) === AluOp.jal) {
-//       decodeNode.haltWhen(pc.jumpCmd.valid && hzRange.map(e => e.up(borb.decode.Decoder.ALUOP) === AluOp.jal).reduce(_ || _))
-//       decodeNode.throwWhen(pc.jumpCmd.valid)
-//       // when JAL, stall pipeline, update PC, carryone
-//     }
+case class Branch(node : CtrlLink, pc : PC) extends Area {
+  val logic = new node.Area {
+    val src1 = up(RS1).asSInt
+    val src2 = up(RS2).asSInt
+    val src1U = up(RS1).asUInt
+    val src2U = up(RS2).asUInt
+    val pcValue = up(PC.PC)
+    val imm = up(IMMED).asUInt
 
-//     when(up(borb.decode.Decoder.ALUOP) === AluOp.jalr) {
-//       decodeNode.haltWhen(pc.jumpCmd.valid && hzRange.map(e => e.up(borb.decode.Decoder.ALUOP) === AluOp.jalr).reduce(_ || _))
-//       decodeNode.throwWhen(pc.jumpCmd.valid)
-//       // when JAL, stall pipeline, update PC, carryone
-//     }
-//   }
-// }
+    val condition = Bool()
+    switch(up(MicroCode)) {
+      is(uopBEQ)  { condition := src1 === src2 }
+      is(uopBNE)  { condition := src1 =/= src2 }
+      is(uopBLT)  { condition := src1 < src2 }
+      is(uopBGE)  { condition := src1 >= src2 }
+      is(uopBLTU) { condition := src1U < src2U }
+      is(uopBGEU) { condition := src1U >= src2U }
+      default     { condition := False }
+    }
 
-// case class Branch(node : CtrlLink, pc : PC) extends Area {
-//   import borb.LsuL1.PC._
-//
-//   val jumpCmd = Flow(borb.LsuL1.JumpCmd())
-//
-//   pc.jumpCmd << jumpCmd
-//
-//   // override val FUType = ExecutionUnitEnum.BR
-//
-//   val SRC1 = borb.dispatch.SrcPlugin.RS1
-//   val SRC2 = borb.dispatch.SrcPlugin.RS2
-//
-//   val doBranch = Bool()
-//
-//   val logic = new node.Area {
-//   }
-//
-//   // val ctrlHz = CtrlHazardThrowPipeline(node, branchCtrlHzRange, pc)
-//
-//   val branchlogic = new node.Area {
-//     doBranch := False
-//     when(up(borb.dispatch.Dispatch.SENDTOBRANCH) === True && up.isFiring) {
-//       doBranch := (ALUOP).muxDc(
-//         AluOp.beq -> (SRC1.asSInt === SRC2.asSInt),
-//         AluOp.bne -> (SRC1.asSInt =/= SRC2.asSInt),
-//         AluOp.bge -> (SRC1.asSInt >= SRC2.asSInt),
-//         AluOp.bgeu -> (SRC1.asUInt >= SRC2.asUInt),
-//         AluOp.blt -> (SRC1.asSInt <= SRC2.asSInt),
-//         AluOp.bltu -> (SRC1.asUInt <= SRC2.asUInt),
-//       )
-//     }
-//     when(up(borb.frontend.Decoder.ALUOP) === AluOp.jal || up(borb.frontend.Decoder.ALUOP) === AluOp.jalr) {
-//       doBranch := True
-//       RESULT := PCPLUS4.asBits
-//     }
-//     jumpCmd.setIdle()
-//     when(doBranch) {
-//      jumpCmd.valid := True
-//      jumpCmd.payload.address := IMMED.asUInt
-//     }
-//
-//   }
-//
-//
-//
-//
-// }
+    val target = UInt(32 bits)
+    switch(up(MicroCode)) {
+      is(uopJALR) { target := (src1U.asSInt + imm.asSInt).asUInt }
+      default     { target := (pcValue.asSInt + imm.asSInt).asUInt }
+    }
 
+    val isJump = Bool()
+    switch(up(MicroCode)) {
+      is(uopJAL)  { isJump := True }
+      is(uopJALR) { isJump := True }
+      default     { isJump := False }
+    }
+
+    val isBranch = Bool()
+    switch(up(MicroCode)) {
+      is(uopBEQ)  { isBranch := True }
+      is(uopBNE)  { isBranch := True }
+      is(uopBLT)  { isBranch := True }
+      is(uopBGE)  { isBranch := True }
+      is(uopBLTU) { isBranch := True }
+      is(uopBGEU) { isBranch := True }
+      default     { isBranch := False }
+    }
+    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
+
+    pc.jump.valid := doJump && down.isFiring
+    pc.jump.payload.target := target(31 downto 0).resized // PC target is 32 bits typically in this design
+    pc.jump.payload.is_jump := isJump
+    pc.jump.payload.is_branch := isBranch
+
+    when(up(LANE_SEL) && up(SENDTOBRANCH)) {
+      when(isJump) {
+        down(RESULT).address := up(RD_ADDR).asUInt
+        down(RESULT).data := (pcValue + 4).asBits
+        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)
+      }
+      when(up(MicroCode) === uopAUIPC) {
+        down(RESULT).address := up(RD_ADDR).asUInt
+        down(RESULT).data := (pcValue + imm).asBits
+        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)
+      }
+    }
+  }
+}
