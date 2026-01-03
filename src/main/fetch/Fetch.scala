@@ -11,7 +11,7 @@ import borb.memory._
 import spinal.core.sim._
 
 object Fetch extends AreaObject {
-  val addressWidth = 32
+  val addressWidth = 64
 }
 
 case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, dataWidth: Int) extends Area {
@@ -54,7 +54,9 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   val rspArea = new rspStage.Area {
     // Wait for data in FIFO
     haltWhen(!fifo.io.pop.valid)
-    INSTRUCTION := fifo.io.pop.payload
+    val rawData = fifo.io.pop.payload
+    val wordSel = rspStage(PC.PC)(1)
+    INSTRUCTION := rawData.subdivideIn(32 bits)(wordSel.asUInt)
     fifo.io.pop.ready := rspStage.down.isFiring
   }
 }

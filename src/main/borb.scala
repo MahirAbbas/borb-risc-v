@@ -13,7 +13,7 @@ import borb.common.MicroCode
 
 class Borb extends Component {
   val io = new Bundle {
-    val ramRead = master(new RamFetchBus(addressWidth = 32, dataWidth = 32, idWidth = 16))
+    val ramRead = master(new RamFetchBus(addressWidth = 64, dataWidth = 64, idWidth = 16))
   }
   // PIPELINE
   // FETCH
@@ -23,8 +23,8 @@ class Borb extends Component {
   // MEMORY
   val pipeline = new StageCtrlPipeline()
 
-  val pc = new PC(pipeline.ctrl(0), withCompressed = false, addressWidth = 32)
-  val fetch = new Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 32, dataWidth = 32)
+  val pc = new PC(pipeline.ctrl(0), withCompressed = false, addressWidth = 64)
+  val fetch = new Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 64, dataWidth = 64)
   
   io.ramRead.cmd.valid := fetch.io.readCmd.cmd.valid
   io.ramRead.cmd.payload := fetch.io.readCmd.cmd.payload
