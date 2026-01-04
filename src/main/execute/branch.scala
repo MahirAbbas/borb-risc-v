@@ -16,6 +16,7 @@ import borb.execute.IntAlu.RESULT
 import borb.frontend.YESNO
 
 case class Branch(node : CtrlLink, pc : PC) extends Area {
+  val branchResolved = Bool()
   val logic = new node.Area {
     val src1 = up(RS1).asSInt
     val src2 = up(RS2).asSInt
@@ -35,9 +36,13 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       default     { condition := False }
     }
 
-    val target = UInt(32 bits)
+    val target = UInt(64 bits)
     switch(up(MicroCode)) {
-      is(uopJALR) { target := (src1U.asSInt + imm.asSInt).asUInt }
+      is(uopJALR) { 
+        target := (src1U.asSInt + imm.asSInt).asUInt 
+        target(0) := False
+        
+        }
       default     { target := (pcValue.asSInt + imm.asSInt).asUInt }
     }
 
@@ -59,11 +64,14 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       default     { isBranch := False }
     }
     val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
+    branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
 
-    pc.jump.valid := doJump && down.isFiring
-    pc.jump.payload.target := target(31 downto 0).resized // PC target is 32 bits typically in this design
-    pc.jump.payload.is_jump := isJump
-    pc.jump.payload.is_branch := isBranch
+    val jumpCmd = Flow(JumpCmd(pc.addressWidth))
+    jumpCmd.valid := doJump
+    jumpCmd.payload.target := target
+    jumpCmd.payload.is_jump := isJump
+    jumpCmd.payload.is_branch := isBranch
+    
 
     when(up(LANE_SEL) && up(SENDTOBRANCH)) {
       when(isJump) {

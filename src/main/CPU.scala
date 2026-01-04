@@ -57,7 +57,7 @@ case class CPU() extends Component {
     }
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
-    pc.jump.setIdle()
+    //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
     val fetch = Fetch(pipeline.ctrl(1), pipeline.ctrl(2), addressWidth = 64, dataWidth = 64)
@@ -70,6 +70,21 @@ case class CPU() extends Component {
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
+
+    decode.branchResolved := branch.branchResolved
+
+    // Flush Logic
+    // If a branch mispredicts (redirects), flush all instructions that were speculatively fetched (MAY_FLUSH)
+    //val flushPipeline = pc.jump.valid
+    val flushPipeline = branch.logic.jumpCmd.valid
+    pc.jump << branch.logic.jumpCmd
+    
+    fetch.fifo.io.flush := flushPipeline
+    // Iterate over stages after Decode (Dispatch onwards) that might hold speculative instructions
+    val executionStages = Array(4, 5, 6, 7).map(pipeline.ctrl(_))
+    executionStages.foreach { ctrl => 
+       ctrl.throwWhen(ctrl(MAY_FLUSH) && flushPipeline)
+    }
     
     val write = pipeline.ctrl(7)
     val dispCtrl = pipeline.ctrl(4)
@@ -96,6 +111,7 @@ case class CPU() extends Component {
         val rdaddr         = up(borb.execute.IntAlu.RESULT).address
         val lane_sel       = up(LANE_SEL)
         val commit         = up(COMMIT)
+        val flush          = up(MAY_FLUSH)
         
         valid.simPublic()
         immed.simPublic()
@@ -105,6 +121,7 @@ case class CPU() extends Component {
         rdaddr.simPublic()
         lane_sel.simPublic()
         commit.simPublic()
+        flush.simPublic()
       }
     }
 

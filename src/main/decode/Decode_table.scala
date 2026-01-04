@@ -206,7 +206,7 @@ object DecodeTable {
               //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | ren2 | | | | | | fast | | |
               //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | ren3 | | | | | |  | | | |
               //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
-    //                 List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT,  N, I_IMM, uopADD,   N, N  X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
+    //                 List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT,  N, I_IMM, uopADD,      N, N  X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
 
   SLLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSLLI , N, N, N, N),
   SRLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopSRLI , N, N, N, N),
@@ -257,11 +257,11 @@ object DecodeTable {
   SRA        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSRA , N, N, N, N),
   SRL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSRL , N, N, N, N),
                                                                                                                               
-  AUIPC      ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopAUIPC, N, N, N, N),
-  JAL        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , uopJAL , N, N, N, N),
-  JALR       ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, I_IMM , uopJALR, N, N, N, N),
+  AUIPC      ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopAUIPC,N, N, N, N),
+  JAL        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , uopJAL , Y, N, N, N),
+  JALR       ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_INT , RSTYPE.RS_NA , N, I_IMM , uopJALR, Y, N, N, N),
 
-  BEQ        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBEQ , N, N, N, N),
+  BEQ        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBEQ , Y, N, N, N),
   BNE        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBNE , Y, N, N, N),
   BGE        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBGE , Y, N, N, N),
   BGEU       ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBGEU, Y, N, N, N),

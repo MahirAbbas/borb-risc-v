@@ -181,9 +181,6 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       val valid = up(Decoder.VALID)
       val rd    = up(Decoder.RD_ADDR)
       
-      when(up.isFiring && (rd =/= 0)) {
-        regBusy(rd.asUInt) := True
-      }
       
       val wbStage = hzRange.last
       val wbValid = wbStage(RESULT).valid
@@ -192,6 +189,10 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       // Only clear busy when writeback actually commits (fires)
       when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {
         regBusy(wbRd) := False
+      }
+
+      when(up.isFiring && (rd =/= 0)) {
+        regBusy(rd.asUInt) := True
       }
 
       // val stage = hzRange.head

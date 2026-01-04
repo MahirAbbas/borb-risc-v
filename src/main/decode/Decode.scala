@@ -127,6 +127,25 @@ case class Decoder(stage: CtrlLink) extends Area {
     down(Decoder.RS1_ADDR) := up(Decoder.INSTRUCTION)(19 downto 15)
     down(Decoder.RS2_ADDR) := up(Decoder.INSTRUCTION)(24 downto 20)
   }
+
+  val branchResolved = Bool()
+  val shadowLogic = new stage.Area {
+      import borb.common.Common._
+      val inBranchShadow = RegInit(False)
+      
+      // If we are currently in shadow, mark instruction as flushable
+      // The instruction *following* the branch is the one that gets marked
+
+      when(branchResolved) {
+          inBranchShadow := False
+      }
+      
+      // If current instruction is a branch, set shadow for NEXT instruction
+      when(stage.down.isFiring && stage(IS_BR) === YESNO.Y) {
+          inBranchShadow := True
+      }
+      stage(MAY_FLUSH) := inBranchShadow
+  }
 }
 
 // case class DecompressedInstruction() extends Bundle{
