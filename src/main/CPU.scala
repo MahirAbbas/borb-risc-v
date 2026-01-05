@@ -75,24 +75,24 @@ case class CPU() extends Component {
 
     // Flush Logic
     // If a branch mispredicts (redirects), flush all instructions that were speculatively fetched (MAY_FLUSH)
-    //val flushPipeline = pc.jump.valid
     val flushPipeline = branch.logic.jumpCmd.valid
     pc.jump << branch.logic.jumpCmd
     
     fetch.fifo.io.flush := flushPipeline
+    
+    // Flush all upstream stages combinationally
+    //val upstreamStages = Array(3, 4, 5).map(pipeline.ctrl(_))
+    //upstreamStages.foreach { ctrl => 
+       //ctrl.throwWhen(flushPipeline)
+    //}
+
     // Iterate over stages after Decode (Dispatch onwards) that might hold speculative instructions
-    val executionStages = Array(4, 5, 6, 7).map(pipeline.ctrl(_))
+    val executionStages = Array(3,4, 5, 6, 7).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl => 
        ctrl.throwWhen(ctrl(MAY_FLUSH) && flushPipeline)
     }
     
     val write = pipeline.ctrl(7)
-    val dispCtrl = pipeline.ctrl(4)
-    //dispCtrl.down.ready := True
-
-    //write.down.ready := True
-
-  
     import borb.execute.WriteBack
     val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writer)
     val wbArea = new write.Area {
@@ -112,6 +112,7 @@ case class CPU() extends Component {
         val lane_sel       = up(LANE_SEL)
         val commit         = up(COMMIT)
         val flush          = up(MAY_FLUSH)
+        val pc             = up(PC.PC)
         
         valid.simPublic()
         immed.simPublic()
@@ -122,6 +123,7 @@ case class CPU() extends Component {
         lane_sel.simPublic()
         commit.simPublic()
         flush.simPublic()
+        pc.simPublic()
       }
     }
 

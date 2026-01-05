@@ -110,10 +110,10 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     IMMED.assignDontCare()
 
     down(RS1) := up(RS1TYPE).muxDc(
-      RDTYPE.RD_INT -> rs1Reader.data
+      RSTYPE.RS_INT -> rs1Reader.data
     )
     down(RS2) := up(RS2TYPE).muxDc(
-      RDTYPE.RD_INT -> rs2Reader.data
+      RSTYPE.RS_INT -> rs2Reader.data
     )
     IMMED := immsel.sext
   }

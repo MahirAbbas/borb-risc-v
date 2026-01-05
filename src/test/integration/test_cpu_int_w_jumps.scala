@@ -14,52 +14,8 @@ import borb.dispatch.Dispatch.SENDTOALU
 import borb.execute.IntAlu._
 import borb.dispatch.SrcPlugin._
 
-case class TestCpuIntWJumps() extends Component {
-  val io = new Bundle {
-    val clk = in port Bool()
-    val clkEnable = in port Bool()
-    val reset = in port Bool()
-  }
-
-  val cpu = CPU()
-  cpu.io.clk := io.clk
-  cpu.io.clkEnable := io.clkEnable
-  cpu.io.reset := io.reset
-  
-  // Use the SAME clock domain for RAM? 
-  // UnifiedRam typically expects to be in a clock domain or uses the current one.
-  // In test_hazards, ram was inside coreArea (custom ClockDomain).
-  // Here, let's put RAM in the same custom clock domain as CPU internals? 
-  // OR just put it in the default domain if we drive io.clk with the default domain?
-  
-  // CPU internals use `coreClockDomain` derived from `io`.
-  // If we want RAM to be synchronous with CPU, we should probably clock it with the same clock.
-  // But UnifiedRam doesn't take CD in constructor, it uses the current CD.
-  // So we should wrap RAM in a ClockingArea associated with cpu.coreClockDomain? 
-  // access to cpu.coreClockDomain might be hard if it's val inside.
-  // Simpler: The test bench drives `io.clk`. We can create a ClockDomain in TestTop that drives `io.clk` and wraps RAM.
-  
-  val testClockDomain = ClockDomain(
-    io.clk,
-    reset = io.reset,
-    clockEnable = io.clkEnable,
-    config = ClockDomainConfig(
-      clockEdge = RISING,
-      resetKind = SYNC,
-      resetActiveLevel = HIGH
-    )
-  )
-  
-  val ramArea = new ClockingArea(testClockDomain) {
-    val ram = new UnifiedRam(addressWidth = 64, dataWidth = 64, idWidth = 16)
-    //ram.io.reads.cmd << cpu.io.iBus.cmd
-    //ram.io.reads.rsp >> cpu.io.iBus.rsp
-    ram.io.reads <> cpu.io.iBus
-  }
-}
-
 object test_cpu_int_w_jumps_app extends App {
-  SimConfig.withWave.compile(new TestCpuIntegration()).doSim { dut =>
+  SimConfig.withWave.withFstWave.compile(new TestCpuIntegration()).doSim { dut =>
     dut.io.clkEnable #= true
     
     // We need to drive dut.io.clk toggling.
@@ -231,7 +187,7 @@ object test_cpu_int_w_jumps_app extends App {
     // We need to wait for clock edges. Since we generate clock manually, we can just sleep period.
     // Or we can use `dut.testClockDomain.waitSampling` if we exposed the clock domain appropriately, but easier to just loop and sleep.
     
-    for(i <- 0 to 115) {
+    for(i <- 0 to 135) {
        // Wait one clock cycle
        sleep(period)
        
@@ -259,7 +215,7 @@ object test_cpu_int_w_jumps_app extends App {
        val rh = dut.cpu.coreArea.wbArea.readHere
        //println(s"PC: $pc CMD: v=$cmd_valid r=$cmd_ready RSP: v=$rsp_valid | RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, SENDTOALU: ${rh.sendtoalu.toBoolean}, VALID: ${rh.valid.toBoolean}")
        if(rh.commit.toBoolean == true){
-        println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, WRITE_VALID: ${valid_result}, MAY_FLUSH: ${rh.flush.toBoolean}")
+        println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, PC: ${rh.pc.toBigInt.toLong}")
 
        }
        

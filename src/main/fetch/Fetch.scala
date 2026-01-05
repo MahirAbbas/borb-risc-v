@@ -22,16 +22,15 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
 
   val fifo = StreamFifo(Bits(dataWidth bits), depth = 8)
   
-  
-  // Connect memory response to FIFO
-  fifo.io.push.valid := io.readCmd.rsp.valid
-  fifo.io.push.payload := io.readCmd.rsp.data
-  
   // Track inflight requests to prevent FIFO overflow
   val inflight = RegInit(U(0, 4 bits))
   val cmdFire = io.readCmd.cmd.fire
   val rspFire = io.readCmd.rsp.valid
   inflight := inflight + U(cmdFire) - U(rspFire)
+
+  // Connect memory response to FIFO (Gated)
+  fifo.io.push.valid := io.readCmd.rsp.valid 
+  fifo.io.push.payload := io.readCmd.rsp.data
 
   val cmdArea = new cmdStage.Area {
     val reqSent = RegInit(False)
@@ -55,8 +54,8 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     // Wait for data in FIFO
     haltWhen(!fifo.io.pop.valid)
     val rawData = fifo.io.pop.payload
-    val wordSel = rspStage(PC.PC)(1)
-    INSTRUCTION := rawData.subdivideIn(32 bits)(wordSel.asUInt)
+    //val wordSel = rspStage(PC.PC)(1)
+    INSTRUCTION := rawData(31 downto 0)
     fifo.io.pop.ready := rspStage.down.isFiring
   }
 }

@@ -63,7 +63,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       is(uopBGEU) { isBranch := True }
       default     { isBranch := False }
     }
-    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
+    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH) && !up(MAY_FLUSH)
     branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
