@@ -32,18 +32,6 @@ case class IMM(instruction: Bits) extends Area {
   def b_sext = S(b ## False).resize(64)
   def j_sext = S(j ## False).resize(64)
   def u_sext = S(u).resize(64).simPublic()
-  val i_sext_pub = SInt(64 bits).simPublic()
-  val h_sext_pub = SInt(64 bits).simPublic()
-  val s_sext_pub = SInt(64 bits).simPublic()
-  val b_sext_pub = SInt(64 bits).simPublic()
-  val j_sext_pub = SInt(64 bits).simPublic()
-  val u_sext_pub = SInt(64 bits).simPublic()
-  i_sext_pub := i_sext
-  h_sext_pub := h_sext
-  s_sext_pub := s_sext
-  b_sext_pub := b_sext
-  j_sext_pub := j_sext
-  u_sext_pub := u_sext
 }
 
 object SrcPlugin extends AreaObject {

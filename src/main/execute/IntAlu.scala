@@ -63,8 +63,8 @@ case class IntAlu(aluNode: CtrlLink) extends Area {
           .resize(64)
           .asBits,
         uopSUBW -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
-        uopLUI -> (SRC2.asBits),
-        uopAUIPC -> (SRC2.asUInt + borb.fetch.PC.PC).asBits
+        uopLUI -> (IMMED.asBits),
+        uopAUIPC -> (IMMED.asSInt + borb.fetch.PC.PC.asSInt).asBits
       )
     }
 
