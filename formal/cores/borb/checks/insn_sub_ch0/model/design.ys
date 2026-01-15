@@ -1,0 +1,9 @@
+# running in insn_sub_ch0/src/
+read -sv insn_sub_ch0.sv /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv
+prep -flatten -nordff -top rvfi_testbench
+chformal -early
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il
