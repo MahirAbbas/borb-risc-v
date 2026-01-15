@@ -49,7 +49,6 @@ case class IMM(instruction: Bits) extends Area {
 object SrcPlugin extends AreaObject {
   val RS1, RS2 = Payload(Bits(64 bits))
   val IMMED = Payload(Bits(64 bits))
-  
 
 }
 case class SrcPlugin(stage: CtrlLink) extends Area {
@@ -66,20 +65,19 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     sext.assignDontCare()
     val imm = new IMM(borb.frontend.Decoder.INSTRUCTION)
     // when(up.isFiring) {
-      sext := up(IMMSEL)
-        .muxDc(
-          Imm_Select.I_IMM -> imm.i_sext,
-          Imm_Select.S_IMM -> imm.s_sext,
-          Imm_Select.B_IMM -> imm.b_sext,
-          Imm_Select.U_IMM -> imm.u_sext,
-          Imm_Select.J_IMM -> imm.j_sext
-        )
-        .asBits
+    sext := up(IMMSEL)
+      .muxDc(
+        Imm_Select.I_IMM -> imm.i_sext,
+        Imm_Select.S_IMM -> imm.s_sext,
+        Imm_Select.B_IMM -> imm.b_sext,
+        Imm_Select.U_IMM -> imm.u_sext,
+        Imm_Select.J_IMM -> imm.j_sext
+      )
+      .asBits
     // }
   }
 
   import borb.frontend.REGFILE._
-
 
   val rs1Reader = (new RegFileRead())
   val rs2Reader = (new RegFileRead())
@@ -91,16 +89,22 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     rs2Reader.valid := (RS2TYPE === RSTYPE.RS_INT && up(VALID) === True)
     rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
     rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
-    
 
     regfile.io.readerRS1.address := rs1Reader.address
     regfile.io.readerRS1.valid := rs1Reader.valid
-    rs1Reader.data := regfile.io.readerRS1.data
-    
+    // Enforce x0 invariant: reads from x0 must be 0
+    rs1Reader.data := (rs1Reader.address === 0) ? B(
+      0,
+      64 bits
+    ) | regfile.io.readerRS1.data
+
     regfile.io.readerRS2.address := rs2Reader.address
     regfile.io.readerRS2.valid := rs2Reader.valid
-    rs2Reader.data := regfile.io.readerRS2.data
-    
+    // Enforce x0 invariant: reads from x0 must be 0
+    rs2Reader.data := (rs2Reader.address === 0) ? B(
+      0,
+      64 bits
+    ) | regfile.io.readerRS2.data
 
   }
 
@@ -109,12 +113,13 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     RS2.assignDontCare()
     IMMED.assignDontCare()
 
-    down(RS1) := up(RS1TYPE).muxDc(
-      RDTYPE.RD_INT -> rs1Reader.data
-    )
-    down(RS2) := up(RS2TYPE).muxDc(
-      RDTYPE.RD_INT -> rs2Reader.data
-    )
+    val rs1Data =
+      (up(RS1TYPE) === RSTYPE.RS_INT) ? rs1Reader.data | B(0, 64 bits)
+    val rs2Data =
+      (up(RS2TYPE) === RSTYPE.RS_INT) ? rs2Reader.data | B(0, 64 bits)
+
+    down(RS1) := rs1Data
+    down(RS2) := rs2Data
     IMMED := immsel.sext
   }
 }

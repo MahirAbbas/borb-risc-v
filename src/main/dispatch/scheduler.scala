@@ -73,7 +73,7 @@ How to detect RD->RSx hazards for a given candidate:
 //   val isRs1Haz = hzRange.tail.map(e =>(hzRange.head(RS1_ADDR) =/= 0) &&(hzRange.head(RS1_ADDR) === e(RD_ADDR)) && e.up(borb.frontend.Decoder.RDTYPE) === (borb.frontend.REGFILE.RDTYPE.RD_INT))
 //   isRs1Haz.foreach(e => e.simPublic())
 //   // isRs1Haz.simPublic()
-  
+
 //   // val isRS1Haz = hzRange.tail.map(e => hzRange.head(RS1_ADDR) === e(RD_ADDR)).orR
 
 //   // isRs1Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
@@ -113,7 +113,11 @@ object Dispatch extends AreaObject {
   val SENDTOAGU = Payload(Bool())
 }
 
-case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: StageCtrlPipeline) extends Area {
+case class Dispatch(
+    dispatchNode: CtrlLink,
+    hzRange: Seq[CtrlLink],
+    pipeline: StageCtrlPipeline
+) extends Area {
 
   // import borb.decode.Decoder._
   import Dispatch._
@@ -126,19 +130,19 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
   val logic = new dispatchNode.Area {
     import borb.common.Common._
     down(LANE_SEL) := False
-    
+
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)
     // }
     down(SENDTOALU) := False
     down(SENDTOBRANCH) := False
     down(SENDTOAGU) := False
-    
+
     // Logic to select an execution lane implies LANE_SEL is true
     // Crucially, it must only be True if we are actually firing (not stalled by hazard)
     // LANE_SEL acts as the valid bit for the lane.
     val firing = up.isFiring
-    
+
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
       down(SENDTOALU) := True
       down(LANE_SEL) := firing
@@ -151,15 +155,16 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       down(SENDTOAGU) := True
       down(LANE_SEL) := firing
     }
-    
+
     // Explicitly handle invalid/bubble case if needed, but default False covers it.
   }
- case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32) extends Area {
+  case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32)
+      extends Area {
 
     // ===============================================================
     // 1. The "scoreboard": one bit per register to indicate busy
     // ===============================================================
-    val regBusy = RegInit(Bits(regCount bits)) init(0)
+    val regBusy = Reg(Bits(regCount bits)) init (0)
 
     // ===============================================================
     // 2. Each cycle, update busy bits based on writes in pipeline
@@ -179,15 +184,15 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
     val writes = new dispatchNode.Area {
       // val stage = dispatchNode
       val valid = up(Decoder.VALID)
-      val rd    = up(Decoder.RD_ADDR)
-      
+      val rd = up(Decoder.RD_ADDR)
+
       when(up.isFiring && (rd =/= 0)) {
         regBusy(rd.asUInt) := True
       }
-      
+
       val wbStage = hzRange.last
       val wbValid = wbStage(RESULT).valid
-      val wbRd    = wbStage(RESULT).address
+      val wbRd = wbStage(RESULT).address
 
       // Only clear busy when writeback actually commits (fires)
       when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {
@@ -195,20 +200,18 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
       }
 
       // val stage = hzRange.head
-      val rs1   = up(Decoder.RS1_ADDR)
-      val rs2   = up(Decoder.RS2_ADDR)
+      val rs1 = up(Decoder.RS1_ADDR)
+      val rs2 = up(Decoder.RS2_ADDR)
       val rs1Busy = regBusy(rs1.asUInt)
       val rs2Busy = regBusy(rs2.asUInt)
 
       val hazard = valid && (rs1Busy || rs2Busy)
       hazard.simPublic()
-      
 
-      //down(Decoder.VALID) := (!hazard)
+      // down(Decoder.VALID) := (!hazard)
       haltWhen(hazard)
-      
-      
-      //pipeline.links.last.down.ready := !hazard
+
+      // pipeline.links.last.down.ready := !hazard
 
     }
     // Step 2: detect completions (clear busy)
@@ -231,16 +234,14 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
     //   // hzRange.head.haltWhen(hazard)
     // }
     // hzRange.head.haltWhen(hazards.orR)
-    
 
+    val hazards = RegInit(Bits(hzRange.size bits)) init (0)
 
-    val hazards = RegInit(Bits(hzRange.size bits)) init(0)
+    val stall = new Area {
 
-      val stall = new Area {
-
-        // stage.haltWhen(hazard)
-        // hzRange.take(2).tail.head.haltWhen(hazard)
-        //TODO: NEED HALT DISPATCH. CANDIDATES AND SLOT architecture
+      // stage.haltWhen(hazard)
+      // hzRange.take(2).tail.head.haltWhen(hazard)
+      // TODO: NEED HALT DISPATCH. CANDIDATES AND SLOT architecture
     }
 
     val init = Counter(1 to 5)
@@ -254,7 +255,6 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
     inValue.simPublic()
   }
   val hcs = new HazardChecker(hzRange, 32)
-
 
   // logic?
   // for each EU check if UOP maps.
@@ -286,7 +286,6 @@ case class Dispatch(dispatchNode: CtrlLink, hzRange: Seq[CtrlLink], pipeline: St
   // when not hazard, and EU free
 
 }
-
 
 // case class HazardChecker(hazardStages: Seq[StageCtrl],
 //                          forwardingMatrix: Seq[Seq[Bool]] = Seq.empty  // optional: forwardingMatrix(i)(j) true if stage i can forward from stage j

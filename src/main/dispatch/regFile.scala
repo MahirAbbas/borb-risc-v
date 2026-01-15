@@ -56,15 +56,18 @@ case class IntRegFile(dataWidth: Int) extends Component {
     val writer = slave(new RegFileWrite())
   }
   io.simPublic()
-  val mem = Mem.fill(32)(Bits(dataWidth bits)) init(Seq.fill(32)(B(0)))
+  val mem = Mem.fill(32)(Bits(dataWidth bits))
 
   // io.readerRS1.data := mem.readSync(address = io.readerRS1.address, enable = io.readerRS1.valid)
   // io.readerRS2.data := mem.readSync(address = io.readerRS2.address, enable = io.readerRS2.valid)
   io.readerRS1.data := mem.readAsync(address = io.readerRS1.address)
   io.readerRS2.data := mem.readAsync(address = io.readerRS2.address)
 
-  mem.write(address = io.writer.address, enable = io.writer.valid, data = io.writer.data)
-
+  mem.write(
+    address = io.writer.address,
+    enable = io.writer.valid,
+    data = io.writer.data
+  )
 
   // Read logic
   // for (port <- io.reads) {

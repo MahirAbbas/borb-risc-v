@@ -16,70 +16,70 @@ object IntAlu extends AreaObject {
   val RESULT = Payload(new RegFileWrite())
 
 }
-case class IntAlu(aluNode : CtrlLink) extends Area {
+case class IntAlu(aluNode: CtrlLink) extends Area {
   import IntAlu._
   val SRC1 = borb.dispatch.SrcPlugin.RS1
   val SRC2 = borb.dispatch.SrcPlugin.RS2
-
-  
 
   // override val FUType = borb.frontend.ExecutionUnitEnum.ALU
   // import borb.execute.Execute._
   import borb.LsuL1.PC.PCVal
 
   val aluNodeStage = new aluNode.Area {
-      import borb.dispatch.Dispatch._
-      import borb.dispatch.SrcPlugin._
-      // import borb.frontend.AluOp
-      val result = Bits(64 bits)
-      result.assignDontCare()
-      when(up(borb.dispatch.Dispatch.SENDTOALU) === True) {
-        result := up(MicroCode).muxDc(
-          uopXORI     -> (SRC1 ^ IMMED),
-          uopORI      -> (SRC1 | IMMED),
-          uopANDI     -> (SRC1 & IMMED),
-          uopADDI     -> (SRC1.asSInt + IMMED.asSInt).asBits,
-          uopSLTI     -> (SRC1.asSInt < IMMED.asSInt).asBits.resized,
-          uopSLTIU    -> (SRC1.asUInt < IMMED.asUInt).asBits.resized,
-          uopSLLI     -> (SRC1.asUInt |<< (IMMED(5 downto 0)).asUInt).asBits,
-          uopSRLI     -> (SRC1.asUInt |>> (IMMED(5 downto 0)).asUInt).asBits,
-          uopSRAI     -> (SRC1.asSInt  >> (IMMED(5 downto 0)).asUInt).asBits,
-          
-          uopXOR      -> (SRC1 ^ SRC2),
-          uopOR       -> (SRC1 | SRC2),
-          uopAND      -> (SRC1 & SRC2),
-          uopADD      -> (SRC1.asSInt + SRC2.asSInt).asBits,
-          uopSLL      -> (SRC1.asUInt |<< (SRC2(5 downto 0)).asUInt).asBits,
-          uopSRL      -> (SRC1.asUInt |>> (SRC2(5 downto 0)).asUInt).asBits,
-          uopSRA      -> (SRC1.asSInt  >> (SRC2(5 downto 0)).asUInt).asBits,
-          uopSUB      -> (SRC1.asSInt - SRC2.asSInt).asBits,
-          
-          uopSLT      -> (SRC1.asSInt < SRC2.asSInt).asBits.resized,
-          uopSLTU     -> (SRC1.asUInt < SRC2.asUInt).asBits.resized,
+    import borb.dispatch.Dispatch._
+    import borb.dispatch.SrcPlugin._
+    // import borb.frontend.AluOp
+    val result = Bits(64 bits)
+    result.assignDontCare()
+    when(up(borb.dispatch.Dispatch.SENDTOALU) === True) {
+      result := up(MicroCode).muxDc(
+        uopXORI -> (SRC1 ^ IMMED),
+        uopORI -> (SRC1 | IMMED),
+        uopANDI -> (SRC1 & IMMED),
+        uopADDI -> (SRC1.asSInt + IMMED.asSInt).asBits,
+        uopSLTI -> (SRC1.asSInt < IMMED.asSInt).asBits.resized,
+        uopSLTIU -> (SRC1.asUInt < IMMED.asUInt).asBits.resized,
+        uopSLLI -> (SRC1.asUInt |<< (IMMED(5 downto 0)).asUInt).asBits,
+        uopSRLI -> (SRC1.asUInt |>> (IMMED(5 downto 0)).asUInt).asBits,
+        uopSRAI -> (SRC1.asSInt >> (IMMED(5 downto 0)).asUInt).asBits,
+        uopXOR -> (SRC1 ^ SRC2),
+        uopOR -> (SRC1 | SRC2),
+        uopAND -> (SRC1 & SRC2),
+        uopADD -> (SRC1.asSInt + SRC2.asSInt).asBits,
+        uopSLL -> (SRC1.asUInt |<< (SRC2(5 downto 0)).asUInt).asBits,
+        uopSRL -> (SRC1.asUInt |>> (SRC2(5 downto 0)).asUInt).asBits,
+        uopSRA -> (SRC1.asSInt >> (SRC2(5 downto 0)).asUInt).asBits,
+        uopSUB -> (SRC1.asSInt - SRC2.asSInt).asBits,
+        uopSLT -> (SRC1.asSInt < SRC2.asSInt).asBits.resized,
+        uopSLTU -> (SRC1.asUInt < SRC2.asUInt).asBits.resized,
+        uopADDW -> (SRC1.asSInt + SRC2.asSInt)(31 downto 0).resize(64).asBits,
+        uopSLLW -> (SRC1.asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0)
+          .resize(64)
+          .asBits,
+        uopSRAW -> (SRC1.asSInt >> SRC2(4 downto 0).asUInt)(31 downto 0)
+          .resize(64)
+          .asBits,
+        uopSRLW -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0)
+          .resize(64)
+          .asBits,
+        uopSUBW -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
+        uopLUI -> (SRC2.asBits),
+        uopAUIPC -> (SRC2.asUInt + borb.fetch.PC.PC).asBits
+      )
+    }
 
-          uopADDW     -> (SRC1.asSInt + SRC2.asSInt)(31 downto 0).resize(64).asBits,
-          uopSLLW     -> (SRC1.asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          uopSRAW     -> (SRC1.asSInt  >> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          uopSRLW     -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          uopSUBW     -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
+    down(RESULT).address.assignDontCare()
+    down(RESULT).data.assignDontCare()
+    down(RESULT).valid := False
 
-          uopLUI      -> (SRC2.asBits),
-          uopAUIPC    -> (SRC2.asUInt + PCVal).asBits
-        )
-      }
-
-
-      down(RESULT).address.assignDontCare()
-      down(RESULT).data.assignDontCare()
-      down(RESULT).valid := False
-
-
-      
-      when(VALID === True) {
-        // down(RESULT) := result.asBits
-        down(RESULT).data := result.asBits
-        down(RESULT).address := up(RD_ADDR).asUInt
-        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)
-      }
+    when(up(VALID) === True) {
+      // down(RESULT) := result.asBits
+      // Enforce x0 invariant: writes to x0 must have 0 data (architecturally).
+      // This ensures RVFI sees the correct "ignore" behavior.
+      val isX0 = up(RD_ADDR).asUInt === 0
+      down(RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
+      down(RESULT).address := up(RD_ADDR).asUInt
+      down(RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID)
+    }
   }
 }

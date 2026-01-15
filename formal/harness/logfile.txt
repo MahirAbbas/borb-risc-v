@@ -1,0 +1,13 @@
+SBY 13:06:48 [harness] Removing directory '/Users/mahir/fun/borb/formal/harness'.
+SBY 13:06:48 [harness] Copy '/Users/mahir/fun/borb/formal/BorbRvfiWrapper.sv' to '/Users/mahir/fun/borb/formal/harness/src/BorbRvfiWrapper.sv'.
+SBY 13:06:48 [harness] Copy '/Users/mahir/fun/borb/formal/../CPU.v' to '/Users/mahir/fun/borb/formal/harness/src/CPU.v'.
+SBY 13:06:48 [harness] engine_0: smtbmc
+SBY 13:06:48 [harness] base: starting process "cd harness/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 13:06:49 [harness] base: bash: /Users/mahir/Downloads/oss-cad-suite/bin/yosys: Operation not permitted
+SBY 13:06:49 [harness] base: finished (returncode=126)
+SBY 13:06:49 [harness] base: task failed. ERROR.
+SBY 13:06:49 [harness] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 13:06:49 [harness] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 13:06:49 [harness] summary: engine_0 (smtbmc) did not return a status
+SBY 13:06:49 [harness] summary: engine_0 did not produce any traces
+SBY 13:06:49 [harness] DONE (ERROR, rc=16)

@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 20
+
+[engines]
+smtbmc
+
+[script]
+read_verilog -sv BorbRvfiWrapper.sv
+read_verilog CPU.v
+prep -top BorbRvfiWrapper
+
+[files]
+BorbRvfiWrapper.sv
+../CPU.v
