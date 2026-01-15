@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+<testsuite timestamp="2026-01-15T18:45:25" hostname="Mahirs-MBP.lan" package="insn_andi_ch0" id="0" name="default" tests="57" errors="0" failures="0" time="1" skipped="4">
+<properties>
+<property name="os" value="Darwin"/>
+<property name="expect" value="PASS, FAIL"/>
+<property name="status" value="PASS"/>
+</properties>
+<testcase classname="default" name="build execution" time="0">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:144.6-144.18" time="0" type="ASSERT" location="rvfi_insn_check.sv:144.6-144.18" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_144_64">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:145.6-145.26" time="0" type="ASSERT" location="rvfi_insn_check.sv:145.6-145.26" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_145_65">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:146.6-146.27" time="0" type="ASSERT" location="rvfi_insn_check.sv:146.6-146.27" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_146_67">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:147.6-147.28" time="0" type="ASSERT" location="rvfi_insn_check.sv:147.6-147.28" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_147_69">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:164.7-164.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:164.7-164.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_164_72">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:167.7-167.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:167.7-167.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_167_75">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:171.8-171.41" time="0" type="ASSERT" location="rvfi_insn_check.sv:171.8-171.41" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_171_79">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:174.8-174.41" time="0" type="ASSERT" location="rvfi_insn_check.sv:174.8-174.41" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_174_82">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:176.7-176.38" time="0" type="ASSERT" location="rvfi_insn_check.sv:176.7-176.38" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_176_84">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:177.7-177.40" time="0" type="ASSERT" location="rvfi_insn_check.sv:177.7-177.40" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_177_86">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:178.7-178.76" time="0" type="ASSERT" location="rvfi_insn_check.sv:178.7-178.76" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_178_88">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:181.8-181.79" time="0" type="ASSERT" location="rvfi_insn_check.sv:181.8-181.79" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_181_93">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_104">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_111">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_118">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_125">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_132">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_139">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_146">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:186.9-186.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:186.9-186.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_97">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_105">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_112">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_119">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_126">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_133">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_140">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_147">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:187.9-187.64" time="0" type="ASSERT" location="rvfi_insn_check.sv:187.9-187.64" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_187_98">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_100">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_107">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_114">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_121">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_128">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_135">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_142">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:189.9-189.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:189.9-189.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_189_149">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_101">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_108">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_115">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_122">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_129">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_136">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_143">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:190.9-190.59" time="0" type="ASSERT" location="rvfi_insn_check.sv:190.9-190.59" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_190_150">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_103">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_110">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_117">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_124">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_131">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_138">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_145">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:193.9-193.29" time="0" type="ASSERT" location="rvfi_insn_check.sv:193.9-193.29" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_193_152">
+</testcase>
+<testcase classname="default" name="Property ASSERT in rvfi_testbench at rvfi_insn_check.sv:198.6-198.31" time="0" type="ASSERT" location="rvfi_insn_check.sv:198.6-198.31" id="_witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_198_153">
+</testcase>
+<testcase classname="default" name="Property COVER in rvfi_testbench at rvfi_insn_check.sv:135.5-135.22" time="0" type="COVER" location="rvfi_insn_check.sv:135.5-135.22" id="_witness_.check_flatten_checker_inst__cover_rvfi_insn_check_sv_135_48">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property COVER in rvfi_testbench at rvfi_insn_check.sv:136.5-136.31" time="0" type="COVER" location="rvfi_insn_check.sv:136.5-136.31" id="_witness_.check_flatten_checker_inst__cover_rvfi_insn_check_sv_136_49">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property COVER in rvfi_testbench at rvfi_insn_check.sv:137.5-137.31" time="0" type="COVER" location="rvfi_insn_check.sv:137.5-137.31" id="_witness_.check_flatten_checker_inst__cover_rvfi_insn_check_sv_137_52">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property COVER in rvfi_testbench at rvfi_insn_check.sv:138.5-138.40" time="0" type="COVER" location="rvfi_insn_check.sv:138.5-138.40" id="_witness_.check_flatten_checker_inst__cover_rvfi_insn_check_sv_138_54">
+<skipped />
+</testcase>
+<system-out>SBY 18:45:24 [insn_andi_ch0] Writing '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/defines.sv'.
+SBY 18:45:24 [insn_andi_ch0] Writing '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/insn_andi_ch0.sv'.
+SBY 18:45:24 [insn_andi_ch0] Copy '/Users/mahir/fun/borb/formal/cores/borb/../../checks/rvfi_macros.vh' to '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/rvfi_macros.vh'.
+SBY 18:45:24 [insn_andi_ch0] Copy '/Users/mahir/fun/borb/formal/cores/borb/../../checks/rvfi_channel.sv' to '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/rvfi_channel.sv'.
+SBY 18:45:24 [insn_andi_ch0] Copy '/Users/mahir/fun/borb/formal/cores/borb/../../checks/rvfi_testbench.sv' to '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/rvfi_testbench.sv'.
+SBY 18:45:24 [insn_andi_ch0] Copy '/Users/mahir/fun/borb/formal/cores/borb/../../checks/rvfi_insn_check.sv' to '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/rvfi_insn_check.sv'.
+SBY 18:45:24 [insn_andi_ch0] Copy '/Users/mahir/fun/borb/formal/cores/borb/../../insns/insn_andi.v' to '/Users/mahir/fun/borb/formal/cores/borb/checks/insn_andi_ch0/src/insn_andi.v'.
+SBY 18:45:24 [insn_andi_ch0] engine_0: smtbmc boolector
+SBY 18:45:24 [insn_andi_ch0] base: starting process &quot;cd insn_andi_ch0/src; yosys -ql ../model/design.log ../model/design.ys&quot;
+SBY 18:45:24 [insn_andi_ch0] base: finished (returncode=0)
+SBY 18:45:24 [insn_andi_ch0] prep: starting process &quot;cd insn_andi_ch0/model; yosys -ql design_prep.log design_prep.ys&quot;
+SBY 18:45:24 [insn_andi_ch0] prep: finished (returncode=0)
+SBY 18:45:24 [insn_andi_ch0] smt2: starting process &quot;cd insn_andi_ch0/model; yosys -ql design_smt2.log design_smt2.ys&quot;
+SBY 18:45:24 [insn_andi_ch0] smt2: finished (returncode=0)
+SBY 18:45:24 [insn_andi_ch0] engine_0: starting process &quot;cd insn_andi_ch0; yosys-smtbmc -s boolector --presat --unroll --noprogress -t 20:21  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2&quot;
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Solver: boolector
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 0..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 1..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 2..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 3..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 4..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 5..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 6..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 7..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 8..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 9..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 10..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 11..
+SBY 18:45:24 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 12..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 13..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 14..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 15..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 16..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 17..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 18..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Skipping step 19..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Checking assumptions in step 20..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Checking assertions in step 20..
+SBY 18:45:25 [insn_andi_ch0] engine_0: ##   0:00:00  Status: passed
+SBY 18:45:25 [insn_andi_ch0] engine_0: finished (returncode=0)
+SBY 18:45:25 [insn_andi_ch0] engine_0: Status returned by engine: pass
+SBY 18:45:25 [insn_andi_ch0] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 18:45:25 [insn_andi_ch0] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 18:45:25 [insn_andi_ch0] summary: engine_0 (smtbmc boolector) returned pass
+SBY 18:45:25 [insn_andi_ch0] summary: engine_0 did not produce any traces
+SBY 18:45:25 [insn_andi_ch0] DONE (PASS, rc=0)
+</system-out>
+<system-err>
+</system-err>
+</testsuite>
+</testsuites>
