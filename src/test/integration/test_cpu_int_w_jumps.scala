@@ -14,6 +14,8 @@ import borb.dispatch.Dispatch.SENDTOALU
 import borb.execute.IntAlu._
 import borb.dispatch.SrcPlugin._
 
+
+
 object test_cpu_int_w_jumps_app extends App {
   SimConfig.withWave.withFstWave.compile(new TestCpuIntegration()).doSim { dut =>
     dut.io.clkEnable #= true
@@ -187,7 +189,7 @@ object test_cpu_int_w_jumps_app extends App {
     // We need to wait for clock edges. Since we generate clock manually, we can just sleep period.
     // Or we can use `dut.testClockDomain.waitSampling` if we exposed the clock domain appropriately, but easier to just loop and sleep.
     
-    for(i <- 0 to 135) {
+    for(i <- 0 to 145) {
        // Wait one clock cycle
        sleep(period)
        
@@ -214,6 +216,28 @@ object test_cpu_int_w_jumps_app extends App {
        
        val rh = dut.cpu.coreArea.wbArea.readHere
        //println(s"PC: $pc CMD: v=$cmd_valid r=$cmd_ready RSP: v=$rsp_valid | RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, SENDTOALU: ${rh.sendtoalu.toBoolean}, VALID: ${rh.valid.toBoolean}")
+        val pc_dec = dut.cpu.coreArea.pipeline.ctrls(3).up(borb.fetch.PC.PC).toBigInt.toLong
+        val pc_dsp = dut.cpu.coreArea.pipeline.ctrls(4).up(borb.fetch.PC.PC).toBigInt.toLong
+        val pc_ex  = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.fetch.PC.PC).toBigInt.toLong
+        val v_dsp = dut.cpu.coreArea.pipeline.ctrls(4).isValid.toBoolean
+        val f_dsp = dut.cpu.coreArea.pipeline.ctrls(4).down.isFiring.toBoolean
+        val r_busy = dut.cpu.coreArea.dispatcher.hcs.regBusy.toBigInt
+        
+        val may_flush_ex = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.common.Common.MAY_FLUSH).toBoolean
+        val ucode_ex     = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.frontend.Decoder.MicroCode).toEnum
+        val flush_cmd    = dut.cpu.coreArea.branch.logic.jumpCmd.valid.toBoolean
+        
+        val inflight = dut.cpu.coreArea.fetch.inflight.toBigInt
+        val epoch    = dut.cpu.coreArea.fetch.epoch.toBigInt
+        val avail    = dut.cpu.coreArea.fetch.fifo.io.availability.toBigInt
+        val cmd_v    = dut.cpu.coreArea.fetch.io.readCmd.cmd.valid.toBoolean
+        val rsp_v    = dut.cpu.coreArea.fetch.io.readCmd.rsp.valid.toBoolean
+        
+       // if(i > 90 && i < 155) {
+       //      println(f"Cycle $i%3d | DEC:$pc_dec%3d | DSP:$pc_dsp%3d | EX:$pc_ex%3d (MF=$may_flush_ex, FL=$flush_cmd, UC=$ucode_ex) | WB: ${rh.pc.toBigInt.toLong}%3d (Commit=${rh.commit.toBoolean}) | Inflight:$inflight Epoch:$epoch Avail:$avail CmdV:$cmd_v RspV:$rsp_v")
+       // }
+        
+
        if(rh.commit.toBoolean == true){
         println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, PC: ${rh.pc.toBigInt.toLong}")
 

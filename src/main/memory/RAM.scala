@@ -69,7 +69,9 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
   // when(io.writes.cmd.valid) {
   //   io.reads.cmd.ready := False
   // }
-  io.reads.rsp.payload.address := io.reads.cmd.payload.address
+  io.reads.rsp.payload.address := RegNext(io.reads.cmd.payload.address)
+  io.reads.rsp.payload.id := RegNext(io.reads.cmd.payload.id)
+  
   // val validReadReg = Reg(io.reads.cmd.valid)
   // validReadReg := io.reads.cmd.valid
   io.reads.rsp.valid := RegNext(io.reads.cmd.valid) init False

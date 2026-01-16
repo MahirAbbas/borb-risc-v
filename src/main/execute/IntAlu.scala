@@ -26,7 +26,6 @@ case class IntAlu(aluNode : CtrlLink) extends Area {
 
   // override val FUType = borb.frontend.ExecutionUnitEnum.ALU
   // import borb.execute.Execute._
-  import borb.LsuL1.PC.PCVal
 
   val aluNodeStage = new aluNode.Area {
       import borb.dispatch.Dispatch._

@@ -78,7 +78,7 @@ case class CPU() extends Component {
     val flushPipeline = branch.logic.jumpCmd.valid
     pc.jump << branch.logic.jumpCmd
     
-    fetch.fifo.io.flush := flushPipeline
+    fetch.io.flush := flushPipeline
     
     // Flush all upstream stages combinationally
     //val upstreamStages = Array(3, 4, 5).map(pipeline.ctrl(_))
@@ -90,6 +90,12 @@ case class CPU() extends Component {
     val executionStages = Array(3,4, 5, 6, 7).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl => 
        ctrl.throwWhen(ctrl(MAY_FLUSH) && flushPipeline)
+    }
+    
+    // Flush Fetch stages (PC in transit) unconditionally on redirect
+    val fetchStages = Array(1, 2).map(pipeline.ctrl(_))
+    fetchStages.foreach { ctrl =>
+       ctrl.throwWhen(flushPipeline)
     }
     
     val write = pipeline.ctrl(7)
@@ -124,6 +130,33 @@ case class CPU() extends Component {
         commit.simPublic()
         flush.simPublic()
         pc.simPublic()
+        
+        // Debug signals
+        pipeline.ctrls.foreach { case (id, ctrl) =>
+           ctrl.isValid.simPublic()
+           ctrl.down.isFiring.simPublic()
+        }
+        pipeline.ctrl(3).up(PC.PC).simPublic() // Decode
+        pipeline.ctrl(4).up(PC.PC).simPublic() // Dispatch
+        pipeline.ctrl(5).up(PC.PC).simPublic() // Src
+        pipeline.ctrl(6).up(PC.PC).simPublic() // Ex
+        
+        dispatcher.hcs.regBusy.simPublic()
+        branch.logic.jumpCmd.valid.simPublic()
+        branch.logic.pcValue.simPublic()
+        branch.logic.target.simPublic()
+        
+        pipeline.ctrl(6).up(borb.common.Common.MAY_FLUSH).simPublic()
+        pipeline.ctrl(6).up(borb.frontend.Decoder.MicroCode).simPublic()
+        pipeline.ctrl(5).up(borb.common.Common.MAY_FLUSH).simPublic()
+        pipeline.ctrl(7).up(borb.common.Common.MAY_FLUSH).simPublic()
+        
+        // Fetch debug
+        fetch.inflight.simPublic()
+        fetch.epoch.simPublic()
+        fetch.fifo.io.availability.simPublic()
+        fetch.io.readCmd.cmd.valid.simPublic()
+        fetch.io.readCmd.rsp.valid.simPublic()
       }
     }
 

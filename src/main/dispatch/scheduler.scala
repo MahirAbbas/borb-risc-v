@@ -10,7 +10,6 @@ import borb.frontend.Decoder._
 import borb.frontend.Decoder
 import borb.frontend.ExecutionUnitEnum
 // import borb.frontend.AluOp
-import borb.LsuL1.PC
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
 import borb.execute.IntAlu.RESULT
