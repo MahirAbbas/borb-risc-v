@@ -60,6 +60,15 @@ module rvfi_wrapper (
         .io_iBus_rsp_payload_data   (ibus_resp_data),
         .io_iBus_rsp_payload_address (ibus_resp_addr),
         .io_iBus_rsp_payload_id     (ibus_resp_id),
+
+        // Data Bus (dBus) - Added for LSU
+        .io_dBus_cmd_valid          (),
+        .io_dBus_cmd_payload_address(),
+        .io_dBus_cmd_payload_data   (),
+        .io_dBus_cmd_payload_mask   (),
+        .io_dBus_cmd_payload_write  (),
+        .io_dBus_rsp_valid          (1'b0), // No responses in formal check unless modeled
+        .io_dBus_rsp_payload_data   (64'b0),
         
         .io_dbg_commitValid (),
         .io_dbg_commitPc    (),

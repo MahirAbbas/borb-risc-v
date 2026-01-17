@@ -96,10 +96,11 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
     val branchTarget = up(Branch.BRANCH_TARGET)
     io.rvfi.pc_wdata := Mux(branchTaken, branchTarget.asBits, (currentPc + 4).asBits)
 
-    io.rvfi.mem_addr := 0
-    io.rvfi.mem_rmask := 0
-    io.rvfi.mem_wmask := 0
-    io.rvfi.mem_rdata := 0
-    io.rvfi.mem_wdata := 0
+    // Memory access signals from LSU
+    io.rvfi.mem_addr := up(borb.execute.Lsu.MEM_ADDR).asBits
+    io.rvfi.mem_rmask := up(borb.execute.Lsu.MEM_RMASK)
+    io.rvfi.mem_wmask := up(borb.execute.Lsu.MEM_WMASK)
+    io.rvfi.mem_rdata := up(borb.execute.Lsu.MEM_RDATA)
+    io.rvfi.mem_wdata := up(borb.execute.Lsu.MEM_WDATA)
   }
 }

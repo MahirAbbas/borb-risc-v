@@ -33,6 +33,9 @@ case class CPU() extends Component {
     val iBus = master(
       new RamFetchBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     )
+    val dBus = master(
+      borb.execute.DataBus(addressWidth = 64, dataWidth = 64)
+    )
     val rvfi = out(Rvfi())
     val dbg = out(Dbg())
   }
@@ -89,6 +92,17 @@ case class CPU() extends Component {
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
+    val lsu = new borb.execute.Lsu(pipeline.ctrl(6))
+
+    // Connect LSU data bus to external port
+    io.dBus.cmd << lsu.io.dBus.cmd
+    lsu.io.dBus.rsp << io.dBus.rsp
+
+    // Aggregate TRAP signals in Stage 6
+    val execStage = pipeline.ctrl(6)
+    val trapLogic = new execStage.Area {
+      down(TRAP) := branch.logic.willTrap || lsu.logic.localTrap
+    }
 
     decode.branchResolved := branch.branchResolved
 
@@ -148,7 +162,7 @@ case class CPU() extends Component {
     debugPlugin.io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
 
     val write = pipeline.ctrl(7)
-    val dispCtrl = pipeline.ctrl(4)
+    //val dispCtrl = pipeline.ctrl(4)
 
     import borb.execute.WriteBack
     val writeback =

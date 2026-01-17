@@ -76,7 +76,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     val misaligned = target(1 downto 0) =/= 0
     val willTrap = doJump && misaligned
 
-    down(TRAP) := willTrap
+    // down(TRAP) := willTrap // Moved to CPU.scala logic integration
     down(BRANCH_TAKEN) := doJump && !willTrap
     down(BRANCH_TARGET) := target
     branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
