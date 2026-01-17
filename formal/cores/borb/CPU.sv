@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : bafe5d4a2201e9244b5baab8b3ede4166353fc7d
+// Git hash  : 4e26b10c5ed5c91d15207063e679519991388445
 
 `timescale 1ns/1ps
 
@@ -164,12 +164,14 @@ module CPU (
   localparam RDTYPE_RD_VEC = 2'd2;
   localparam RDTYPE_RD_NA = 2'd3;
 
+  wire                coreArea_fetch_fifo_io_pop_ready;
   wire                coreArea_srcPlugin_regfileread_regfile_io_writer_valid;
   wire                coreArea_fetch_fifo_io_push_ready;
   wire                coreArea_fetch_fifo_io_pop_valid;
-  wire       [63:0]   coreArea_fetch_fifo_io_pop_payload;
-  wire       [3:0]    coreArea_fetch_fifo_io_occupancy;
-  wire       [3:0]    coreArea_fetch_fifo_io_availability;
+  wire       [63:0]   coreArea_fetch_fifo_io_pop_payload_data;
+  wire       [15:0]   coreArea_fetch_fifo_io_pop_payload_epoch;
+  wire       [1:0]    coreArea_fetch_fifo_io_occupancy;
+  wire       [1:0]    coreArea_fetch_fifo_io_availability;
   wire       [63:0]   coreArea_srcPlugin_regfileread_regfile_io_readerRS1_data;
   wire       [63:0]   coreArea_srcPlugin_regfileread_regfile_io_readerRS2_data;
   wire       [3:0]    _zz_coreArea_fetch_inflight;
@@ -177,8 +179,7 @@ module CPU (
   wire       [0:0]    _zz_coreArea_fetch_inflight_2;
   wire       [3:0]    _zz_coreArea_fetch_inflight_3;
   wire       [0:0]    _zz_coreArea_fetch_inflight_4;
-  reg        [31:0]   _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
-  wire       [0:0]    _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION_1;
+  wire       [3:0]    _zz_coreArea_fetch_io_readCmd_cmd_valid;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2;
@@ -191,101 +192,105 @@ module CPU (
   wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10;
   wire       [1:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_11;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_1;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_3;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4;
-  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_5;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_7;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_9;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_11;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_12;
-  wire       [5:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_13;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_15;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_17;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_18;
-  wire       [3:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_19;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_21;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_23;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_24;
-  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_25;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_27;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_29;
-  wire       [6:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_30;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_32;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_34;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_35;
-  wire       [4:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_36;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_38;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_40;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_41;
-  wire       [2:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_42;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_44;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_46;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_47;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_49;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_50;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52;
-  wire       [9:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_55;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_56;
-  wire       [7:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_57;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_59;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_61;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_62;
-  wire       [5:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_63;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_66;
-  wire       [3:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_67;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_68;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_69;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_74;
-  wire       [10:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_77;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_78;
-  wire       [8:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_79;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_81;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_83;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_84;
-  wire       [6:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_85;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_88;
-  wire       [4:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_89;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_90;
-  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_91;
-  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92;
-  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93;
-  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_94;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_1;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_3;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4;
+  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_5;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_7;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_9;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_11;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_12;
+  wire       [5:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_13;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_15;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_17;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_18;
+  wire       [3:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_19;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_21;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_23;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_24;
+  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_25;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_27;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_29;
+  wire       [6:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_30;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_32;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_34;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_35;
+  wire       [4:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_36;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_38;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_40;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_41;
+  wire       [2:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_42;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_44;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_46;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_47;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_49;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_50;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52;
+  wire       [9:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_55;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_57;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_58;
+  wire       [7:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_59;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_61;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_63;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_64;
+  wire       [5:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_65;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_68;
+  wire       [3:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_69;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_70;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_71;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_76;
+  wire       [10:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_79;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_81;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_82;
+  wire       [8:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_83;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_85;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_87;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_88;
+  wire       [6:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_89;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_92;
+  wire       [4:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_93;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_94;
+  wire       [31:0]   _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_95;
+  wire                _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96;
+  wire       [0:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97;
+  wire       [1:0]    _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_98;
   wire       [2:0]    _zz_coreArea_dispatcher_hcs_init_valueNext;
   wire       [0:0]    _zz_coreArea_dispatcher_hcs_init_valueNext_1;
   wire       [31:0]   _zz__zz_coreArea_srcPlugin_immsel_sext;
@@ -341,20 +346,29 @@ module CPU (
   wire       [63:0]   _zz__zz_coreArea_intalu_aluNodeStage_result_45;
   wire       [63:0]   _zz__zz_coreArea_intalu_aluNodeStage_result_46;
   wire       [63:0]   _zz__zz_coreArea_intalu_aluNodeStage_result_47;
+  wire       [63:0]   _zz_coreArea_branch_logic_target;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_1;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_2;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_3;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_4;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_5;
+  wire       [63:0]   _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data;
+  wire       [63:0]   _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1;
   wire       [63:0]   _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata;
   wire                coreArea_pipeline_ctrl_7_down_isValid;
+  wire                coreArea_pipeline_ctrl_4_up_isCancel;
   wire                coreArea_pipeline_ctrl_4_up_isReady;
   wire                coreArea_pipeline_ctrl_7_down_isReady;
-  wire                coreArea_pipeline_ctrl_7_up_isValid;
   wire                coreArea_pipeline_ctrl_6_down_Dispatch_SENDTOALU;
   wire                coreArea_pipeline_ctrl_6_down_Common_LANE_SEL;
   wire       [4:0]    coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR;
   wire       [4:0]    coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR;
   wire                coreArea_pipeline_ctrl_6_down_Decoder_VALID;
+  wire       [3:0]    coreArea_pipeline_ctrl_6_down_Common_SPEC_EPOCH;
   wire       [31:0]   coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION;
   wire                coreArea_pipeline_ctrl_6_down_isValid;
   wire                coreArea_pipeline_ctrl_6_down_isReady;
-  wire                coreArea_pipeline_ctrl_6_up_isValid;
+  wire                coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOBRANCH;
   wire                coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU;
   wire                coreArea_pipeline_ctrl_5_down_Common_LANE_SEL;
   wire       [4:0]    coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR;
@@ -366,15 +380,9 @@ module CPU (
   wire       [63:0]   coreArea_pipeline_ctrl_5_down_PC_PC;
   wire                coreArea_pipeline_ctrl_5_down_isValid;
   wire                coreArea_pipeline_ctrl_5_down_isReady;
-  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
-  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
-  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
-  reg                 coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
   reg        [4:0]    coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR;
   reg        [4:0]    coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR;
   reg        [31:0]   coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
-  reg        [63:0]   coreArea_pipeline_ctrl_6_up_PC_PC;
-  wire                coreArea_pipeline_ctrl_5_up_isValid;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR;
@@ -388,14 +396,13 @@ module CPU (
   wire       [63:0]   coreArea_pipeline_ctrl_4_down_PC_PC;
   wire                coreArea_pipeline_ctrl_4_down_isValid;
   wire                coreArea_pipeline_ctrl_4_down_isReady;
+  reg                 coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH;
   reg                 coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU;
   reg                 coreArea_pipeline_ctrl_5_up_Common_LANE_SEL;
   reg        [4:0]    coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR;
   reg        [5:0]    coreArea_pipeline_ctrl_5_up_Decoder_MicroCode;
   reg        [0:0]    coreArea_pipeline_ctrl_5_up_Decoder_LEGAL;
   reg        [31:0]   coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION;
-  reg        [63:0]   coreArea_pipeline_ctrl_5_up_PC_PC;
-  wire                coreArea_pipeline_ctrl_4_up_isValid;
   wire                coreArea_pipeline_ctrl_3_down_isValid;
   wire                coreArea_pipeline_ctrl_3_down_isReady;
   reg        [5:0]    coreArea_pipeline_ctrl_4_up_Decoder_MicroCode;
@@ -403,13 +410,11 @@ module CPU (
   reg        [2:0]    coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE;
   reg        [2:0]    coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE;
   reg        [0:0]    coreArea_pipeline_ctrl_4_up_Decoder_LEGAL;
+  reg        [3:0]    coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH;
   reg        [31:0]   coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION;
-  reg        [63:0]   coreArea_pipeline_ctrl_4_up_PC_PC;
-  wire                coreArea_pipeline_ctrl_3_up_isValid;
   wire                coreArea_pipeline_ctrl_2_down_isValid;
   wire                coreArea_pipeline_ctrl_2_down_isReady;
-  reg        [63:0]   coreArea_pipeline_ctrl_3_up_PC_PC;
-  wire                coreArea_pipeline_ctrl_2_up_isValid;
+  reg        [3:0]    coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH;
   wire                coreArea_pipeline_ctrl_1_down_isValid;
   wire                coreArea_pipeline_ctrl_1_down_isReady;
   reg        [63:0]   coreArea_pipeline_ctrl_2_up_PC_PC;
@@ -419,11 +424,11 @@ module CPU (
   reg                 coreArea_pipeline_ctrl_7_up_valid;
   wire                coreArea_pipeline_ctrl_6_down_valid;
   reg                 coreArea_pipeline_ctrl_6_up_valid;
-  wire                coreArea_pipeline_ctrl_5_down_valid;
+  reg                 coreArea_pipeline_ctrl_5_down_valid;
   reg                 coreArea_pipeline_ctrl_5_up_valid;
   reg                 coreArea_pipeline_ctrl_4_down_valid;
   reg                 coreArea_pipeline_ctrl_4_up_valid;
-  wire                coreArea_pipeline_ctrl_3_down_valid;
+  reg                 coreArea_pipeline_ctrl_3_down_valid;
   reg                 coreArea_pipeline_ctrl_3_up_valid;
   reg                 coreArea_pipeline_ctrl_2_down_valid;
   reg                 coreArea_pipeline_ctrl_2_up_valid;
@@ -433,24 +438,49 @@ module CPU (
   wire                coreArea_pipeline_ctrl_0_up_ready;
   reg                 coreArea_pipeline_ctrl_0_down_ready;
   reg                 coreArea_pipeline_ctrl_1_up_ready;
+  wire                coreArea_pipeline_ctrl_1_up_cancel;
   reg                 coreArea_pipeline_ctrl_1_down_ready;
   reg                 coreArea_pipeline_ctrl_2_up_ready;
+  wire                coreArea_pipeline_ctrl_2_up_cancel;
   reg                 coreArea_pipeline_ctrl_2_down_ready;
   wire                coreArea_pipeline_ctrl_3_up_ready;
+  wire                coreArea_pipeline_ctrl_3_up_cancel;
   reg                 coreArea_pipeline_ctrl_3_down_ready;
   reg                 coreArea_pipeline_ctrl_4_up_ready;
+  wire                coreArea_pipeline_ctrl_4_up_cancel;
   reg                 coreArea_pipeline_ctrl_4_down_ready;
   wire                coreArea_pipeline_ctrl_5_up_ready;
+  wire                coreArea_pipeline_ctrl_5_up_cancel;
   reg                 coreArea_pipeline_ctrl_5_down_ready;
   wire                coreArea_pipeline_ctrl_6_up_ready;
   reg                 coreArea_pipeline_ctrl_6_down_ready;
   wire                coreArea_pipeline_ctrl_7_up_ready;
+  reg        [3:0]    coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH;
+  reg        [3:0]    coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH;
+  reg        [63:0]   coreArea_pipeline_ctrl_5_up_PC_PC;
+  reg        [63:0]   coreArea_pipeline_ctrl_4_up_PC_PC;
+  reg        [63:0]   coreArea_pipeline_ctrl_3_up_PC_PC;
+  wire                coreArea_pipeline_ctrl_7_up_isValid;
+  wire                coreArea_pipeline_ctrl_6_up_isValid;
+  wire                coreArea_pipeline_ctrl_5_down_isFiring;
+  wire                coreArea_pipeline_ctrl_5_up_isValid;
+  wire                coreArea_pipeline_ctrl_4_down_isFiring;
+  wire                coreArea_pipeline_ctrl_4_up_isValid;
+  wire                coreArea_pipeline_ctrl_3_down_isFiring;
+  wire                coreArea_pipeline_ctrl_3_up_isValid;
+  wire                coreArea_pipeline_ctrl_2_up_isValid;
+  wire                coreArea_pipeline_ctrl_0_down_isFiring;
+  wire                coreArea_pipeline_ctrl_0_up_isValid;
+  reg        [3:0]    coreArea_pipeline_ctrl_7_up_Common_SPEC_EPOCH;
   reg                 coreArea_pipeline_ctrl_7_up_Dispatch_SENDTOALU;
   reg        [63:0]   coreArea_pipeline_ctrl_7_up_SrcPlugin_IMMED;
   reg                 coreArea_pipeline_ctrl_7_up_Decoder_VALID;
   wire                coreArea_pipeline_ctrl_7_down_ready;
   wire       [63:0]   coreArea_pipeline_ctrl_3_down_PC_PC;
+  wire       [63:0]   coreArea_pipeline_ctrl_2_down_PC_PC;
   reg                 coreArea_pipeline_ctrl_7_up_Common_LANE_SEL;
+  reg        [63:0]   coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET;
+  reg                 coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN;
   reg        [63:0]   coreArea_pipeline_ctrl_7_up_PC_PC;
   reg                 coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid;
   reg        [4:0]    coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address;
@@ -459,9 +489,23 @@ module CPU (
   reg        [63:0]   coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1;
   reg        [4:0]    coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR;
   reg        [4:0]    coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR;
-  wire                coreArea_pipeline_ctrl_7_up_Common_TRAP;
+  reg                 coreArea_pipeline_ctrl_7_up_Common_TRAP;
   reg        [31:0]   coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
   wire                coreArea_pipeline_ctrl_7_up_Common_COMMIT;
+  wire       [3:0]    coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH;
+  wire       [3:0]    coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH;
+  wire       [3:0]    coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH;
+  wire       [0:0]    coreArea_pipeline_ctrl_6_down_Decoder_LEGAL;
+  wire                coreArea_pipeline_ctrl_6_down_isFiring;
+  wire       [63:0]   coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET;
+  wire                coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN;
+  wire                coreArea_pipeline_ctrl_6_down_Common_TRAP;
+  reg                 coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH;
+  reg                 coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
+  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
+  reg        [63:0]   coreArea_pipeline_ctrl_6_up_PC_PC;
+  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
+  reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
   reg        [0:0]    coreArea_pipeline_ctrl_6_up_Decoder_LEGAL;
   reg        [4:0]    coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
   reg                 coreArea_pipeline_ctrl_6_up_Decoder_VALID;
@@ -520,13 +564,13 @@ module CPU (
   wire       [31:0]   coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION;
   wire                coreArea_pipeline_ctrl_3_down_Decoder_VALID;
   wire                coreArea_pipeline_ctrl_2_down_isFiring;
+  wire       [3:0]    coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH;
   wire       [31:0]   coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
-  wire       [63:0]   coreArea_pipeline_ctrl_2_down_PC_PC;
   wire       [63:0]   coreArea_pipeline_ctrl_1_down_PC_PC;
   wire                coreArea_pipeline_ctrl_1_up_isValid;
   wire                coreArea_pipeline_ctrl_1_down_isFiring;
+  wire       [63:0]   coreArea_pipeline_ctrl_0_down_PC_PC;
   wire                coreArea_pipeline_ctrl_0_down_isReady;
-  reg        [63:0]   coreArea_pipeline_ctrl_0_down_PC_PC;
   wire                coreArea_pipeline_ctrl_0_up_valid;
   wire                coreArea_pc_jump_valid;
   wire       [63:0]   coreArea_pc_jump_payload_target;
@@ -545,12 +589,18 @@ module CPU (
   wire       [63:0]   coreArea_fetch_io_readCmd_rsp_payload_data;
   wire       [63:0]   coreArea_fetch_io_readCmd_rsp_payload_address;
   wire       [15:0]   coreArea_fetch_io_readCmd_rsp_payload_id;
+  wire                coreArea_fetch_io_flush;
+  wire       [3:0]    coreArea_fetch_io_currentEpoch;
   reg        [3:0]    coreArea_fetch_inflight;
   wire                coreArea_fetch_cmdFire;
+  reg        [15:0]   coreArea_fetch_epoch;
+  reg                 coreArea_fetch_flushPending;
   reg                 coreArea_fetch_cmdArea_reqSent;
-  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51;
-  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l56;
-  wire                coreArea_fetch_rspArea_wordSel;
+  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80;
+  wire                coreArea_fetch_rspArea_epochMatch;
+  wire                coreArea_fetch_rspArea_stalePacket;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92;
+  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_2;
@@ -566,26 +616,26 @@ module CPU (
   wire       [1:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE;
   wire       [1:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_1;
   wire       [1:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2;
+  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1;
+  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2;
-  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode;
-  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1;
-  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2;
-  wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE;
+  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2;
+  wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2;
-  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3;
-  wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1;
+  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2;
   wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3;
-  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4;
+  wire       [2:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4;
+  wire                _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2;
+  wire       [5:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3;
+  wire       [5:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4;
   wire       [5:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5;
-  wire       [5:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6;
-  wire       [5:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_2;
@@ -598,16 +648,18 @@ module CPU (
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ_2;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ_3;
-  wire                when_scheduler_l146;
-  wire                when_scheduler_l150;
-  wire                when_scheduler_l154;
+  wire                coreArea_decode_branchResolved;
+  wire                when_scheduler_l145;
+  wire                when_scheduler_l149;
+  wire                when_scheduler_l153;
   reg        [31:0]   coreArea_dispatcher_hcs_regBusy;
-  wire                when_scheduler_l189;
-  wire                when_scheduler_l198;
+  wire                when_scheduler_l188;
+  wire                when_scheduler_l197;
+  wire                when_scheduler_l201;
   wire                coreArea_dispatcher_hcs_writes_rs1Busy;
   wire                coreArea_dispatcher_hcs_writes_rs2Busy;
   wire                coreArea_dispatcher_hcs_writes_hazard;
-  wire                coreArea_pipeline_ctrl_4_haltRequest_scheduler_l212;
+  wire                coreArea_pipeline_ctrl_4_haltRequest_scheduler_l215;
   wire       [3:0]    _zz_coreArea_dispatcher_hcs_hazards;
   reg        [3:0]    coreArea_dispatcher_hcs_hazards;
   reg                 coreArea_dispatcher_hcs_init_willIncrement;
@@ -616,7 +668,7 @@ module CPU (
   reg        [2:0]    coreArea_dispatcher_hcs_init_value;
   wire                coreArea_dispatcher_hcs_init_willOverflowIfInc;
   wire                coreArea_dispatcher_hcs_init_willOverflow;
-  wire                when_scheduler_l248;
+  wire                when_scheduler_l251;
   wire                coreArea_srcPlugin_wasReset;
   reg        [63:0]   coreArea_srcPlugin_immsel_sext;
   wire       [63:0]   _zz_coreArea_srcPlugin_immsel_sext;
@@ -632,8 +684,38 @@ module CPU (
   reg        [63:0]   coreArea_intalu_aluNodeStage_result;
   wire                when_IntAlu_l34;
   reg        [63:0]   _zz_coreArea_intalu_aluNodeStage_result;
-  wire                when_IntAlu_l75;
+  wire                when_IntAlu_l76;
+  wire                coreArea_branch_branchResolved;
+  wire       [63:0]   coreArea_branch_logic_src1;
+  wire       [63:0]   coreArea_branch_logic_src2;
+  wire       [63:0]   coreArea_branch_logic_src1U;
+  wire       [63:0]   coreArea_branch_logic_src2U;
+  wire       [63:0]   coreArea_branch_logic_imm;
+  reg                 coreArea_branch_logic_condition;
+  reg        [63:0]   coreArea_branch_logic_target;
+  reg                 coreArea_branch_logic_isJump;
+  reg                 coreArea_branch_logic_isBranch;
+  wire                coreArea_branch_logic_doJump;
+  wire                coreArea_branch_logic_misaligned;
+  wire                coreArea_branch_logic_willTrap;
+  wire                coreArea_branch_logic_jumpCmd_valid;
+  wire       [63:0]   coreArea_branch_logic_jumpCmd_payload_target;
+  wire                coreArea_branch_logic_jumpCmd_payload_is_jump;
+  wire                coreArea_branch_logic_jumpCmd_payload_is_branch;
+  wire                when_branch_l90;
+  wire                when_branch_l98;
+  reg        [3:0]    coreArea_currentEpoch;
+  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l130;
+  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l130;
+  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l130;
+  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l136;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l136;
   reg        [63:0]   coreArea_rvfiPlugin_order;
+  wire                coreArea_pipeline_ctrl_5_up_forgetOne;
+  wire                coreArea_pipeline_ctrl_4_up_forgetOne;
+  wire                coreArea_pipeline_ctrl_3_up_forgetOne;
+  wire                coreArea_pipeline_ctrl_2_up_forgetOne;
+  wire                coreArea_pipeline_ctrl_1_up_forgetOne;
   wire                when_StageLink_l71;
   wire                when_StageLink_l71_1;
   wire                when_StageLink_l71_2;
@@ -642,8 +724,13 @@ module CPU (
   wire                when_StageLink_l71_5;
   wire                when_StageLink_l71_6;
   wire                when_CtrlLink_l191;
+  wire                when_CtrlLink_l198;
   wire                when_CtrlLink_l191_1;
+  wire                when_CtrlLink_l198_1;
+  wire                when_CtrlLink_l198_2;
   wire                when_CtrlLink_l191_2;
+  wire                when_CtrlLink_l198_3;
+  wire                when_CtrlLink_l198_4;
   `ifndef SYNTHESIS
   reg [79:0] coreArea_pipeline_ctrl_5_down_Decoder_MicroCode_string;
   reg [7:0] coreArea_pipeline_ctrl_5_down_Decoder_LEGAL_string;
@@ -659,6 +746,7 @@ module CPU (
   reg [47:0] coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE_string;
   reg [47:0] coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE_string;
   reg [7:0] coreArea_pipeline_ctrl_4_up_Decoder_LEGAL_string;
+  reg [7:0] coreArea_pipeline_ctrl_6_down_Decoder_LEGAL_string;
   reg [7:0] coreArea_pipeline_ctrl_6_up_Decoder_LEGAL_string;
   reg [79:0] coreArea_pipeline_ctrl_6_up_Decoder_MicroCode_string;
   reg [47:0] coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE_string;
@@ -695,18 +783,18 @@ module CPU (
   reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_string;
   reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1_string;
   reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2_string;
-  reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string;
   reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1_string;
   reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2_string;
+  reg [47:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2_string;
-  reg [39:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string;
   reg [39:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2_string;
   reg [39:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3_string;
+  reg [39:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string;
+  reg [79:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string;
+  reg [79:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string;
   reg [79:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5_string;
-  reg [79:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string;
-  reg [79:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_1_string;
   reg [7:0] _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_2_string;
@@ -727,6 +815,7 @@ module CPU (
   assign _zz_coreArea_fetch_inflight_1 = {3'd0, _zz_coreArea_fetch_inflight_2};
   assign _zz_coreArea_fetch_inflight_4 = coreArea_fetch_io_readCmd_rsp_valid;
   assign _zz_coreArea_fetch_inflight_3 = {3'd0, _zz_coreArea_fetch_inflight_4};
+  assign _zz_coreArea_fetch_io_readCmd_cmd_valid = {2'd0, coreArea_fetch_fifo_io_availability};
   assign _zz_coreArea_dispatcher_hcs_init_valueNext_1 = coreArea_dispatcher_hcs_init_willIncrement;
   assign _zz_coreArea_dispatcher_hcs_init_valueNext = {2'd0, _zz_coreArea_dispatcher_hcs_init_valueNext_1};
   assign _zz__zz_coreArea_srcPlugin_immsel_sext = {coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION[31 : 12],12'h0};
@@ -782,8 +871,15 @@ module CPU (
   assign _zz__zz_coreArea_intalu_aluNodeStage_result_45 = ($signed(_zz__zz_coreArea_intalu_aluNodeStage_result_46) + $signed(_zz__zz_coreArea_intalu_aluNodeStage_result_47));
   assign _zz__zz_coreArea_intalu_aluNodeStage_result_46 = coreArea_pipeline_ctrl_6_down_SrcPlugin_IMMED;
   assign _zz__zz_coreArea_intalu_aluNodeStage_result_47 = coreArea_pipeline_ctrl_6_down_PC_PC;
+  assign _zz_coreArea_branch_logic_target = ($signed(_zz_coreArea_branch_logic_target_1) + $signed(_zz_coreArea_branch_logic_target_2));
+  assign _zz_coreArea_branch_logic_target_1 = coreArea_branch_logic_src1U;
+  assign _zz_coreArea_branch_logic_target_2 = coreArea_branch_logic_imm;
+  assign _zz_coreArea_branch_logic_target_3 = ($signed(_zz_coreArea_branch_logic_target_4) + $signed(_zz_coreArea_branch_logic_target_5));
+  assign _zz_coreArea_branch_logic_target_4 = coreArea_pipeline_ctrl_6_up_PC_PC;
+  assign _zz_coreArea_branch_logic_target_5 = coreArea_branch_logic_imm;
+  assign _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = (coreArea_pipeline_ctrl_6_up_PC_PC + 64'h0000000000000004);
+  assign _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1 = (coreArea_pipeline_ctrl_6_up_PC_PC + coreArea_branch_logic_imm);
   assign _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata = (coreArea_pipeline_ctrl_7_up_PC_PC + 64'h0000000000000004);
-  assign _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION_1 = coreArea_fetch_rspArea_wordSel;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID = 32'h0000407f;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 = (coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000207f);
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2 = 32'h00002013;
@@ -796,114 +892,120 @@ module CPU (
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9 = ((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'hfe00007f) == 32'h00000033);
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10 = ((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'hbe007077) == 32'h00005033);
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_11 = {((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'hfe003077) == 32'h00001033),((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'hbe007077) == 32'h00000033)};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_1) == 32'h00004020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_3) == 32'h00003020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_5 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_11 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_12);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_13 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_19}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_30 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_36}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51 = (|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53});
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73 = (|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_74,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75});
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_1 = 32'h00004064;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_3 = 32'h00003064;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_7) == 32'h0);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_9) == 32'h0);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_11 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00001048);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_12 = 32'h00001008;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_15) == 32'h00002000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_17 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_18);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_19 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_25}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_32) == 32'h00000008);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_34 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_35);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_36 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_42}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53 = {_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_57}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_74 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75 = {_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_79}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_7 = 32'h00005044;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_9 = 32'h00006044;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_15 = 32'h00002018;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_17 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005018);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_18 = 32'h00005000;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_21) == 32'h00005000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_23 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_24);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_25 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_32 = 32'h00001028;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_34 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005024);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_35 = 32'h00004000;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_38) == 32'h00002000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_40 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_41);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_42 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_55 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_56);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_57 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_63}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_77 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_78);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_79 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_85}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_21 = 32'h00005024;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_23 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40004064);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_24 = 32'h40000020;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_27) == 32'h00001000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_29) == 32'h00000020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_38 = 32'h00006024;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_40 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00003018);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_41 = 32'h0;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_44) == 32'h00006020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_46 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_47);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_49 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_50);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_55 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00003010);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_56 = 32'h00003000;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_59) == 32'h00000008);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_61 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_62);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_63 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_67}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_77 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40004008);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_78 = 32'h00000008;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_81) == 32'h0);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_83 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_84);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_85 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_89}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_27 = 32'h00007044;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_29 = 32'h0000506c;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_44 = 32'h00006064;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_46 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h0000602c);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_47 = 32'h00000020;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_49 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40005024);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_50 = 32'h00000020;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_59 = 32'h40001008;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_61 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_62 = 32'h00004000;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005010) == 32'h00001000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_66) == 32'h0);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_67 = {(_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_68 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_69),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72}}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_81 = 32'h00001014;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_83 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_84 = 32'h00002020;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007020) == 32'h00004020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_88) == 32'h00001000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_89 = {(_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_90 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_91),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_94}}};
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_66 = 32'h00003020;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_68 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007010);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_69 = 32'h00004000;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007024) == 32'h00002020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007044) == 32'h00005000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h0000306c) == 32'h00001020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_88 = 32'h00005024;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_90 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00006024);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_91 = 32'h0;
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007060) == 32'h00007020);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007024) == 32'h00006000);
-  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_94 = {((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40003044) == 32'h40001000),((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h4000700c) == 32'h40000000)};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_1) == 32'h00004020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_3) == 32'h00003020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_5 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_11 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_12);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_13 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_19}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_30 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_36}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51 = (|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53});
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75 = (|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_76,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77});
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_1 = 32'h00004064;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_3 = 32'h00003064;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_7) == 32'h0);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_9) == 32'h0);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_11 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00001048);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_12 = 32'h00001008;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_15) == 32'h00002000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_17 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_18);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_19 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_25}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_32) == 32'h00000008);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_34 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_35);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_36 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_42}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_59}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_76 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_83}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_7 = 32'h00005044;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_9 = 32'h00006044;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_15 = 32'h00002018;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_17 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005018);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_18 = 32'h00005000;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_21) == 32'h00005000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_23 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_24);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_25 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_32 = 32'h00001028;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_34 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005024);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_35 = 32'h00004000;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_38) == 32'h00002000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_40 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_41);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_42 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_55) == 32'h00000004);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_57 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_58);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_59 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_65}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_79) == 32'h00000024);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_81 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_82);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_83 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_89}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_21 = 32'h00005024;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_23 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40004064);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_24 = 32'h40000020;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_27) == 32'h00001000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_29) == 32'h00000020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_38 = 32'h00006024;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_40 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00003018);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_41 = 32'h0;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_44) == 32'h00006020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_46 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_47);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_49 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_50);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_55 = 32'h00000024;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_57 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00003010);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_58 = 32'h00003000;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_61) == 32'h00000008);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_63 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_64);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_65 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_69}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_79 = 32'h00000064;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_81 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40004008);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_82 = 32'h00000008;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_85) == 32'h0);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86 = (_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_87 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_88);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_89 = {_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_93}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_27 = 32'h00007044;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_29 = 32'h0000506c;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_44 = 32'h00006064;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_46 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h0000602c);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_47 = 32'h00000020;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_49 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40005024);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_50 = 32'h00000020;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_61 = 32'h40001008;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_63 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_64 = 32'h00004000;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005010) == 32'h00001000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_68) == 32'h0);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_69 = {(_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_70 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_71),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74}}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_85 = 32'h00001014;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_87 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_88 = 32'h00002020;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007020) == 32'h00004020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_92) == 32'h00001000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_93 = {(_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_94 == _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_95),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_98}}};
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_68 = 32'h00003020;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_70 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007010);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_71 = 32'h00004000;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007024) == 32'h00002020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007044) == 32'h00005000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h0000306c) == 32'h00001020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_92 = 32'h00005024;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_94 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00006024);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_95 = 32'h0;
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007060) == 32'h00007020);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00007024) == 32'h00006000);
+  assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_98 = {((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h40003044) == 32'h40001000),((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h4000700c) == 32'h40000000)};
   StreamFifo coreArea_fetch_fifo (
-    .io_push_valid   (coreArea_fetch_io_readCmd_rsp_valid             ), //i
-    .io_push_ready   (coreArea_fetch_fifo_io_push_ready               ), //o
-    .io_push_payload (coreArea_fetch_io_readCmd_rsp_payload_data[63:0]), //i
-    .io_pop_valid    (coreArea_fetch_fifo_io_pop_valid                ), //o
-    .io_pop_ready    (coreArea_pipeline_ctrl_2_down_isFiring          ), //i
-    .io_pop_payload  (coreArea_fetch_fifo_io_pop_payload[63:0]        ), //o
-    .io_flush        (1'b0                                            ), //i
-    .io_occupancy    (coreArea_fetch_fifo_io_occupancy[3:0]           ), //o
-    .io_availability (coreArea_fetch_fifo_io_availability[3:0]        ), //o
-    .io_clk          (io_clk                                          ), //i
-    .io_reset        (io_reset                                        ), //i
-    .io_clkEnable    (io_clkEnable                                    )  //i
+    .io_push_valid         (coreArea_fetch_io_readCmd_rsp_valid             ), //i
+    .io_push_ready         (coreArea_fetch_fifo_io_push_ready               ), //o
+    .io_push_payload_data  (coreArea_fetch_io_readCmd_rsp_payload_data[63:0]), //i
+    .io_push_payload_epoch (coreArea_fetch_io_readCmd_rsp_payload_id[15:0]  ), //i
+    .io_pop_valid          (coreArea_fetch_fifo_io_pop_valid                ), //o
+    .io_pop_ready          (coreArea_fetch_fifo_io_pop_ready                ), //i
+    .io_pop_payload_data   (coreArea_fetch_fifo_io_pop_payload_data[63:0]   ), //o
+    .io_pop_payload_epoch  (coreArea_fetch_fifo_io_pop_payload_epoch[15:0]  ), //o
+    .io_flush              (coreArea_fetch_io_flush                         ), //i
+    .io_occupancy          (coreArea_fetch_fifo_io_occupancy[1:0]           ), //o
+    .io_availability       (coreArea_fetch_fifo_io_availability[1:0]        ), //o
+    .io_clk                (io_clk                                          ), //i
+    .io_reset              (io_reset                                        ), //i
+    .io_clkEnable          (io_clkEnable                                    )  //i
   );
   IntRegFile coreArea_srcPlugin_regfileread_regfile (
     .io_readerRS1_valid   (coreArea_srcPlugin_rs1Reader_valid                            ), //i
@@ -919,13 +1021,6 @@ module CPU (
     .io_reset             (io_reset                                                      ), //i
     .io_clkEnable         (io_clkEnable                                                  )  //i
   );
-  always @(*) begin
-    case(_zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION_1)
-      1'b0 : _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = coreArea_fetch_fifo_io_pop_payload[31 : 0];
-      default : _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = coreArea_fetch_fifo_io_pop_payload[63 : 32];
-    endcase
-  end
-
   `ifndef SYNTHESIS
   always @(*) begin
     case(coreArea_pipeline_ctrl_5_down_Decoder_MicroCode)
@@ -1275,6 +1370,13 @@ module CPU (
       YESNO_Y : coreArea_pipeline_ctrl_4_up_Decoder_LEGAL_string = "Y";
       YESNO_N : coreArea_pipeline_ctrl_4_up_Decoder_LEGAL_string = "N";
       default : coreArea_pipeline_ctrl_4_up_Decoder_LEGAL_string = "?";
+    endcase
+  end
+  always @(*) begin
+    case(coreArea_pipeline_ctrl_6_down_Decoder_LEGAL)
+      YESNO_Y : coreArea_pipeline_ctrl_6_down_Decoder_LEGAL_string = "Y";
+      YESNO_N : coreArea_pipeline_ctrl_6_down_Decoder_LEGAL_string = "N";
+      default : coreArea_pipeline_ctrl_6_down_Decoder_LEGAL_string = "?";
     endcase
   end
   always @(*) begin
@@ -1704,16 +1806,6 @@ module CPU (
     endcase
   end
   always @(*) begin
-    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE)
-      RSTYPE_RS_INT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "RS_NA ";
-      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_string = "??????";
-    endcase
-  end
-  always @(*) begin
     case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1)
       RSTYPE_RS_INT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1_string = "RS_INT";
       RSTYPE_RS_FP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1_string = "RS_FP ";
@@ -1731,6 +1823,16 @@ module CPU (
       RSTYPE_IMMED : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2_string = "IMMED ";
       RSTYPE_RS_NA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2_string = "RS_NA ";
       default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2_string = "??????";
+    endcase
+  end
+  always @(*) begin
+    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3)
+      RSTYPE_RS_INT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "RS_NA ";
+      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3_string = "??????";
     endcase
   end
   always @(*) begin
@@ -1755,17 +1857,6 @@ module CPU (
     endcase
   end
   always @(*) begin
-    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1)
-      Imm_Select_N_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "N_IMM";
-      Imm_Select_I_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "I_IMM";
-      Imm_Select_S_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "S_IMM";
-      Imm_Select_B_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "B_IMM";
-      Imm_Select_U_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "U_IMM";
-      Imm_Select_J_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "J_IMM";
-      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1_string = "?????";
-    endcase
-  end
-  always @(*) begin
     case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2)
       Imm_Select_N_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2_string = "N_IMM";
       Imm_Select_I_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2_string = "I_IMM";
@@ -1785,6 +1876,147 @@ module CPU (
       Imm_Select_U_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3_string = "U_IMM";
       Imm_Select_J_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3_string = "J_IMM";
       default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3_string = "?????";
+    endcase
+  end
+  always @(*) begin
+    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4)
+      Imm_Select_N_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "N_IMM";
+      Imm_Select_I_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "I_IMM";
+      Imm_Select_S_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "S_IMM";
+      Imm_Select_B_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "B_IMM";
+      Imm_Select_U_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "U_IMM";
+      Imm_Select_J_IMM : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "J_IMM";
+      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4_string = "?????";
+    endcase
+  end
+  always @(*) begin
+    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3)
+      MicroCode_uopNOP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopNOP    ";
+      MicroCode_uopLUI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLUI    ";
+      MicroCode_uopAUIPC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopAUIPC  ";
+      MicroCode_uopJAL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopJAL    ";
+      MicroCode_uopJALR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopJALR   ";
+      MicroCode_uopBEQ : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBEQ    ";
+      MicroCode_uopBNE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBNE    ";
+      MicroCode_uopBLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBLT    ";
+      MicroCode_uopBGE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBGE    ";
+      MicroCode_uopBLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBLTU   ";
+      MicroCode_uopBGEU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopBGEU   ";
+      MicroCode_uopLB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLB     ";
+      MicroCode_uopLH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLH     ";
+      MicroCode_uopLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLW     ";
+      MicroCode_uopLBU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLBU    ";
+      MicroCode_uopLHU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLHU    ";
+      MicroCode_uopSB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSB     ";
+      MicroCode_uopSH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSH     ";
+      MicroCode_uopSW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSW     ";
+      MicroCode_uopADDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopADDI   ";
+      MicroCode_uopSLTI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLTI   ";
+      MicroCode_uopSLTIU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLTIU  ";
+      MicroCode_uopXORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopXORI   ";
+      MicroCode_uopORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopORI    ";
+      MicroCode_uopANDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopANDI   ";
+      MicroCode_uopSLLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLLI   ";
+      MicroCode_uopSRLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRLI   ";
+      MicroCode_uopSRAI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRAI   ";
+      MicroCode_uopADD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopADD    ";
+      MicroCode_uopSUB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSUB    ";
+      MicroCode_uopSLL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLL    ";
+      MicroCode_uopSLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLT    ";
+      MicroCode_uopSLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLTU   ";
+      MicroCode_uopXOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopXOR    ";
+      MicroCode_uopSRL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRL    ";
+      MicroCode_uopSRA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRA    ";
+      MicroCode_uopOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopOR     ";
+      MicroCode_uopAND : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopAND    ";
+      MicroCode_uopFENCE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopFENCE  ";
+      MicroCode_uopFENCE_I : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopFENCE_I";
+      MicroCode_uopECALL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopECALL  ";
+      MicroCode_uopEBREAK : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopEBREAK ";
+      MicroCode_uopCSRRW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRW  ";
+      MicroCode_uopCSRRS : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRS  ";
+      MicroCode_uopCSRRC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRC  ";
+      MicroCode_uopCSRRWI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRWI ";
+      MicroCode_uopCSRRSI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRSI ";
+      MicroCode_uopCSRRCI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopCSRRCI ";
+      MicroCode_uopLWU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLWU    ";
+      MicroCode_uopLD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopLD     ";
+      MicroCode_uopSD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSD     ";
+      MicroCode_uopADDIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopADDIW  ";
+      MicroCode_uopSLLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLLIW  ";
+      MicroCode_uopSRLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRLIW  ";
+      MicroCode_uopSRAIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRAIW  ";
+      MicroCode_uopADDW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopADDW   ";
+      MicroCode_uopSUBW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSUBW   ";
+      MicroCode_uopSLLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSLLW   ";
+      MicroCode_uopSRLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRLW   ";
+      MicroCode_uopSRAW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "uopSRAW   ";
+      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3_string = "??????????";
+    endcase
+  end
+  always @(*) begin
+    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4)
+      MicroCode_uopNOP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopNOP    ";
+      MicroCode_uopLUI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLUI    ";
+      MicroCode_uopAUIPC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopAUIPC  ";
+      MicroCode_uopJAL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopJAL    ";
+      MicroCode_uopJALR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopJALR   ";
+      MicroCode_uopBEQ : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBEQ    ";
+      MicroCode_uopBNE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBNE    ";
+      MicroCode_uopBLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBLT    ";
+      MicroCode_uopBGE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBGE    ";
+      MicroCode_uopBLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBLTU   ";
+      MicroCode_uopBGEU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopBGEU   ";
+      MicroCode_uopLB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLB     ";
+      MicroCode_uopLH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLH     ";
+      MicroCode_uopLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLW     ";
+      MicroCode_uopLBU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLBU    ";
+      MicroCode_uopLHU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLHU    ";
+      MicroCode_uopSB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSB     ";
+      MicroCode_uopSH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSH     ";
+      MicroCode_uopSW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSW     ";
+      MicroCode_uopADDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopADDI   ";
+      MicroCode_uopSLTI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLTI   ";
+      MicroCode_uopSLTIU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLTIU  ";
+      MicroCode_uopXORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopXORI   ";
+      MicroCode_uopORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopORI    ";
+      MicroCode_uopANDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopANDI   ";
+      MicroCode_uopSLLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLLI   ";
+      MicroCode_uopSRLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRLI   ";
+      MicroCode_uopSRAI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRAI   ";
+      MicroCode_uopADD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopADD    ";
+      MicroCode_uopSUB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSUB    ";
+      MicroCode_uopSLL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLL    ";
+      MicroCode_uopSLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLT    ";
+      MicroCode_uopSLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLTU   ";
+      MicroCode_uopXOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopXOR    ";
+      MicroCode_uopSRL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRL    ";
+      MicroCode_uopSRA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRA    ";
+      MicroCode_uopOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopOR     ";
+      MicroCode_uopAND : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopAND    ";
+      MicroCode_uopFENCE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopFENCE  ";
+      MicroCode_uopFENCE_I : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopFENCE_I";
+      MicroCode_uopECALL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopECALL  ";
+      MicroCode_uopEBREAK : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopEBREAK ";
+      MicroCode_uopCSRRW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRW  ";
+      MicroCode_uopCSRRS : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRS  ";
+      MicroCode_uopCSRRC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRC  ";
+      MicroCode_uopCSRRWI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRWI ";
+      MicroCode_uopCSRRSI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRSI ";
+      MicroCode_uopCSRRCI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopCSRRCI ";
+      MicroCode_uopLWU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLWU    ";
+      MicroCode_uopLD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopLD     ";
+      MicroCode_uopSD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSD     ";
+      MicroCode_uopADDIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopADDIW  ";
+      MicroCode_uopSLLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLLIW  ";
+      MicroCode_uopSRLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRLIW  ";
+      MicroCode_uopSRAIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRAIW  ";
+      MicroCode_uopADDW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopADDW   ";
+      MicroCode_uopSUBW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSUBW   ";
+      MicroCode_uopSLLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSLLW   ";
+      MicroCode_uopSRLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRLW   ";
+      MicroCode_uopSRAW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "uopSRAW   ";
+      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_string = "??????????";
     endcase
   end
   always @(*) begin
@@ -1850,136 +2082,6 @@ module CPU (
       MicroCode_uopSRLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5_string = "uopSRLW   ";
       MicroCode_uopSRAW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5_string = "uopSRAW   ";
       default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5_string = "??????????";
-    endcase
-  end
-  always @(*) begin
-    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6)
-      MicroCode_uopNOP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopNOP    ";
-      MicroCode_uopLUI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLUI    ";
-      MicroCode_uopAUIPC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopAUIPC  ";
-      MicroCode_uopJAL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopJAL    ";
-      MicroCode_uopJALR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopJALR   ";
-      MicroCode_uopBEQ : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBEQ    ";
-      MicroCode_uopBNE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBNE    ";
-      MicroCode_uopBLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBLT    ";
-      MicroCode_uopBGE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBGE    ";
-      MicroCode_uopBLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBLTU   ";
-      MicroCode_uopBGEU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopBGEU   ";
-      MicroCode_uopLB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLB     ";
-      MicroCode_uopLH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLH     ";
-      MicroCode_uopLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLW     ";
-      MicroCode_uopLBU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLBU    ";
-      MicroCode_uopLHU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLHU    ";
-      MicroCode_uopSB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSB     ";
-      MicroCode_uopSH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSH     ";
-      MicroCode_uopSW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSW     ";
-      MicroCode_uopADDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopADDI   ";
-      MicroCode_uopSLTI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLTI   ";
-      MicroCode_uopSLTIU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLTIU  ";
-      MicroCode_uopXORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopXORI   ";
-      MicroCode_uopORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopORI    ";
-      MicroCode_uopANDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopANDI   ";
-      MicroCode_uopSLLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLLI   ";
-      MicroCode_uopSRLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRLI   ";
-      MicroCode_uopSRAI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRAI   ";
-      MicroCode_uopADD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopADD    ";
-      MicroCode_uopSUB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSUB    ";
-      MicroCode_uopSLL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLL    ";
-      MicroCode_uopSLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLT    ";
-      MicroCode_uopSLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLTU   ";
-      MicroCode_uopXOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopXOR    ";
-      MicroCode_uopSRL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRL    ";
-      MicroCode_uopSRA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRA    ";
-      MicroCode_uopOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopOR     ";
-      MicroCode_uopAND : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopAND    ";
-      MicroCode_uopFENCE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopFENCE  ";
-      MicroCode_uopFENCE_I : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopFENCE_I";
-      MicroCode_uopECALL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopECALL  ";
-      MicroCode_uopEBREAK : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopEBREAK ";
-      MicroCode_uopCSRRW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRW  ";
-      MicroCode_uopCSRRS : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRS  ";
-      MicroCode_uopCSRRC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRC  ";
-      MicroCode_uopCSRRWI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRWI ";
-      MicroCode_uopCSRRSI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRSI ";
-      MicroCode_uopCSRRCI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopCSRRCI ";
-      MicroCode_uopLWU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLWU    ";
-      MicroCode_uopLD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopLD     ";
-      MicroCode_uopSD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSD     ";
-      MicroCode_uopADDIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopADDIW  ";
-      MicroCode_uopSLLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLLIW  ";
-      MicroCode_uopSRLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRLIW  ";
-      MicroCode_uopSRAIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRAIW  ";
-      MicroCode_uopADDW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopADDW   ";
-      MicroCode_uopSUBW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSUBW   ";
-      MicroCode_uopSLLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSLLW   ";
-      MicroCode_uopSRLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRLW   ";
-      MicroCode_uopSRAW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "uopSRAW   ";
-      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_string = "??????????";
-    endcase
-  end
-  always @(*) begin
-    case(_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7)
-      MicroCode_uopNOP : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopNOP    ";
-      MicroCode_uopLUI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLUI    ";
-      MicroCode_uopAUIPC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopAUIPC  ";
-      MicroCode_uopJAL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopJAL    ";
-      MicroCode_uopJALR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopJALR   ";
-      MicroCode_uopBEQ : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBEQ    ";
-      MicroCode_uopBNE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBNE    ";
-      MicroCode_uopBLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBLT    ";
-      MicroCode_uopBGE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBGE    ";
-      MicroCode_uopBLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBLTU   ";
-      MicroCode_uopBGEU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopBGEU   ";
-      MicroCode_uopLB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLB     ";
-      MicroCode_uopLH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLH     ";
-      MicroCode_uopLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLW     ";
-      MicroCode_uopLBU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLBU    ";
-      MicroCode_uopLHU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLHU    ";
-      MicroCode_uopSB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSB     ";
-      MicroCode_uopSH : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSH     ";
-      MicroCode_uopSW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSW     ";
-      MicroCode_uopADDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopADDI   ";
-      MicroCode_uopSLTI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLTI   ";
-      MicroCode_uopSLTIU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLTIU  ";
-      MicroCode_uopXORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopXORI   ";
-      MicroCode_uopORI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopORI    ";
-      MicroCode_uopANDI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopANDI   ";
-      MicroCode_uopSLLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLLI   ";
-      MicroCode_uopSRLI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRLI   ";
-      MicroCode_uopSRAI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRAI   ";
-      MicroCode_uopADD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopADD    ";
-      MicroCode_uopSUB : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSUB    ";
-      MicroCode_uopSLL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLL    ";
-      MicroCode_uopSLT : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLT    ";
-      MicroCode_uopSLTU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLTU   ";
-      MicroCode_uopXOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopXOR    ";
-      MicroCode_uopSRL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRL    ";
-      MicroCode_uopSRA : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRA    ";
-      MicroCode_uopOR : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopOR     ";
-      MicroCode_uopAND : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopAND    ";
-      MicroCode_uopFENCE : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopFENCE  ";
-      MicroCode_uopFENCE_I : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopFENCE_I";
-      MicroCode_uopECALL : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopECALL  ";
-      MicroCode_uopEBREAK : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopEBREAK ";
-      MicroCode_uopCSRRW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRW  ";
-      MicroCode_uopCSRRS : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRS  ";
-      MicroCode_uopCSRRC : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRC  ";
-      MicroCode_uopCSRRWI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRWI ";
-      MicroCode_uopCSRRSI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRSI ";
-      MicroCode_uopCSRRCI : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopCSRRCI ";
-      MicroCode_uopLWU : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLWU    ";
-      MicroCode_uopLD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopLD     ";
-      MicroCode_uopSD : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSD     ";
-      MicroCode_uopADDIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopADDIW  ";
-      MicroCode_uopSLLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLLIW  ";
-      MicroCode_uopSRLIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRLIW  ";
-      MicroCode_uopSRAIW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRAIW  ";
-      MicroCode_uopADDW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopADDW   ";
-      MicroCode_uopSUBW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSUBW   ";
-      MicroCode_uopSLLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSLLW   ";
-      MicroCode_uopSRLW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRLW   ";
-      MicroCode_uopSRAW : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "uopSRAW   ";
-      default : _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7_string = "??????????";
     endcase
   end
   always @(*) begin
@@ -2069,29 +2171,23 @@ module CPU (
   `endif
 
   assign coreArea_pipeline_ctrl_0_up_valid = 1'b1;
-  always @(*) begin
-    coreArea_pipeline_ctrl_0_down_PC_PC = coreArea_pc_PC_cur;
-    if(coreArea_pipeline_ctrl_0_down_isReady) begin
-      coreArea_pipeline_ctrl_0_down_PC_PC = coreArea_pc_PC_cur;
-    end
-  end
-
-  assign coreArea_pc_jump_valid = 1'b0;
-  assign coreArea_pc_jump_payload_target = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-  assign coreArea_pc_jump_payload_is_jump = 1'bx;
-  assign coreArea_pc_jump_payload_is_branch = 1'bx;
+  assign coreArea_pipeline_ctrl_0_down_PC_PC = coreArea_pc_PC_cur;
   assign coreArea_pc_exception_valid = 1'b0;
   assign coreArea_pc_exception_payload_vector = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
   assign coreArea_pc_flush_valid = 1'b0;
   assign coreArea_pc_flush_payload_address = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
   assign coreArea_fetch_cmdFire = (coreArea_fetch_io_readCmd_cmd_valid && coreArea_fetch_io_readCmd_cmd_ready);
-  assign coreArea_fetch_io_readCmd_cmd_valid = ((coreArea_pipeline_ctrl_1_up_isValid && (! coreArea_fetch_cmdArea_reqSent)) && (coreArea_fetch_inflight < coreArea_fetch_fifo_io_availability));
+  assign coreArea_fetch_io_readCmd_cmd_valid = (((coreArea_pipeline_ctrl_1_up_isValid && (! coreArea_fetch_cmdArea_reqSent)) && (coreArea_fetch_inflight < _zz_coreArea_fetch_io_readCmd_cmd_valid)) && (! coreArea_fetch_io_flush));
   assign coreArea_fetch_io_readCmd_cmd_payload_address = coreArea_pipeline_ctrl_1_down_PC_PC;
-  assign coreArea_fetch_io_readCmd_cmd_payload_id = 16'bxxxxxxxxxxxxxxxx;
-  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51 = ((! coreArea_fetch_cmdArea_reqSent) && (! coreArea_fetch_cmdFire));
-  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l56 = (! coreArea_fetch_fifo_io_pop_valid);
-  assign coreArea_fetch_rspArea_wordSel = coreArea_pipeline_ctrl_2_down_PC_PC[1];
-  assign coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = _zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
+  assign coreArea_fetch_io_readCmd_cmd_payload_id = coreArea_fetch_epoch;
+  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80 = ((! coreArea_fetch_cmdArea_reqSent) && (! coreArea_fetch_cmdFire));
+  assign coreArea_fetch_rspArea_epochMatch = (coreArea_fetch_fifo_io_pop_payload_epoch == coreArea_fetch_epoch);
+  assign coreArea_fetch_rspArea_stalePacket = (coreArea_fetch_fifo_io_pop_valid && (! coreArea_fetch_rspArea_epochMatch));
+  assign coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92 = coreArea_fetch_rspArea_stalePacket;
+  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95 = (! coreArea_fetch_fifo_io_pop_valid);
+  assign coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = coreArea_fetch_fifo_io_pop_payload_data[31 : 0];
+  assign coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH = coreArea_fetch_io_currentEpoch;
+  assign coreArea_fetch_fifo_io_pop_ready = (coreArea_pipeline_ctrl_2_down_isFiring || coreArea_fetch_rspArea_stalePacket);
   assign coreArea_pipeline_ctrl_3_down_Decoder_VALID = (|{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000005f) == 32'h00000017),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000007f) == 32'h0000006f),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID) == 32'h00004063),{(_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 == _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2),{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3,{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4,_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5}}}}}});
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1 = 1'b0;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL = _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
@@ -2112,32 +2208,32 @@ module CPU (
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_1;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE;
   assign coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1 = {(|((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000004) == 32'h00000004)),{1'b0,1'b0}};
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000044) == 32'h00000004);
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000018) == 32'h00000008);
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode,_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1}),{1'b0,1'b0}};
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE;
   assign coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000064) == 32'h00000024);
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000024) == 32'h0);
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000024) == 32'h00000004);
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2,((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000014) == 32'h00000004)}),{(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1,_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode}),(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1,_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode})}};
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE;
-  assign coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000020) == 32'h0);
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2 = {(|((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000014) == 32'h00000004)),{(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE,_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1}),(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE,_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1})}};
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1;
+  assign coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE = _zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1 = (|_zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ);
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN = _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN;
   assign coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN = _zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000018) == 32'h00000008);
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3,((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000044) == 32'h00000004)}),{(|_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL),(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W,_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1})}};
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1;
-  assign coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000048) == 32'h00000008);
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2}}),{(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_5}}),{(|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_13}),{(|_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_30),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73}}}}};
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5;
-  assign coreArea_pipeline_ctrl_3_down_Decoder_MicroCode = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7;
-  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_1 = (|{((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000008) == 32'h00000008),{((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000040) == 32'h0),((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00005000) == 32'h0)}});
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000024) == 32'h0);
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode,_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1}),{(|_zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL),(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W,_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1})}};
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2;
+  assign coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2 = ((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000048) == 32'h00000008);
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 = {(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2}}),{(|{_zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2,{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_5}}),{(|{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_13}),{(|_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_30),{_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51,_zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75}}}}};
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3;
+  assign coreArea_pipeline_ctrl_3_down_Decoder_MicroCode = _zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5;
+  assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_1 = (|((coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h00000040) == 32'h0));
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_1;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_2 = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR;
   assign coreArea_pipeline_ctrl_3_down_Decoder_IS_BR = _zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_BR_2;
@@ -2158,47 +2254,48 @@ module CPU (
   assign coreArea_pipeline_ctrl_3_down_Decoder_RS2_ADDR = coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION[24 : 20];
   always @(*) begin
     coreArea_pipeline_ctrl_4_down_Common_LANE_SEL = 1'b0;
-    if(when_scheduler_l146) begin
+    if(when_scheduler_l145) begin
       coreArea_pipeline_ctrl_4_down_Common_LANE_SEL = coreArea_pipeline_ctrl_4_up_isFiring;
     end
-    if(when_scheduler_l150) begin
+    if(when_scheduler_l149) begin
       coreArea_pipeline_ctrl_4_down_Common_LANE_SEL = coreArea_pipeline_ctrl_4_up_isFiring;
     end
-    if(when_scheduler_l154) begin
+    if(when_scheduler_l153) begin
       coreArea_pipeline_ctrl_4_down_Common_LANE_SEL = coreArea_pipeline_ctrl_4_up_isFiring;
     end
   end
 
   always @(*) begin
     coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU = 1'b0;
-    if(when_scheduler_l146) begin
+    if(when_scheduler_l145) begin
       coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU = 1'b1;
     end
   end
 
   always @(*) begin
     coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH = 1'b0;
-    if(when_scheduler_l150) begin
+    if(when_scheduler_l149) begin
       coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH = 1'b1;
     end
   end
 
   always @(*) begin
     coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOAGU = 1'b0;
-    if(when_scheduler_l154) begin
+    if(when_scheduler_l153) begin
       coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOAGU = 1'b1;
     end
   end
 
-  assign when_scheduler_l146 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_ALU);
-  assign when_scheduler_l150 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_BR);
-  assign when_scheduler_l154 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_AGU);
-  assign when_scheduler_l189 = (coreArea_pipeline_ctrl_4_up_isFiring && (coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR != 5'h0));
-  assign when_scheduler_l198 = ((coreArea_pipeline_ctrl_7_down_isFiring && coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid) && (coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address != 5'h0));
+  assign when_scheduler_l145 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_ALU);
+  assign when_scheduler_l149 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_BR);
+  assign when_scheduler_l153 = (coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT == ExecutionUnitEnum_AGU);
+  assign when_scheduler_l188 = (coreArea_pipeline_ctrl_4_up_isFiring && (coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR != 5'h0));
+  assign when_scheduler_l197 = ((coreArea_pipeline_ctrl_7_down_isFiring && coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid) && (coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address != 5'h0));
+  assign when_scheduler_l201 = (coreArea_pipeline_ctrl_4_up_isFiring && (coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR != 5'h0));
   assign coreArea_dispatcher_hcs_writes_rs1Busy = coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR];
   assign coreArea_dispatcher_hcs_writes_rs2Busy = coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR];
   assign coreArea_dispatcher_hcs_writes_hazard = (coreArea_pipeline_ctrl_4_up_Decoder_VALID && (coreArea_dispatcher_hcs_writes_rs1Busy || coreArea_dispatcher_hcs_writes_rs2Busy));
-  assign coreArea_pipeline_ctrl_4_haltRequest_scheduler_l212 = coreArea_dispatcher_hcs_writes_hazard;
+  assign coreArea_pipeline_ctrl_4_haltRequest_scheduler_l215 = coreArea_dispatcher_hcs_writes_hazard;
   always @(*) begin
     coreArea_dispatcher_hcs_hazards = _zz_coreArea_dispatcher_hcs_hazards;
     coreArea_dispatcher_hcs_hazards = 4'b0000;
@@ -2206,7 +2303,7 @@ module CPU (
 
   always @(*) begin
     coreArea_dispatcher_hcs_init_willIncrement = 1'b0;
-    if(when_scheduler_l248) begin
+    if(when_scheduler_l251) begin
       coreArea_dispatcher_hcs_init_willIncrement = 1'b1;
     end
   end
@@ -2225,7 +2322,7 @@ module CPU (
     end
   end
 
-  assign when_scheduler_l248 = (coreArea_dispatcher_hcs_init_value != 3'b101);
+  assign when_scheduler_l251 = (coreArea_dispatcher_hcs_init_value != 3'b101);
   assign coreArea_srcPlugin_wasReset = 1'b0;
   always @(*) begin
     coreArea_srcPlugin_immsel_sext = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
@@ -2374,27 +2471,159 @@ module CPU (
   end
 
   always @(*) begin
-    coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address = 5'bxxxxx;
-    if(when_IntAlu_l75) begin
+    coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address = 5'h0;
+    if(when_IntAlu_l76) begin
       coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
+    end
+    if(when_branch_l90) begin
+      if(coreArea_branch_logic_isJump) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
+      end
+      if(when_branch_l98) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
+      end
     end
   end
 
   always @(*) begin
-    coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-    if(when_IntAlu_l75) begin
+    coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = 64'h0;
+    if(when_IntAlu_l76) begin
       coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : coreArea_intalu_aluNodeStage_result);
+    end
+    if(when_branch_l90) begin
+      if(coreArea_branch_logic_isJump) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data);
+      end
+      if(when_branch_l98) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data = _zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1;
+      end
     end
   end
 
   always @(*) begin
     coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid = 1'b0;
-    if(when_IntAlu_l75) begin
+    if(when_IntAlu_l76) begin
       coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid = ((coreArea_pipeline_ctrl_6_up_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
+    end
+    if(when_branch_l90) begin
+      if(coreArea_branch_logic_isJump) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid = (((coreArea_pipeline_ctrl_6_down_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID) && (! coreArea_branch_logic_willTrap));
+      end
+      if(when_branch_l98) begin
+        coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid = ((coreArea_pipeline_ctrl_6_down_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
+      end
     end
   end
 
-  assign when_IntAlu_l75 = (coreArea_pipeline_ctrl_6_up_Decoder_VALID == 1'b1);
+  assign when_IntAlu_l76 = ((coreArea_pipeline_ctrl_6_up_Decoder_VALID == 1'b1) && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU);
+  assign coreArea_branch_logic_src1 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
+  assign coreArea_branch_logic_src2 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
+  assign coreArea_branch_logic_src1U = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
+  assign coreArea_branch_logic_src2U = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
+  assign coreArea_branch_logic_imm = coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
+  always @(*) begin
+    case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
+      MicroCode_uopBEQ : begin
+        coreArea_branch_logic_condition = ($signed(coreArea_branch_logic_src1) == $signed(coreArea_branch_logic_src2));
+      end
+      MicroCode_uopBNE : begin
+        coreArea_branch_logic_condition = ($signed(coreArea_branch_logic_src1) != $signed(coreArea_branch_logic_src2));
+      end
+      MicroCode_uopBLT : begin
+        coreArea_branch_logic_condition = ($signed(coreArea_branch_logic_src1) < $signed(coreArea_branch_logic_src2));
+      end
+      MicroCode_uopBGE : begin
+        coreArea_branch_logic_condition = ($signed(coreArea_branch_logic_src2) <= $signed(coreArea_branch_logic_src1));
+      end
+      MicroCode_uopBLTU : begin
+        coreArea_branch_logic_condition = (coreArea_branch_logic_src1U < coreArea_branch_logic_src2U);
+      end
+      MicroCode_uopBGEU : begin
+        coreArea_branch_logic_condition = (coreArea_branch_logic_src2U <= coreArea_branch_logic_src1U);
+      end
+      default : begin
+        coreArea_branch_logic_condition = 1'b0;
+      end
+    endcase
+  end
+
+  always @(*) begin
+    case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
+      MicroCode_uopJALR : begin
+        coreArea_branch_logic_target = _zz_coreArea_branch_logic_target;
+        coreArea_branch_logic_target[0] = 1'b0;
+      end
+      default : begin
+        coreArea_branch_logic_target = _zz_coreArea_branch_logic_target_3;
+      end
+    endcase
+  end
+
+  always @(*) begin
+    case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
+      MicroCode_uopJAL : begin
+        coreArea_branch_logic_isJump = 1'b1;
+      end
+      MicroCode_uopJALR : begin
+        coreArea_branch_logic_isJump = 1'b1;
+      end
+      default : begin
+        coreArea_branch_logic_isJump = 1'b0;
+      end
+    endcase
+  end
+
+  always @(*) begin
+    case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
+      MicroCode_uopBEQ : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      MicroCode_uopBNE : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      MicroCode_uopBLT : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      MicroCode_uopBGE : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      MicroCode_uopBLTU : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      MicroCode_uopBGEU : begin
+        coreArea_branch_logic_isBranch = 1'b1;
+      end
+      default : begin
+        coreArea_branch_logic_isBranch = 1'b0;
+      end
+    endcase
+  end
+
+  assign coreArea_branch_logic_doJump = (((coreArea_branch_logic_isJump || (coreArea_branch_logic_isBranch && coreArea_branch_logic_condition)) && coreArea_pipeline_ctrl_6_up_Common_LANE_SEL) && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
+  assign coreArea_branch_logic_misaligned = (coreArea_branch_logic_target[1 : 0] != 2'b00);
+  assign coreArea_branch_logic_willTrap = (coreArea_branch_logic_doJump && coreArea_branch_logic_misaligned);
+  assign coreArea_pipeline_ctrl_6_down_Common_TRAP = coreArea_branch_logic_willTrap;
+  assign coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN = (coreArea_branch_logic_doJump && (! coreArea_branch_logic_willTrap));
+  assign coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET = coreArea_branch_logic_target;
+  assign coreArea_branch_branchResolved = ((((coreArea_branch_logic_isJump || coreArea_branch_logic_isBranch) && coreArea_pipeline_ctrl_6_up_Common_LANE_SEL) && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH) && coreArea_pipeline_ctrl_6_down_isFiring);
+  assign coreArea_branch_logic_jumpCmd_valid = (coreArea_branch_logic_doJump && (! coreArea_branch_logic_willTrap));
+  assign coreArea_branch_logic_jumpCmd_payload_target = coreArea_branch_logic_target;
+  assign coreArea_branch_logic_jumpCmd_payload_is_jump = coreArea_branch_logic_isJump;
+  assign coreArea_branch_logic_jumpCmd_payload_is_branch = coreArea_branch_logic_isBranch;
+  assign when_branch_l90 = (coreArea_pipeline_ctrl_6_up_Common_LANE_SEL && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
+  assign when_branch_l98 = (coreArea_pipeline_ctrl_6_up_Decoder_MicroCode == MicroCode_uopAUIPC);
+  assign coreArea_decode_branchResolved = coreArea_branch_branchResolved;
+  assign coreArea_pc_jump_valid = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pc_jump_payload_target = coreArea_branch_logic_jumpCmd_payload_target;
+  assign coreArea_pc_jump_payload_is_jump = coreArea_branch_logic_jumpCmd_payload_is_jump;
+  assign coreArea_pc_jump_payload_is_branch = coreArea_branch_logic_jumpCmd_payload_is_branch;
+  assign coreArea_fetch_io_flush = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_fetch_io_currentEpoch = coreArea_currentEpoch;
+  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l130 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l130 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l130 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l136 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l136 = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_rvfiPlugin_io_rvfi_valid = coreArea_pipeline_ctrl_7_up_Common_COMMIT;
   assign coreArea_rvfiPlugin_io_rvfi_order = coreArea_rvfiPlugin_order;
   assign coreArea_rvfiPlugin_io_rvfi_insn = coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
@@ -2410,7 +2639,7 @@ module CPU (
   assign coreArea_rvfiPlugin_io_rvfi_rd_addr = coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address;
   assign coreArea_rvfiPlugin_io_rvfi_rd_wdata = coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data;
   assign coreArea_rvfiPlugin_io_rvfi_pc_rdata = coreArea_pipeline_ctrl_7_up_PC_PC;
-  assign coreArea_rvfiPlugin_io_rvfi_pc_wdata = _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata;
+  assign coreArea_rvfiPlugin_io_rvfi_pc_wdata = (coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN ? coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET : _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata);
   assign coreArea_rvfiPlugin_io_rvfi_mem_addr = 64'h0;
   assign coreArea_rvfiPlugin_io_rvfi_mem_rmask = 8'h0;
   assign coreArea_rvfiPlugin_io_rvfi_mem_wmask = 8'h0;
@@ -2459,7 +2688,6 @@ module CPU (
   assign coreArea_debugPlugin_io_dbg_f_pc = coreArea_pipeline_ctrl_2_down_PC_PC;
   assign coreArea_debugPlugin_io_dbg_d_pc = coreArea_pipeline_ctrl_3_down_PC_PC;
   assign coreArea_debugPlugin_io_dbg_x_pc = coreArea_pipeline_ctrl_6_down_PC_PC;
-  assign coreArea_pipeline_ctrl_7_up_Common_TRAP = 1'b0;
   assign coreArea_pipeline_ctrl_7_up_Common_COMMIT = ((! coreArea_pipeline_ctrl_7_up_Common_TRAP) && coreArea_pipeline_ctrl_7_up_Common_LANE_SEL);
   assign coreArea_srcPlugin_regfileread_regfile_io_writer_valid = ((coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid && coreArea_pipeline_ctrl_7_down_isFiring) && coreArea_pipeline_ctrl_7_up_Common_COMMIT);
   assign coreArea_pipeline_ctrl_7_down_ready = 1'b1;
@@ -2471,6 +2699,16 @@ module CPU (
   assign coreArea_fetch_io_readCmd_rsp_payload_data = io_iBus_rsp_payload_data;
   assign coreArea_fetch_io_readCmd_rsp_payload_address = io_iBus_rsp_payload_address;
   assign coreArea_fetch_io_readCmd_rsp_payload_id = io_iBus_rsp_payload_id;
+  assign coreArea_pipeline_ctrl_5_up_forgetOne = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_5_up_cancel = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_4_up_forgetOne = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_4_up_cancel = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_3_up_forgetOne = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_3_up_cancel = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l130);
+  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l136,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
+  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l136,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
+  assign coreArea_pipeline_ctrl_1_up_forgetOne = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l136);
+  assign coreArea_pipeline_ctrl_1_up_cancel = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l136);
   always @(*) begin
     coreArea_pipeline_ctrl_0_down_ready = coreArea_pipeline_ctrl_1_up_ready;
     if(when_StageLink_l71) begin
@@ -2534,6 +2772,9 @@ module CPU (
     if(when_CtrlLink_l191) begin
       coreArea_pipeline_ctrl_1_down_valid = 1'b0;
     end
+    if(when_CtrlLink_l198) begin
+      coreArea_pipeline_ctrl_1_down_valid = 1'b0;
+    end
   end
 
   always @(*) begin
@@ -2543,11 +2784,15 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51);
+  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80);
+  assign when_CtrlLink_l198 = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l136);
   assign coreArea_pipeline_ctrl_1_down_PC_PC = coreArea_pipeline_ctrl_1_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_2_down_valid = coreArea_pipeline_ctrl_2_up_valid;
     if(when_CtrlLink_l191_1) begin
+      coreArea_pipeline_ctrl_2_down_valid = 1'b0;
+    end
+    if(when_CtrlLink_l198_1) begin
       coreArea_pipeline_ctrl_2_down_valid = 1'b0;
     end
   end
@@ -2559,15 +2804,27 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l56);
+  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95);
+  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l136,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
   assign coreArea_pipeline_ctrl_2_down_PC_PC = coreArea_pipeline_ctrl_2_up_PC_PC;
-  assign coreArea_pipeline_ctrl_3_down_valid = coreArea_pipeline_ctrl_3_up_valid;
+  always @(*) begin
+    coreArea_pipeline_ctrl_3_down_valid = coreArea_pipeline_ctrl_3_up_valid;
+    if(when_CtrlLink_l198_2) begin
+      coreArea_pipeline_ctrl_3_down_valid = 1'b0;
+    end
+  end
+
   assign coreArea_pipeline_ctrl_3_up_ready = coreArea_pipeline_ctrl_3_down_isReady;
+  assign when_CtrlLink_l198_2 = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l130);
   assign coreArea_pipeline_ctrl_3_down_PC_PC = coreArea_pipeline_ctrl_3_up_PC_PC;
   assign coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION;
+  assign coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH;
   always @(*) begin
     coreArea_pipeline_ctrl_4_down_valid = coreArea_pipeline_ctrl_4_up_valid;
     if(when_CtrlLink_l191_2) begin
+      coreArea_pipeline_ctrl_4_down_valid = 1'b0;
+    end
+    if(when_CtrlLink_l198_3) begin
       coreArea_pipeline_ctrl_4_down_valid = 1'b0;
     end
   end
@@ -2579,9 +2836,11 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191_2 = (|coreArea_pipeline_ctrl_4_haltRequest_scheduler_l212);
+  assign when_CtrlLink_l191_2 = (|coreArea_pipeline_ctrl_4_haltRequest_scheduler_l215);
+  assign when_CtrlLink_l198_3 = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l130);
   assign coreArea_pipeline_ctrl_4_down_PC_PC = coreArea_pipeline_ctrl_4_up_PC_PC;
   assign coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION;
+  assign coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH;
   assign coreArea_pipeline_ctrl_4_down_Decoder_VALID = coreArea_pipeline_ctrl_4_up_Decoder_VALID;
   assign coreArea_pipeline_ctrl_4_down_Decoder_LEGAL = coreArea_pipeline_ctrl_4_up_Decoder_LEGAL;
   assign coreArea_pipeline_ctrl_4_down_Decoder_RS1TYPE = coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE;
@@ -2591,10 +2850,18 @@ module CPU (
   assign coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR = coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR;
   assign coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR = coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR;
   assign coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR = coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR;
-  assign coreArea_pipeline_ctrl_5_down_valid = coreArea_pipeline_ctrl_5_up_valid;
+  always @(*) begin
+    coreArea_pipeline_ctrl_5_down_valid = coreArea_pipeline_ctrl_5_up_valid;
+    if(when_CtrlLink_l198_4) begin
+      coreArea_pipeline_ctrl_5_down_valid = 1'b0;
+    end
+  end
+
   assign coreArea_pipeline_ctrl_5_up_ready = coreArea_pipeline_ctrl_5_down_isReady;
+  assign when_CtrlLink_l198_4 = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l130);
   assign coreArea_pipeline_ctrl_5_down_PC_PC = coreArea_pipeline_ctrl_5_up_PC_PC;
   assign coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION;
+  assign coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH;
   assign coreArea_pipeline_ctrl_5_down_Decoder_VALID = coreArea_pipeline_ctrl_5_up_Decoder_VALID;
   assign coreArea_pipeline_ctrl_5_down_Decoder_LEGAL = coreArea_pipeline_ctrl_5_up_Decoder_LEGAL;
   assign coreArea_pipeline_ctrl_5_down_Decoder_RS1TYPE = coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE;
@@ -2605,11 +2872,14 @@ module CPU (
   assign coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR = coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR;
   assign coreArea_pipeline_ctrl_5_down_Common_LANE_SEL = coreArea_pipeline_ctrl_5_up_Common_LANE_SEL;
   assign coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU = coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU;
+  assign coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOBRANCH = coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH;
   assign coreArea_pipeline_ctrl_6_down_valid = coreArea_pipeline_ctrl_6_up_valid;
   assign coreArea_pipeline_ctrl_6_up_ready = coreArea_pipeline_ctrl_6_down_isReady;
   assign coreArea_pipeline_ctrl_6_down_PC_PC = coreArea_pipeline_ctrl_6_up_PC_PC;
   assign coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
+  assign coreArea_pipeline_ctrl_6_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH;
   assign coreArea_pipeline_ctrl_6_down_Decoder_VALID = coreArea_pipeline_ctrl_6_up_Decoder_VALID;
+  assign coreArea_pipeline_ctrl_6_down_Decoder_LEGAL = coreArea_pipeline_ctrl_6_up_Decoder_LEGAL;
   assign coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR = coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR;
   assign coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR = coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR;
   assign coreArea_pipeline_ctrl_6_down_Common_LANE_SEL = coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
@@ -2622,6 +2892,7 @@ module CPU (
   assign coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid = coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid;
   assign coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address = coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address;
   assign coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_data = coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data;
+  assign coreArea_pipeline_ctrl_0_down_isFiring = (coreArea_pipeline_ctrl_0_down_isValid && coreArea_pipeline_ctrl_0_down_isReady);
   assign coreArea_pipeline_ctrl_0_down_isValid = coreArea_pipeline_ctrl_0_down_valid;
   assign coreArea_pipeline_ctrl_0_down_isReady = coreArea_pipeline_ctrl_0_down_ready;
   assign coreArea_pipeline_ctrl_1_up_isValid = coreArea_pipeline_ctrl_1_up_valid;
@@ -2633,20 +2904,26 @@ module CPU (
   assign coreArea_pipeline_ctrl_2_down_isValid = coreArea_pipeline_ctrl_2_down_valid;
   assign coreArea_pipeline_ctrl_2_down_isReady = coreArea_pipeline_ctrl_2_down_ready;
   assign coreArea_pipeline_ctrl_3_up_isValid = coreArea_pipeline_ctrl_3_up_valid;
+  assign coreArea_pipeline_ctrl_3_down_isFiring = (coreArea_pipeline_ctrl_3_down_isValid && coreArea_pipeline_ctrl_3_down_isReady);
   assign coreArea_pipeline_ctrl_3_down_isValid = coreArea_pipeline_ctrl_3_down_valid;
   assign coreArea_pipeline_ctrl_3_down_isReady = coreArea_pipeline_ctrl_3_down_ready;
-  assign coreArea_pipeline_ctrl_4_up_isFiring = (coreArea_pipeline_ctrl_4_up_isValid && coreArea_pipeline_ctrl_4_up_isReady);
+  assign coreArea_pipeline_ctrl_4_up_isFiring = ((coreArea_pipeline_ctrl_4_up_isValid && coreArea_pipeline_ctrl_4_up_isReady) && (! coreArea_pipeline_ctrl_4_up_isCancel));
   assign coreArea_pipeline_ctrl_4_up_isValid = coreArea_pipeline_ctrl_4_up_valid;
   assign coreArea_pipeline_ctrl_4_up_isReady = coreArea_pipeline_ctrl_4_up_ready;
+  assign coreArea_pipeline_ctrl_4_up_isCancel = coreArea_pipeline_ctrl_4_up_cancel;
+  assign coreArea_pipeline_ctrl_4_down_isFiring = (coreArea_pipeline_ctrl_4_down_isValid && coreArea_pipeline_ctrl_4_down_isReady);
   assign coreArea_pipeline_ctrl_4_down_isValid = coreArea_pipeline_ctrl_4_down_valid;
   assign coreArea_pipeline_ctrl_4_down_isReady = coreArea_pipeline_ctrl_4_down_ready;
   assign coreArea_pipeline_ctrl_5_up_isValid = coreArea_pipeline_ctrl_5_up_valid;
+  assign coreArea_pipeline_ctrl_5_down_isFiring = (coreArea_pipeline_ctrl_5_down_isValid && coreArea_pipeline_ctrl_5_down_isReady);
   assign coreArea_pipeline_ctrl_5_down_isValid = coreArea_pipeline_ctrl_5_down_valid;
   assign coreArea_pipeline_ctrl_5_down_isReady = coreArea_pipeline_ctrl_5_down_ready;
   assign coreArea_pipeline_ctrl_6_up_isValid = coreArea_pipeline_ctrl_6_up_valid;
+  assign coreArea_pipeline_ctrl_6_down_isFiring = (coreArea_pipeline_ctrl_6_down_isValid && coreArea_pipeline_ctrl_6_down_isReady);
   assign coreArea_pipeline_ctrl_6_down_isValid = coreArea_pipeline_ctrl_6_down_valid;
   assign coreArea_pipeline_ctrl_6_down_isReady = coreArea_pipeline_ctrl_6_down_ready;
   assign coreArea_pipeline_ctrl_7_up_isValid = coreArea_pipeline_ctrl_7_up_valid;
+  assign coreArea_pipeline_ctrl_0_up_isValid = coreArea_pipeline_ctrl_0_up_valid;
   assign coreArea_pipeline_ctrl_7_down_isFiring = (coreArea_pipeline_ctrl_7_down_isValid && coreArea_pipeline_ctrl_7_down_isReady);
   assign coreArea_pipeline_ctrl_7_down_isValid = coreArea_pipeline_ctrl_7_down_valid;
   assign coreArea_pipeline_ctrl_7_down_isReady = coreArea_pipeline_ctrl_7_down_ready;
@@ -2655,9 +2932,12 @@ module CPU (
       if(io_reset) begin
       coreArea_pc_PC_cur <= 64'h0;
       coreArea_fetch_inflight <= 4'b0000;
+      coreArea_fetch_epoch <= 16'h0;
+      coreArea_fetch_flushPending <= 1'b0;
       coreArea_fetch_cmdArea_reqSent <= 1'b0;
       coreArea_dispatcher_hcs_regBusy <= 32'h0;
       coreArea_dispatcher_hcs_init_value <= 3'b001;
+      coreArea_currentEpoch <= 4'b0000;
       coreArea_rvfiPlugin_order <= 64'h0;
       coreArea_pipeline_ctrl_1_up_valid <= 1'b0;
       coreArea_pipeline_ctrl_2_up_valid <= 1'b0;
@@ -2667,51 +2947,80 @@ module CPU (
       coreArea_pipeline_ctrl_6_up_valid <= 1'b0;
       coreArea_pipeline_ctrl_7_up_valid <= 1'b0;
       end else begin
-        if(coreArea_pipeline_ctrl_0_down_isReady) begin
-          coreArea_pc_PC_cur <= (coreArea_pc_PC_cur + 64'h0000000000000004);
-          if(coreArea_pc_exception_valid) begin
-            coreArea_pc_PC_cur <= coreArea_pc_exception_payload_vector;
+        if(coreArea_pc_exception_valid) begin
+          coreArea_pc_PC_cur <= coreArea_pc_exception_payload_vector;
+        end else begin
+          if(coreArea_pc_flush_valid) begin
+            coreArea_pc_PC_cur <= coreArea_pc_flush_payload_address;
           end else begin
-            if(coreArea_pc_flush_valid) begin
-              coreArea_pc_PC_cur <= coreArea_pc_flush_payload_address;
+            if(coreArea_pc_jump_valid) begin
+              coreArea_pc_PC_cur <= coreArea_pc_jump_payload_target;
             end else begin
-              if(coreArea_pc_jump_valid) begin
-                coreArea_pc_PC_cur <= coreArea_pc_jump_payload_target;
+              if(coreArea_pipeline_ctrl_0_down_isReady) begin
+                coreArea_pc_PC_cur <= (coreArea_pc_PC_cur + 64'h0000000000000004);
               end
             end
           end
         end
         coreArea_fetch_inflight <= (_zz_coreArea_fetch_inflight - _zz_coreArea_fetch_inflight_3);
+        coreArea_fetch_flushPending <= coreArea_fetch_io_flush;
+        if(coreArea_fetch_flushPending) begin
+          coreArea_fetch_epoch <= (coreArea_fetch_epoch + 16'h0001);
+        end
         if(coreArea_fetch_cmdFire) begin
           coreArea_fetch_cmdArea_reqSent <= 1'b1;
         end
         if(coreArea_pipeline_ctrl_1_down_isFiring) begin
           coreArea_fetch_cmdArea_reqSent <= 1'b0;
         end
-        if(when_scheduler_l189) begin
+        if(coreArea_fetch_io_flush) begin
+          coreArea_fetch_cmdArea_reqSent <= 1'b0;
+        end
+        if(when_scheduler_l188) begin
           coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR] <= 1'b1;
         end
-        if(when_scheduler_l198) begin
+        if(when_scheduler_l197) begin
           coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address] <= 1'b0;
         end
+        if(when_scheduler_l201) begin
+          coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR] <= 1'b1;
+        end
         coreArea_dispatcher_hcs_init_value <= coreArea_dispatcher_hcs_init_valueNext;
-        if(when_scheduler_l248) begin
+        if(when_scheduler_l251) begin
           coreArea_dispatcher_hcs_regBusy <= 32'h0;
+        end
+        if(coreArea_branch_logic_jumpCmd_valid) begin
+          coreArea_currentEpoch <= (coreArea_currentEpoch + 4'b0001);
         end
         if(coreArea_pipeline_ctrl_7_up_Common_COMMIT) begin
           coreArea_rvfiPlugin_order <= (coreArea_rvfiPlugin_order + 64'h0000000000000001);
         end
+        if(coreArea_pipeline_ctrl_1_up_forgetOne) begin
+          coreArea_pipeline_ctrl_1_up_valid <= 1'b0;
+        end
         if(coreArea_pipeline_ctrl_0_down_isReady) begin
           coreArea_pipeline_ctrl_1_up_valid <= coreArea_pipeline_ctrl_0_down_isValid;
+        end
+        if(coreArea_pipeline_ctrl_2_up_forgetOne) begin
+          coreArea_pipeline_ctrl_2_up_valid <= 1'b0;
         end
         if(coreArea_pipeline_ctrl_1_down_isReady) begin
           coreArea_pipeline_ctrl_2_up_valid <= coreArea_pipeline_ctrl_1_down_isValid;
         end
+        if(coreArea_pipeline_ctrl_3_up_forgetOne) begin
+          coreArea_pipeline_ctrl_3_up_valid <= 1'b0;
+        end
         if(coreArea_pipeline_ctrl_2_down_isReady) begin
           coreArea_pipeline_ctrl_3_up_valid <= coreArea_pipeline_ctrl_2_down_isValid;
         end
+        if(coreArea_pipeline_ctrl_4_up_forgetOne) begin
+          coreArea_pipeline_ctrl_4_up_valid <= 1'b0;
+        end
         if(coreArea_pipeline_ctrl_3_down_isReady) begin
           coreArea_pipeline_ctrl_4_up_valid <= coreArea_pipeline_ctrl_3_down_isValid;
+        end
+        if(coreArea_pipeline_ctrl_5_up_forgetOne) begin
+          coreArea_pipeline_ctrl_5_up_valid <= 1'b0;
         end
         if(coreArea_pipeline_ctrl_4_down_isReady) begin
           coreArea_pipeline_ctrl_5_up_valid <= coreArea_pipeline_ctrl_4_down_isValid;
@@ -2728,6 +3037,7 @@ module CPU (
 
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
+      coreArea_pipeline_ctrl_7_up_Common_TRAP <= 1'b0;
       if(coreArea_pipeline_ctrl_0_down_isReady) begin
         coreArea_pipeline_ctrl_1_up_PC_PC <= coreArea_pipeline_ctrl_0_down_PC_PC;
       end
@@ -2737,10 +3047,12 @@ module CPU (
       if(coreArea_pipeline_ctrl_2_down_isReady) begin
         coreArea_pipeline_ctrl_3_up_PC_PC <= coreArea_pipeline_ctrl_2_down_PC_PC;
         coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION <= coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
+        coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH <= coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH;
       end
       if(coreArea_pipeline_ctrl_3_down_isReady) begin
         coreArea_pipeline_ctrl_4_up_PC_PC <= coreArea_pipeline_ctrl_3_down_PC_PC;
         coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION <= coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION;
+        coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH <= coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH;
         coreArea_pipeline_ctrl_4_up_Decoder_VALID <= coreArea_pipeline_ctrl_3_down_Decoder_VALID;
         coreArea_pipeline_ctrl_4_up_Decoder_LEGAL <= coreArea_pipeline_ctrl_3_down_Decoder_LEGAL;
         coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT <= coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT;
@@ -2755,6 +3067,7 @@ module CPU (
       if(coreArea_pipeline_ctrl_4_down_isReady) begin
         coreArea_pipeline_ctrl_5_up_PC_PC <= coreArea_pipeline_ctrl_4_down_PC_PC;
         coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION <= coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION;
+        coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH <= coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH;
         coreArea_pipeline_ctrl_5_up_Decoder_VALID <= coreArea_pipeline_ctrl_4_down_Decoder_VALID;
         coreArea_pipeline_ctrl_5_up_Decoder_LEGAL <= coreArea_pipeline_ctrl_4_down_Decoder_LEGAL;
         coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE <= coreArea_pipeline_ctrl_4_down_Decoder_RS1TYPE;
@@ -2766,10 +3079,12 @@ module CPU (
         coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR <= coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR;
         coreArea_pipeline_ctrl_5_up_Common_LANE_SEL <= coreArea_pipeline_ctrl_4_down_Common_LANE_SEL;
         coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU <= coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU;
+        coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH <= coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH;
       end
       if(coreArea_pipeline_ctrl_5_down_isReady) begin
         coreArea_pipeline_ctrl_6_up_PC_PC <= coreArea_pipeline_ctrl_5_down_PC_PC;
         coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION <= coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION;
+        coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH <= coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH;
         coreArea_pipeline_ctrl_6_up_Decoder_VALID <= coreArea_pipeline_ctrl_5_down_Decoder_VALID;
         coreArea_pipeline_ctrl_6_up_Decoder_LEGAL <= coreArea_pipeline_ctrl_5_down_Decoder_LEGAL;
         coreArea_pipeline_ctrl_6_up_Decoder_MicroCode <= coreArea_pipeline_ctrl_5_down_Decoder_MicroCode;
@@ -2778,6 +3093,7 @@ module CPU (
         coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR <= coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR;
         coreArea_pipeline_ctrl_6_up_Common_LANE_SEL <= coreArea_pipeline_ctrl_5_down_Common_LANE_SEL;
         coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU <= coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU;
+        coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH <= coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOBRANCH;
         coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1 <= coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1;
         coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2 <= coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2;
         coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED <= coreArea_pipeline_ctrl_5_down_SrcPlugin_IMMED;
@@ -2785,6 +3101,7 @@ module CPU (
       if(coreArea_pipeline_ctrl_6_down_isReady) begin
         coreArea_pipeline_ctrl_7_up_PC_PC <= coreArea_pipeline_ctrl_6_down_PC_PC;
         coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION <= coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION;
+        coreArea_pipeline_ctrl_7_up_Common_SPEC_EPOCH <= coreArea_pipeline_ctrl_6_down_Common_SPEC_EPOCH;
         coreArea_pipeline_ctrl_7_up_Decoder_VALID <= coreArea_pipeline_ctrl_6_down_Decoder_VALID;
         coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR <= coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR;
         coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR <= coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR;
@@ -2796,6 +3113,9 @@ module CPU (
         coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid <= coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid;
         coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address <= coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address;
         coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data <= coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data;
+        coreArea_pipeline_ctrl_7_up_Common_TRAP <= coreArea_pipeline_ctrl_6_down_Common_TRAP;
+        coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN <= coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN;
+        coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET <= coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET;
       end
     end
   end
@@ -2820,80 +3140,98 @@ module IntRegFile (
 
   wire       [63:0]   mem_spinal_port0;
   wire       [63:0]   mem_spinal_port1;
+  reg                 _zz_1;
+  wire                when_regFile_l66;
   (* ram_style = "distributed" *) reg [63:0] mem [0:31];
 
   assign mem_spinal_port0 = mem[io_readerRS1_address];
   assign mem_spinal_port1 = mem[io_readerRS2_address];
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
-      if(io_writer_valid) begin
+      if(_zz_1) begin
         mem[io_writer_address] <= io_writer_data;
       end
     end
   end
 
-  assign io_readerRS1_data = mem_spinal_port0;
-  assign io_readerRS2_data = mem_spinal_port1;
+  always @(*) begin
+    _zz_1 = 1'b0;
+    if(when_regFile_l66) begin
+      _zz_1 = 1'b1;
+    end
+  end
+
+  assign io_readerRS1_data = ((io_readerRS1_address == 5'h0) ? 64'h0 : mem_spinal_port0);
+  assign io_readerRS2_data = ((io_readerRS2_address == 5'h0) ? 64'h0 : mem_spinal_port1);
+  assign when_regFile_l66 = (io_writer_valid && (io_writer_address != 5'h0));
 
 endmodule
 
 module StreamFifo (
   input  wire          io_push_valid,
   output wire          io_push_ready,
-  input  wire [63:0]   io_push_payload,
+  input  wire [63:0]   io_push_payload_data,
+  input  wire [15:0]   io_push_payload_epoch,
   output wire          io_pop_valid,
   input  wire          io_pop_ready,
-  output wire [63:0]   io_pop_payload,
+  output wire [63:0]   io_pop_payload_data,
+  output wire [15:0]   io_pop_payload_epoch,
   input  wire          io_flush,
-  output wire [3:0]    io_occupancy,
-  output wire [3:0]    io_availability,
+  output wire [1:0]    io_occupancy,
+  output wire [1:0]    io_availability,
   input  wire          io_clk,
   input  wire          io_reset,
   input  wire          io_clkEnable
 );
 
-  reg        [63:0]   logic_ram_spinal_port1;
+  reg        [79:0]   logic_ram_spinal_port1;
+  wire       [79:0]   _zz_logic_ram_port;
   reg                 _zz_1;
   wire                logic_ptr_doPush;
   wire                logic_ptr_doPop;
   wire                logic_ptr_full;
   wire                logic_ptr_empty;
-  reg        [3:0]    logic_ptr_push;
-  reg        [3:0]    logic_ptr_pop;
-  wire       [3:0]    logic_ptr_occupancy;
-  wire       [3:0]    logic_ptr_popOnIo;
+  reg        [1:0]    logic_ptr_push;
+  reg        [1:0]    logic_ptr_pop;
+  wire       [1:0]    logic_ptr_occupancy;
+  wire       [1:0]    logic_ptr_popOnIo;
   wire                when_Stream_l1455;
   reg                 logic_ptr_wentUp;
   wire                io_push_fire;
   wire                logic_push_onRam_write_valid;
-  wire       [2:0]    logic_push_onRam_write_payload_address;
-  wire       [63:0]   logic_push_onRam_write_payload_data;
+  wire       [0:0]    logic_push_onRam_write_payload_address;
+  wire       [63:0]   logic_push_onRam_write_payload_data_data;
+  wire       [15:0]   logic_push_onRam_write_payload_data_epoch;
   wire                logic_pop_addressGen_valid;
   reg                 logic_pop_addressGen_ready;
-  wire       [2:0]    logic_pop_addressGen_payload;
+  wire       [0:0]    logic_pop_addressGen_payload;
   wire                logic_pop_addressGen_fire;
   wire                logic_pop_sync_readArbitation_valid;
   wire                logic_pop_sync_readArbitation_ready;
-  wire       [2:0]    logic_pop_sync_readArbitation_payload;
+  wire       [0:0]    logic_pop_sync_readArbitation_payload;
   reg                 logic_pop_addressGen_rValid;
-  reg        [2:0]    logic_pop_addressGen_rData;
+  reg        [0:0]    logic_pop_addressGen_rData;
   wire                when_Stream_l477;
   wire                logic_pop_sync_readPort_cmd_valid;
-  wire       [2:0]    logic_pop_sync_readPort_cmd_payload;
-  wire       [63:0]   logic_pop_sync_readPort_rsp;
+  wire       [0:0]    logic_pop_sync_readPort_cmd_payload;
+  wire       [63:0]   logic_pop_sync_readPort_rsp_data;
+  wire       [15:0]   logic_pop_sync_readPort_rsp_epoch;
+  wire       [79:0]   _zz_logic_pop_sync_readPort_rsp_data;
   wire                logic_pop_addressGen_toFlowFire_valid;
-  wire       [2:0]    logic_pop_addressGen_toFlowFire_payload;
+  wire       [0:0]    logic_pop_addressGen_toFlowFire_payload;
   wire                logic_pop_sync_readArbitation_translated_valid;
   wire                logic_pop_sync_readArbitation_translated_ready;
-  wire       [63:0]   logic_pop_sync_readArbitation_translated_payload;
+  wire       [63:0]   logic_pop_sync_readArbitation_translated_payload_data;
+  wire       [15:0]   logic_pop_sync_readArbitation_translated_payload_epoch;
   wire                logic_pop_sync_readArbitation_fire;
-  reg        [3:0]    logic_pop_sync_popReg;
-  reg [63:0] logic_ram [0:7];
+  reg        [1:0]    logic_pop_sync_popReg;
+  reg [79:0] logic_ram [0:1];
 
+  assign _zz_logic_ram_port = {logic_push_onRam_write_payload_data_epoch,logic_push_onRam_write_payload_data_data};
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
       if(_zz_1) begin
-        logic_ram[logic_push_onRam_write_payload_address] <= logic_push_onRam_write_payload_data;
+        logic_ram[logic_push_onRam_write_payload_address] <= _zz_logic_ram_port;
       end
     end
   end
@@ -2914,17 +3252,18 @@ module StreamFifo (
   end
 
   assign when_Stream_l1455 = (logic_ptr_doPush != logic_ptr_doPop);
-  assign logic_ptr_full = (((logic_ptr_push ^ logic_ptr_popOnIo) ^ 4'b1000) == 4'b0000);
+  assign logic_ptr_full = (((logic_ptr_push ^ logic_ptr_popOnIo) ^ 2'b10) == 2'b00);
   assign logic_ptr_empty = (logic_ptr_push == logic_ptr_pop);
   assign logic_ptr_occupancy = (logic_ptr_push - logic_ptr_popOnIo);
   assign io_push_ready = (! logic_ptr_full);
   assign io_push_fire = (io_push_valid && io_push_ready);
   assign logic_ptr_doPush = io_push_fire;
   assign logic_push_onRam_write_valid = io_push_fire;
-  assign logic_push_onRam_write_payload_address = logic_ptr_push[2:0];
-  assign logic_push_onRam_write_payload_data = io_push_payload;
+  assign logic_push_onRam_write_payload_address = logic_ptr_push[0:0];
+  assign logic_push_onRam_write_payload_data_data = io_push_payload_data;
+  assign logic_push_onRam_write_payload_data_epoch = io_push_payload_epoch;
   assign logic_pop_addressGen_valid = (! logic_ptr_empty);
-  assign logic_pop_addressGen_payload = logic_ptr_pop[2:0];
+  assign logic_pop_addressGen_payload = logic_ptr_pop[0:0];
   assign logic_pop_addressGen_fire = (logic_pop_addressGen_valid && logic_pop_addressGen_ready);
   assign logic_ptr_doPop = logic_pop_addressGen_fire;
   always @(*) begin
@@ -2937,29 +3276,33 @@ module StreamFifo (
   assign when_Stream_l477 = (! logic_pop_sync_readArbitation_valid);
   assign logic_pop_sync_readArbitation_valid = logic_pop_addressGen_rValid;
   assign logic_pop_sync_readArbitation_payload = logic_pop_addressGen_rData;
-  assign logic_pop_sync_readPort_rsp = logic_ram_spinal_port1;
+  assign _zz_logic_pop_sync_readPort_rsp_data = logic_ram_spinal_port1;
+  assign logic_pop_sync_readPort_rsp_data = _zz_logic_pop_sync_readPort_rsp_data[63 : 0];
+  assign logic_pop_sync_readPort_rsp_epoch = _zz_logic_pop_sync_readPort_rsp_data[79 : 64];
   assign logic_pop_addressGen_toFlowFire_valid = logic_pop_addressGen_fire;
   assign logic_pop_addressGen_toFlowFire_payload = logic_pop_addressGen_payload;
   assign logic_pop_sync_readPort_cmd_valid = logic_pop_addressGen_toFlowFire_valid;
   assign logic_pop_sync_readPort_cmd_payload = logic_pop_addressGen_toFlowFire_payload;
   assign logic_pop_sync_readArbitation_translated_valid = logic_pop_sync_readArbitation_valid;
   assign logic_pop_sync_readArbitation_ready = logic_pop_sync_readArbitation_translated_ready;
-  assign logic_pop_sync_readArbitation_translated_payload = logic_pop_sync_readPort_rsp;
+  assign logic_pop_sync_readArbitation_translated_payload_data = logic_pop_sync_readPort_rsp_data;
+  assign logic_pop_sync_readArbitation_translated_payload_epoch = logic_pop_sync_readPort_rsp_epoch;
   assign io_pop_valid = logic_pop_sync_readArbitation_translated_valid;
   assign logic_pop_sync_readArbitation_translated_ready = io_pop_ready;
-  assign io_pop_payload = logic_pop_sync_readArbitation_translated_payload;
+  assign io_pop_payload_data = logic_pop_sync_readArbitation_translated_payload_data;
+  assign io_pop_payload_epoch = logic_pop_sync_readArbitation_translated_payload_epoch;
   assign logic_pop_sync_readArbitation_fire = (logic_pop_sync_readArbitation_valid && logic_pop_sync_readArbitation_ready);
   assign logic_ptr_popOnIo = logic_pop_sync_popReg;
   assign io_occupancy = logic_ptr_occupancy;
-  assign io_availability = (4'b1000 - logic_ptr_occupancy);
+  assign io_availability = (2'b10 - logic_ptr_occupancy);
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
       if(io_reset) begin
-      logic_ptr_push <= 4'b0000;
-      logic_ptr_pop <= 4'b0000;
+      logic_ptr_push <= 2'b00;
+      logic_ptr_pop <= 2'b00;
       logic_ptr_wentUp <= 1'b0;
       logic_pop_addressGen_rValid <= 1'b0;
-      logic_pop_sync_popReg <= 4'b0000;
+      logic_pop_sync_popReg <= 2'b00;
       end else begin
         if(when_Stream_l1455) begin
           logic_ptr_wentUp <= logic_ptr_doPush;
@@ -2968,14 +3311,14 @@ module StreamFifo (
           logic_ptr_wentUp <= 1'b0;
         end
         if(logic_ptr_doPush) begin
-          logic_ptr_push <= (logic_ptr_push + 4'b0001);
+          logic_ptr_push <= (logic_ptr_push + 2'b01);
         end
         if(logic_ptr_doPop) begin
-          logic_ptr_pop <= (logic_ptr_pop + 4'b0001);
+          logic_ptr_pop <= (logic_ptr_pop + 2'b01);
         end
         if(io_flush) begin
-          logic_ptr_push <= 4'b0000;
-          logic_ptr_pop <= 4'b0000;
+          logic_ptr_push <= 2'b00;
+          logic_ptr_pop <= 2'b00;
         end
         if(logic_pop_addressGen_ready) begin
           logic_pop_addressGen_rValid <= logic_pop_addressGen_valid;
@@ -2987,7 +3330,7 @@ module StreamFifo (
           logic_pop_sync_popReg <= logic_ptr_pop;
         end
         if(io_flush) begin
-          logic_pop_sync_popReg <= 4'b0000;
+          logic_pop_sync_popReg <= 2'b00;
         end
       end
     end

@@ -68,11 +68,12 @@ case class IntAlu(aluNode: CtrlLink) extends Area {
       )
     }
 
-    down(RESULT).address.assignDontCare()
-    down(RESULT).data.assignDontCare()
+    down(RESULT).address := 0
+    down(RESULT).data := 0
     down(RESULT).valid := False
 
-    when(up(VALID) === True) {
+    // Only drive result if this instruction is dispatched to ALU
+    when(up(VALID) === True && up(SENDTOALU)) {
       // down(RESULT) := result.asBits
       // Enforce x0 invariant: writes to x0 must have 0 data (architecturally).
       // This ensures RVFI sees the correct "ignore" behavior.

@@ -2,107 +2,117 @@
 ; yosys-smt2-module rvfi_testbench
 (declare-sort |rvfi_testbench_s| 0)
 (declare-fun |rvfi_testbench_is| (|rvfi_testbench_s|) Bool)
-; yosys-smt2-anyseq rvfi_testbench#0 32 $auto$setundef.cc:533:execute$2420
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2420"], "smtname": 0, "smtoffset": 0, "type": "seq", "width": 32}
-(declare-fun |rvfi_testbench#0| (|rvfi_testbench_s|) (_ BitVec 32)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2420
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2420 32
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2420| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#0| state))
-; yosys-smt2-anyseq rvfi_testbench#1 64 $auto$setundef.cc:533:execute$2422
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2422"], "smtname": 1, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#1| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2422
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2422 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2422| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#1| state))
-; yosys-smt2-anyseq rvfi_testbench#2 5 $auto$setundef.cc:533:execute$2424
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2424"], "smtname": 2, "smtoffset": 0, "type": "seq", "width": 5}
-(declare-fun |rvfi_testbench#2| (|rvfi_testbench_s|) (_ BitVec 5)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2424
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2424 5
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2424| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#2| state))
-; yosys-smt2-anyseq rvfi_testbench#3 64 $auto$setundef.cc:533:execute$2426
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2426"], "smtname": 3, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#3| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2426
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2426 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2426| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#3| state))
-; yosys-smt2-anyseq rvfi_testbench#4 64 $auto$setundef.cc:533:execute$2428
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2428"], "smtname": 4, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#4| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2428
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2428 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2428| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#4| state))
-; yosys-smt2-anyseq rvfi_testbench#5 64 $auto$setundef.cc:533:execute$2430
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2430"], "smtname": 5, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#5| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2430
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2430 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2430| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#5| state))
-; yosys-smt2-anyseq rvfi_testbench#6 64 $auto$setundef.cc:533:execute$2432
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2432"], "smtname": 6, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#6| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2432
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2432 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2432| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#6| state))
-; yosys-smt2-anyseq rvfi_testbench#7 3 $auto$setundef.cc:533:execute$2434
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2434"], "smtname": 7, "smtoffset": 0, "type": "seq", "width": 3}
-(declare-fun |rvfi_testbench#7| (|rvfi_testbench_s|) (_ BitVec 3)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2434
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2434 3
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2434| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#7| state))
-; yosys-smt2-anyseq rvfi_testbench#8 64 $auto$setundef.cc:533:execute$2436
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2436"], "smtname": 8, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#8| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2436
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2436 64
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2436| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#8| state))
-; yosys-smt2-anyseq rvfi_testbench#9 5 $auto$setundef.cc:533:execute$2438
-; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2438"], "smtname": 9, "smtoffset": 0, "type": "seq", "width": 5}
-(declare-fun |rvfi_testbench#9| (|rvfi_testbench_s|) (_ BitVec 5)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2438
-; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2438 5
-(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2438| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#9| state))
-; yosys-smt2-witness {"offset": 0, "path": ["\\cycle_reg"], "smtname": 10, "smtoffset": 0, "type": "reg", "width": 8}
-(declare-fun |rvfi_testbench#10| (|rvfi_testbench_s|) (_ BitVec 8)) ; \cycle_reg
-(declare-fun |rvfi_testbench#11| (|rvfi_testbench_s|) (_ BitVec 1)) ; \reset
-(define-fun |rvfi_testbench#12| ((state |rvfi_testbench_s|)) (_ BitVec 8) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b00000000 (|rvfi_testbench#10| state))) ; \cycle
-(define-fun |rvfi_testbench#13| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#12| state) #b00010100)) ; \checker_inst.check
+; yosys-smt2-anyseq rvfi_testbench#0 32 $auto$setundef.cc:533:execute$2706
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2706"], "smtname": 0, "smtoffset": 0, "type": "seq", "width": 32}
+(declare-fun |rvfi_testbench#0| (|rvfi_testbench_s|) (_ BitVec 32)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2706
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2706 32
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2706| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#0| state))
+; yosys-smt2-anyseq rvfi_testbench#1 32 $auto$setundef.cc:533:execute$2708
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2708"], "smtname": 1, "smtoffset": 0, "type": "seq", "width": 32}
+(declare-fun |rvfi_testbench#1| (|rvfi_testbench_s|) (_ BitVec 32)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2708
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2708 32
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2708| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#1| state))
+; yosys-smt2-anyseq rvfi_testbench#2 64 $auto$setundef.cc:533:execute$2710
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2710"], "smtname": 2, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#2| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2710
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2710 64
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2710| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#2| state))
+; yosys-smt2-anyseq rvfi_testbench#3 5 $auto$setundef.cc:533:execute$2712
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2712"], "smtname": 3, "smtoffset": 0, "type": "seq", "width": 5}
+(declare-fun |rvfi_testbench#3| (|rvfi_testbench_s|) (_ BitVec 5)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2712
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2712 5
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2712| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#3| state))
+; yosys-smt2-anyseq rvfi_testbench#4 64 $auto$setundef.cc:533:execute$2714
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2714"], "smtname": 4, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#4| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2714
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2714 64
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2714| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#4| state))
+; yosys-smt2-anyseq rvfi_testbench#5 64 $auto$setundef.cc:533:execute$2716
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2716"], "smtname": 5, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#5| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2716
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2716 64
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2716| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#5| state))
+; yosys-smt2-anyseq rvfi_testbench#6 64 $auto$setundef.cc:533:execute$2718
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2718"], "smtname": 6, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#6| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2718
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2718 64
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2718| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#6| state))
+; yosys-smt2-anyseq rvfi_testbench#7 80 $auto$setundef.cc:533:execute$2720
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2720"], "smtname": 7, "smtoffset": 0, "type": "seq", "width": 80}
+(declare-fun |rvfi_testbench#7| (|rvfi_testbench_s|) (_ BitVec 80)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2720
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2720 80
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2720| ((state |rvfi_testbench_s|)) (_ BitVec 80) (|rvfi_testbench#7| state))
+; yosys-smt2-anyseq rvfi_testbench#8 1 $auto$setundef.cc:533:execute$2722
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2722"], "smtname": 8, "smtoffset": 0, "type": "seq", "width": 1}
+(declare-fun |rvfi_testbench#8| (|rvfi_testbench_s|) (_ BitVec 1)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2722
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2722 1
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2722| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#8| state)) #b1))
+; yosys-smt2-anyseq rvfi_testbench#9 64 $auto$setundef.cc:533:execute$2724
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2724"], "smtname": 9, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#9| (|rvfi_testbench_s|) (_ BitVec 64)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2724
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2724 64
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2724| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#9| state))
+; yosys-smt2-anyseq rvfi_testbench#10 5 $auto$setundef.cc:533:execute$2726
+; yosys-smt2-witness {"offset": 0, "path": ["\\_witness_", "\\anyseq_auto_setundef_cc_533_execute_2726"], "smtname": 10, "smtoffset": 0, "type": "seq", "width": 5}
+(declare-fun |rvfi_testbench#10| (|rvfi_testbench_s|) (_ BitVec 5)) ; \_witness_.anyseq_auto_setundef_cc_533_execute_2726
+; yosys-smt2-wire _witness_.anyseq_auto_setundef_cc_533_execute_2726 5
+(define-fun |rvfi_testbench_n _witness_.anyseq_auto_setundef_cc_533_execute_2726| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#10| state))
+; yosys-smt2-witness {"offset": 0, "path": ["\\cycle_reg"], "smtname": 11, "smtoffset": 0, "type": "reg", "width": 8}
+(declare-fun |rvfi_testbench#11| (|rvfi_testbench_s|) (_ BitVec 8)) ; \cycle_reg
+(declare-fun |rvfi_testbench#12| (|rvfi_testbench_s|) (_ BitVec 1)) ; \reset
+(define-fun |rvfi_testbench#13| ((state |rvfi_testbench_s|)) (_ BitVec 8) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00000000 (|rvfi_testbench#11| state))) ; \cycle
+(define-fun |rvfi_testbench#14| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#13| state) #b00010100)) ; \checker_inst.check
 ; yosys-smt2-wire checker_inst.check 1
-(define-fun |rvfi_testbench_n checker_inst.check| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#13| state))
-(declare-fun |rvfi_testbench#14| (|rvfi_testbench_s|) Bool) ; \clock
+(define-fun |rvfi_testbench_n checker_inst.check| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(declare-fun |rvfi_testbench#15| (|rvfi_testbench_s|) Bool) ; \clock
 ; yosys-smt2-wire checker_inst.clock 1
 ; yosys-smt2-clock checker_inst.clock posedge
-(define-fun |rvfi_testbench_n checker_inst.clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(define-fun |rvfi_testbench_n checker_inst.clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
 ; yosys-smt2-wire checker_inst.halt 1
 (define-fun |rvfi_testbench_n checker_inst.halt| ((state |rvfi_testbench_s|)) Bool false)
-; yosys-smt2-anyinit rvfi_testbench#15 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION"], "smtname": 15, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#15| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION
+; yosys-smt2-anyinit rvfi_testbench#16 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION"], "smtname": 16, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#16| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION
 ; yosys-smt2-wire checker_inst.insn 32
-(define-fun |rvfi_testbench_n checker_inst.insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n checker_inst.insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire checker_inst.insn_pma_x 1
 (define-fun |rvfi_testbench_n checker_inst.insn_pma_x| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire checker_inst.insn_spec.insn_imm 64
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_imm| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 12) (|rvfi_testbench#15| state)) #b000000000000))))))))))))))))))))))))))))))))))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_imm| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 12) (|rvfi_testbench#16| state)) #b000000000000))))))))))))))))))))))))))))))))))
 ; yosys-smt2-wire checker_inst.insn_spec.insn_opcode 7
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_opcode| ((state |rvfi_testbench_s|)) (_ BitVec 7) ((_ extract 6 0) (|rvfi_testbench#15| state)))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_opcode| ((state |rvfi_testbench_s|)) (_ BitVec 7) ((_ extract 6 0) (|rvfi_testbench#16| state)))
 ; yosys-smt2-wire checker_inst.insn_spec.insn_padding 32
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_padding| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.insn_spec.insn_rd 5
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_rd| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#15| state)))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.insn_rd| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#16| state)))
 ; yosys-smt2-wire checker_inst.insn_spec.misa_ok 1
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.misa_ok| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_insn 32
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_mem_rdata 64
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_mem_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
-; yosys-smt2-anyinit rvfi_testbench#16 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_PC_PC"], "smtname": 16, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#16| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC
+; yosys-smt2-anyinit rvfi_testbench#17 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_PC_PC"], "smtname": 17, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#17| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_rs1_rdata 64
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_rs2_rdata 64
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
-(define-fun |rvfi_testbench#17| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#12| state) #b00000001)) ; \checker_inst.reset
-(define-fun |rvfi_testbench#18| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#17| state) false))) ; $flatten\checker_inst.$logic_not$rvfi_insn_check.sv:140$58_Y
-; yosys-smt2-anyinit rvfi_testbench#19 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Common_LANE_SEL"], "smtname": 19, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#19| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
-(define-fun |rvfi_testbench#20| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#18| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1) false))) ; \checker_inst.valid
+(define-fun |rvfi_testbench#18| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#13| state) #b00000001)) ; \checker_inst.reset
+(define-fun |rvfi_testbench#19| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#18| state) false))) ; $flatten\checker_inst.$logic_not$rvfi_insn_check.sv:140$58_Y
+; yosys-smt2-anyinit rvfi_testbench#20 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Common_TRAP"], "smtname": 20, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#20| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP
+(define-fun |rvfi_testbench#21| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1) false))) ; $flatten\checker_inst.$logic_not$rvfi_insn_check.sv:136$50_Y
+; yosys-smt2-anyinit rvfi_testbench#22 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Common_LANE_SEL"], "smtname": 22, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#22| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
+(define-fun |rvfi_testbench#23| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#21| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#22| state)) #b1) false))) ; \checker_inst.rvfi_valid
+(define-fun |rvfi_testbench#24| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#19| state) false) (or  (|rvfi_testbench#23| state) false))) ; \checker_inst.valid
 ; yosys-smt2-wire checker_inst.insn_spec.rvfi_valid 1
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#20| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#24| state))
 ; yosys-smt2-wire checker_inst.insn_spec.spec_mem_addr 64
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_mem_addr| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.insn_spec.spec_mem_rmask 8
@@ -111,26 +121,26 @@
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_mem_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.insn_spec.spec_mem_wmask 8
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_mem_wmask| ((state |rvfi_testbench_s|)) (_ BitVec 8) #b00000000)
-(define-fun |rvfi_testbench#21| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#16| state) #b0000000000000000000000000000000000000000000000000000000000000100)) ; \checker_inst.pc_wdata
+(define-fun |rvfi_testbench#25| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#17| state) #b0000000000000000000000000000000000000000000000000000000000000100)) ; \checker_inst.spec_pc_wdata
 ; yosys-smt2-wire checker_inst.insn_spec.spec_pc_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#25| state))
 ; yosys-smt2-wire checker_inst.insn_spec.spec_rd_addr 5
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#15| state)))
-(define-fun |rvfi_testbench#22| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#16| state) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 31) (|rvfi_testbench#15| state)) (concat ((_ extract 31 12) (|rvfi_testbench#15| state)) #b000000000000))))))))))))))))))))))))))))))))))) ; $flatten\checker_inst.\insn_spec.$add$insn_auipc.v:44$161_Y
-(define-fun |rvfi_testbench#23| ((state |rvfi_testbench_s|)) Bool (distinct ((_ extract 11 7) (|rvfi_testbench#15| state)) #b00000)) ; $flatten\checker_inst.\insn_spec.$reduce_bool$insn_auipc.v:44$162_Y
-(define-fun |rvfi_testbench#24| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#23| state) (|rvfi_testbench#22| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \checker_inst.spec_rd_wdata
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#16| state)))
+(define-fun |rvfi_testbench#26| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#17| state) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 31) (|rvfi_testbench#16| state)) (concat ((_ extract 31 12) (|rvfi_testbench#16| state)) #b000000000000))))))))))))))))))))))))))))))))))) ; $flatten\checker_inst.\insn_spec.$add$insn_auipc.v:44$161_Y
+(define-fun |rvfi_testbench#27| ((state |rvfi_testbench_s|)) Bool (distinct ((_ extract 11 7) (|rvfi_testbench#16| state)) #b00000)) ; $flatten\checker_inst.\insn_spec.$reduce_bool$insn_auipc.v:44$162_Y
+(define-fun |rvfi_testbench#28| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#27| state) (|rvfi_testbench#26| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \checker_inst.spec_rd_wdata
 ; yosys-smt2-wire checker_inst.insn_spec.spec_rd_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#24| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
 ; yosys-smt2-wire checker_inst.insn_spec.spec_rs1_addr 5
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) #b00000)
 ; yosys-smt2-wire checker_inst.insn_spec.spec_rs2_addr 5
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) #b00000)
 ; yosys-smt2-wire checker_inst.insn_spec.spec_trap 1
 (define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_trap| ((state |rvfi_testbench_s|)) Bool false)
-(define-fun |rvfi_testbench#25| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 6 0) (|rvfi_testbench#15| state)) #b0010111)) ; $flatten\checker_inst.\insn_spec.$eq$insn_auipc.v:42$159_Y
-(define-fun |rvfi_testbench#26| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#20| state) false) (or  (|rvfi_testbench#25| state) false))) ; \checker_inst.spec_valid
+(define-fun |rvfi_testbench#29| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 6 0) (|rvfi_testbench#16| state)) #b0010111)) ; $flatten\checker_inst.\insn_spec.$eq$insn_auipc.v:42$159_Y
+(define-fun |rvfi_testbench#30| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#24| state) false) (or  (|rvfi_testbench#29| state) false))) ; \checker_inst.spec_valid
 ; yosys-smt2-wire checker_inst.insn_spec.spec_valid 1
-(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#26| state))
+(define-fun |rvfi_testbench_n checker_inst.insn_spec.spec_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#30| state))
 ; yosys-smt2-wire checker_inst.intr 1
 (define-fun |rvfi_testbench_n checker_inst.intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire checker_inst.mem_access_fault 1
@@ -152,49 +162,56 @@
 ; yosys-smt2-wire checker_inst.mem_wmask 8
 (define-fun |rvfi_testbench_n checker_inst.mem_wmask| ((state |rvfi_testbench_s|)) (_ BitVec 8) #b00000000)
 ; yosys-smt2-wire checker_inst.pc_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n checker_inst.pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
+; yosys-smt2-anyinit rvfi_testbench#31 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET"], "smtname": 31, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#31| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET
+; yosys-smt2-anyinit rvfi_testbench#32 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN"], "smtname": 32, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#32| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN
+(define-fun |rvfi_testbench#33| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#32| state)) #b1) (|rvfi_testbench#31| state) (|rvfi_testbench#25| state))) ; \checker_inst.pc_wdata
 ; yosys-smt2-wire checker_inst.pc_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
-; yosys-smt2-anyinit rvfi_testbench#27 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address"], "smtname": 27, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#27| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address
+(define-fun |rvfi_testbench_n checker_inst.pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+; yosys-smt2-anyinit rvfi_testbench#34 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address"], "smtname": 34, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#34| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address
 ; yosys-smt2-wire checker_inst.rd_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
-; yosys-smt2-anyinit rvfi_testbench#28 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data"], "smtname": 28, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#28| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data
+(define-fun |rvfi_testbench_n checker_inst.rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
+; yosys-smt2-anyinit rvfi_testbench#35 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data"], "smtname": 35, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#35| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data
 ; yosys-smt2-wire checker_inst.rd_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n checker_inst.rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire checker_inst.reset 1
-(define-fun |rvfi_testbench_n checker_inst.reset| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#17| state))
-; yosys-smt2-anyinit rvfi_testbench#29 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR"], "smtname": 29, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#29| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR
+(define-fun |rvfi_testbench_n checker_inst.reset| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#18| state))
+; yosys-smt2-anyinit rvfi_testbench#36 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR"], "smtname": 36, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#36| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR
 ; yosys-smt2-wire checker_inst.rs1_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
-; yosys-smt2-anyinit rvfi_testbench#30 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1"], "smtname": 30, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#30| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1
+(define-fun |rvfi_testbench_n checker_inst.rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
+; yosys-smt2-anyinit rvfi_testbench#37 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1"], "smtname": 37, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#37| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1
 ; yosys-smt2-wire checker_inst.rs1_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n checker_inst.rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire checker_inst.rs1_rdata_or_zero 64
 (define-fun |rvfi_testbench_n checker_inst.rs1_rdata_or_zero| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
-; yosys-smt2-anyinit rvfi_testbench#31 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR"], "smtname": 31, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#31| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR
+; yosys-smt2-anyinit rvfi_testbench#38 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR"], "smtname": 38, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#38| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR
 ; yosys-smt2-wire checker_inst.rs2_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
-; yosys-smt2-anyinit rvfi_testbench#32 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2"], "smtname": 32, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#32| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2
+(define-fun |rvfi_testbench_n checker_inst.rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
+; yosys-smt2-anyinit rvfi_testbench#39 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2"], "smtname": 39, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#39| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2
 ; yosys-smt2-wire checker_inst.rs2_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n checker_inst.rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire checker_inst.rs2_rdata_or_zero 64
 (define-fun |rvfi_testbench_n checker_inst.rs2_rdata_or_zero| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.rvfi_halt 1
 (define-fun |rvfi_testbench_n checker_inst.rvfi_halt| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire checker_inst.rvfi_insn 32
-(define-fun |rvfi_testbench_n checker_inst.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire checker_inst.rvfi_intr 1
 (define-fun |rvfi_testbench_n checker_inst.rvfi_intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire checker_inst.rvfi_ixl 2
@@ -211,31 +228,31 @@
 (define-fun |rvfi_testbench_n checker_inst.rvfi_mem_wmask| ((state |rvfi_testbench_s|)) (_ BitVec 8) #b00000000)
 ; yosys-smt2-wire checker_inst.rvfi_mode 2
 (define-fun |rvfi_testbench_n checker_inst.rvfi_mode| ((state |rvfi_testbench_s|)) (_ BitVec 2) #b11)
-; yosys-smt2-anyinit rvfi_testbench#33 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_rvfiPlugin_order"], "smtname": 33, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#33| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_rvfiPlugin_order
+; yosys-smt2-anyinit rvfi_testbench#40 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_rvfiPlugin_order"], "smtname": 40, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#40| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_rvfiPlugin_order
 ; yosys-smt2-wire checker_inst.rvfi_order 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire checker_inst.rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire checker_inst.rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
 ; yosys-smt2-wire checker_inst.rvfi_rd_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire checker_inst.rvfi_rd_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire checker_inst.rvfi_rs1_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-wire checker_inst.rvfi_rs1_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire checker_inst.rvfi_rs2_addr 5
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-wire checker_inst.rvfi_rs2_rdata 64
-(define-fun |rvfi_testbench_n checker_inst.rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire checker_inst.rvfi_trap 1
-(define-fun |rvfi_testbench_n checker_inst.rvfi_trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n checker_inst.rvfi_trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire checker_inst.rvfi_valid 1
-(define-fun |rvfi_testbench_n checker_inst.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n checker_inst.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-wire checker_inst.spec_mem_addr 64
 (define-fun |rvfi_testbench_n checker_inst.spec_mem_addr| ((state |rvfi_testbench_s|)) (_ BitVec 64) #b0000000000000000000000000000000000000000000000000000000000000000)
 ; yosys-smt2-wire checker_inst.spec_mem_rmask 8
@@ -245,11 +262,11 @@
 ; yosys-smt2-wire checker_inst.spec_mem_wmask 8
 (define-fun |rvfi_testbench_n checker_inst.spec_mem_wmask| ((state |rvfi_testbench_s|)) (_ BitVec 8) #b00000000)
 ; yosys-smt2-wire checker_inst.spec_pc_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.spec_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n checker_inst.spec_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#25| state))
 ; yosys-smt2-wire checker_inst.spec_rd_addr 5
-(define-fun |rvfi_testbench_n checker_inst.spec_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#15| state)))
+(define-fun |rvfi_testbench_n checker_inst.spec_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#16| state)))
 ; yosys-smt2-wire checker_inst.spec_rd_wdata 64
-(define-fun |rvfi_testbench_n checker_inst.spec_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#24| state))
+(define-fun |rvfi_testbench_n checker_inst.spec_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
 ; yosys-smt2-wire checker_inst.spec_rs1_addr 5
 (define-fun |rvfi_testbench_n checker_inst.spec_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) #b00000)
 ; yosys-smt2-wire checker_inst.spec_rs2_addr 5
@@ -257,30 +274,30 @@
 ; yosys-smt2-wire checker_inst.spec_trap 1
 (define-fun |rvfi_testbench_n checker_inst.spec_trap| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire checker_inst.spec_valid 1
-(define-fun |rvfi_testbench_n checker_inst.spec_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#26| state))
+(define-fun |rvfi_testbench_n checker_inst.spec_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#30| state))
 ; yosys-smt2-wire checker_inst.trap 1
-(define-fun |rvfi_testbench_n checker_inst.trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n checker_inst.trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire checker_inst.valid 1
-(define-fun |rvfi_testbench_n checker_inst.valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#20| state))
+(define-fun |rvfi_testbench_n checker_inst.valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#24| state))
 ; yosys-smt2-input clock 1
 ; yosys-smt2-wire clock 1
 ; yosys-smt2-clock clock posedge
 ; yosys-smt2-witness {"offset": 0, "path": ["\\clock"], "smtname": "clock", "smtoffset": 0, "type": "posedge", "width": 1}
 ; yosys-smt2-witness {"offset": 0, "path": ["\\clock"], "smtname": "clock", "smtoffset": 0, "type": "input", "width": 1}
-(define-fun |rvfi_testbench_n clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(define-fun |rvfi_testbench_n clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
 ; yosys-smt2-wire cycle 8
-(define-fun |rvfi_testbench_n cycle| ((state |rvfi_testbench_s|)) (_ BitVec 8) (|rvfi_testbench#12| state))
+(define-fun |rvfi_testbench_n cycle| ((state |rvfi_testbench_s|)) (_ BitVec 8) (|rvfi_testbench#13| state))
 ; yosys-smt2-register cycle_reg 8
 ; yosys-smt2-wire cycle_reg 8
-(define-fun |rvfi_testbench_n cycle_reg| ((state |rvfi_testbench_s|)) (_ BitVec 8) (|rvfi_testbench#10| state))
+(define-fun |rvfi_testbench_n cycle_reg| ((state |rvfi_testbench_s|)) (_ BitVec 8) (|rvfi_testbench#11| state))
 ; yosys-smt2-input reset 1
 ; yosys-smt2-wire reset 1
 ; yosys-smt2-witness {"offset": 0, "path": ["\\reset"], "smtname": "reset", "smtoffset": 0, "type": "input", "width": 1}
-(define-fun |rvfi_testbench_n reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1))
+(define-fun |rvfi_testbench_n reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1))
 ; yosys-smt2-wire rvfi_halt 1
 (define-fun |rvfi_testbench_n rvfi_halt| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire rvfi_insn 32
-(define-fun |rvfi_testbench_n rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire rvfi_intr 1
 (define-fun |rvfi_testbench_n rvfi_intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire rvfi_ixl 2
@@ -298,525 +315,571 @@
 ; yosys-smt2-wire rvfi_mode 2
 (define-fun |rvfi_testbench_n rvfi_mode| ((state |rvfi_testbench_s|)) (_ BitVec 2) #b11)
 ; yosys-smt2-wire rvfi_order 64
-(define-fun |rvfi_testbench_n rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
 ; yosys-smt2-wire rvfi_rd_addr 5
-(define-fun |rvfi_testbench_n rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire rvfi_rd_wdata 64
-(define-fun |rvfi_testbench_n rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire rvfi_rs1_addr 5
-(define-fun |rvfi_testbench_n rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-wire rvfi_rs1_rdata 64
-(define-fun |rvfi_testbench_n rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire rvfi_rs2_addr 5
-(define-fun |rvfi_testbench_n rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-wire rvfi_rs2_rdata 64
-(define-fun |rvfi_testbench_n rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire rvfi_trap 1
-(define-fun |rvfi_testbench_n rvfi_trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n rvfi_trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire rvfi_valid 1
-(define-fun |rvfi_testbench_n rvfi_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-wire wrapper.clock 1
 ; yosys-smt2-clock wrapper.clock posedge
-(define-fun |rvfi_testbench_n wrapper.clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
-; yosys-smt2-anyinit rvfi_testbench#34 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1"], "smtname": 34, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#34| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
-; yosys-smt2-anyinit rvfi_testbench#35 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED"], "smtname": 35, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#35| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
-(define-fun |rvfi_testbench#36| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result
+(define-fun |rvfi_testbench_n wrapper.clock| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
+; yosys-smt2-anyinit rvfi_testbench#41 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1"], "smtname": 41, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#41| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
+; yosys-smt2-anyinit rvfi_testbench#42 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED"], "smtname": 42, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#42| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
+(define-fun |rvfi_testbench#43| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#36| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#43| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_1 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_10 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_10| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
-; yosys-smt2-anyinit rvfi_testbench#37 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2"], "smtname": 37, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#37| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
-(define-fun |rvfi_testbench#38| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_11
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_10| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+; yosys-smt2-anyinit rvfi_testbench#44 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2"], "smtname": 44, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#44| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
+(define-fun |rvfi_testbench#45| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_11
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_11 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_11| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#38| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_11| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#45| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_12 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_12| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_12| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_13 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_13| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
-(define-fun |rvfi_testbench#39| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvshl (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#37| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_14
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_13| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+(define-fun |rvfi_testbench#46| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvshl (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#44| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_14
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_14 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_14| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
-(define-fun |rvfi_testbench#40| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvlshr (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#37| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_15
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_14| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#46| state))
+(define-fun |rvfi_testbench#47| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvlshr (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#44| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_15
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_15 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_15| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
-(define-fun |rvfi_testbench#41| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvashr (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#37| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_16
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_15| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#47| state))
+(define-fun |rvfi_testbench#48| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvashr (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#44| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_16
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_16 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_16| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_16| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#48| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_17 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_17| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
-(define-fun |rvfi_testbench#42| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvsub (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_18
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_17| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+(define-fun |rvfi_testbench#49| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvsub (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_18
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_18 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_18| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_18| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#49| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_19 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_19| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_19| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_2 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_20 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_20| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
-(define-fun |rvfi_testbench#43| ((state |rvfi_testbench_s|)) Bool (bvslt (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_21
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_20| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+(define-fun |rvfi_testbench#50| ((state |rvfi_testbench_s|)) Bool (bvslt (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_21
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_21 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_21| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#43| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_21| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#50| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_22 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_22| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_22| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_23 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_23| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
-(define-fun |rvfi_testbench#44| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_24
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_23| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+(define-fun |rvfi_testbench#51| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_24
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_24 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_24| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#44| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_24| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#51| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_25 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_25| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) ((_ extract 31 0) (|rvfi_testbench#38| state)))))))))))))))))))))))))))))))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_25| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) ((_ extract 31 0) (|rvfi_testbench#45| state)))))))))))))))))))))))))))))))))))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_26 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_26| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (|rvfi_testbench#38| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_26| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (|rvfi_testbench#45| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_27 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_27| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#38| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_27| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#45| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_28 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_28| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_28| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_29 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_29| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
-(define-fun |rvfi_testbench#45| ((state |rvfi_testbench_s|)) Bool (bvslt (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_3
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_29| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+(define-fun |rvfi_testbench#52| ((state |rvfi_testbench_s|)) Bool (bvslt (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_3
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_3 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#45| state))
-(define-fun |rvfi_testbench#46| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvshl (|rvfi_testbench#34| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#37| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_31
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench#53| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvshl (|rvfi_testbench#41| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#44| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_31
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_30 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_30| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat #b00000000000000000000000000000000 (|rvfi_testbench#46| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_30| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat #b00000000000000000000000000000000 (|rvfi_testbench#53| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_31 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_31| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#46| state))
-(declare-fun |rvfi_testbench#47| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_32 [63:32]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_31| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#53| state))
+(declare-fun |rvfi_testbench#54| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_32 [63:32]
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_32 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_32| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#47| state) (|rvfi_testbench#46| state)))
-(define-fun |rvfi_testbench#48| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvashr (|rvfi_testbench#34| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#37| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_34
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_32| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#54| state) (|rvfi_testbench#53| state)))
+(define-fun |rvfi_testbench#55| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvashr (|rvfi_testbench#41| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#44| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_34
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_33 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_33| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (|rvfi_testbench#48| state))))))))))))))))))))))))))))))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_33| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (|rvfi_testbench#55| state))))))))))))))))))))))))))))))))))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_34 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_34| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#48| state))
-(declare-fun |rvfi_testbench#49| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_35 [63:32]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_34| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#55| state))
+(declare-fun |rvfi_testbench#56| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_35 [63:32]
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_35 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_35| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#49| state) (|rvfi_testbench#48| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_35| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#56| state) (|rvfi_testbench#55| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_36 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_36| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
-(define-fun |rvfi_testbench#50| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvlshr (|rvfi_testbench#34| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#37| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_38
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_36| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+(define-fun |rvfi_testbench#57| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (bvlshr (|rvfi_testbench#41| state) (concat #b00000000000000000000000000000000000000000000000000000000000 ((_ extract 4 0) (|rvfi_testbench#44| state)))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_38
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_37 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_37| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat #b00000000000000000000000000000000 (|rvfi_testbench#50| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_37| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat #b00000000000000000000000000000000 (|rvfi_testbench#57| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_38 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_38| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#50| state))
-(declare-fun |rvfi_testbench#51| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_39 [63:32]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_38| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#57| state))
+(declare-fun |rvfi_testbench#58| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_39 [63:32]
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_39 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_39| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#51| state) (|rvfi_testbench#50| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_39| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#58| state) (|rvfi_testbench#57| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_4 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_4| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_4| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_40 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_40| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) ((_ extract 31 0) (|rvfi_testbench#42| state)))))))))))))))))))))))))))))))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_40| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) ((_ extract 31 0) (|rvfi_testbench#49| state)))))))))))))))))))))))))))))))))))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_41 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_41| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (|rvfi_testbench#42| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_41| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (|rvfi_testbench#49| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_42 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_42| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_42| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#49| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_43 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_43| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_43| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_44 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_44| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
-; yosys-smt2-anyinit rvfi_testbench#52 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_PC_PC"], "smtname": 52, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#52| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC
-(define-fun |rvfi_testbench#53| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#35| state) (|rvfi_testbench#52| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_45
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_44| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+; yosys-smt2-anyinit rvfi_testbench#59 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_PC_PC"], "smtname": 59, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#59| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC
+(define-fun |rvfi_testbench#60| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#42| state) (|rvfi_testbench#59| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_45
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_45 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_45| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#53| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_45| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#60| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_46 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_46| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_46| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_47 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_47| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_47| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_5 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_5| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
-(define-fun |rvfi_testbench#54| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_6
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_5| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+(define-fun |rvfi_testbench#61| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_6
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_6 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_6| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#54| state))
-(define-fun |rvfi_testbench#55| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvshl (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#35| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_7
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_6| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#61| state))
+(define-fun |rvfi_testbench#62| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvshl (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#42| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_7
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_7 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_7| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#55| state))
-(define-fun |rvfi_testbench#56| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvlshr (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#35| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_8
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_7| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#62| state))
+(define-fun |rvfi_testbench#63| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvlshr (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#42| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_8
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_8 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_8| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#56| state))
-(define-fun |rvfi_testbench#57| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvashr (|rvfi_testbench#34| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#35| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_9
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_8| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#63| state))
+(define-fun |rvfi_testbench#64| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvashr (|rvfi_testbench#41| state) (concat #b0000000000000000000000000000000000000000000000000000000000 ((_ extract 5 0) (|rvfi_testbench#42| state))))) ; \wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_9
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_9 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_9| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#57| state))
-; yosys-smt2-anyinit rvfi_testbench#58 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION"], "smtname": 58, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#58| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION
-(define-fun |rvfi_testbench#59| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b1010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#59| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_1 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_1| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000001100100)
-(define-fun |rvfi_testbench#60| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 3 3) (|rvfi_testbench#58| state)))) #b101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_10| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#60| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_11 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_11| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0000000000000000000 (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat #b00000 (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) (concat #b00 (concat ((_ extract 3 3) (|rvfi_testbench#58| state)) #b000)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_12 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_12| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000001000)
-(define-fun |rvfi_testbench#61| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 3 2) (|rvfi_testbench#58| state))))) #b000100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28
-(define-fun |rvfi_testbench#62| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b00100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26
-(define-fun |rvfi_testbench#63| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))))) #b10010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22
-(define-fun |rvfi_testbench#64| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))))) #b1100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20
-(define-fun |rvfi_testbench#65| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) ((_ extract 4 3) (|rvfi_testbench#58| state)))) #b1100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16
-(define-fun |rvfi_testbench#66| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#58| state)) ((_ extract 4 3) (|rvfi_testbench#58| state))) #b100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_13 6
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_13| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#66| state) #b1 #b0) (concat (ite (|rvfi_testbench#65| state) #b1 #b0) (concat (ite (|rvfi_testbench#64| state) #b1 #b0) (concat (ite (|rvfi_testbench#63| state) #b1 #b0) (concat (ite (|rvfi_testbench#62| state) #b1 #b0) (ite (|rvfi_testbench#61| state) #b1 #b0)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_14| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#66| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_15 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_15| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000010000000011000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_16| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#65| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_17 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_17| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 4 3) (|rvfi_testbench#58| state)) #b000)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_18 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_18| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_19 4
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_19| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat (ite (|rvfi_testbench#64| state) #b1 #b0) (concat (ite (|rvfi_testbench#63| state) #b1 #b0) (concat (ite (|rvfi_testbench#62| state) #b1 #b0) (ite (|rvfi_testbench#61| state) #b1 #b0)))))
-(define-fun |rvfi_testbench#67| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b11010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#67| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_20| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#64| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_21 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_21| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000100100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_22| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#63| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_23 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_23| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00)))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_24 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_24| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b01000000000000000000000000100000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_25 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_25| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#62| state) #b1 #b0) (ite (|rvfi_testbench#61| state) #b1 #b0)))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_26| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#62| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_27 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_27| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000111000001000100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_28| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#61| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_29 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_29| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000001101100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_3 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_3| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000001100100)
-(define-fun |rvfi_testbench#68| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))))) #b00010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48
-(define-fun |rvfi_testbench#69| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 3 2) (|rvfi_testbench#58| state)))) #b00100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45
-(define-fun |rvfi_testbench#70| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b11010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43
-(define-fun |rvfi_testbench#71| ((state |rvfi_testbench_s|)) Bool (not (or  false false false (= ((_ extract 3 3) (|rvfi_testbench#58| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#58| state)) #b1) false false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#58| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39
-(define-fun |rvfi_testbench#72| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b0100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37
-(define-fun |rvfi_testbench#73| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))))) #b1000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33
-(define-fun |rvfi_testbench#74| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 3 3) (|rvfi_testbench#58| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_30 7
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_30| ((state |rvfi_testbench_s|)) (_ BitVec 7) (concat (ite (|rvfi_testbench#74| state) #b1 #b0) (concat (ite (|rvfi_testbench#73| state) #b1 #b0) (concat (ite (|rvfi_testbench#72| state) #b1 #b0) (concat (ite (|rvfi_testbench#71| state) #b1 #b0) (concat (ite (|rvfi_testbench#70| state) #b1 #b0) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_31| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#74| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_32 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_32| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000101000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_33| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#73| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_34 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_34| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00)))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_35 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_35| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_36 5
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_36| ((state |rvfi_testbench_s|)) (_ BitVec 5) (concat (ite (|rvfi_testbench#72| state) #b1 #b0) (concat (ite (|rvfi_testbench#71| state) #b1 #b0) (concat (ite (|rvfi_testbench#70| state) #b1 #b0) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_37| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#72| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_38 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_38| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000000100100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_39| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#71| state))
-(define-fun |rvfi_testbench#75| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false false (= ((_ extract 5 5) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#75| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_40 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_40| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 4 3) (|rvfi_testbench#58| state)) #b000)))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_41 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_41| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_42 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_42| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#70| state) #b1 #b0) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_43| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#70| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_44 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_44| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000001100100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_45| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#69| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_46 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_46| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 13) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) (concat #b0 (concat ((_ extract 3 2) (|rvfi_testbench#58| state)) #b00)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_47 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_47| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000100000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_48| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#68| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_49 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_49| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00)))))))))))
-(define-fun |rvfi_testbench#76| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false false false (= ((_ extract 6 6) (|rvfi_testbench#58| state)) #b1) false false false false false false (= ((_ extract 13 13) (|rvfi_testbench#58| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8
-(define-fun |rvfi_testbench#77| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false false false (= ((_ extract 6 6) (|rvfi_testbench#58| state)) #b1) false false false false false (= ((_ extract 12 12) (|rvfi_testbench#58| state)) #b1) false (= ((_ extract 14 14) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_5 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_5| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#77| state) #b1 #b0) (ite (|rvfi_testbench#76| state) #b1 #b0)))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_50 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_50| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000100000)
-(define-fun |rvfi_testbench#78| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 4 3) (|rvfi_testbench#58| state)) #b01)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52
-(define-fun |rvfi_testbench#79| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) ((_ extract 4 4) (|rvfi_testbench#58| state))) #b1000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53 [3]
-(define-fun |rvfi_testbench#80| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) ((_ extract 4 4) (|rvfi_testbench#58| state))) #b110)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54
-(define-fun |rvfi_testbench#81| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) ((_ extract 3 3) (|rvfi_testbench#58| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58
-(define-fun |rvfi_testbench#82| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) ((_ extract 5 5) (|rvfi_testbench#58| state)))) #b100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60
-(define-fun |rvfi_testbench#83| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) ((_ extract 4 4) (|rvfi_testbench#58| state)))) #b010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64
-(define-fun |rvfi_testbench#84| ((state |rvfi_testbench_s|)) Bool (not (or  false false false false false (= ((_ extract 5 5) (|rvfi_testbench#58| state)) #b1) false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#58| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65
-(define-fun |rvfi_testbench#85| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b01010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70
-(define-fun |rvfi_testbench#86| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b10100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71
-(define-fun |rvfi_testbench#87| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 3 2) (|rvfi_testbench#58| state)))) #b010100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72
-(define-fun |rvfi_testbench#88| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))) #b01)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2
-(define-fun |rvfi_testbench#89| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#78| state) (|rvfi_testbench#79| state) (|rvfi_testbench#80| state) (|rvfi_testbench#81| state) (|rvfi_testbench#82| state) (|rvfi_testbench#83| state) (|rvfi_testbench#84| state) (|rvfi_testbench#85| state) (|rvfi_testbench#86| state) (|rvfi_testbench#87| state) (|rvfi_testbench#88| state))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_51| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#89| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_52| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#78| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53 10
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_53| ((state |rvfi_testbench_s|)) (_ BitVec 10) (concat (ite (|rvfi_testbench#88| state) #b1 #b0) (concat (ite (|rvfi_testbench#80| state) #b1 #b0) (concat (ite (|rvfi_testbench#81| state) #b1 #b0) (concat (ite (|rvfi_testbench#82| state) #b1 #b0) (concat (ite (|rvfi_testbench#83| state) #b1 #b0) (concat (ite (|rvfi_testbench#84| state) #b1 #b0) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#85| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (ite (|rvfi_testbench#87| state) #b1 #b0)))))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_54| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#80| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_55 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_55| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 4 4) (|rvfi_testbench#58| state)) #b0000)))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_56 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_56| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_57 8
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_57| ((state |rvfi_testbench_s|)) (_ BitVec 8) (concat (ite (|rvfi_testbench#81| state) #b1 #b0) (concat (ite (|rvfi_testbench#82| state) #b1 #b0) (concat (ite (|rvfi_testbench#83| state) #b1 #b0) (concat (ite (|rvfi_testbench#84| state) #b1 #b0) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#85| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (ite (|rvfi_testbench#87| state) #b1 #b0)))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_58| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#81| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_59 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_59| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b01000000000000000001000000001000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_6| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#77| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_60| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#82| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_61 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_61| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) #b00000)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_62 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_62| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_63 6
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_63| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#83| state) #b1 #b0) (concat (ite (|rvfi_testbench#84| state) #b1 #b0) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#85| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (ite (|rvfi_testbench#87| state) #b1 #b0)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_64| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#83| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_65| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#84| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_66 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_66| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000000100000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_67 4
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_67| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#85| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (ite (|rvfi_testbench#87| state) #b1 #b0)))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_68 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_68| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 4 4) (|rvfi_testbench#58| state)) #b0000)))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_69 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_69| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_7 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_7| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000001000100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_70| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#85| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_71| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#86| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_72| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#87| state))
-(define-fun |rvfi_testbench#90| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) ((_ extract 3 2) (|rvfi_testbench#58| state)))) #b100000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75 [0]
-(define-fun |rvfi_testbench#91| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))))) #b10100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75 [1]
-(define-fun |rvfi_testbench#92| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false false (= ((_ extract 5 5) (|rvfi_testbench#58| state)) #b1) false false false false false false false (= ((_ extract 13 13) (|rvfi_testbench#58| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75 [4]
-(define-fun |rvfi_testbench#93| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) ((_ extract 3 3) (|rvfi_testbench#58| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76
-(define-fun |rvfi_testbench#94| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false (= ((_ extract 4 4) (|rvfi_testbench#58| state)) #b1) false false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80
-(define-fun |rvfi_testbench#95| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) ((_ extract 5 5) (|rvfi_testbench#58| state))) #b0101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82
-(define-fun |rvfi_testbench#96| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) ((_ extract 5 5) (|rvfi_testbench#58| state))) #b1001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86
-(define-fun |rvfi_testbench#97| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))))) #b0100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87
-(define-fun |rvfi_testbench#98| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) ((_ extract 6 5) (|rvfi_testbench#58| state))) #b11101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92
-(define-fun |rvfi_testbench#99| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state)))) #b11000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93
-(define-fun |rvfi_testbench#100| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 5) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))) #b011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode
-(define-fun |rvfi_testbench#101| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#78| state) (|rvfi_testbench#90| state) (|rvfi_testbench#91| state) (|rvfi_testbench#92| state) (|rvfi_testbench#93| state) (|rvfi_testbench#94| state) (|rvfi_testbench#95| state) (|rvfi_testbench#96| state) (|rvfi_testbench#97| state) (|rvfi_testbench#98| state) (|rvfi_testbench#99| state) (|rvfi_testbench#100| state))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_73| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#101| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_74 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_74| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#78| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75 11
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_75| ((state |rvfi_testbench_s|)) (_ BitVec 11) (concat (ite (|rvfi_testbench#100| state) #b1 #b0) (concat (ite (|rvfi_testbench#93| state) #b1 #b0) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (concat (ite (|rvfi_testbench#95| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (concat (ite (|rvfi_testbench#97| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (ite (|rvfi_testbench#90| state) #b1 #b0))))))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_76| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#93| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_77 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_77| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#58| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) (concat #b0000000000 (concat ((_ extract 3 3) (|rvfi_testbench#58| state)) #b000)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_78 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_78| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000001000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_79 9
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_79| ((state |rvfi_testbench_s|)) (_ BitVec 9) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (concat (ite (|rvfi_testbench#95| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (concat (ite (|rvfi_testbench#97| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (ite (|rvfi_testbench#90| state) #b1 #b0))))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_8| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#76| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_80| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#94| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_81 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_81| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000010100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_82| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#95| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_83 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_83| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) #b00000)))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_84 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_84| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000010000000100000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_85 7
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_85| ((state |rvfi_testbench_s|)) (_ BitVec 7) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (concat (ite (|rvfi_testbench#97| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (ite (|rvfi_testbench#90| state) #b1 #b0))))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_86| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#96| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_87| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#97| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_88 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_88| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000100100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_89 5
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_89| ((state |rvfi_testbench_s|)) (_ BitVec 5) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (ite (|rvfi_testbench#90| state) #b1 #b0))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_9 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_9| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000001000100)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_90 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_90| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 13) (|rvfi_testbench#58| state)) (concat #b0000000 (concat ((_ extract 5 5) (|rvfi_testbench#58| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00)))))))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_91 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_91| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000000000)
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_92| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#98| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_93| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#99| state))
-; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_94 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6_94| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (ite (|rvfi_testbench#90| state) #b1 #b0)))
-; yosys-smt2-anyinit rvfi_testbench#102 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION"], "smtname": 102, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#102| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_intalu_aluNodeStage_result_9| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#64| state))
+; yosys-smt2-anyinit rvfi_testbench#65 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION"], "smtname": 65, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#65| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION
+(define-fun |rvfi_testbench#66| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b1010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#66| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_1 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_1| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000001100100)
+(define-fun |rvfi_testbench#67| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 3 3) (|rvfi_testbench#65| state)))) #b101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_10| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#67| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_11 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_11| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0000000000000000000 (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat #b00000 (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) (concat #b00 (concat ((_ extract 3 3) (|rvfi_testbench#65| state)) #b000)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_12 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_12| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000001000)
+(define-fun |rvfi_testbench#68| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 3 2) (|rvfi_testbench#65| state))))) #b000100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28
+(define-fun |rvfi_testbench#69| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b00100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26
+(define-fun |rvfi_testbench#70| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))))) #b10010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22
+(define-fun |rvfi_testbench#71| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))))) #b1100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20
+(define-fun |rvfi_testbench#72| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) ((_ extract 4 3) (|rvfi_testbench#65| state)))) #b1100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16
+(define-fun |rvfi_testbench#73| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#65| state)) ((_ extract 4 3) (|rvfi_testbench#65| state))) #b100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_13 6
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_13| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#73| state) #b1 #b0) (concat (ite (|rvfi_testbench#72| state) #b1 #b0) (concat (ite (|rvfi_testbench#71| state) #b1 #b0) (concat (ite (|rvfi_testbench#70| state) #b1 #b0) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_14| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#73| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_15 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_15| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000010000000011000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_16| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#72| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_17 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_17| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 4 3) (|rvfi_testbench#65| state)) #b000)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_18 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_18| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_19 4
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_19| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat (ite (|rvfi_testbench#71| state) #b1 #b0) (concat (ite (|rvfi_testbench#70| state) #b1 #b0) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0)))))
+(define-fun |rvfi_testbench#74| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b11010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#74| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_20| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#71| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_21 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_21| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_22| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#70| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_23 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_23| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#65| state)) #b00)))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_24 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_24| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b01000000000000000000000000100000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_25 2
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_25| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#69| state) #b1 #b0) (ite (|rvfi_testbench#68| state) #b1 #b0)))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_26| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#69| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_27 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_27| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000111000001000100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_28| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#68| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_29 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_29| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000001101100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_3 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_3| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000001100100)
+(define-fun |rvfi_testbench#75| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))))) #b00010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48
+(define-fun |rvfi_testbench#76| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 3 2) (|rvfi_testbench#65| state)))) #b00100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45
+(define-fun |rvfi_testbench#77| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b11010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43
+(define-fun |rvfi_testbench#78| ((state |rvfi_testbench_s|)) Bool (not (or  false false false (= ((_ extract 3 3) (|rvfi_testbench#65| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#65| state)) #b1) false false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#65| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39
+(define-fun |rvfi_testbench#79| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 13) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b0100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37
+(define-fun |rvfi_testbench#80| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))))) #b1000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33
+(define-fun |rvfi_testbench#81| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 3 3) (|rvfi_testbench#65| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_30 7
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_30| ((state |rvfi_testbench_s|)) (_ BitVec 7) (concat (ite (|rvfi_testbench#81| state) #b1 #b0) (concat (ite (|rvfi_testbench#80| state) #b1 #b0) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#78| state) #b1 #b0) (concat (ite (|rvfi_testbench#77| state) #b1 #b0) (concat (ite (|rvfi_testbench#76| state) #b1 #b0) (ite (|rvfi_testbench#75| state) #b1 #b0))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_31| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#81| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_32 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_32| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000101000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_33| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#80| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_34 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_34| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#65| state)) #b00)))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_35 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_35| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_36 5
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_36| ((state |rvfi_testbench_s|)) (_ BitVec 5) (concat (ite (|rvfi_testbench#79| state) #b1 #b0) (concat (ite (|rvfi_testbench#78| state) #b1 #b0) (concat (ite (|rvfi_testbench#77| state) #b1 #b0) (concat (ite (|rvfi_testbench#76| state) #b1 #b0) (ite (|rvfi_testbench#75| state) #b1 #b0))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_37| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#79| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_38 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_38| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000000100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_39| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#78| state))
+(define-fun |rvfi_testbench#82| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false false (= ((_ extract 5 5) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#82| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_40 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_40| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 4 3) (|rvfi_testbench#65| state)) #b000)))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_41 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_41| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_42 3
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_42| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#77| state) #b1 #b0) (concat (ite (|rvfi_testbench#76| state) #b1 #b0) (ite (|rvfi_testbench#75| state) #b1 #b0))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_43| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#77| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_44 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_44| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000001100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_45| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#76| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_46 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_46| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 13) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) (concat #b0 (concat ((_ extract 3 2) (|rvfi_testbench#65| state)) #b00)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_47 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_47| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000100000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_48| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#75| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_49 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_49| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#65| state)) #b00)))))))))))
+(define-fun |rvfi_testbench#83| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false false false (= ((_ extract 6 6) (|rvfi_testbench#65| state)) #b1) false false false false false false (= ((_ extract 13 13) (|rvfi_testbench#65| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8
+(define-fun |rvfi_testbench#84| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false false false (= ((_ extract 6 6) (|rvfi_testbench#65| state)) #b1) false false false false false (= ((_ extract 12 12) (|rvfi_testbench#65| state)) #b1) false (= ((_ extract 14 14) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_5 2
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_5| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#84| state) #b1 #b0) (ite (|rvfi_testbench#83| state) #b1 #b0)))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_50 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_50| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000100000)
+(define-fun |rvfi_testbench#85| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 4 3) (|rvfi_testbench#65| state)) #b01)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52
+(define-fun |rvfi_testbench#86| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) ((_ extract 4 4) (|rvfi_testbench#65| state))) #b1000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53 [3]
+(define-fun |rvfi_testbench#87| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))) #b01)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54
+(define-fun |rvfi_testbench#88| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) ((_ extract 4 4) (|rvfi_testbench#65| state))) #b110)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56
+(define-fun |rvfi_testbench#89| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) ((_ extract 3 3) (|rvfi_testbench#65| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60
+(define-fun |rvfi_testbench#90| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) ((_ extract 5 5) (|rvfi_testbench#65| state)))) #b100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62
+(define-fun |rvfi_testbench#91| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) ((_ extract 4 4) (|rvfi_testbench#65| state)))) #b010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66
+(define-fun |rvfi_testbench#92| ((state |rvfi_testbench_s|)) Bool (not (or  false false false false false (= ((_ extract 5 5) (|rvfi_testbench#65| state)) #b1) false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#65| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67
+(define-fun |rvfi_testbench#93| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b01010)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72
+(define-fun |rvfi_testbench#94| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b10100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73
+(define-fun |rvfi_testbench#95| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 3 2) (|rvfi_testbench#65| state)))) #b010100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74
+(define-fun |rvfi_testbench#96| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#85| state) (|rvfi_testbench#86| state) (|rvfi_testbench#87| state) (|rvfi_testbench#88| state) (|rvfi_testbench#89| state) (|rvfi_testbench#90| state) (|rvfi_testbench#91| state) (|rvfi_testbench#92| state) (|rvfi_testbench#93| state) (|rvfi_testbench#94| state) (|rvfi_testbench#95| state))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_51| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#96| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_52| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#85| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53 10
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_53| ((state |rvfi_testbench_s|)) (_ BitVec 10) (concat (ite (|rvfi_testbench#87| state) #b1 #b0) (concat (ite (|rvfi_testbench#88| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (concat (ite (|rvfi_testbench#90| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (concat (ite (|rvfi_testbench#93| state) #b1 #b0) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (ite (|rvfi_testbench#95| state) #b1 #b0)))))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_54| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#87| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_55 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_55| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_56| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#88| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_57 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_57| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 4 4) (|rvfi_testbench#65| state)) #b0000)))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_58 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_58| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_59 8
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_59| ((state |rvfi_testbench_s|)) (_ BitVec 8) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (concat (ite (|rvfi_testbench#90| state) #b1 #b0) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (concat (ite (|rvfi_testbench#93| state) #b1 #b0) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (ite (|rvfi_testbench#95| state) #b1 #b0)))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_6| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#84| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_60| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#89| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_61 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_61| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b01000000000000000001000000001000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_62| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#90| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_63 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_63| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0 (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) #b00000)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_64 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_64| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_65 6
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_65| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#91| state) #b1 #b0) (concat (ite (|rvfi_testbench#92| state) #b1 #b0) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (concat (ite (|rvfi_testbench#93| state) #b1 #b0) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (ite (|rvfi_testbench#95| state) #b1 #b0)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_66| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#91| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_67| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#92| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_68 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_68| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000011000000100000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_69 4
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_69| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat (ite (|rvfi_testbench#86| state) #b1 #b0) (concat (ite (|rvfi_testbench#93| state) #b1 #b0) (concat (ite (|rvfi_testbench#94| state) #b1 #b0) (ite (|rvfi_testbench#95| state) #b1 #b0)))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_7 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_7| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000001000100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_70 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_70| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 4 4) (|rvfi_testbench#65| state)) #b0000)))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_71 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_71| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_72| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#93| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_73| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#94| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_74| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#95| state))
+(define-fun |rvfi_testbench#97| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) ((_ extract 3 2) (|rvfi_testbench#65| state)))) #b100000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77 [0]
+(define-fun |rvfi_testbench#98| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))))) #b10100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77 [1]
+(define-fun |rvfi_testbench#99| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false false (= ((_ extract 5 5) (|rvfi_testbench#65| state)) #b1) false false false false false false false (= ((_ extract 13 13) (|rvfi_testbench#65| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77 [4]
+(define-fun |rvfi_testbench#100| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))) #b011)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78
+(define-fun |rvfi_testbench#101| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) ((_ extract 3 3) (|rvfi_testbench#65| state)))) #b001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80
+(define-fun |rvfi_testbench#102| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false (= ((_ extract 4 4) (|rvfi_testbench#65| state)) #b1) false false false false false false false (= ((_ extract 12 12) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84
+(define-fun |rvfi_testbench#103| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) ((_ extract 5 5) (|rvfi_testbench#65| state))) #b0101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86
+(define-fun |rvfi_testbench#104| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) ((_ extract 5 5) (|rvfi_testbench#65| state))) #b1001)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90
+(define-fun |rvfi_testbench#105| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))))) #b0100)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91
+(define-fun |rvfi_testbench#106| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) ((_ extract 6 5) (|rvfi_testbench#65| state))) #b11101)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96
+(define-fun |rvfi_testbench#107| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state)))) #b11000)) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97
+(define-fun |rvfi_testbench#108| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#85| state) (|rvfi_testbench#97| state) (|rvfi_testbench#98| state) (|rvfi_testbench#99| state) (|rvfi_testbench#100| state) (|rvfi_testbench#101| state) (|rvfi_testbench#102| state) (|rvfi_testbench#103| state) (|rvfi_testbench#104| state) (|rvfi_testbench#105| state) (|rvfi_testbench#106| state) (|rvfi_testbench#107| state))) ; \wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_75| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#108| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_76 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_76| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#85| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77 11
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_77| ((state |rvfi_testbench_s|)) (_ BitVec 11) (concat (ite (|rvfi_testbench#100| state) #b1 #b0) (concat (ite (|rvfi_testbench#101| state) #b1 #b0) (concat (ite (|rvfi_testbench#102| state) #b1 #b0) (concat (ite (|rvfi_testbench#103| state) #b1 #b0) (concat (ite (|rvfi_testbench#104| state) #b1 #b0) (concat (ite (|rvfi_testbench#105| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#106| state) #b1 #b0) (concat (ite (|rvfi_testbench#107| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (ite (|rvfi_testbench#97| state) #b1 #b0))))))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_78| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#100| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_79 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_79| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000001100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_8| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#83| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_80| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#101| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_81 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_81| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b0 (concat ((_ extract 30 30) (|rvfi_testbench#65| state)) (concat #b000000000000000 (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) (concat #b0000000000 (concat ((_ extract 3 3) (|rvfi_testbench#65| state)) #b000)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_82 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_82| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000001000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_83 9
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_83| ((state |rvfi_testbench_s|)) (_ BitVec 9) (concat (ite (|rvfi_testbench#102| state) #b1 #b0) (concat (ite (|rvfi_testbench#103| state) #b1 #b0) (concat (ite (|rvfi_testbench#104| state) #b1 #b0) (concat (ite (|rvfi_testbench#105| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#106| state) #b1 #b0) (concat (ite (|rvfi_testbench#107| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (ite (|rvfi_testbench#97| state) #b1 #b0))))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_84| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#102| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_85 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_85| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000010100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_86| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#103| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_87 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_87| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat #b000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) #b00000)))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_88 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_88| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000010000000100000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_89 7
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_89| ((state |rvfi_testbench_s|)) (_ BitVec 7) (concat (ite (|rvfi_testbench#104| state) #b1 #b0) (concat (ite (|rvfi_testbench#105| state) #b1 #b0) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#106| state) #b1 #b0) (concat (ite (|rvfi_testbench#107| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (ite (|rvfi_testbench#97| state) #b1 #b0))))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_9 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_9| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000110000001000100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_90| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#104| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_91| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#105| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_92 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_92| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000101000000100100)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_93 5
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_93| ((state |rvfi_testbench_s|)) (_ BitVec 5) (concat (ite (|rvfi_testbench#99| state) #b1 #b0) (concat (ite (|rvfi_testbench#106| state) #b1 #b0) (concat (ite (|rvfi_testbench#107| state) #b1 #b0) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (ite (|rvfi_testbench#97| state) #b1 #b0))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_94 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_94| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b00000000000000000 (concat ((_ extract 14 13) (|rvfi_testbench#65| state)) (concat #b0000000 (concat ((_ extract 5 5) (|rvfi_testbench#65| state)) (concat #b00 (concat ((_ extract 2 2) (|rvfi_testbench#65| state)) #b00)))))))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_95 32
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_95| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000000000000000000)
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_96| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#106| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_97| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#107| state))
+; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_98 2
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_98| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#98| state) #b1 #b0) (ite (|rvfi_testbench#97| state) #b1 #b0)))
+; yosys-smt2-anyinit rvfi_testbench#109 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION"], "smtname": 109, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#109| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat ((_ extract 31 12) (|rvfi_testbench#102| state)) #b000000000000))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat ((_ extract 31 12) (|rvfi_testbench#109| state)) #b000000000000))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1 12
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1| ((state |rvfi_testbench_s|)) (_ BitVec 12) ((_ extract 31 20) (|rvfi_testbench#102| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1| ((state |rvfi_testbench_s|)) (_ BitVec 12) ((_ extract 31 20) (|rvfi_testbench#109| state)))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_1 12
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_1| ((state |rvfi_testbench_s|)) (_ BitVec 12) (concat ((_ extract 31 25) (|rvfi_testbench#102| state)) ((_ extract 11 7) (|rvfi_testbench#102| state))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_1| ((state |rvfi_testbench_s|)) (_ BitVec 12) (concat ((_ extract 31 25) (|rvfi_testbench#109| state)) ((_ extract 11 7) (|rvfi_testbench#109| state))))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_2 13
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_2| ((state |rvfi_testbench_s|)) (_ BitVec 13) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 7 7) (|rvfi_testbench#102| state)) (concat ((_ extract 30 25) (|rvfi_testbench#102| state)) (concat ((_ extract 11 8) (|rvfi_testbench#102| state)) #b0)))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_2| ((state |rvfi_testbench_s|)) (_ BitVec 13) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 7 7) (|rvfi_testbench#109| state)) (concat ((_ extract 30 25) (|rvfi_testbench#109| state)) (concat ((_ extract 11 8) (|rvfi_testbench#109| state)) #b0)))))
 ; yosys-smt2-wire wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_3 21
-(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_3| ((state |rvfi_testbench_s|)) (_ BitVec 21) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 19 12) (|rvfi_testbench#102| state)) (concat ((_ extract 20 20) (|rvfi_testbench#102| state)) (concat ((_ extract 30 21) (|rvfi_testbench#102| state)) #b0)))))
-; yosys-smt2-anyinit rvfi_testbench#103 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_dispatcher_hcs_init_value"], "smtname": 103, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#103| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_value
-(define-fun |rvfi_testbench#104| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#103| state) #b101)) ; \wrapper.cpu.when_scheduler_l248
-(define-fun |rvfi_testbench#105| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#104| state) #b1 #b0)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willIncrement
+(define-fun |rvfi_testbench_n wrapper.cpu._zz__zz_coreArea_srcPlugin_immsel_sext_1_3| ((state |rvfi_testbench_s|)) (_ BitVec 21) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 19 12) (|rvfi_testbench#109| state)) (concat ((_ extract 20 20) (|rvfi_testbench#109| state)) (concat ((_ extract 30 21) (|rvfi_testbench#109| state)) #b0)))))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#43| state))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target_1 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target_2 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target_2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target_3 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target_3| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#60| state))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target_4 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target_4| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_branch_logic_target_5 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_branch_logic_target_5| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+; yosys-smt2-anyinit rvfi_testbench#110 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_dispatcher_hcs_init_value"], "smtname": 110, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#110| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_value
+(define-fun |rvfi_testbench#111| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#110| state) #b101)) ; \wrapper.cpu.when_scheduler_l251
+(define-fun |rvfi_testbench#112| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#111| state) #b1 #b0)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willIncrement
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b00 (|rvfi_testbench#105| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b00 (|rvfi_testbench#112| state)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext_1 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#105| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#106 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_inflight"], "smtname": 106, "smtoffset": 0, "type": "init", "width": 4}
-(declare-fun |rvfi_testbench#106| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_fetch_inflight
-; yosys-smt2-anyinit rvfi_testbench#107 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_1_up_valid"], "smtname": 107, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#107| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid
-; yosys-smt2-anyinit rvfi_testbench#108 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_cmdArea_reqSent"], "smtname": 108, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#108| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_cmdArea_reqSent
-(define-fun |rvfi_testbench#109| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#108| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2088$290_Y
-(define-fun |rvfi_testbench#110| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#107| state)) #b1) false) (or  (|rvfi_testbench#109| state) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2088$291_Y
-; yosys-smt2-anyinit rvfi_testbench#111 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2955.3-2994.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ptr_push"], "smtname": 111, "smtoffset": 0, "type": "init", "width": 4}
-(declare-fun |rvfi_testbench#111| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push
-; yosys-smt2-anyinit rvfi_testbench#112 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2955.3-2994.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_pop_sync_popReg"], "smtname": 112, "smtoffset": 0, "type": "init", "width": 4}
-(declare-fun |rvfi_testbench#112| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg
-(define-fun |rvfi_testbench#113| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvsub (|rvfi_testbench#111| state) (|rvfi_testbench#112| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy
-(define-fun |rvfi_testbench#114| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvsub #b1000 (|rvfi_testbench#113| state))) ; \wrapper.cpu.coreArea_fetch_fifo_io_availability
-(define-fun |rvfi_testbench#115| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#106| state) (|rvfi_testbench#114| state))) ; $flatten\wrapper.\cpu.$lt$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2088$292_Y
-(define-fun |rvfi_testbench#116| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#110| state) false) (or  (|rvfi_testbench#115| state) false))) ; \wrapper.cpu.coreArea_fetch_cmdFire
-(define-fun |rvfi_testbench#117| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvadd (|rvfi_testbench#106| state) (concat #b000 (ite (|rvfi_testbench#116| state) #b1 #b0)))) ; \wrapper.cpu._zz_coreArea_fetch_inflight
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_dispatcher_hcs_init_valueNext_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#112| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#113 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_inflight"], "smtname": 113, "smtoffset": 0, "type": "init", "width": 4}
+(declare-fun |rvfi_testbench#113| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_fetch_inflight
+; yosys-smt2-anyinit rvfi_testbench#114 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_1_up_valid"], "smtname": 114, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#114| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid
+; yosys-smt2-anyinit rvfi_testbench#115 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_cmdArea_reqSent"], "smtname": 115, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#115| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_cmdArea_reqSent
+(define-fun |rvfi_testbench#116| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#115| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2180$297_Y
+(define-fun |rvfi_testbench#117| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#114| state)) #b1) false) (or  (|rvfi_testbench#116| state) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2180$298_Y
+; yosys-smt2-anyinit rvfi_testbench#118 2 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3298.3-3337.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ptr_push"], "smtname": 118, "smtoffset": 0, "type": "init", "width": 2}
+(declare-fun |rvfi_testbench#118| (|rvfi_testbench_s|) (_ BitVec 2)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push
+; yosys-smt2-anyinit rvfi_testbench#119 2 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3298.3-3337.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_pop_sync_popReg"], "smtname": 119, "smtoffset": 0, "type": "init", "width": 2}
+(declare-fun |rvfi_testbench#119| (|rvfi_testbench_s|) (_ BitVec 2)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg
+(define-fun |rvfi_testbench#120| ((state |rvfi_testbench_s|)) (_ BitVec 2) (bvsub (|rvfi_testbench#118| state) (|rvfi_testbench#119| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy
+(define-fun |rvfi_testbench#121| ((state |rvfi_testbench_s|)) (_ BitVec 2) (bvsub #b10 (|rvfi_testbench#120| state))) ; \wrapper.cpu.coreArea_fetch_fifo.io_availability
+(define-fun |rvfi_testbench#122| ((state |rvfi_testbench_s|)) Bool (bvult (|rvfi_testbench#113| state) (concat #b00 (|rvfi_testbench#121| state)))) ; $flatten\wrapper.\cpu.$lt$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2180$299_Y
+(define-fun |rvfi_testbench#123| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#117| state) false) (or  (|rvfi_testbench#122| state) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2180$300_Y
+; yosys-smt2-anyinit rvfi_testbench#124 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_MicroCode"], "smtname": 124, "smtoffset": 0, "type": "init", "width": 6}
+(declare-fun |rvfi_testbench#124| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode
+(define-fun |rvfi_testbench#125| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000100)) ; $flatten\wrapper.\cpu.$procmux$1937_CMP
+(define-fun |rvfi_testbench#126| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000011)) ; $flatten\wrapper.\cpu.$procmux$1938_CMP
+(define-fun |rvfi_testbench#127| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#125| state) (|rvfi_testbench#126| state))) ; $auto$opt_reduce.cc:137:opt_pmux$2239
+(define-fun |rvfi_testbench#128| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#127| state) #b1 #b0)) ; \wrapper.cpu.coreArea_branch_logic_isJump
+(define-fun |rvfi_testbench#129| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b001010)) ; $flatten\wrapper.\cpu.$procmux$1929_CMP
+(define-fun |rvfi_testbench#130| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b001001)) ; $flatten\wrapper.\cpu.$procmux$1930_CMP
+(define-fun |rvfi_testbench#131| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b001000)) ; $flatten\wrapper.\cpu.$procmux$1931_CMP
+(define-fun |rvfi_testbench#132| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000111)) ; $flatten\wrapper.\cpu.$procmux$1932_CMP
+(define-fun |rvfi_testbench#133| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000110)) ; $flatten\wrapper.\cpu.$procmux$1933_CMP
+(define-fun |rvfi_testbench#134| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000101)) ; $flatten\wrapper.\cpu.$procmux$1934_CMP
+(define-fun |rvfi_testbench#135| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#129| state) (|rvfi_testbench#130| state) (|rvfi_testbench#131| state) (|rvfi_testbench#132| state) (|rvfi_testbench#133| state) (|rvfi_testbench#134| state))) ; $auto$opt_reduce.cc:137:opt_pmux$2237
+(define-fun |rvfi_testbench#136| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#135| state) #b1 #b0)) ; \wrapper.cpu.coreArea_branch_logic_isBranch
+(define-fun |rvfi_testbench#137| ((state |rvfi_testbench_s|)) Bool (bvule (|rvfi_testbench#44| state) (|rvfi_testbench#41| state))) ; $flatten\wrapper.\cpu.$le$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2542$437_Y
+(define-fun |rvfi_testbench#138| ((state |rvfi_testbench_s|)) Bool (bvsle (|rvfi_testbench#44| state) (|rvfi_testbench#41| state))) ; $flatten\wrapper.\cpu.$le$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2536$435_Y
+(define-fun |rvfi_testbench#139| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; $flatten\wrapper.\cpu.$ne$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2530$433_Y
+(define-fun |rvfi_testbench#140| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2527$432_Y
+(define-fun |rvfi_testbench#141| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#134| state) (ite (|rvfi_testbench#140| state) #b1 #b0) (ite (|rvfi_testbench#133| state) (ite (|rvfi_testbench#139| state) #b1 #b0) (ite (|rvfi_testbench#132| state) (ite (|rvfi_testbench#50| state) #b1 #b0) (ite (|rvfi_testbench#131| state) (ite (|rvfi_testbench#138| state) #b1 #b0) (ite (|rvfi_testbench#130| state) (ite (|rvfi_testbench#51| state) #b1 #b0) (ite (|rvfi_testbench#129| state) (ite (|rvfi_testbench#137| state) #b1 #b0) #b0))))))) ; \wrapper.cpu.coreArea_branch_logic_condition
+(define-fun |rvfi_testbench#142| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#136| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#141| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2602$441_Y
+(define-fun |rvfi_testbench#143| ((state |rvfi_testbench_s|)) Bool (or  (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1) false  (|rvfi_testbench#142| state) false)) ; $flatten\wrapper.\cpu.$logic_or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2602$442_Y
+; yosys-smt2-anyinit rvfi_testbench#144 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Common_LANE_SEL"], "smtname": 144, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#144| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
+(define-fun |rvfi_testbench#145| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#143| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#144| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2602$443_Y
+; yosys-smt2-anyinit rvfi_testbench#146 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH"], "smtname": 146, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#146| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH
+(define-fun |rvfi_testbench#147| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#145| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#146| state)) #b1) false))) ; \wrapper.cpu.coreArea_branch_logic_doJump
+(define-fun |rvfi_testbench#148| ((state |rvfi_testbench_s|)) (_ BitVec 63) (ite (|rvfi_testbench#125| state) ((_ extract 63 1) (|rvfi_testbench#43| state)) ((_ extract 63 1) (|rvfi_testbench#60| state)))) ; { \wrapper.cpu.coreArea_branch_logic_target [63:2] \wrapper.cpu.coreArea_branch_logic_misaligned }
+(define-fun |rvfi_testbench#149| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#147| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#148| state)) #b1) false))) ; \wrapper.cpu.coreArea_branch_logic_willTrap
+(define-fun |rvfi_testbench#150| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#149| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2510$426_Y
+(define-fun |rvfi_testbench#151| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#147| state) false) (or  (|rvfi_testbench#150| state) false))) ; \wrapper.cpu.coreArea_branch_logic_jumpCmd_valid
+(define-fun |rvfi_testbench#152| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#151| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2180$301_Y
+(define-fun |rvfi_testbench#153| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#123| state) false) (or  (|rvfi_testbench#152| state) false))) ; \wrapper.cpu.coreArea_fetch_cmdFire
+(define-fun |rvfi_testbench#154| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvadd (|rvfi_testbench#113| state) (concat #b000 (ite (|rvfi_testbench#153| state) #b1 #b0)))) ; \wrapper.cpu._zz_coreArea_fetch_inflight
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_inflight 4
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#117| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#154| state))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_inflight_1 4
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_1| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat #b000 (ite (|rvfi_testbench#116| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_1| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat #b000 (ite (|rvfi_testbench#153| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_inflight_2 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#116| state))
-; yosys-smt2-anyseq rvfi_testbench#118 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:17.32-17.47 ibus_resp_valid
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\io_push_valid"], "smtname": 118, "smtoffset": 0, "type": "seq", "width": 1}
-(declare-fun |rvfi_testbench#118| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_valid
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#153| state))
+; yosys-smt2-anyseq rvfi_testbench#155 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:17.32-17.47 ibus_resp_valid
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\io_push_valid"], "smtname": 155, "smtoffset": 0, "type": "seq", "width": 1}
+(declare-fun |rvfi_testbench#155| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_valid
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_inflight_3 4
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_3| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat #b000 (|rvfi_testbench#118| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_3| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat #b000 (|rvfi_testbench#155| state)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_inflight_4 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_4| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
-(define-fun |rvfi_testbench#119| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvand (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2327$407_Y
-(define-fun |rvfi_testbench#120| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvor (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2324$406_Y
-(define-fun |rvfi_testbench#121| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvxor (|rvfi_testbench#34| state) (|rvfi_testbench#37| state))) ; $flatten\wrapper.\cpu.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2321$405_Y
-(define-fun |rvfi_testbench#122| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvand (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2300$404_Y
-(define-fun |rvfi_testbench#123| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvor (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2297$403_Y
-(define-fun |rvfi_testbench#124| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvxor (|rvfi_testbench#34| state) (|rvfi_testbench#35| state))) ; $flatten\wrapper.\cpu.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2294$402_Y
-; yosys-smt2-anyinit rvfi_testbench#125 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_MicroCode"], "smtname": 125, "smtoffset": 0, "type": "init", "width": 6}
-(declare-fun |rvfi_testbench#125| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode
-(define-fun |rvfi_testbench#126| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b000010)) ; $flatten\wrapper.\cpu.$procmux$1726_CMP
-(define-fun |rvfi_testbench#127| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b000001)) ; $flatten\wrapper.\cpu.$procmux$1727_CMP
-(define-fun |rvfi_testbench#128| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b111000)) ; $flatten\wrapper.\cpu.$procmux$1728_CMP
-(define-fun |rvfi_testbench#129| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b111010)) ; $flatten\wrapper.\cpu.$procmux$1729_CMP
-(define-fun |rvfi_testbench#130| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b111011)) ; $flatten\wrapper.\cpu.$procmux$1730_CMP
-(define-fun |rvfi_testbench#131| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b111001)) ; $flatten\wrapper.\cpu.$procmux$1731_CMP
-(define-fun |rvfi_testbench#132| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b110111)) ; $flatten\wrapper.\cpu.$procmux$1732_CMP
-(define-fun |rvfi_testbench#133| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100000)) ; $flatten\wrapper.\cpu.$procmux$1733_CMP
-(define-fun |rvfi_testbench#134| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011111)) ; $flatten\wrapper.\cpu.$procmux$1734_CMP
-(define-fun |rvfi_testbench#135| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011101)) ; $flatten\wrapper.\cpu.$procmux$1735_CMP
-(define-fun |rvfi_testbench#136| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100011)) ; $flatten\wrapper.\cpu.$procmux$1736_CMP
-(define-fun |rvfi_testbench#137| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100010)) ; $flatten\wrapper.\cpu.$procmux$1737_CMP
-(define-fun |rvfi_testbench#138| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011110)) ; $flatten\wrapper.\cpu.$procmux$1738_CMP
-(define-fun |rvfi_testbench#139| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011100)) ; $flatten\wrapper.\cpu.$procmux$1739_CMP
-(define-fun |rvfi_testbench#140| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100101)) ; $flatten\wrapper.\cpu.$procmux$1740_CMP
-(define-fun |rvfi_testbench#141| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100100)) ; $flatten\wrapper.\cpu.$procmux$1741_CMP
-(define-fun |rvfi_testbench#142| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b100001)) ; $flatten\wrapper.\cpu.$procmux$1742_CMP
-(define-fun |rvfi_testbench#143| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011011)) ; $flatten\wrapper.\cpu.$procmux$1743_CMP
-(define-fun |rvfi_testbench#144| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011010)) ; $flatten\wrapper.\cpu.$procmux$1744_CMP
-(define-fun |rvfi_testbench#145| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011001)) ; $flatten\wrapper.\cpu.$procmux$1745_CMP
-(define-fun |rvfi_testbench#146| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b010101)) ; $flatten\wrapper.\cpu.$procmux$1746_CMP
-(define-fun |rvfi_testbench#147| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b010100)) ; $flatten\wrapper.\cpu.$procmux$1747_CMP
-(define-fun |rvfi_testbench#148| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b010011)) ; $flatten\wrapper.\cpu.$procmux$1748_CMP
-(define-fun |rvfi_testbench#149| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b011000)) ; $flatten\wrapper.\cpu.$procmux$1749_CMP
-(define-fun |rvfi_testbench#150| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b010111)) ; $flatten\wrapper.\cpu.$procmux$1750_CMP
-(define-fun |rvfi_testbench#151| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#125| state) #b010110)) ; $flatten\wrapper.\cpu.$procmux$1751_CMP
-(define-fun |rvfi_testbench#152| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#151| state) (|rvfi_testbench#124| state) (ite (|rvfi_testbench#150| state) (|rvfi_testbench#123| state) (ite (|rvfi_testbench#149| state) (|rvfi_testbench#122| state) (ite (|rvfi_testbench#148| state) (|rvfi_testbench#36| state) (ite (|rvfi_testbench#147| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#45| state) #b1 #b0)) (ite (|rvfi_testbench#146| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#54| state) #b1 #b0)) (ite (|rvfi_testbench#145| state) (|rvfi_testbench#55| state) (ite (|rvfi_testbench#144| state) (|rvfi_testbench#56| state) (ite (|rvfi_testbench#143| state) (|rvfi_testbench#57| state) (ite (|rvfi_testbench#142| state) (|rvfi_testbench#121| state) (ite (|rvfi_testbench#141| state) (|rvfi_testbench#120| state) (ite (|rvfi_testbench#140| state) (|rvfi_testbench#119| state) (ite (|rvfi_testbench#139| state) (|rvfi_testbench#38| state) (ite (|rvfi_testbench#138| state) (|rvfi_testbench#39| state) (ite (|rvfi_testbench#137| state) (|rvfi_testbench#40| state) (ite (|rvfi_testbench#136| state) (|rvfi_testbench#41| state) (ite (|rvfi_testbench#135| state) (|rvfi_testbench#42| state) (ite (|rvfi_testbench#134| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#43| state) #b1 #b0)) (ite (|rvfi_testbench#133| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#44| state) #b1 #b0)) (ite (|rvfi_testbench#132| state) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) (concat ((_ extract 31 31) (|rvfi_testbench#38| state)) ((_ extract 31 0) (|rvfi_testbench#38| state)))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#131| state) (concat #b00000000000000000000000000000000 (|rvfi_testbench#46| state)) (ite (|rvfi_testbench#130| state) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (concat ((_ extract 31 31) (|rvfi_testbench#48| state)) (|rvfi_testbench#48| state))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#129| state) (concat #b00000000000000000000000000000000 (|rvfi_testbench#50| state)) (ite (|rvfi_testbench#128| state) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) (concat ((_ extract 31 31) (|rvfi_testbench#42| state)) ((_ extract 31 0) (|rvfi_testbench#42| state)))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#127| state) (|rvfi_testbench#35| state) (ite (|rvfi_testbench#126| state) (|rvfi_testbench#53| state) (|rvfi_testbench#3| state)))))))))))))))))))))))))))) ; \wrapper.cpu._zz_coreArea_intalu_aluNodeStage_result
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_inflight_4| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_fetch_io_readCmd_cmd_valid 4
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_fetch_io_readCmd_cmd_valid| ((state |rvfi_testbench_s|)) (_ BitVec 4) (concat #b00 (|rvfi_testbench#121| state)))
+(define-fun |rvfi_testbench#156| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvand (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2424$414_Y
+(define-fun |rvfi_testbench#157| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvor (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2421$413_Y
+(define-fun |rvfi_testbench#158| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvxor (|rvfi_testbench#41| state) (|rvfi_testbench#44| state))) ; $flatten\wrapper.\cpu.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2418$412_Y
+(define-fun |rvfi_testbench#159| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvand (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2397$411_Y
+(define-fun |rvfi_testbench#160| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvor (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2394$410_Y
+(define-fun |rvfi_testbench#161| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvxor (|rvfi_testbench#41| state) (|rvfi_testbench#42| state))) ; $flatten\wrapper.\cpu.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2391$409_Y
+(define-fun |rvfi_testbench#162| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000010)) ; \wrapper.cpu.when_branch_l98
+(define-fun |rvfi_testbench#163| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b000001)) ; $flatten\wrapper.\cpu.$procmux$2010_CMP
+(define-fun |rvfi_testbench#164| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b111000)) ; $flatten\wrapper.\cpu.$procmux$2011_CMP
+(define-fun |rvfi_testbench#165| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b111010)) ; $flatten\wrapper.\cpu.$procmux$2012_CMP
+(define-fun |rvfi_testbench#166| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b111011)) ; $flatten\wrapper.\cpu.$procmux$2013_CMP
+(define-fun |rvfi_testbench#167| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b111001)) ; $flatten\wrapper.\cpu.$procmux$2014_CMP
+(define-fun |rvfi_testbench#168| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b110111)) ; $flatten\wrapper.\cpu.$procmux$2015_CMP
+(define-fun |rvfi_testbench#169| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100000)) ; $flatten\wrapper.\cpu.$procmux$2016_CMP
+(define-fun |rvfi_testbench#170| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011111)) ; $flatten\wrapper.\cpu.$procmux$2017_CMP
+(define-fun |rvfi_testbench#171| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011101)) ; $flatten\wrapper.\cpu.$procmux$2018_CMP
+(define-fun |rvfi_testbench#172| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100011)) ; $flatten\wrapper.\cpu.$procmux$2019_CMP
+(define-fun |rvfi_testbench#173| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100010)) ; $flatten\wrapper.\cpu.$procmux$2020_CMP
+(define-fun |rvfi_testbench#174| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011110)) ; $flatten\wrapper.\cpu.$procmux$2021_CMP
+(define-fun |rvfi_testbench#175| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011100)) ; $flatten\wrapper.\cpu.$procmux$2022_CMP
+(define-fun |rvfi_testbench#176| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100101)) ; $flatten\wrapper.\cpu.$procmux$2023_CMP
+(define-fun |rvfi_testbench#177| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100100)) ; $flatten\wrapper.\cpu.$procmux$2024_CMP
+(define-fun |rvfi_testbench#178| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b100001)) ; $flatten\wrapper.\cpu.$procmux$2025_CMP
+(define-fun |rvfi_testbench#179| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011011)) ; $flatten\wrapper.\cpu.$procmux$2026_CMP
+(define-fun |rvfi_testbench#180| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011010)) ; $flatten\wrapper.\cpu.$procmux$2027_CMP
+(define-fun |rvfi_testbench#181| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011001)) ; $flatten\wrapper.\cpu.$procmux$2028_CMP
+(define-fun |rvfi_testbench#182| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b010101)) ; $flatten\wrapper.\cpu.$procmux$2029_CMP
+(define-fun |rvfi_testbench#183| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b010100)) ; $flatten\wrapper.\cpu.$procmux$2030_CMP
+(define-fun |rvfi_testbench#184| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b010011)) ; $flatten\wrapper.\cpu.$procmux$2031_CMP
+(define-fun |rvfi_testbench#185| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b011000)) ; $flatten\wrapper.\cpu.$procmux$2032_CMP
+(define-fun |rvfi_testbench#186| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b010111)) ; $flatten\wrapper.\cpu.$procmux$2033_CMP
+(define-fun |rvfi_testbench#187| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#124| state) #b010110)) ; $flatten\wrapper.\cpu.$procmux$2034_CMP
+(define-fun |rvfi_testbench#188| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#187| state) (|rvfi_testbench#161| state) (ite (|rvfi_testbench#186| state) (|rvfi_testbench#160| state) (ite (|rvfi_testbench#185| state) (|rvfi_testbench#159| state) (ite (|rvfi_testbench#184| state) (|rvfi_testbench#43| state) (ite (|rvfi_testbench#183| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#52| state) #b1 #b0)) (ite (|rvfi_testbench#182| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#61| state) #b1 #b0)) (ite (|rvfi_testbench#181| state) (|rvfi_testbench#62| state) (ite (|rvfi_testbench#180| state) (|rvfi_testbench#63| state) (ite (|rvfi_testbench#179| state) (|rvfi_testbench#64| state) (ite (|rvfi_testbench#178| state) (|rvfi_testbench#158| state) (ite (|rvfi_testbench#177| state) (|rvfi_testbench#157| state) (ite (|rvfi_testbench#176| state) (|rvfi_testbench#156| state) (ite (|rvfi_testbench#175| state) (|rvfi_testbench#45| state) (ite (|rvfi_testbench#174| state) (|rvfi_testbench#46| state) (ite (|rvfi_testbench#173| state) (|rvfi_testbench#47| state) (ite (|rvfi_testbench#172| state) (|rvfi_testbench#48| state) (ite (|rvfi_testbench#171| state) (|rvfi_testbench#49| state) (ite (|rvfi_testbench#170| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#50| state) #b1 #b0)) (ite (|rvfi_testbench#169| state) (concat #b000000000000000000000000000000000000000000000000000000000000000 (ite (|rvfi_testbench#51| state) #b1 #b0)) (ite (|rvfi_testbench#168| state) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) (concat ((_ extract 31 31) (|rvfi_testbench#45| state)) ((_ extract 31 0) (|rvfi_testbench#45| state)))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#167| state) (concat #b00000000000000000000000000000000 (|rvfi_testbench#53| state)) (ite (|rvfi_testbench#166| state) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (concat ((_ extract 31 31) (|rvfi_testbench#55| state)) (|rvfi_testbench#55| state))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#165| state) (concat #b00000000000000000000000000000000 (|rvfi_testbench#57| state)) (ite (|rvfi_testbench#164| state) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) (concat ((_ extract 31 31) (|rvfi_testbench#49| state)) ((_ extract 31 0) (|rvfi_testbench#49| state)))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#163| state) (|rvfi_testbench#42| state) (ite (|rvfi_testbench#162| state) (|rvfi_testbench#60| state) (|rvfi_testbench#4| state)))))))))))))))))))))))))))) ; \wrapper.cpu._zz_coreArea_intalu_aluNodeStage_result
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_intalu_aluNodeStage_result 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#152| state))
-; yosys-smt2-anyinit rvfi_testbench#153 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2901.3-2907.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ram_spinal_port1"], "smtname": 153, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#153| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1
-; yosys-smt2-anyinit rvfi_testbench#154 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_2_up_PC_PC"], "smtname": 154, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#154| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC
-(define-fun |rvfi_testbench#155| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 1 1) (|rvfi_testbench#154| state)) #b1) ((_ extract 63 32) (|rvfi_testbench#153| state)) ((_ extract 31 0) (|rvfi_testbench#153| state)))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#155| state))
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION_1 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 1 1) (|rvfi_testbench#154| state)) #b1))
-(define-fun |rvfi_testbench#156| ((state |rvfi_testbench_s|)) Bool (not (or  false false false false (= ((_ extract 4 4) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#188| state))
+(define-fun |rvfi_testbench#189| ((state |rvfi_testbench_s|)) Bool (not (or  false false false false (= ((_ extract 4 4) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#156| state) #b1 #b0) (ite (|rvfi_testbench#156| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#189| state) #b1 #b0) (ite (|rvfi_testbench#189| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_1 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#156| state) #b1 #b0) (ite (|rvfi_testbench#156| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#189| state) #b1 #b0) (ite (|rvfi_testbench#189| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_2 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#156| state) #b1 #b0) (ite (|rvfi_testbench#156| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#189| state) #b1 #b0) (ite (|rvfi_testbench#189| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_1| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN_2| ((state |rvfi_testbench_s|)) Bool true)
-(define-fun |rvfi_testbench#157| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#58| state)) #b1) false (= ((_ extract 4 4) (|rvfi_testbench#58| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL
+(define-fun |rvfi_testbench#190| ((state |rvfi_testbench_s|)) Bool (not (or  false false (= ((_ extract 2 2) (|rvfi_testbench#65| state)) #b1) false (= ((_ extract 4 4) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#157| state))
-(define-fun |rvfi_testbench#158| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#75| state) (|rvfi_testbench#156| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 [0]
-(define-fun |rvfi_testbench#159| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))) #b01)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2131$337_Y
-(define-fun |rvfi_testbench#160| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#78| state) (|rvfi_testbench#159| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 [2]
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#160| state) #b1 #b0) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#158| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#190| state))
+(define-fun |rvfi_testbench#191| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))) #b01)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_1| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#191| state))
+(define-fun |rvfi_testbench#192| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#82| state) (|rvfi_testbench#189| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2 [0]
+(define-fun |rvfi_testbench#193| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#85| state) (|rvfi_testbench#191| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2 [2]
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#160| state) #b1 #b0) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#158| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#192| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#160| state) #b1 #b0) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#158| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_3| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#192| state) #b1 #b0))))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4 3
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL_4| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#192| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_FP 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_FP| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_FP_1 1
@@ -824,7 +887,7 @@
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_FP_2 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_FP_2| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#156| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_IS_W| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#189| state))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1 1
@@ -832,47 +895,45 @@
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_2 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_2| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#100| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#85| state))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#75| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_1| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#82| state))
+(define-fun |rvfi_testbench#194| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 3 3) (|rvfi_testbench#65| state))) #b01)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#88| state))
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#78| state))
-(define-fun |rvfi_testbench#161| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 3 3) (|rvfi_testbench#58| state))) #b01)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#161| state))
-(define-fun |rvfi_testbench#162| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#74| state) (|rvfi_testbench#73| state) (|rvfi_testbench#72| state) (|rvfi_testbench#71| state) (|rvfi_testbench#70| state) (|rvfi_testbench#69| state) (|rvfi_testbench#68| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 [2]
-(define-fun |rvfi_testbench#163| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#60| state) (|rvfi_testbench#66| state) (|rvfi_testbench#65| state) (|rvfi_testbench#64| state) (|rvfi_testbench#63| state) (|rvfi_testbench#62| state) (|rvfi_testbench#61| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 [3]
-(define-fun |rvfi_testbench#164| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#75| state) (|rvfi_testbench#77| state) (|rvfi_testbench#76| state) (|rvfi_testbench#161| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 [4]
-(define-fun |rvfi_testbench#165| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#59| state) (|rvfi_testbench#67| state) (|rvfi_testbench#161| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 [5]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#194| state))
+(define-fun |rvfi_testbench#195| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#81| state) (|rvfi_testbench#80| state) (|rvfi_testbench#79| state) (|rvfi_testbench#78| state) (|rvfi_testbench#77| state) (|rvfi_testbench#76| state) (|rvfi_testbench#75| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 [2]
+(define-fun |rvfi_testbench#196| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#67| state) (|rvfi_testbench#73| state) (|rvfi_testbench#72| state) (|rvfi_testbench#71| state) (|rvfi_testbench#70| state) (|rvfi_testbench#69| state) (|rvfi_testbench#68| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 [3]
+(define-fun |rvfi_testbench#197| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#82| state) (|rvfi_testbench#84| state) (|rvfi_testbench#83| state) (|rvfi_testbench#194| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 [4]
+(define-fun |rvfi_testbench#198| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#66| state) (|rvfi_testbench#74| state) (|rvfi_testbench#194| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 [5]
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3 6
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_3| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#198| state) #b1 #b0) (concat (ite (|rvfi_testbench#197| state) #b1 #b0) (concat (ite (|rvfi_testbench#196| state) #b1 #b0) (concat (ite (|rvfi_testbench#195| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (ite (|rvfi_testbench#108| state) #b1 #b0)))))))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4 6
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#198| state) #b1 #b0) (concat (ite (|rvfi_testbench#197| state) #b1 #b0) (concat (ite (|rvfi_testbench#196| state) #b1 #b0) (concat (ite (|rvfi_testbench#195| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (ite (|rvfi_testbench#108| state) #b1 #b0)))))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5 6
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#165| state) #b1 #b0) (concat (ite (|rvfi_testbench#164| state) #b1 #b0) (concat (ite (|rvfi_testbench#163| state) #b1 #b0) (concat (ite (|rvfi_testbench#162| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (ite (|rvfi_testbench#101| state) #b1 #b0)))))))
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6 6
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_6| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#165| state) #b1 #b0) (concat (ite (|rvfi_testbench#164| state) #b1 #b0) (concat (ite (|rvfi_testbench#163| state) #b1 #b0) (concat (ite (|rvfi_testbench#162| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (ite (|rvfi_testbench#101| state) #b1 #b0)))))))
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7 6
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_7| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#165| state) #b1 #b0) (concat (ite (|rvfi_testbench#164| state) #b1 #b0) (concat (ite (|rvfi_testbench#163| state) #b1 #b0) (concat (ite (|rvfi_testbench#162| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (ite (|rvfi_testbench#101| state) #b1 #b0)))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_5| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#198| state) #b1 #b0) (concat (ite (|rvfi_testbench#197| state) #b1 #b0) (concat (ite (|rvfi_testbench#196| state) #b1 #b0) (concat (ite (|rvfi_testbench#195| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (ite (|rvfi_testbench#108| state) #b1 #b0)))))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#157| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#190| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_1 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#157| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#190| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#157| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#190| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) #b00))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) #b00))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00))
-(define-fun |rvfi_testbench#166| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#75| state) (|rvfi_testbench#100| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE [1]
-(define-fun |rvfi_testbench#167| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 4 4) (|rvfi_testbench#58| state)) ((_ extract 2 2) (|rvfi_testbench#58| state))) #b01)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2122$329_Y
-(define-fun |rvfi_testbench#168| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#88| state) (|rvfi_testbench#167| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE [2]
-; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#168| state) #b1 #b0) (concat (ite (|rvfi_testbench#166| state) #b1 #b0) (ite (|rvfi_testbench#166| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) #b00))
+(define-fun |rvfi_testbench#199| ((state |rvfi_testbench_s|)) Bool (not (or  false false false false false (= ((_ extract 5 5) (|rvfi_testbench#65| state)) #b1) false false false false false false false false false false false false false false false false false false false false false false false false false false))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE 1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#199| state))
+(define-fun |rvfi_testbench#200| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#191| state) (|rvfi_testbench#199| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1 [1]
+(define-fun |rvfi_testbench#201| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 4 4) (|rvfi_testbench#65| state)) ((_ extract 2 2) (|rvfi_testbench#65| state))) #b01)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1 [2]
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#168| state) #b1 #b0) (concat (ite (|rvfi_testbench#166| state) #b1 #b0) (ite (|rvfi_testbench#166| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_1| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#201| state) #b1 #b0) (concat (ite (|rvfi_testbench#200| state) #b1 #b0) (ite (|rvfi_testbench#200| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2 3
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#168| state) #b1 #b0) (concat (ite (|rvfi_testbench#166| state) #b1 #b0) (ite (|rvfi_testbench#166| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_2| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#201| state) #b1 #b0) (concat (ite (|rvfi_testbench#200| state) #b1 #b0) (ite (|rvfi_testbench#200| state) #b1 #b0))))
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3 3
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE_3| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#201| state) #b1 #b0) (concat (ite (|rvfi_testbench#200| state) #b1 #b0) (ite (|rvfi_testbench#200| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_LDQ 1
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_LDQ| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_USE_LDQ_1 1
@@ -890,865 +951,1084 @@
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID 32
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000100000001111111)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 13) (|rvfi_testbench#58| state)) (concat #b000000 ((_ extract 6 0) (|rvfi_testbench#58| state))))))
-(define-fun |rvfi_testbench#169| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#58| state)) (concat ((_ extract 29 25) (|rvfi_testbench#58| state)) (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state)))))) #b000000101011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat #b000000000000000000 (concat ((_ extract 13 13) (|rvfi_testbench#65| state)) (concat #b000000 ((_ extract 6 0) (|rvfi_testbench#65| state))))))
+(define-fun |rvfi_testbench#202| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#65| state)) (concat ((_ extract 29 25) (|rvfi_testbench#65| state)) (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state)))))) #b000000101011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#169| state))
-(define-fun |rvfi_testbench#170| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#58| state)) (concat ((_ extract 29 25) (|rvfi_testbench#58| state)) (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state)))))) #b000000000011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [0]
-(define-fun |rvfi_testbench#171| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 25) (|rvfi_testbench#58| state)) (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state))))) #b000000001011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [1]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_10| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#202| state))
+(define-fun |rvfi_testbench#203| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#65| state)) (concat ((_ extract 29 25) (|rvfi_testbench#65| state)) (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state)))))) #b000000000011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [0]
+(define-fun |rvfi_testbench#204| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 25) (|rvfi_testbench#65| state)) (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state))))) #b000000001011011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [1]
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_11 2
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_11| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#171| state) #b1 #b0) (ite (|rvfi_testbench#170| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_11| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#204| state) #b1 #b0) (ite (|rvfi_testbench#203| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2 32
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000010000000010011)
-(define-fun |rvfi_testbench#172| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#58| state)) ((_ extract 6 0) (|rvfi_testbench#58| state))) #b01100011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3
+(define-fun |rvfi_testbench#205| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#65| state)) ((_ extract 6 0) (|rvfi_testbench#65| state))) #b01100011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#172| state))
-(define-fun |rvfi_testbench#173| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#58| state)) ((_ extract 6 0) (|rvfi_testbench#58| state))) #b00010011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#205| state))
+(define-fun |rvfi_testbench#206| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 12 12) (|rvfi_testbench#65| state)) ((_ extract 6 0) (|rvfi_testbench#65| state))) #b00010011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#173| state))
-(define-fun |rvfi_testbench#174| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 25) (|rvfi_testbench#58| state)) ((_ extract 6 0) (|rvfi_testbench#58| state))) #b00000000110011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9
-(define-fun |rvfi_testbench#175| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 26) (|rvfi_testbench#58| state)) (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state))))) #b00000001001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [4]
-(define-fun |rvfi_testbench#176| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#58| state)) (concat ((_ extract 29 26) (|rvfi_testbench#58| state)) (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state)))))) #b00000101001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [5]
-(define-fun |rvfi_testbench#177| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) ((_ extract 2 0) (|rvfi_testbench#58| state)))) #b000001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [6]
-(define-fun |rvfi_testbench#178| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#58| state)) (concat ((_ extract 6 3) (|rvfi_testbench#58| state)) ((_ extract 1 0) (|rvfi_testbench#58| state)))) #b000110011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [7]
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#206| state))
+(define-fun |rvfi_testbench#207| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 25) (|rvfi_testbench#65| state)) ((_ extract 6 0) (|rvfi_testbench#65| state))) #b00000000110011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9
+(define-fun |rvfi_testbench#208| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 26) (|rvfi_testbench#65| state)) (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state))))) #b00000001001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [4]
+(define-fun |rvfi_testbench#209| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 31 31) (|rvfi_testbench#65| state)) (concat ((_ extract 29 26) (|rvfi_testbench#65| state)) (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state)))))) #b00000101001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [5]
+(define-fun |rvfi_testbench#210| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) ((_ extract 2 0) (|rvfi_testbench#65| state)))) #b000001011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [6]
+(define-fun |rvfi_testbench#211| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 12) (|rvfi_testbench#65| state)) (concat ((_ extract 6 3) (|rvfi_testbench#65| state)) ((_ extract 1 0) (|rvfi_testbench#65| state)))) #b000110011)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 [7]
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5 8
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5| ((state |rvfi_testbench_s|)) (_ BitVec 8) (concat (ite (|rvfi_testbench#178| state) #b1 #b0) (concat (ite (|rvfi_testbench#177| state) #b1 #b0) (concat (ite (|rvfi_testbench#176| state) #b1 #b0) (concat (ite (|rvfi_testbench#175| state) #b1 #b0) (concat (ite (|rvfi_testbench#174| state) #b1 #b0) (concat (ite (|rvfi_testbench#169| state) #b1 #b0) (concat (ite (|rvfi_testbench#171| state) #b1 #b0) (ite (|rvfi_testbench#170| state) #b1 #b0)))))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5| ((state |rvfi_testbench_s|)) (_ BitVec 8) (concat (ite (|rvfi_testbench#211| state) #b1 #b0) (concat (ite (|rvfi_testbench#210| state) #b1 #b0) (concat (ite (|rvfi_testbench#209| state) #b1 #b0) (concat (ite (|rvfi_testbench#208| state) #b1 #b0) (concat (ite (|rvfi_testbench#207| state) #b1 #b0) (concat (ite (|rvfi_testbench#202| state) #b1 #b0) (concat (ite (|rvfi_testbench#204| state) #b1 #b0) (ite (|rvfi_testbench#203| state) #b1 #b0)))))))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_6 32
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_6| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b10111100000000000111000001110111)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_7 32
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_7| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat ((_ extract 31 26) (|rvfi_testbench#58| state)) (concat #b000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#58| state)) (concat #b00000 (concat ((_ extract 6 4) (|rvfi_testbench#58| state)) (concat #b0 ((_ extract 2 0) (|rvfi_testbench#58| state)))))))))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_7| ((state |rvfi_testbench_s|)) (_ BitVec 32) (concat ((_ extract 31 26) (|rvfi_testbench#65| state)) (concat #b000000000000 (concat ((_ extract 13 12) (|rvfi_testbench#65| state)) (concat #b00000 (concat ((_ extract 6 4) (|rvfi_testbench#65| state)) (concat #b0 ((_ extract 2 0) (|rvfi_testbench#65| state)))))))))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_8 32
 (define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_8| ((state |rvfi_testbench_s|)) (_ BitVec 32) #b00000000000000000001000000010011)
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9 1
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#174| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_9| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#207| state))
+(define-fun |rvfi_testbench#212| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#59| state) #b0000000000000000000000000000000000000000000000000000000000000100)) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#212| state))
+(define-fun |rvfi_testbench#213| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#59| state) (|rvfi_testbench#42| state))) ; \wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1
+; yosys-smt2-wire wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1 64
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#213| state))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#25| state))
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 12) (|rvfi_testbench#102| state)) #b000000000000))))))))))))))))))))))))))))))))))
-; yosys-smt2-anyinit rvfi_testbench#179 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL"], "smtname": 179, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#179| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL
-(define-fun |rvfi_testbench#180| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#179| state) #b101)) ; $flatten\wrapper.\cpu.$procmux$1757_CMP
-(define-fun |rvfi_testbench#181| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#179| state) #b100)) ; $flatten\wrapper.\cpu.$procmux$1758_CMP
-(define-fun |rvfi_testbench#182| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#179| state) #b011)) ; $flatten\wrapper.\cpu.$procmux$1759_CMP
-(define-fun |rvfi_testbench#183| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#179| state) #b010)) ; $flatten\wrapper.\cpu.$procmux$1760_CMP
-(define-fun |rvfi_testbench#184| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#179| state) #b001)) ; $flatten\wrapper.\cpu.$procmux$1761_CMP
-(define-fun |rvfi_testbench#185| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#184| state) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) ((_ extract 31 20) (|rvfi_testbench#102| state)))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#183| state) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 25) (|rvfi_testbench#102| state)) ((_ extract 11 7) (|rvfi_testbench#102| state))))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#182| state) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 7 7) (|rvfi_testbench#102| state)) (concat ((_ extract 30 25) (|rvfi_testbench#102| state)) (concat ((_ extract 11 8) (|rvfi_testbench#102| state)) #b0))))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#181| state) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 12) (|rvfi_testbench#102| state)) #b000000000000))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#180| state) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 31 31) (|rvfi_testbench#102| state)) (concat ((_ extract 19 12) (|rvfi_testbench#102| state)) (concat ((_ extract 20 20) (|rvfi_testbench#102| state)) (concat ((_ extract 30 21) (|rvfi_testbench#102| state)) #b0))))))))))))))))))))))))))))))))))))))))))))))) (|rvfi_testbench#5| state))))))) ; \wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext_1
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 12) (|rvfi_testbench#109| state)) #b000000000000))))))))))))))))))))))))))))))))))
+; yosys-smt2-anyinit rvfi_testbench#214 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL"], "smtname": 214, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#214| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL
+(define-fun |rvfi_testbench#215| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#214| state) #b101)) ; $flatten\wrapper.\cpu.$procmux$2040_CMP
+(define-fun |rvfi_testbench#216| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#214| state) #b100)) ; $flatten\wrapper.\cpu.$procmux$2041_CMP
+(define-fun |rvfi_testbench#217| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#214| state) #b011)) ; $flatten\wrapper.\cpu.$procmux$2042_CMP
+(define-fun |rvfi_testbench#218| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#214| state) #b010)) ; $flatten\wrapper.\cpu.$procmux$2043_CMP
+(define-fun |rvfi_testbench#219| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#214| state) #b001)) ; $flatten\wrapper.\cpu.$procmux$2044_CMP
+(define-fun |rvfi_testbench#220| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#219| state) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) ((_ extract 31 20) (|rvfi_testbench#109| state)))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#218| state) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 25) (|rvfi_testbench#109| state)) ((_ extract 11 7) (|rvfi_testbench#109| state))))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#217| state) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 7 7) (|rvfi_testbench#109| state)) (concat ((_ extract 30 25) (|rvfi_testbench#109| state)) (concat ((_ extract 11 8) (|rvfi_testbench#109| state)) #b0))))))))))))))))))))))))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#216| state) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 12) (|rvfi_testbench#109| state)) #b000000000000))))))))))))))))))))))))))))))))) (ite (|rvfi_testbench#215| state) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 31 31) (|rvfi_testbench#109| state)) (concat ((_ extract 19 12) (|rvfi_testbench#109| state)) (concat ((_ extract 20 20) (|rvfi_testbench#109| state)) (concat ((_ extract 30 21) (|rvfi_testbench#109| state)) #b0))))))))))))))))))))))))))))))))))))))))))))))) (|rvfi_testbench#6| state))))))) ; \wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext_1
 ; yosys-smt2-wire wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext_1 64
-(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#185| state))
+(define-fun |rvfi_testbench_n wrapper.cpu._zz_coreArea_srcPlugin_immsel_sext_1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#220| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_condition 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_condition| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#141| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_doJump 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_doJump| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#147| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_imm 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_imm| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_isBranch 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_isBranch| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#136| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_isJump 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_isJump| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_is_branch 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_is_branch| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#136| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_is_jump 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_is_jump| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1))
+(define-fun |rvfi_testbench#221| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#125| state) #b0 ((_ extract 0 0) (|rvfi_testbench#60| state)))) ; \wrapper.cpu.coreArea_branch_logic_target [0]
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_target 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_jumpCmd_payload_target| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_jumpCmd_valid 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_jumpCmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_misaligned 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_misaligned| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#148| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_src1 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_src1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_src1U 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_src1U| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_src2 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_src2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_src2U 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_src2U| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_target 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_target| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_branch_logic_willTrap 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_branch_logic_willTrap| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#149| state))
+; yosys-smt2-anyinit rvfi_testbench#222 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_currentEpoch"], "smtname": 222, "smtoffset": 0, "type": "init", "width": 4}
+(declare-fun |rvfi_testbench#222| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_currentEpoch
+; yosys-smt2-register wrapper.cpu.coreArea_currentEpoch 4
+; yosys-smt2-wire wrapper.cpu.coreArea_currentEpoch 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_currentEpoch| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#222| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_commitInsn 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitInsn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitInsn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_commitPc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitPc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitPc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_commitValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#186 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_PC_PC"], "smtname": 186, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#186| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_commitValid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
+; yosys-smt2-anyinit rvfi_testbench#223 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_PC_PC"], "smtname": 223, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#223| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_d_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_d_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#186| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_d_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#223| state))
+; yosys-smt2-anyinit rvfi_testbench#224 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_2_up_PC_PC"], "smtname": 224, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#224| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_f_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_f_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#154| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_f_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#224| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_wb_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_wb_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_wb_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_debugPlugin_io_dbg_x_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_x_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_debugPlugin_io_dbg_x_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_hazards 4
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_hazards| ((state |rvfi_testbench_s|)) (_ BitVec 4) #b0000)
 ; yosys-smt2-register wrapper.cpu.coreArea_dispatcher_hcs_init_value 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_value 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_value| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#103| state))
-(define-fun |rvfi_testbench#187| ((state |rvfi_testbench_s|)) (_ BitVec 3) (bvadd (|rvfi_testbench#103| state) (concat #b00 (|rvfi_testbench#105| state)))) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2221$378_Y
-(define-fun |rvfi_testbench#188| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#103| state) #b101)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflowIfInc
-(define-fun |rvfi_testbench#189| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#188| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#105| state)) #b1) false))) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflow
-(define-fun |rvfi_testbench#190| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (|rvfi_testbench#189| state) #b001 (|rvfi_testbench#187| state))) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_valueNext
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_value| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#110| state))
+(define-fun |rvfi_testbench#225| ((state |rvfi_testbench_s|)) (_ BitVec 3) (bvadd (|rvfi_testbench#110| state) (concat #b00 (|rvfi_testbench#112| state)))) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2318$385_Y
+(define-fun |rvfi_testbench#226| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#110| state) #b101)) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflowIfInc
+(define-fun |rvfi_testbench#227| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#226| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#112| state)) #b1) false))) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflow
+(define-fun |rvfi_testbench#228| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (|rvfi_testbench#227| state) #b001 (|rvfi_testbench#225| state))) ; \wrapper.cpu.coreArea_dispatcher_hcs_init_valueNext
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_valueNext 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_valueNext| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#190| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_valueNext| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#228| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_willClear 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willClear| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_willIncrement 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willIncrement| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#105| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willIncrement| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#112| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflow 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflow| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#189| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflow| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#227| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflowIfInc 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflowIfInc| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#188| state))
-; yosys-smt2-anyinit rvfi_testbench#191 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_dispatcher_hcs_regBusy"], "smtname": 191, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#191| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_dispatcher_hcs_regBusy
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_init_willOverflowIfInc| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#226| state))
+; yosys-smt2-anyinit rvfi_testbench#229 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_dispatcher_hcs_regBusy"], "smtname": 229, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#229| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_dispatcher_hcs_regBusy
 ; yosys-smt2-register wrapper.cpu.coreArea_dispatcher_hcs_regBusy 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_regBusy 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_regBusy| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#191| state))
-; yosys-smt2-anyinit rvfi_testbench#192 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_VALID"], "smtname": 192, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#192| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID
-; yosys-smt2-anyinit rvfi_testbench#193 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR"], "smtname": 193, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#193| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR
-(define-fun |rvfi_testbench#194| ((state |rvfi_testbench_s|)) (_ BitVec 1) ((_ extract 0 0) (bvlshr (|rvfi_testbench#191| state) (concat #b000000000000000000000000000 (|rvfi_testbench#193| state))))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_rs1Busy
-; yosys-smt2-anyinit rvfi_testbench#195 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR"], "smtname": 195, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#195| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR
-(define-fun |rvfi_testbench#196| ((state |rvfi_testbench_s|)) (_ BitVec 1) ((_ extract 0 0) (bvlshr (|rvfi_testbench#191| state) (concat #b000000000000000000000000000 (|rvfi_testbench#195| state))))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_rs2Busy
-(define-fun |rvfi_testbench#197| ((state |rvfi_testbench_s|)) Bool (or  (= ((_ extract 0 0) (|rvfi_testbench#194| state)) #b1) false  (= ((_ extract 0 0) (|rvfi_testbench#196| state)) #b1) false)) ; $flatten\wrapper.\cpu.$logic_or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2200$371_Y
-(define-fun |rvfi_testbench#198| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#192| state)) #b1) false) (or  (|rvfi_testbench#197| state) false))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_hazard
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_regBusy| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#229| state))
+; yosys-smt2-anyinit rvfi_testbench#230 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_VALID"], "smtname": 230, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#230| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID
+; yosys-smt2-anyinit rvfi_testbench#231 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR"], "smtname": 231, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#231| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR
+(define-fun |rvfi_testbench#232| ((state |rvfi_testbench_s|)) (_ BitVec 1) ((_ extract 0 0) (bvlshr (|rvfi_testbench#229| state) (concat #b000000000000000000000000000 (|rvfi_testbench#231| state))))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_rs1Busy
+; yosys-smt2-anyinit rvfi_testbench#233 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR"], "smtname": 233, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#233| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR
+(define-fun |rvfi_testbench#234| ((state |rvfi_testbench_s|)) (_ BitVec 1) ((_ extract 0 0) (bvlshr (|rvfi_testbench#229| state) (concat #b000000000000000000000000000 (|rvfi_testbench#233| state))))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_rs2Busy
+(define-fun |rvfi_testbench#235| ((state |rvfi_testbench_s|)) Bool (or  (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1) false  (= ((_ extract 0 0) (|rvfi_testbench#234| state)) #b1) false)) ; $flatten\wrapper.\cpu.$logic_or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2297$378_Y
+(define-fun |rvfi_testbench#236| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#230| state)) #b1) false) (or  (|rvfi_testbench#235| state) false))) ; \wrapper.cpu.coreArea_dispatcher_hcs_writes_hazard
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_writes_hazard 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_hazard| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#198| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_hazard| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#236| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_writes_rs1Busy 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_rs1Busy| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#194| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_rs1Busy| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_dispatcher_hcs_writes_rs2Busy 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_rs2Busy| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#196| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_dispatcher_hcs_writes_rs2Busy| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#234| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_fetch_cmdArea_reqSent 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_cmdArea_reqSent 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_cmdArea_reqSent| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#108| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_cmdArea_reqSent| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#115| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_cmdFire 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_cmdFire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#116| state))
-(define-fun |rvfi_testbench#199| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvxor (|rvfi_testbench#111| state) (|rvfi_testbench#112| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2917$514_Y
-(define-fun |rvfi_testbench#200| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot ((_ extract 3 3) (|rvfi_testbench#199| state)))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$auto$rtlil.cc:3135:Not$1937
-(define-fun |rvfi_testbench#201| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#199| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#199| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#199| state)) #b1) (= ((_ extract 0 0) (|rvfi_testbench#200| state)) #b1)))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_full
-(define-fun |rvfi_testbench#202| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#201| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_ready
-(define-fun |rvfi_testbench#203| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1) false) (or  (|rvfi_testbench#202| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_fire
-(define-fun |rvfi_testbench#204| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#203| state) #b1 #b0)) ; \wrapper.cpu.coreArea_fetch_fifo._zz_1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_cmdFire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#153| state))
+; yosys-smt2-anyinit rvfi_testbench#237 16 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_epoch"], "smtname": 237, "smtoffset": 0, "type": "init", "width": 16}
+(declare-fun |rvfi_testbench#237| (|rvfi_testbench_s|) (_ BitVec 16)) ; \wrapper.cpu.coreArea_fetch_epoch
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_epoch 16
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#237| state))
+(define-fun |rvfi_testbench#238| ((state |rvfi_testbench_s|)) (_ BitVec 2) (bvxor (|rvfi_testbench#118| state) (|rvfi_testbench#119| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$xor$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3255$606_Y
+(define-fun |rvfi_testbench#239| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot ((_ extract 1 1) (|rvfi_testbench#238| state)))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$auto$rtlil.cc:3135:Not$2229
+(define-fun |rvfi_testbench#240| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#238| state)) #b1) (= ((_ extract 0 0) (|rvfi_testbench#239| state)) #b1)))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_full
+(define-fun |rvfi_testbench#241| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#240| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_ready
+(define-fun |rvfi_testbench#242| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1) false) (or  (|rvfi_testbench#241| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_fire
+(define-fun |rvfi_testbench#243| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#242| state) #b1 #b0)) ; \wrapper.cpu.coreArea_fetch_fifo._zz_1
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo._zz_1 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo._zz_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#204| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_availability 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_availability| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#114| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo._zz_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#243| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#244 80 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3239.3-3245.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ram_spinal_port1"], "smtname": 244, "smtoffset": 0, "type": "init", "width": 80}
+(declare-fun |rvfi_testbench#244| (|rvfi_testbench_s|) (_ BitVec 80)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo._zz_logic_pop_sync_readPort_rsp_data 80
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo._zz_logic_pop_sync_readPort_rsp_data| ((state |rvfi_testbench_s|)) (_ BitVec 80) (|rvfi_testbench#244| state))
+; yosys-smt2-anyseq rvfi_testbench#245 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:18.32-18.46 ibus_resp_data
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\io_push_payload_data"], "smtname": 245, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#245| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_payload_data
+; yosys-smt2-anyseq rvfi_testbench#246 16 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:20.32-20.44 ibus_resp_id
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\io_push_payload_epoch"], "smtname": 246, "smtoffset": 0, "type": "seq", "width": 16}
+(declare-fun |rvfi_testbench#246| (|rvfi_testbench_s|) (_ BitVec 16)) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_payload_epoch
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo._zz_logic_ram_port 80
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo._zz_logic_ram_port| ((state |rvfi_testbench_s|)) (_ BitVec 80) (concat (|rvfi_testbench#246| state) (|rvfi_testbench#245| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_availability 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_availability| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#121| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_clk 1
 ; yosys-smt2-clock wrapper.cpu.coreArea_fetch_fifo.io_clk posedge
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_clkEnable 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_clkEnable| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_flush 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_flush| ((state |rvfi_testbench_s|)) Bool false)
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_occupancy 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#113| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_pop_payload 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_payload| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#153| state))
-; yosys-smt2-anyinit rvfi_testbench#205 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_2_up_valid"], "smtname": 205, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#205| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid
-; yosys-smt2-anyinit rvfi_testbench#206 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2955.3-2994.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_pop_addressGen_rValid"], "smtname": 206, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#206| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid
-(define-fun |rvfi_testbench#207| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1) (|rvfi_testbench#205| state) #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_down_isValid
-(define-fun |rvfi_testbench#208| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#198| state) #b0 #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_isReady
-; yosys-smt2-anyinit rvfi_testbench#209 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_valid"], "smtname": 209, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#209| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid
-(define-fun |rvfi_testbench#210| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#209| state)) #b1) (|rvfi_testbench#208| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_down_ready
-; yosys-smt2-anyinit rvfi_testbench#211 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_valid"], "smtname": 211, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#211| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid
-(define-fun |rvfi_testbench#212| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#211| state)) #b1) (|rvfi_testbench#210| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_down_isReady
-(define-fun |rvfi_testbench#213| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#207| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1) false))) ; \wrapper.cpu.coreArea_fetch_fifo.io_pop_ready
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_flush| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_occupancy 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#120| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_pop_payload_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) ((_ extract 63 0) (|rvfi_testbench#244| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_pop_payload_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_payload_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) ((_ extract 79 64) (|rvfi_testbench#244| state)))
+; yosys-smt2-anyinit rvfi_testbench#247 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_2_up_valid"], "smtname": 247, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#247| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid
+; yosys-smt2-anyinit rvfi_testbench#248 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3298.3-3337.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_pop_addressGen_rValid"], "smtname": 248, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#248| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid
+(define-fun |rvfi_testbench#249| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1) (|rvfi_testbench#247| state) #b0)) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_2_down_valid[0:0]
+(define-fun |rvfi_testbench#250| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 79 64) (|rvfi_testbench#244| state)) (|rvfi_testbench#237| state))) ; \wrapper.cpu.coreArea_fetch_rspArea_epochMatch
+(define-fun |rvfi_testbench#251| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#250| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2185$307_Y
+(define-fun |rvfi_testbench#252| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1) false) (or  (|rvfi_testbench#251| state) false))) ; \wrapper.cpu.coreArea_fetch_rspArea_stalePacket
+(define-fun |rvfi_testbench#253| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#252| state) (|rvfi_testbench#151| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_forgetOne
+(define-fun |rvfi_testbench#254| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#253| state) #b0 (|rvfi_testbench#249| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_down_isValid
+(define-fun |rvfi_testbench#255| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#236| state) #b0 #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_isReady
+; yosys-smt2-anyinit rvfi_testbench#256 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_valid"], "smtname": 256, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#256| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid
+(define-fun |rvfi_testbench#257| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#256| state)) #b1) (|rvfi_testbench#255| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_down_ready
+; yosys-smt2-anyinit rvfi_testbench#258 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_valid"], "smtname": 258, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#258| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid
+(define-fun |rvfi_testbench#259| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#258| state)) #b1) (|rvfi_testbench#257| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_down_isReady
+(define-fun |rvfi_testbench#260| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#254| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_down_isFiring
+(define-fun |rvfi_testbench#261| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#260| state) false  (|rvfi_testbench#252| state) false)) ; \wrapper.cpu.coreArea_fetch_fifo.io_pop_ready
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_pop_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#213| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#261| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_pop_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_pop_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_fire 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#203| state))
-; yosys-smt2-anyseq rvfi_testbench#214 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:18.32-18.46 ibus_resp_data
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\io_push_payload"], "smtname": 214, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#214| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_fetch_fifo.io_push_payload
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_payload 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_payload| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#214| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#242| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_payload_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#245| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_payload_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_payload_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#246| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#202| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#241| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_push_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_push_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.io_reset 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#215 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2955.3-2994.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ptr_pop"], "smtname": 215, "smtoffset": 0, "type": "init", "width": 4}
-(declare-fun |rvfi_testbench#215| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop
-(define-fun |rvfi_testbench#216| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#111| state) (|rvfi_testbench#215| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_empty
-(define-fun |rvfi_testbench#217| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#216| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_valid
-(define-fun |rvfi_testbench#218| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1) (ite (|rvfi_testbench#213| state) #b1 #b0) #b1)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_ready
-(define-fun |rvfi_testbench#219| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#217| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#218| state)) #b1) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_fire
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#262 2 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3298.3-3337.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ptr_pop"], "smtname": 262, "smtoffset": 0, "type": "init", "width": 2}
+(declare-fun |rvfi_testbench#262| (|rvfi_testbench_s|) (_ BitVec 2)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop
+(define-fun |rvfi_testbench#263| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#118| state) (|rvfi_testbench#262| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_empty
+(define-fun |rvfi_testbench#264| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#263| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_valid
+(define-fun |rvfi_testbench#265| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1) (ite (|rvfi_testbench#261| state) #b1 #b0) #b1)) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_ready
+(define-fun |rvfi_testbench#266| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#264| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#265| state)) #b1) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_fire
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_fire 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#219| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_payload 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_payload| ((state |rvfi_testbench_s|)) (_ BitVec 3) ((_ extract 2 0) (|rvfi_testbench#215| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#266| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_payload 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_payload| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#262| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#218| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_payload 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_payload| ((state |rvfi_testbench_s|)) (_ BitVec 3) ((_ extract 2 0) (|rvfi_testbench#215| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#265| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_payload 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_payload| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#262| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#219| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_toFlowFire_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#266| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#217| state))
-; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg 4
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#112| state))
-(define-fun |rvfi_testbench#220| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1) false) (or  (|rvfi_testbench#213| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_fire
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#264| state))
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg 2
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#119| state))
+(define-fun |rvfi_testbench#267| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1) false) (or  (|rvfi_testbench#261| state) false))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_fire
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_fire 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#220| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_fire| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#267| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#213| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#153| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#261| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) ((_ extract 63 0) (|rvfi_testbench#244| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_payload_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) ((_ extract 79 64) (|rvfi_testbench#244| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#213| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#261| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_translated_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_payload 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_payload| ((state |rvfi_testbench_s|)) (_ BitVec 3) ((_ extract 2 0) (|rvfi_testbench#215| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readArbitation_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_payload 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_payload| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#262| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#219| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#153| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#266| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) ((_ extract 63 0) (|rvfi_testbench#244| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_readPort_rsp_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) ((_ extract 79 64) (|rvfi_testbench#244| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPop 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPop| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#219| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPop| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#266| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPush 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPush| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#203| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_doPush| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#242| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_empty 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_empty| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#216| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_empty| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#263| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_full 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_full| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#201| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#113| state))
-; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop 4
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#215| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_popOnIo 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_popOnIo| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#112| state))
-; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push 4
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#111| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_address 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 3) ((_ extract 2 0) (|rvfi_testbench#111| state)))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#214| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_full| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#240| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#120| state))
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop 2
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#262| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_popOnIo 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_popOnIo| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#119| state))
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push 2
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#118| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_address 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_address| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#245| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_payload_data_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#246| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#203| state))
-; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1 64
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#153| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_availability 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_availability| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#114| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_occupancy 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#113| state))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_pop_payload 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_payload| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#153| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_push_onRam_write_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#242| state))
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1 80
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1 80
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1| ((state |rvfi_testbench_s|)) (_ BitVec 80) (|rvfi_testbench#244| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_availability 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_availability| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#121| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_occupancy 2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_occupancy| ((state |rvfi_testbench_s|)) (_ BitVec 2) (|rvfi_testbench#120| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_pop_payload_data 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) ((_ extract 63 0) (|rvfi_testbench#244| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_pop_payload_epoch 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_payload_epoch| ((state |rvfi_testbench_s|)) (_ BitVec 16) ((_ extract 79 64) (|rvfi_testbench#244| state)))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_pop_ready 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#261| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_pop_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_pop_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_fifo_io_push_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_push_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#202| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_fifo_io_push_ready| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#241| state))
+; yosys-smt2-anyinit rvfi_testbench#268 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_flushPending"], "smtname": 268, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#268| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_fetch_flushPending
+; yosys-smt2-register wrapper.cpu.coreArea_fetch_flushPending 1
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_flushPending 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_flushPending| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#268| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_fetch_inflight 4
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_inflight 4
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_inflight| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#106| state))
-; yosys-smt2-anyinit rvfi_testbench#221 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_1_up_PC_PC"], "smtname": 221, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#221| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_inflight| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#113| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_currentEpoch 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_currentEpoch| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#222| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_flush 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_flush| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-anyinit rvfi_testbench#269 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_1_up_PC_PC"], "smtname": 269, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#269| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_cmd_payload_address 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#221| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#269| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_cmd_payload_id 16
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#237| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_cmd_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_cmd_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#116| state))
-; yosys-smt2-anyseq rvfi_testbench#222 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:19.32-19.46 ibus_resp_addr
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\ibus_resp_addr"], "smtname": 222, "smtoffset": 0, "type": "seq", "width": 64}
-(declare-fun |rvfi_testbench#222| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.ibus_resp_addr
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#153| state))
+; yosys-smt2-anyseq rvfi_testbench#270 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:19.32-19.46 ibus_resp_addr
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\ibus_resp_addr"], "smtname": 270, "smtoffset": 0, "type": "seq", "width": 64}
+(declare-fun |rvfi_testbench#270| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.ibus_resp_addr
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_address 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#222| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#214| state))
-; yosys-smt2-anyseq rvfi_testbench#223 16 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/wrapper.sv:20.32-20.44 ibus_resp_id
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\ibus_resp_id"], "smtname": 223, "smtoffset": 0, "type": "seq", "width": 16}
-(declare-fun |rvfi_testbench#223| (|rvfi_testbench_s|) (_ BitVec 16)) ; \wrapper.ibus_resp_id
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#245| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_id 16
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#223| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#246| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_fetch_io_readCmd_rsp_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_fetch_rspArea_wordSel 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_rspArea_wordSel| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 1 1) (|rvfi_testbench#154| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#224 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU"], "smtname": 224, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#224| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU
-(define-fun |rvfi_testbench#225| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#224| state)) #b1) (|rvfi_testbench#152| state) (|rvfi_testbench#4| state))) ; \wrapper.cpu.coreArea_intalu_aluNodeStage_result
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_io_readCmd_rsp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_rspArea_epochMatch 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_rspArea_epochMatch| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#250| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_fetch_rspArea_stalePacket 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_fetch_rspArea_stalePacket| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#252| state))
+; yosys-smt2-anyinit rvfi_testbench#271 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU"], "smtname": 271, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#271| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU
+(define-fun |rvfi_testbench#272| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#271| state)) #b1) (|rvfi_testbench#188| state) (|rvfi_testbench#5| state))) ; \wrapper.cpu.coreArea_intalu_aluNodeStage_result
 ; yosys-smt2-wire wrapper.cpu.coreArea_intalu_aluNodeStage_result 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#225| state))
-; yosys-smt2-anyinit rvfi_testbench#226 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pc_PC_cur"], "smtname": 226, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#226| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pc_PC_cur
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_intalu_aluNodeStage_result| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#272| state))
+; yosys-smt2-anyinit rvfi_testbench#273 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pc_PC_cur"], "smtname": 273, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#273| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pc_PC_cur
 ; yosys-smt2-register wrapper.cpu.coreArea_pc_PC_cur 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pc_PC_cur 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_PC_cur| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#226| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_PC_cur| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#273| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pc_exception_valid 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_exception_valid| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pc_flush_valid 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_flush_valid| ((state |rvfi_testbench_s|)) Bool false)
+; yosys-smt2-wire wrapper.cpu.coreArea_pc_jump_payload_is_branch 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_jump_payload_is_branch| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#136| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pc_jump_payload_is_jump 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_jump_payload_is_jump| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pc_jump_payload_target 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_jump_payload_target| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pc_jump_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_jump_valid| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pc_jump_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#226| state))
-(define-fun |rvfi_testbench#227| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#206| state)) #b1) (|rvfi_testbench#212| state) #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_ready
-(define-fun |rvfi_testbench#228| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#205| state)) #b1) (|rvfi_testbench#227| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isReady
-(define-fun |rvfi_testbench#229| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#116| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2091$295_Y
-(define-fun |rvfi_testbench#230| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#109| state) false) (or  (|rvfi_testbench#229| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51
-(define-fun |rvfi_testbench#231| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#230| state) #b0 (|rvfi_testbench#228| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_ready
-(define-fun |rvfi_testbench#232| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#107| state)) #b1) (|rvfi_testbench#231| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_0_down_isReady
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#273| state))
+(define-fun |rvfi_testbench#274| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#248| state)) #b1) (|rvfi_testbench#259| state) #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_2_up_ready
+(define-fun |rvfi_testbench#275| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#247| state)) #b1) (|rvfi_testbench#274| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isReady
+(define-fun |rvfi_testbench#276| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#153| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2183$304_Y
+(define-fun |rvfi_testbench#277| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#116| state) false) (or  (|rvfi_testbench#276| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80
+(define-fun |rvfi_testbench#278| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#277| state) #b0 (|rvfi_testbench#275| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_up_ready
+(define-fun |rvfi_testbench#279| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#114| state)) #b1) (|rvfi_testbench#278| state) #b1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_0_down_isFiring
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_isFiring 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_isReady 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_isValid 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_isValid| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_down_valid 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_down_valid| ((state |rvfi_testbench_s|)) Bool true)
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_up_isValid 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_up_isValid| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_up_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_0_up_valid 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_0_up_valid| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#221| state))
-(define-fun |rvfi_testbench#233| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#230| state) #b0 (|rvfi_testbench#107| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isValid
-(define-fun |rvfi_testbench#234| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#233| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#228| state)) #b1) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isFiring
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#269| state))
+(define-fun |rvfi_testbench#280| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#277| state) #b0 (|rvfi_testbench#114| state))) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_1_down_valid[0:0]
+(define-fun |rvfi_testbench#281| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#151| state) #b0 (|rvfi_testbench#280| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isValid
+(define-fun |rvfi_testbench#282| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#281| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#275| state)) #b1) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_1_down_isFiring
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_isFiring 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#234| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#282| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_isReady 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#228| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#275| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#233| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#281| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#228| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#275| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#233| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l51| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#230| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#281| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#277| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_throwWhen_CPU_l136 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_throwWhen_CPU_l136| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#221| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#269| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_cancel 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_cancel| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_forgetOne 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_forgetOne| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#107| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#114| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#231| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#278| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#107| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#114| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#222| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#155| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) ((_ extract 31 0) (|rvfi_testbench#244| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#154| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#224| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_isFiring 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#213| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#260| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_isReady 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#207| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#254| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#207| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#254| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_throwWhen_CPU_l136 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_throwWhen_CPU_l136| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#252| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#154| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#224| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_up_forgetOne 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_forgetOne| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#253| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#205| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#247| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_up_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#227| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#274| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#205| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#247| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#283 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH"], "smtname": 283, "smtoffset": 0, "type": "init", "width": 4}
+(declare-fun |rvfi_testbench#283| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#283| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#156| state) #b1 #b0) (ite (|rvfi_testbench#156| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat #b0 (concat (ite (|rvfi_testbench#189| state) #b1 #b0) (ite (|rvfi_testbench#189| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_FSR3EN| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#160| state) #b1 #b0) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#158| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#192| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#58| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#65| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_IS_FP 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_IS_FP| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_LEGAL 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#165| state) #b1 #b0) (concat (ite (|rvfi_testbench#164| state) #b1 #b0) (concat (ite (|rvfi_testbench#163| state) #b1 #b0) (concat (ite (|rvfi_testbench#162| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (ite (|rvfi_testbench#101| state) #b1 #b0)))))))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (concat (ite (|rvfi_testbench#198| state) #b1 #b0) (concat (ite (|rvfi_testbench#197| state) #b1 #b0) (concat (ite (|rvfi_testbench#196| state) #b1 #b0) (concat (ite (|rvfi_testbench#195| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (ite (|rvfi_testbench#108| state) #b1 #b0)))))))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE 2
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#157| state) #b1 #b0)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RDTYPE| ((state |rvfi_testbench_s|)) (_ BitVec 2) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#190| state) #b1 #b0)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#58| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 11 7) (|rvfi_testbench#65| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) #b00))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 19 15) (|rvfi_testbench#58| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 19 15) (|rvfi_testbench#65| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#168| state) #b1 #b0) (concat (ite (|rvfi_testbench#166| state) #b1 #b0) (ite (|rvfi_testbench#166| state) #b1 #b0))))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (concat (ite (|rvfi_testbench#201| state) #b1 #b0) (concat (ite (|rvfi_testbench#200| state) #b1 #b0) (ite (|rvfi_testbench#200| state) #b1 #b0))))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 24 20) (|rvfi_testbench#58| state)))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) ((_ extract 24 20) (|rvfi_testbench#65| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_USE_LDQ 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_USE_LDQ| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_USE_STQ| ((state |rvfi_testbench_s|)) Bool true)
-(define-fun |rvfi_testbench#235| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#58| state)) ((_ extract 6 0) (|rvfi_testbench#58| state))) #b10010011)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2095$298_Y
-(define-fun |rvfi_testbench#236| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#58| state)) ((_ extract 6 0) (|rvfi_testbench#58| state))) #b11100011)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2095$300_Y
-(define-fun |rvfi_testbench#237| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 6 0) (|rvfi_testbench#58| state)) #b1101111)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2095$302_Y
-(define-fun |rvfi_testbench#238| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#58| state)) ((_ extract 4 0) (|rvfi_testbench#58| state))) #b010111)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2095$304_Y
-(define-fun |rvfi_testbench#239| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#172| state) (|rvfi_testbench#173| state) (|rvfi_testbench#170| state) (|rvfi_testbench#171| state) (|rvfi_testbench#175| state) (|rvfi_testbench#176| state) (|rvfi_testbench#177| state) (|rvfi_testbench#178| state) (|rvfi_testbench#174| state) (|rvfi_testbench#169| state) (|rvfi_testbench#235| state) (|rvfi_testbench#236| state) (|rvfi_testbench#237| state) (|rvfi_testbench#238| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_VALID
+(define-fun |rvfi_testbench#284| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 13 13) (|rvfi_testbench#65| state)) ((_ extract 6 0) (|rvfi_testbench#65| state))) #b10010011)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2191$311_Y
+(define-fun |rvfi_testbench#285| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 14 14) (|rvfi_testbench#65| state)) ((_ extract 6 0) (|rvfi_testbench#65| state))) #b11100011)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2191$313_Y
+(define-fun |rvfi_testbench#286| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 6 0) (|rvfi_testbench#65| state)) #b1101111)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2191$315_Y
+(define-fun |rvfi_testbench#287| ((state |rvfi_testbench_s|)) Bool (= (concat ((_ extract 6 6) (|rvfi_testbench#65| state)) ((_ extract 4 0) (|rvfi_testbench#65| state))) #b010111)) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2191$317_Y
+(define-fun |rvfi_testbench#288| ((state |rvfi_testbench_s|)) Bool (or  (|rvfi_testbench#205| state) (|rvfi_testbench#206| state) (|rvfi_testbench#203| state) (|rvfi_testbench#204| state) (|rvfi_testbench#208| state) (|rvfi_testbench#209| state) (|rvfi_testbench#210| state) (|rvfi_testbench#211| state) (|rvfi_testbench#207| state) (|rvfi_testbench#202| state) (|rvfi_testbench#284| state) (|rvfi_testbench#285| state) (|rvfi_testbench#286| state) (|rvfi_testbench#287| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_VALID
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#239| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#288| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#186| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#223| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_isReady 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1))
+(define-fun |rvfi_testbench#289| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#283| state) (|rvfi_testbench#222| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2622$456_Y
+(define-fun |rvfi_testbench#290| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#151| state) false) (or  (|rvfi_testbench#289| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_throwWhen_CPU_l130
+(define-fun |rvfi_testbench#291| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#290| state) #b0 (|rvfi_testbench#258| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_3_down_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#211| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#291| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#211| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#291| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_throwWhen_CPU_l130 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_throwWhen_CPU_l130| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#290| state))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH 4
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#283| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#58| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#65| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#186| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#223| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_cancel 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_cancel| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#290| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_forgetOne 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_forgetOne| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#290| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#211| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#258| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#211| state)) #b1))
-(define-fun |rvfi_testbench#240| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#209| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#208| state)) #b1) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_isFiring
-; yosys-smt2-anyinit rvfi_testbench#241 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT"], "smtname": 241, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#241| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT
-(define-fun |rvfi_testbench#242| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#241| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#241| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#241| state)) #b1)))) ; \wrapper.cpu.when_scheduler_l146
-(define-fun |rvfi_testbench#243| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#242| state) (ite (|rvfi_testbench#240| state) #b1 #b0) #b0)) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_4_down_Common_LANE_SEL[0:0]
-(define-fun |rvfi_testbench#244| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#241| state) #b011)) ; \wrapper.cpu.when_scheduler_l150
-(define-fun |rvfi_testbench#245| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#244| state) (ite (|rvfi_testbench#240| state) #b1 #b0) (|rvfi_testbench#243| state))) ; $flatten\wrapper.\cpu.$2\coreArea_pipeline_ctrl_4_down_Common_LANE_SEL[0:0]
-(define-fun |rvfi_testbench#246| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#241| state) #b010)) ; \wrapper.cpu.when_scheduler_l154
-(define-fun |rvfi_testbench#247| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#246| state) (ite (|rvfi_testbench#240| state) #b1 #b0) (|rvfi_testbench#245| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_LANE_SEL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#258| state)) #b1))
+(define-fun |rvfi_testbench#292| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#256| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#255| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2910$516_Y
+; yosys-smt2-anyinit rvfi_testbench#293 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH"], "smtname": 293, "smtoffset": 0, "type": "init", "width": 4}
+(declare-fun |rvfi_testbench#293| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH
+(define-fun |rvfi_testbench#294| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#293| state) (|rvfi_testbench#222| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2623$458_Y
+(define-fun |rvfi_testbench#295| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#151| state) false) (or  (|rvfi_testbench#294| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_isCancel
+(define-fun |rvfi_testbench#296| ((state |rvfi_testbench_s|)) Bool (not (or  (|rvfi_testbench#295| state) false))) ; $flatten\wrapper.\cpu.$logic_not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2910$517_Y
+(define-fun |rvfi_testbench#297| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#292| state) false) (or  (|rvfi_testbench#296| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_isFiring
+; yosys-smt2-anyinit rvfi_testbench#298 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT"], "smtname": 298, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#298| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT
+(define-fun |rvfi_testbench#299| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#298| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#298| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#298| state)) #b1)))) ; \wrapper.cpu.when_scheduler_l145
+(define-fun |rvfi_testbench#300| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#299| state) (ite (|rvfi_testbench#297| state) #b1 #b0) #b0)) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_4_down_Common_LANE_SEL[0:0]
+(define-fun |rvfi_testbench#301| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#298| state) #b011)) ; \wrapper.cpu.when_scheduler_l149
+(define-fun |rvfi_testbench#302| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#301| state) (ite (|rvfi_testbench#297| state) #b1 #b0) (|rvfi_testbench#300| state))) ; $flatten\wrapper.\cpu.$2\coreArea_pipeline_ctrl_4_down_Common_LANE_SEL[0:0]
+(define-fun |rvfi_testbench#303| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#298| state) #b010)) ; \wrapper.cpu.when_scheduler_l153
+(define-fun |rvfi_testbench#304| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#303| state) (ite (|rvfi_testbench#297| state) #b1 #b0) (|rvfi_testbench#302| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_LANE_SEL
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#247| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#248 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL"], "smtname": 248, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#248| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#304| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#293| state))
+; yosys-smt2-anyinit rvfi_testbench#305 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL"], "smtname": 305, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#305| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_IMMSEL 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#248| state))
-; yosys-smt2-anyinit rvfi_testbench#249 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION"], "smtname": 249, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#249| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#305| state))
+; yosys-smt2-anyinit rvfi_testbench#306 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION"], "smtname": 306, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#306| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#249| state))
-; yosys-smt2-anyinit rvfi_testbench#250 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_LEGAL"], "smtname": 250, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#250| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#306| state))
+; yosys-smt2-anyinit rvfi_testbench#307 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_LEGAL"], "smtname": 307, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#307| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_LEGAL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#250| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#251 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_MicroCode"], "smtname": 251, "smtoffset": 0, "type": "init", "width": 6}
-(declare-fun |rvfi_testbench#251| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#307| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#308 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_MicroCode"], "smtname": 308, "smtoffset": 0, "type": "init", "width": 6}
+(declare-fun |rvfi_testbench#308| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#251| state))
-; yosys-smt2-anyinit rvfi_testbench#252 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR"], "smtname": 252, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#252| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#308| state))
+; yosys-smt2-anyinit rvfi_testbench#309 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR"], "smtname": 309, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#309| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#252| state))
-; yosys-smt2-anyinit rvfi_testbench#253 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE"], "smtname": 253, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#253| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#309| state))
+; yosys-smt2-anyinit rvfi_testbench#310 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE"], "smtname": 310, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#310| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#253| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#310| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#193| state))
-; yosys-smt2-anyinit rvfi_testbench#254 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE"], "smtname": 254, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#254| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#231| state))
+; yosys-smt2-anyinit rvfi_testbench#311 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE"], "smtname": 311, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#311| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#254| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#311| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#195| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#233| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#192| state)) #b1))
-(define-fun |rvfi_testbench#255| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#242| state) #b1 #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#230| state)) #b1))
+(define-fun |rvfi_testbench#312| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#299| state) #b1 #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#255| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#256 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_PC_PC"], "smtname": 256, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#256| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#312| state)) #b1))
+(define-fun |rvfi_testbench#313| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#301| state) #b1 #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_Dispatch_SENDTOBRANCH| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#313| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#314 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_4_up_PC_PC"], "smtname": 314, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#314| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#256| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#314| state))
+(define-fun |rvfi_testbench#315| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#236| state) #b0 (|rvfi_testbench#256| state))) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_4_down_valid[0:0]
+(define-fun |rvfi_testbench#316| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#295| state) #b0 (|rvfi_testbench#315| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_isFiring
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_isFiring 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#316| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_isReady 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_isReady| ((state |rvfi_testbench_s|)) Bool true)
-(define-fun |rvfi_testbench#257| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#198| state) #b0 (|rvfi_testbench#209| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_4_down_isValid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#316| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_haltRequest_scheduler_l212 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_haltRequest_scheduler_l212| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#198| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#316| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_haltRequest_scheduler_l215 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_haltRequest_scheduler_l215| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#236| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_throwWhen_CPU_l130 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_throwWhen_CPU_l130| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#295| state))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH 4
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#293| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#241| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#298| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#248| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#305| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#249| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#306| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#250| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#307| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode 6
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#251| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#308| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#252| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#309| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#253| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#310| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#193| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#231| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#254| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#311| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#195| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#233| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#192| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#230| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#256| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#314| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_cancel 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_cancel| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#295| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_forgetOne 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_forgetOne| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#295| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_isCancel 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isCancel| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#295| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_isFiring 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#240| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isFiring| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#297| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_isReady 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#208| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isReady| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#255| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#209| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#256| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_ready 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#208| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_ready| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#255| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#209| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#258 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Common_LANE_SEL"], "smtname": 258, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#258| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#256| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#317 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Common_LANE_SEL"], "smtname": 317, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#317| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#258| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#317| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#318 4 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH"], "smtname": 318, "smtoffset": 0, "type": "init", "width": 4}
+(declare-fun |rvfi_testbench#318| (|rvfi_testbench_s|) (_ BitVec 4)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#318| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#102| state))
-; yosys-smt2-anyinit rvfi_testbench#259 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_LEGAL"], "smtname": 259, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#259| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#109| state))
+; yosys-smt2-anyinit rvfi_testbench#319 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_LEGAL"], "smtname": 319, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#319| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_LEGAL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#260 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_MicroCode"], "smtname": 260, "smtoffset": 0, "type": "init", "width": 6}
-(declare-fun |rvfi_testbench#260| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#320 6 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_MicroCode"], "smtname": 320, "smtoffset": 0, "type": "init", "width": 6}
+(declare-fun |rvfi_testbench#320| (|rvfi_testbench_s|) (_ BitVec 6)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#260| state))
-; yosys-smt2-anyinit rvfi_testbench#261 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR"], "smtname": 261, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#261| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#320| state))
+; yosys-smt2-anyinit rvfi_testbench#321 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR"], "smtname": 321, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#321| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#261| state))
-; yosys-smt2-anyinit rvfi_testbench#262 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE"], "smtname": 262, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#262| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#321| state))
+; yosys-smt2-anyinit rvfi_testbench#322 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE"], "smtname": 322, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#322| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#262| state))
-; yosys-smt2-anyinit rvfi_testbench#263 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR"], "smtname": 263, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#263| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#322| state))
+; yosys-smt2-anyinit rvfi_testbench#323 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR"], "smtname": 323, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#323| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#263| state))
-; yosys-smt2-anyinit rvfi_testbench#264 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE"], "smtname": 264, "smtoffset": 0, "type": "init", "width": 3}
-(declare-fun |rvfi_testbench#264| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#323| state))
+; yosys-smt2-anyinit rvfi_testbench#324 3 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE"], "smtname": 324, "smtoffset": 0, "type": "init", "width": 3}
+(declare-fun |rvfi_testbench#324| (|rvfi_testbench_s|) (_ BitVec 3)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#264| state))
-; yosys-smt2-anyinit rvfi_testbench#265 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR"], "smtname": 265, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#265| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#324| state))
+; yosys-smt2-anyinit rvfi_testbench#325 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR"], "smtname": 325, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#325| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#265| state))
-; yosys-smt2-anyinit rvfi_testbench#266 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_VALID"], "smtname": 266, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#266| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#325| state))
+; yosys-smt2-anyinit rvfi_testbench#326 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Decoder_VALID"], "smtname": 326, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#326| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#266| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#267 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU"], "smtname": 267, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#267| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#326| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#327 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU"], "smtname": 327, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#327| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#267| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#268 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_PC_PC"], "smtname": 268, "smtoffset": 0, "type": "init", "width": 64}
-(declare-fun |rvfi_testbench#268| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#327| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#328 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH"], "smtname": 328, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#328| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOBRANCH 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_Dispatch_SENDTOBRANCH| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#328| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#329 64 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_PC_PC"], "smtname": 329, "smtoffset": 0, "type": "init", "width": 64}
+(declare-fun |rvfi_testbench#329| (|rvfi_testbench_s|) (_ BitVec 64)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#268| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#329| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_IMMED 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#185| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#220| state))
 ; yosys-smt2-memory wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem 5 64 2 1 sync
 ; yosys-smt2-witness {"path": ["\\wrapper", "\\cpu", "\\coreArea_srcPlugin_regfileread_regfile", "\\mem"], "rom": false, "size": 32, "smtname": "wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem", "statebv": false, "type": "mem", "uninitialized": [{"offset": 0, "width": 2048}], "width": 64}
-(declare-fun |rvfi_testbench#269#0| (|rvfi_testbench_s|) (Array (_ BitVec 5) (_ BitVec 64))) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
-(define-fun |rvfi_testbench_m wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (Array (_ BitVec 5) (_ BitVec 64)) (|rvfi_testbench#269#0| state))
-(define-fun |rvfi_testbench_m:R0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#265| state)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
-(define-fun |rvfi_testbench#270| ((state |rvfi_testbench_s|)) (_ BitVec 64) (select (|rvfi_testbench#269#0| state) (|rvfi_testbench_m:R0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS2_data
-(define-fun |rvfi_testbench_m:R0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
-(define-fun |rvfi_testbench_m:R1A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#263| state)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
-(define-fun |rvfi_testbench#271| ((state |rvfi_testbench_s|)) (_ BitVec 64) (select (|rvfi_testbench#269#0| state) (|rvfi_testbench_m:R1A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS1_data
-(define-fun |rvfi_testbench_m:R1D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#271| state))
-(define-fun |rvfi_testbench#272| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#263| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#263| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#263| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#263| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#263| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2263$388_Y
-(define-fun |rvfi_testbench#273| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#272| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#271| state))) ; \wrapper.cpu.coreArea_srcPlugin_rs1Reader_data
-(define-fun |rvfi_testbench#274| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#262| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#262| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#262| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2280$395_Y
-(define-fun |rvfi_testbench#275| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#274| state) (|rvfi_testbench#273| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1
+(declare-fun |rvfi_testbench#330#0| (|rvfi_testbench_s|) (Array (_ BitVec 5) (_ BitVec 64))) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
+(define-fun |rvfi_testbench_m wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (Array (_ BitVec 5) (_ BitVec 64)) (|rvfi_testbench#330#0| state))
+(define-fun |rvfi_testbench_m:R0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#325| state)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
+(define-fun |rvfi_testbench#331| ((state |rvfi_testbench_s|)) (_ BitVec 64) (select (|rvfi_testbench#330#0| state) (|rvfi_testbench_m:R0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port1
+(define-fun |rvfi_testbench_m:R0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#331| state))
+(define-fun |rvfi_testbench_m:R1A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#323| state)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
+(define-fun |rvfi_testbench#332| ((state |rvfi_testbench_s|)) (_ BitVec 64) (select (|rvfi_testbench#330#0| state) (|rvfi_testbench_m:R1A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port0
+(define-fun |rvfi_testbench_m:R1D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#332| state))
+(define-fun |rvfi_testbench#333| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#323| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#323| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#323| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#323| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#323| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2360$395_Y
+(define-fun |rvfi_testbench#334| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#333| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#332| state))) ; \wrapper.cpu.coreArea_srcPlugin_rs1Reader_data
+(define-fun |rvfi_testbench#335| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#322| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#322| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#322| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2377$402_Y
+(define-fun |rvfi_testbench#336| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#335| state) (|rvfi_testbench#334| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#275| state))
-(define-fun |rvfi_testbench#276| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#265| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#265| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#265| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#265| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#265| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2264$390_Y
-(define-fun |rvfi_testbench#277| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#276| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#270| state))) ; \wrapper.cpu.coreArea_srcPlugin_rs2Reader_data
-(define-fun |rvfi_testbench#278| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#264| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#264| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#264| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2281$397_Y
-(define-fun |rvfi_testbench#279| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#278| state) (|rvfi_testbench#277| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#336| state))
+(define-fun |rvfi_testbench#337| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#325| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#325| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#325| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#325| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#325| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2361$397_Y
+(define-fun |rvfi_testbench#338| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#337| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#331| state))) ; \wrapper.cpu.coreArea_srcPlugin_rs2Reader_data
+(define-fun |rvfi_testbench#339| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#324| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#324| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#324| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2378$404_Y
+(define-fun |rvfi_testbench#340| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#339| state) (|rvfi_testbench#338| state) #b0000000000000000000000000000000000000000000000000000000000000000)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#279| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#340| state))
+; yosys-smt2-anyinit rvfi_testbench#341 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_valid"], "smtname": 341, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#341| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid
+(define-fun |rvfi_testbench#342| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#318| state) (|rvfi_testbench#222| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2624$460_Y
+(define-fun |rvfi_testbench#343| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#151| state) false) (or  (|rvfi_testbench#342| state) false))) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_throwWhen_CPU_l130
+(define-fun |rvfi_testbench#344| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#343| state) #b0 (|rvfi_testbench#341| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_down_isFiring
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_isFiring 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#344| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_isReady 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_isReady| ((state |rvfi_testbench_s|)) Bool true)
-; yosys-smt2-anyinit rvfi_testbench#280 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_5_up_valid"], "smtname": 280, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#280| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#280| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#344| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#280| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#344| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_throwWhen_CPU_l130 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_throwWhen_CPU_l130| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#343| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#258| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#317| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH 4
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH 4
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH| ((state |rvfi_testbench_s|)) (_ BitVec 4) (|rvfi_testbench#318| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#179| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#214| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#102| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#109| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode 6
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#260| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#320| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#261| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#321| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#262| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#322| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#263| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#323| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE 3
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE 3
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#264| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#324| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#265| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#325| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#266| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#326| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#267| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#327| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH 1
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#328| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#268| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#329| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_cancel 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_cancel| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#343| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_forgetOne 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_forgetOne| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#343| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#280| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#341| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#280| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#281 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Common_LANE_SEL"], "smtname": 281, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#281| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#341| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#281| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#282 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION"], "smtname": 282, "smtoffset": 0, "type": "init", "width": 32}
-(declare-fun |rvfi_testbench#282| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#144| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Common_TRAP 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Common_TRAP| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#149| state))
+; yosys-smt2-anyinit rvfi_testbench#345 32 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION"], "smtname": 345, "smtoffset": 0, "type": "init", "width": 32}
+(declare-fun |rvfi_testbench#345| (|rvfi_testbench_s|) (_ BitVec 32)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#282| state))
-; yosys-smt2-anyinit rvfi_testbench#283 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR"], "smtname": 283, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#283| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#345| state))
+; yosys-smt2-anyinit rvfi_testbench#346 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_LEGAL"], "smtname": 346, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#346| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_LEGAL 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#346| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#347 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR"], "smtname": 347, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#347| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#283| state))
-; yosys-smt2-anyinit rvfi_testbench#284 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR"], "smtname": 284, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#284| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#347| state))
+; yosys-smt2-anyinit rvfi_testbench#348 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR"], "smtname": 348, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#348| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#284| state))
-; yosys-smt2-anyinit rvfi_testbench#285 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_VALID"], "smtname": 285, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#285| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#348| state))
+; yosys-smt2-anyinit rvfi_testbench#349 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_VALID"], "smtname": 349, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#349| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_Dispatch_SENDTOALU 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#224| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#286 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR"], "smtname": 286, "smtoffset": 0, "type": "init", "width": 5}
-(declare-fun |rvfi_testbench#286| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR
-(define-fun |rvfi_testbench#287| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1) (|rvfi_testbench#286| state) (|rvfi_testbench#2| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#271| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#350 5 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR"], "smtname": 350, "smtoffset": 0, "type": "init", "width": 5}
+(declare-fun |rvfi_testbench#350| (|rvfi_testbench_s|) (_ BitVec 5)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR
+(define-fun |rvfi_testbench#351| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1) (|rvfi_testbench#350| state) (|rvfi_testbench#3| state))) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address[4:0]
+(define-fun |rvfi_testbench#352| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1) (|rvfi_testbench#350| state) (|rvfi_testbench#351| state))) ; $flatten\wrapper.\cpu.$3\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address[4:0]
+(define-fun |rvfi_testbench#353| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (|rvfi_testbench#162| state) (|rvfi_testbench#350| state) (|rvfi_testbench#352| state))) ; $flatten\wrapper.\cpu.$4\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address[4:0]
+(define-fun |rvfi_testbench#354| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#144| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#146| state)) #b1) false))) ; \wrapper.cpu.when_branch_l90
+(define-fun |rvfi_testbench#355| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (|rvfi_testbench#354| state) (|rvfi_testbench#353| state) (|rvfi_testbench#351| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#287| state))
-(define-fun |rvfi_testbench#288| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#286| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#286| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#286| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#286| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#286| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2386$410_Y
-(define-fun |rvfi_testbench#289| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#288| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#225| state))) ; $flatten\wrapper.\cpu.$ternary$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2386$411_Y
-(define-fun |rvfi_testbench#290| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1) (|rvfi_testbench#289| state) (|rvfi_testbench#1| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#355| state))
+(define-fun |rvfi_testbench#356| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#350| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#350| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#350| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#350| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#350| state)) #b1)))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2491$417_Y
+(define-fun |rvfi_testbench#357| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#356| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#272| state))) ; $flatten\wrapper.\cpu.$ternary$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2491$418_Y
+(define-fun |rvfi_testbench#358| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1) (|rvfi_testbench#357| state) (|rvfi_testbench#2| state))) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data[63:0]
+(define-fun |rvfi_testbench#359| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#356| state) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#212| state))) ; $flatten\wrapper.\cpu.$ternary$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2495$420_Y
+(define-fun |rvfi_testbench#360| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1) (|rvfi_testbench#359| state) (|rvfi_testbench#358| state))) ; $flatten\wrapper.\cpu.$3\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data[63:0]
+(define-fun |rvfi_testbench#361| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#162| state) (|rvfi_testbench#213| state) (|rvfi_testbench#360| state))) ; $flatten\wrapper.\cpu.$4\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data[63:0]
+(define-fun |rvfi_testbench#362| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#354| state) (|rvfi_testbench#361| state) (|rvfi_testbench#358| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#290| state))
-; yosys-smt2-anyinit rvfi_testbench#291 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_Decoder_LEGAL"], "smtname": 291, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#291| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL
-(define-fun |rvfi_testbench#292| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot (|rvfi_testbench#291| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2393$413_Y
-(define-fun |rvfi_testbench#293| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#292| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2393$414_Y
-(define-fun |rvfi_testbench#294| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1) (ite (|rvfi_testbench#293| state) #b1 #b0) #b0)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#362| state))
+(define-fun |rvfi_testbench#363| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot (|rvfi_testbench#346| state))) ; $flatten\wrapper.\cpu.$eq$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2506$422_Y
+(define-fun |rvfi_testbench#364| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#363| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2506$423_Y
+(define-fun |rvfi_testbench#365| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1) (ite (|rvfi_testbench#364| state) #b1 #b0) #b0)) ; $flatten\wrapper.\cpu.$1\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid[0:0]
+(define-fun |rvfi_testbench#366| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#364| state) false) (or  (|rvfi_testbench#150| state) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2510$427_Y
+(define-fun |rvfi_testbench#367| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#128| state)) #b1) (ite (|rvfi_testbench#366| state) #b1 #b0) (|rvfi_testbench#365| state))) ; $flatten\wrapper.\cpu.$3\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid[0:0]
+(define-fun |rvfi_testbench#368| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#162| state) (ite (|rvfi_testbench#364| state) #b1 #b0) (|rvfi_testbench#367| state))) ; $flatten\wrapper.\cpu.$4\coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid[0:0]
+(define-fun |rvfi_testbench#369| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#354| state) (|rvfi_testbench#368| state) (|rvfi_testbench#365| state))) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#294| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#369| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_IMMED 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS2 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
+; yosys-smt2-anyinit rvfi_testbench#370 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_valid"], "smtname": 370, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#370| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_isFiring 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#370| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_isReady 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_isReady| ((state |rvfi_testbench_s|)) Bool true)
-; yosys-smt2-anyinit rvfi_testbench#295 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_6_up_valid"], "smtname": 295, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#295| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#295| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#370| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#295| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#370| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#281| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#144| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#282| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#345| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#291| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#346| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode 6
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode 6
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#125| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode| ((state |rvfi_testbench_s|)) (_ BitVec 6) (|rvfi_testbench#124| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#286| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#350| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#283| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#347| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#284| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#348| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#224| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#271| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH 1
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#146| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#42| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#34| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#41| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#44| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#295| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#370| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#295| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#370| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
-; yosys-smt2-anyinit rvfi_testbench#296 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2729.3-2801.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid"], "smtname": 296, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#296| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
+; yosys-smt2-anyinit rvfi_testbench#371 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3038.3-3121.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid"], "smtname": 371, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#371| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#296| state)) #b1))
-; yosys-smt2-anyinit rvfi_testbench#297 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2653.3-2727.6
-; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_valid"], "smtname": 297, "smtoffset": 0, "type": "init", "width": 1}
-(declare-fun |rvfi_testbench#297| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#371| state)) #b1))
+; yosys-smt2-anyinit rvfi_testbench#372 1 /Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2930.3-3036.6
+; yosys-smt2-witness {"offset": 0, "path": ["\\wrapper", "\\cpu", "\\coreArea_pipeline_ctrl_7_up_valid"], "smtname": 372, "smtoffset": 0, "type": "init", "width": 1}
+(declare-fun |rvfi_testbench#372| (|rvfi_testbench_s|) (_ BitVec 1)) ; \wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_isFiring 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_isFiring| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_isReady 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_isReady| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_down_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_down_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN 1
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#32| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET 64
+; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET 64
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#31| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_COMMIT 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_COMMIT| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_COMMIT| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#22| state)) #b1))
+; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION 32
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address 5
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#296| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#371| state)) #b1))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_isValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_isValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-register wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid 1
 ; yosys-smt2-wire wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_halt 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_halt| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_insn 32
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_intr 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_ixl 2
@@ -1766,118 +2046,127 @@
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_mode 2
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_mode| ((state |rvfi_testbench_s|)) (_ BitVec 2) #b11)
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_order 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_wdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_trap 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_io_rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-register wrapper.cpu.coreArea_rvfiPlugin_order 64
 ; yosys-smt2-wire wrapper.cpu.coreArea_rvfiPlugin_order 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_rvfiPlugin_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_immsel_sext 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#185| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_immsel_sext| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#220| state))
+(define-fun |rvfi_testbench#373| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#372| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#371| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2293$371_Y
+(define-fun |rvfi_testbench#374| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#373| state) false) (or  (|rvfi_testbench#23| state) false))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_valid
+(define-fun |rvfi_testbench#375| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#34| state) #b00000)) ; $flatten\wrapper.\cpu.$ne$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2293$372_Y
+(define-fun |rvfi_testbench#376| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#374| state) false) (or  (|rvfi_testbench#375| state) false))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.when_regFile_l66
+(define-fun |rvfi_testbench#377| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#376| state) #b1 #b0)) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile._zz_1
+; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile._zz_1 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile._zz_1| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#377| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clk 1
 ; yosys-smt2-clock wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clk posedge
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clkEnable 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_clkEnable| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#263| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#323| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#271| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS1_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#332| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#265| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#325| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_readerRS2_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#331| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_reset 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
-(define-fun |rvfi_testbench#298| ((state |rvfi_testbench_s|)) Bool (and (or  (= ((_ extract 0 0) (|rvfi_testbench#297| state)) #b1) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#296| state)) #b1) false))) ; $flatten\wrapper.\cpu.$logic_and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2197$366_Y
-(define-fun |rvfi_testbench#299| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#298| state) false) (or  (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1) false))) ; \wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_valid
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#299| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.io_writer_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#374| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port0 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port0| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#271| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port0| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#332| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port1 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem_spinal_port1| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#331| state))
+; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.when_regFile_l66 1
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.when_regFile_l66| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#376| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS1_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS1_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#271| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS1_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#332| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS2_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS2_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_readerRS2_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#331| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_writer_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_writer_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#299| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_regfileread_regfile_io_writer_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#374| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs1Reader_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs1Reader_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#263| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs1Reader_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#323| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs1Reader_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs1Reader_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#273| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs1Reader_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#334| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs2Reader_address 5
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs2Reader_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#265| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs2Reader_address| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#325| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs2Reader_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs2Reader_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#277| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs2Reader_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#338| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs_rs1Data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs_rs1Data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#275| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs_rs1Data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#336| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_rs_rs2Data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs_rs2Data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#279| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_rs_rs2Data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#340| state))
 ; yosys-smt2-wire wrapper.cpu.coreArea_srcPlugin_wasReset 1
 (define-fun |rvfi_testbench_n wrapper.cpu.coreArea_srcPlugin_wasReset| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.io_clk 1
 ; yosys-smt2-clock wrapper.cpu.io_clk posedge
-(define-fun |rvfi_testbench_n wrapper.cpu.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#14| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_clk| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#15| state))
 ; yosys-smt2-wire wrapper.cpu.io_clkEnable 1
 (define-fun |rvfi_testbench_n wrapper.cpu.io_clkEnable| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.io_dbg_commitInsn 32
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitInsn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitInsn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_commitPc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitPc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitPc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_commitValid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitValid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_commitValid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_d_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_d_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#186| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_d_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#223| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_f_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_f_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#154| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_f_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#224| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_wb_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_wb_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_wb_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.io_dbg_x_pc 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_x_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#52| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_dbg_x_pc| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#59| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_cmd_payload_address 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#221| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#269| state))
+; yosys-smt2-wire wrapper.cpu.io_iBus_cmd_payload_id 16
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#237| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_cmd_ready 1
 (define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_ready| ((state |rvfi_testbench_s|)) Bool true)
 ; yosys-smt2-wire wrapper.cpu.io_iBus_cmd_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#116| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_cmd_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#153| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_rsp_payload_address 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#222| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_address| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_rsp_payload_data 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#214| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#245| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_rsp_payload_id 16
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#223| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_payload_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#246| state))
 ; yosys-smt2-wire wrapper.cpu.io_iBus_rsp_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_iBus_rsp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.io_reset 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_halt 1
 (define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_halt| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_insn 32
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_intr 1
 (define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_ixl 2
@@ -1895,65 +2184,80 @@
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_mode 2
 (define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_mode| ((state |rvfi_testbench_s|)) (_ BitVec 2) #b11)
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_order 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rd_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rd_wdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rs1_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rs1_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rs2_addr 5
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_rs2_rdata 64
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_trap 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.io_rvfi_valid 1
-(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.io_rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
 ; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l191 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l191| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#230| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l191| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#277| state))
 ; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l191_2 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l191_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#198| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l191_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#236| state))
+; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l198 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l198| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#151| state))
+; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l198_1 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l198_1| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#253| state))
+; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l198_2 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l198_2| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#290| state))
+; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l198_3 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l198_3| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#295| state))
+; yosys-smt2-wire wrapper.cpu.when_CtrlLink_l198_4 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_CtrlLink_l198_4| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#343| state))
 ; yosys-smt2-wire wrapper.cpu.when_IntAlu_l34 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_IntAlu_l34| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#224| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.cpu.when_IntAlu_l34| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#271| state)) #b1))
 ; yosys-smt2-wire wrapper.cpu.when_IntAlu_l75 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_IntAlu_l75| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#285| state)) #b1))
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l146 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l146| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#242| state))
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l150 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l150| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#244| state))
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l154 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l154| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#246| state))
-(define-fun |rvfi_testbench#300| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#252| state) #b00000)) ; $flatten\wrapper.\cpu.$ne$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2196$364_Y
-(define-fun |rvfi_testbench#301| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#240| state) false) (or  (|rvfi_testbench#300| state) false))) ; \wrapper.cpu.when_scheduler_l189
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l189 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l189| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#301| state))
-(define-fun |rvfi_testbench#302| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#27| state) #b00000)) ; $flatten\wrapper.\cpu.$ne$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2197$367_Y
-(define-fun |rvfi_testbench#303| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#298| state) false) (or  (|rvfi_testbench#302| state) false))) ; \wrapper.cpu.when_scheduler_l198
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l198 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l198| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#303| state))
-; yosys-smt2-wire wrapper.cpu.when_scheduler_l248 1
-(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l248| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#104| state))
+(define-fun |rvfi_testbench_n wrapper.cpu.when_IntAlu_l75| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#349| state)) #b1))
+; yosys-smt2-wire wrapper.cpu.when_branch_l90 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_branch_l90| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#354| state))
+; yosys-smt2-wire wrapper.cpu.when_branch_l98 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_branch_l98| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#162| state))
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l145 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l145| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#299| state))
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l149 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l149| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#301| state))
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l153 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l153| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#303| state))
+(define-fun |rvfi_testbench#378| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#309| state) #b00000)) ; $flatten\wrapper.\cpu.$ne$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2292$369_Y
+(define-fun |rvfi_testbench#379| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#297| state) false) (or  (|rvfi_testbench#378| state) false))) ; \wrapper.cpu.when_scheduler_l188
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l188 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l188| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#379| state))
+(define-fun |rvfi_testbench#380| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#373| state) false) (or  (|rvfi_testbench#375| state) false))) ; \wrapper.cpu.when_scheduler_l197
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l197 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l197| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#380| state))
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l201 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l201| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#379| state))
+; yosys-smt2-wire wrapper.cpu.when_scheduler_l251 1
+(define-fun |rvfi_testbench_n wrapper.cpu.when_scheduler_l251| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#111| state))
 ; yosys-smt2-wire wrapper.ibus_resp_addr 64
-(define-fun |rvfi_testbench_n wrapper.ibus_resp_addr| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#222| state))
+(define-fun |rvfi_testbench_n wrapper.ibus_resp_addr| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#270| state))
 ; yosys-smt2-wire wrapper.ibus_resp_data 64
-(define-fun |rvfi_testbench_n wrapper.ibus_resp_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#214| state))
+(define-fun |rvfi_testbench_n wrapper.ibus_resp_data| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#245| state))
 ; yosys-smt2-wire wrapper.ibus_resp_id 16
-(define-fun |rvfi_testbench_n wrapper.ibus_resp_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#223| state))
+(define-fun |rvfi_testbench_n wrapper.ibus_resp_id| ((state |rvfi_testbench_s|)) (_ BitVec 16) (|rvfi_testbench#246| state))
 ; yosys-smt2-wire wrapper.ibus_resp_valid 1
-(define-fun |rvfi_testbench_n wrapper.ibus_resp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#118| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.ibus_resp_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#155| state)) #b1))
 ; yosys-smt2-wire wrapper.reset 1
-(define-fun |rvfi_testbench_n wrapper.reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1))
+(define-fun |rvfi_testbench_n wrapper.reset| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1))
 ; yosys-smt2-wire wrapper.rvfi_halt 1
 (define-fun |rvfi_testbench_n wrapper.rvfi_halt| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.rvfi_insn 32
-(define-fun |rvfi_testbench_n wrapper.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#15| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_insn| ((state |rvfi_testbench_s|)) (_ BitVec 32) (|rvfi_testbench#16| state))
 ; yosys-smt2-wire wrapper.rvfi_intr 1
 (define-fun |rvfi_testbench_n wrapper.rvfi_intr| ((state |rvfi_testbench_s|)) Bool false)
 ; yosys-smt2-wire wrapper.rvfi_ixl 2
@@ -1971,162 +2275,190 @@
 ; yosys-smt2-wire wrapper.rvfi_mode 2
 (define-fun |rvfi_testbench_n wrapper.rvfi_mode| ((state |rvfi_testbench_s|)) (_ BitVec 2) #b11)
 ; yosys-smt2-wire wrapper.rvfi_order 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_order| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#40| state))
 ; yosys-smt2-wire wrapper.rvfi_pc_rdata 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#16| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_pc_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#17| state))
 ; yosys-smt2-wire wrapper.rvfi_pc_wdata 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#21| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_pc_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#33| state))
 ; yosys-smt2-wire wrapper.rvfi_rd_addr 5
-(define-fun |rvfi_testbench_n wrapper.rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#27| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rd_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#34| state))
 ; yosys-smt2-wire wrapper.rvfi_rd_wdata 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#28| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rd_wdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#35| state))
 ; yosys-smt2-wire wrapper.rvfi_rs1_addr 5
-(define-fun |rvfi_testbench_n wrapper.rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#29| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rs1_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#36| state))
 ; yosys-smt2-wire wrapper.rvfi_rs1_rdata 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#30| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rs1_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#37| state))
 ; yosys-smt2-wire wrapper.rvfi_rs2_addr 5
-(define-fun |rvfi_testbench_n wrapper.rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#31| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rs2_addr| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#38| state))
 ; yosys-smt2-wire wrapper.rvfi_rs2_rdata 64
-(define-fun |rvfi_testbench_n wrapper.rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#32| state))
+(define-fun |rvfi_testbench_n wrapper.rvfi_rs2_rdata| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#39| state))
 ; yosys-smt2-wire wrapper.rvfi_trap 1
-(define-fun |rvfi_testbench_n wrapper.rvfi_trap| ((state |rvfi_testbench_s|)) Bool false)
+(define-fun |rvfi_testbench_n wrapper.rvfi_trap| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1))
 ; yosys-smt2-wire wrapper.rvfi_valid 1
-(define-fun |rvfi_testbench_n wrapper.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1))
-(define-fun |rvfi_testbench#304| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot (ite (|rvfi_testbench#14| state) #b1 #b0))) ; $auto$rtlil.cc:3135:Not$2455
-; yosys-smt2-assume 0 $auto$formalff.cc:987:execute$2456
-(define-fun |rvfi_testbench_u 0| ((state |rvfi_testbench_s|)) Bool (or (= ((_ extract 0 0) (|rvfi_testbench#304| state)) #b1) (not true))) ; $auto$formalff.cc:987:execute$2456
-(define-fun |rvfi_testbench#305| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench_is| state)) ; $initstate$2_wire
-(define-fun |rvfi_testbench#306| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#11| state) (ite (|rvfi_testbench#305| state) #b1 #b0))) ; $eq$rvfi_testbench.sv:30$5_Y
+(define-fun |rvfi_testbench_n wrapper.rvfi_valid| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench#23| state))
+(define-fun |rvfi_testbench#381| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot (ite (|rvfi_testbench#15| state) #b1 #b0))) ; $auto$rtlil.cc:3135:Not$2733
+; yosys-smt2-assume 0 $auto$formalff.cc:987:execute$2734
+(define-fun |rvfi_testbench_u 0| ((state |rvfi_testbench_s|)) Bool (or (= ((_ extract 0 0) (|rvfi_testbench#381| state)) #b1) (not true))) ; $auto$formalff.cc:987:execute$2734
+(define-fun |rvfi_testbench#382| ((state |rvfi_testbench_s|)) Bool (|rvfi_testbench_is| state)) ; $initstate$2_wire
+(define-fun |rvfi_testbench#383| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#12| state) (ite (|rvfi_testbench#382| state) #b1 #b0))) ; $eq$rvfi_testbench.sv:30$5_Y
 ; yosys-smt2-assume 1 _witness_.check_assume_rvfi_testbench_sv_30_4 rvfi_testbench.sv:30.14-30.42
-(define-fun |rvfi_testbench_u 1| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#306| state) (not true))) ; _witness_.check_assume_rvfi_testbench_sv_30_4
+(define-fun |rvfi_testbench_u 1| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#383| state) (not true))) ; _witness_.check_assume_rvfi_testbench_sv_30_4
 ; yosys-smt2-assert 0 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_144_64 rvfi_insn_check.sv:144.6-144.18
-(define-fun |rvfi_testbench_a 0| ((state |rvfi_testbench_s|)) Bool (or false (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_144_64
-(define-fun |rvfi_testbench#307| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#27| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#27| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#27| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#27| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#27| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:145$66_Y
+(define-fun |rvfi_testbench_a 0| ((state |rvfi_testbench_s|)) Bool (or (= ((_ extract 0 0) (|rvfi_testbench#20| state)) #b1) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_144_64
+(define-fun |rvfi_testbench#384| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#34| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#34| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#34| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#34| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#34| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:145$66_Y
 ; yosys-smt2-assert 1 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_145_65 rvfi_insn_check.sv:145.6-145.26
-(define-fun |rvfi_testbench_a 1| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#307| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_145_65
-(define-fun |rvfi_testbench#308| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#28| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#28| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:146$68_Y
+(define-fun |rvfi_testbench_a 1| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#384| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_145_65
+(define-fun |rvfi_testbench#385| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#35| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#35| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:146$68_Y
 ; yosys-smt2-assert 2 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_146_67 rvfi_insn_check.sv:146.6-146.27
-(define-fun |rvfi_testbench_a 2| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#308| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_146_67
+(define-fun |rvfi_testbench_a 2| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#385| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_146_67
 ; yosys-smt2-assert 3 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_147_69 rvfi_insn_check.sv:147.6-147.28
 (define-fun |rvfi_testbench_a 3| ((state |rvfi_testbench_s|)) Bool (or true (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_147_69
-(define-fun |rvfi_testbench#309| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#30| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#30| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:164$73_Y
-(define-fun |rvfi_testbench#310| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#29| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#29| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#29| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#29| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#29| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:163$71_Y
-(define-fun |rvfi_testbench#311| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#310| state) #b1 #b0)) ; $flatten\checker_inst.$procmux$1128_Y
-(define-fun |rvfi_testbench#312| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#18| state) false) (or  (|rvfi_testbench#13| state) false))) ; $flatten\checker_inst.$auto$rtlil.cc:3135:Not$1848
-(define-fun |rvfi_testbench#313| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#312| state) (|rvfi_testbench#311| state) #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:164$72_EN
+(define-fun |rvfi_testbench#386| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#37| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#37| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:164$73_Y
+(define-fun |rvfi_testbench#387| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#36| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#36| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#36| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#36| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#36| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:163$71_Y
+(define-fun |rvfi_testbench#388| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#387| state) #b1 #b0)) ; $flatten\checker_inst.$procmux$1220_Y
+(define-fun |rvfi_testbench#389| ((state |rvfi_testbench_s|)) Bool (and (or  (|rvfi_testbench#19| state) false) (or  (|rvfi_testbench#14| state) false))) ; $flatten\checker_inst.$auto$rtlil.cc:3135:Not$2126
+(define-fun |rvfi_testbench#390| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#389| state) (|rvfi_testbench#388| state) #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:164$72_EN
 ; yosys-smt2-assert 4 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_164_72 rvfi_insn_check.sv:164.7-164.29
-(define-fun |rvfi_testbench_a 4| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#309| state) (not (= ((_ extract 0 0) (|rvfi_testbench#313| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_164_72
-(define-fun |rvfi_testbench#314| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#32| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#32| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:167$76_Y
-(define-fun |rvfi_testbench#315| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#31| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#31| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#31| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#31| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#31| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:166$74_Y
-(define-fun |rvfi_testbench#316| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#315| state) #b1 #b0)) ; $flatten\checker_inst.$procmux$1120_Y
-(define-fun |rvfi_testbench#317| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#312| state) (|rvfi_testbench#316| state) #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:167$75_EN
+(define-fun |rvfi_testbench_a 4| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#386| state) (not (= ((_ extract 0 0) (|rvfi_testbench#390| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_164_72
+(define-fun |rvfi_testbench#391| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 5 5) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 6 6) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 7 7) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 8 8) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 9 9) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 10 10) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 11 11) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 12 12) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 13 13) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 14 14) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 15 15) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 16 16) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 17 17) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 18 18) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 19 19) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 20 20) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 21 21) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 22 22) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 23 23) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 24 24) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 25 25) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 26 26) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 27 27) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 28 28) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 29 29) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 30 30) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 31 31) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 32 32) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 33 33) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 34 34) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 35 35) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 36 36) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 37 37) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 38 38) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 39 39) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 40 40) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 41 41) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 42 42) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 43 43) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 44 44) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 45 45) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 46 46) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 47 47) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 48 48) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 49 49) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 50 50) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 51 51) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 52 52) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 53 53) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 54 54) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 55 55) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 56 56) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 57 57) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 58 58) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 59 59) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 60 60) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 61 61) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 62 62) (|rvfi_testbench#39| state)) #b1) (= ((_ extract 63 63) (|rvfi_testbench#39| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:167$76_Y
+(define-fun |rvfi_testbench#392| ((state |rvfi_testbench_s|)) Bool (not (or  (= ((_ extract 0 0) (|rvfi_testbench#38| state)) #b1) (= ((_ extract 1 1) (|rvfi_testbench#38| state)) #b1) (= ((_ extract 2 2) (|rvfi_testbench#38| state)) #b1) (= ((_ extract 3 3) (|rvfi_testbench#38| state)) #b1) (= ((_ extract 4 4) (|rvfi_testbench#38| state)) #b1)))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:166$74_Y
+(define-fun |rvfi_testbench#393| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#392| state) #b1 #b0)) ; $flatten\checker_inst.$procmux$1212_Y
+(define-fun |rvfi_testbench#394| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#389| state) (|rvfi_testbench#393| state) #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:167$75_EN
 ; yosys-smt2-assert 5 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_167_75 rvfi_insn_check.sv:167.7-167.29
-(define-fun |rvfi_testbench_a 5| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#314| state) (not (= ((_ extract 0 0) (|rvfi_testbench#317| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_167_75
+(define-fun |rvfi_testbench_a 5| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#391| state) (not (= ((_ extract 0 0) (|rvfi_testbench#394| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_167_75
 ; yosys-smt2-assert 6 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_171_79 rvfi_insn_check.sv:171.8-171.41
-(define-fun |rvfi_testbench_a 6| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#310| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_171_79
+(define-fun |rvfi_testbench_a 6| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#387| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_171_79
 ; yosys-smt2-assert 7 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_174_82 rvfi_insn_check.sv:174.8-174.41
-(define-fun |rvfi_testbench_a 7| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#315| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_174_82
-(define-fun |rvfi_testbench#318| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 11 7) (|rvfi_testbench#15| state)) (|rvfi_testbench#27| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:176$85_Y
-(define-fun |rvfi_testbench#319| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#312| state) #b1 #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:176$84_EN
+(define-fun |rvfi_testbench_a 7| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#392| state) (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_174_82
+(define-fun |rvfi_testbench#395| ((state |rvfi_testbench_s|)) Bool (= ((_ extract 11 7) (|rvfi_testbench#16| state)) (|rvfi_testbench#34| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:176$85_Y
+(define-fun |rvfi_testbench#396| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#389| state) #b1 #b0)) ; $flatten\checker_inst.$assert$rvfi_insn_check.sv:176$84_EN
 ; yosys-smt2-assert 8 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_176_84 rvfi_insn_check.sv:176.7-176.38
-(define-fun |rvfi_testbench_a 8| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#318| state) (not (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_176_84
-(define-fun |rvfi_testbench#320| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#24| state) (|rvfi_testbench#28| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:177$87_Y
+(define-fun |rvfi_testbench_a 8| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#395| state) (not (= ((_ extract 0 0) (|rvfi_testbench#396| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_176_84
+(define-fun |rvfi_testbench#397| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#28| state) (|rvfi_testbench#35| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:177$87_Y
 ; yosys-smt2-assert 9 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_177_86 rvfi_insn_check.sv:177.7-177.40
-(define-fun |rvfi_testbench_a 9| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#320| state) (not (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_177_86
+(define-fun |rvfi_testbench_a 9| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#397| state) (not (= ((_ extract 0 0) (|rvfi_testbench#396| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_177_86
+(define-fun |rvfi_testbench#398| ((state |rvfi_testbench_s|)) Bool (= (|rvfi_testbench#25| state) (|rvfi_testbench#33| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:178$89_Y
 ; yosys-smt2-assert 10 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_178_88 rvfi_insn_check.sv:178.7-178.76
-(define-fun |rvfi_testbench_a 10| ((state |rvfi_testbench_s|)) Bool (or true (not (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_178_88
+(define-fun |rvfi_testbench_a 10| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#398| state) (not (= ((_ extract 0 0) (|rvfi_testbench#396| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_178_88
+; yosys-smt2-assert 11 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_104 rvfi_insn_check.sv:186.9-186.29
+(define-fun |rvfi_testbench_a 11| ((state |rvfi_testbench_s|)) Bool (or false (not false))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_186_104
+(define-fun |rvfi_testbench#399| ((state |rvfi_testbench_s|)) (_ BitVec 1) (bvnot (|rvfi_testbench#20| state))) ; $flatten\checker_inst.$eq$rvfi_insn_check.sv:198$154_Y
+; yosys-smt2-assert 12 _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_198_153 rvfi_insn_check.sv:198.6-198.31
+(define-fun |rvfi_testbench_a 12| ((state |rvfi_testbench_s|)) Bool (or (= ((_ extract 0 0) (|rvfi_testbench#399| state)) #b1) (not (= ((_ extract 0 0) (|rvfi_testbench#396| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assert_rvfi_insn_check_sv_198_153
 ; yosys-smt2-assume 2 _witness_.check_flatten_checker_inst__assume_rvfi_insn_check_sv_141_60 rvfi_insn_check.sv:141.5-141.23
-(define-fun |rvfi_testbench_u 2| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#26| state) (not (= ((_ extract 0 0) (|rvfi_testbench#319| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assume_rvfi_insn_check_sv_141_60
-(define-fun |rvfi_testbench#321| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#295| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_7_up_valid[0:0]
-(define-fun |rvfi_testbench#322| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#280| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_6_up_valid[0:0]
-(define-fun |rvfi_testbench#323| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#257| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_5_up_valid[0:0]
-(define-fun |rvfi_testbench#324| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (|rvfi_testbench#186| state) (|rvfi_testbench#256| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_PC_PC[63:0]
-(define-fun |rvfi_testbench#325| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (concat (ite (|rvfi_testbench#168| state) #b1 #b0) (concat (ite (|rvfi_testbench#166| state) #b1 #b0) (ite (|rvfi_testbench#166| state) #b1 #b0))) (|rvfi_testbench#254| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE[2:0]
-(define-fun |rvfi_testbench#326| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (concat ((_ extract 2 2) (|rvfi_testbench#58| state)) #b00) (|rvfi_testbench#253| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE[2:0]
-(define-fun |rvfi_testbench#327| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) ((_ extract 11 7) (|rvfi_testbench#58| state)) (|rvfi_testbench#252| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR[4:0]
-(define-fun |rvfi_testbench#328| ((state |rvfi_testbench_s|)) (_ BitVec 6) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (concat (ite (|rvfi_testbench#165| state) #b1 #b0) (concat (ite (|rvfi_testbench#164| state) #b1 #b0) (concat (ite (|rvfi_testbench#163| state) #b1 #b0) (concat (ite (|rvfi_testbench#162| state) #b1 #b0) (concat (ite (|rvfi_testbench#89| state) #b1 #b0) (ite (|rvfi_testbench#101| state) #b1 #b0)))))) (|rvfi_testbench#251| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_MicroCode[5:0]
-(define-fun |rvfi_testbench#329| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) #b0 (|rvfi_testbench#250| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_LEGAL[0:0]
-(define-fun |rvfi_testbench#330| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (|rvfi_testbench#58| state) (|rvfi_testbench#249| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION[31:0]
-(define-fun |rvfi_testbench#331| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (concat (ite (|rvfi_testbench#160| state) #b1 #b0) (concat (ite (|rvfi_testbench#157| state) #b1 #b0) (ite (|rvfi_testbench#158| state) #b1 #b0))) (|rvfi_testbench#248| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL[2:0]
-(define-fun |rvfi_testbench#332| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (concat #b0 (concat (ite (|rvfi_testbench#156| state) #b1 #b0) (ite (|rvfi_testbench#156| state) #b1 #b0))) (|rvfi_testbench#241| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT[2:0]
-(define-fun |rvfi_testbench#333| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#226| state) #b0000000000000000000000000000000000000000000000000000000000000100)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2671$463_Y
-(define-fun |rvfi_testbench#334| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1) (|rvfi_testbench#333| state) (|rvfi_testbench#226| state))) ; $flatten\wrapper.\cpu.$procmux$1614_Y
-(define-fun |rvfi_testbench#335| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#334| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pc_PC_cur[63:0]
-(define-fun |rvfi_testbench#336| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1) (|rvfi_testbench#226| state) (|rvfi_testbench#221| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_1_up_PC_PC[63:0]
-(define-fun |rvfi_testbench#337| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvadd (|rvfi_testbench#215| state) #b0001)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2974$529_Y
-(define-fun |rvfi_testbench#338| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (|rvfi_testbench#219| state) (|rvfi_testbench#337| state) (|rvfi_testbench#215| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1201_Y
-(define-fun |rvfi_testbench#339| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000 (|rvfi_testbench#338| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ptr_pop[3:0]
-(define-fun |rvfi_testbench#340| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1) (|rvfi_testbench#207| state) (|rvfi_testbench#211| state))) ; $flatten\wrapper.\cpu.$procmux$1638_Y
-(define-fun |rvfi_testbench#341| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#340| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_valid[0:0]
-(define-fun |rvfi_testbench#342| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (|rvfi_testbench#211| state) (|rvfi_testbench#209| state))) ; $flatten\wrapper.\cpu.$procmux$1646_Y
-(define-fun |rvfi_testbench#343| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#342| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_valid[0:0]
-(define-fun |rvfi_testbench#344| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#218| state)) #b1) (ite (|rvfi_testbench#217| state) #b1 #b0) (|rvfi_testbench#206| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1183_Y
-(define-fun |rvfi_testbench#345| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#344| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_pop_addressGen_rValid[0:0]
-(define-fun |rvfi_testbench#346| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#228| state)) #b1) (|rvfi_testbench#233| state) (|rvfi_testbench#205| state))) ; $flatten\wrapper.\cpu.$procmux$1630_Y
-(define-fun |rvfi_testbench#347| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#346| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_2_up_valid[0:0]
-(define-fun |rvfi_testbench#348| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) ((_ extract 24 20) (|rvfi_testbench#58| state)) (|rvfi_testbench#195| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR[4:0]
-(define-fun |rvfi_testbench#349| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) ((_ extract 19 15) (|rvfi_testbench#58| state)) (|rvfi_testbench#193| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR[4:0]
-(define-fun |rvfi_testbench#350| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#210| state)) #b1) (ite (|rvfi_testbench#239| state) #b1 #b0) (|rvfi_testbench#192| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_VALID[0:0]
-(define-fun |rvfi_testbench#351| ((state |rvfi_testbench_s|)) (_ BitVec 6) (bvneg (concat #b0 (|rvfi_testbench#252| state)))) ; $flatten\wrapper.\cpu.$neg$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2692$467_Y
-(define-fun |rvfi_testbench#352| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#351| state) #b000000) (bvlshr #b00000000000000000000000000000001 (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (|rvfi_testbench#351| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000001 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (concat ((_ extract 5 5) (|rvfi_testbench#351| state)) (|rvfi_testbench#351| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2692$468_Y
-(define-fun |rvfi_testbench#353| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvnot (|rvfi_testbench#352| state))) ; $flatten\wrapper.\cpu.$not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2692$469_Y
-(define-fun |rvfi_testbench#354| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvand (|rvfi_testbench#191| state) (|rvfi_testbench#353| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2692$470_Y
-(define-fun |rvfi_testbench#355| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvor (|rvfi_testbench#354| state) (|rvfi_testbench#352| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2692$473_Y
-(define-fun |rvfi_testbench#356| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#301| state) (|rvfi_testbench#355| state) (|rvfi_testbench#191| state))) ; $flatten\wrapper.\cpu.$procmux$1532_Y
-(define-fun |rvfi_testbench#357| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) (|rvfi_testbench#0| state) (|rvfi_testbench#356| state))) ; $flatten\wrapper.\cpu.$3$lookahead\coreArea_dispatcher_hcs_regBusy$452[31:0]$466
-(define-fun |rvfi_testbench#358| ((state |rvfi_testbench_s|)) (_ BitVec 6) (bvneg (concat #b0 (|rvfi_testbench#27| state)))) ; $flatten\wrapper.\cpu.$neg$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$476_Y
-(define-fun |rvfi_testbench#359| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#358| state) #b000000) (bvlshr #b00000000000000000000000000000001 (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (|rvfi_testbench#358| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000001 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (|rvfi_testbench#358| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$477_Y
-(define-fun |rvfi_testbench#360| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvnot (|rvfi_testbench#359| state))) ; $flatten\wrapper.\cpu.$not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$478_Y
-(define-fun |rvfi_testbench#361| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvand (|rvfi_testbench#357| state) (|rvfi_testbench#360| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$479_Y
-(define-fun |rvfi_testbench#362| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#358| state) #b000000) (bvlshr #b00000000000000000000000000000000 (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (|rvfi_testbench#358| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000000 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (concat ((_ extract 5 5) (|rvfi_testbench#358| state)) (|rvfi_testbench#358| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$481_Y
-(define-fun |rvfi_testbench#363| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvor (|rvfi_testbench#361| state) (|rvfi_testbench#362| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2695$482_Y
-(define-fun |rvfi_testbench#364| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#303| state) (|rvfi_testbench#363| state) (|rvfi_testbench#357| state))) ; $flatten\wrapper.\cpu.$4$lookahead\coreArea_dispatcher_hcs_regBusy$452[31:0]$475
-(define-fun |rvfi_testbench#365| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#104| state) #b00000000000000000000000000000000 (|rvfi_testbench#364| state))) ; $flatten\wrapper.\cpu.$5$lookahead\coreArea_dispatcher_hcs_regBusy$452[31:0]$483
-(define-fun |rvfi_testbench#366| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b00000000000000000000000000000000 (|rvfi_testbench#365| state))) ; $flatten\wrapper.\cpu.$0$lookahead\coreArea_dispatcher_hcs_regBusy$452[31:0]$456
-(define-fun |rvfi_testbench#367| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1) (|rvfi_testbench#154| state) (|rvfi_testbench#186| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_PC_PC[63:0]
-(define-fun |rvfi_testbench#368| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#228| state)) #b1) (|rvfi_testbench#221| state) (|rvfi_testbench#154| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_2_up_PC_PC[63:0]
-; yosys-smt2-memory wrapper.cpu.coreArea_fetch_fifo.logic_ram 3 64 1 1 sync
-; yosys-smt2-witness {"path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ram"], "rom": false, "size": 8, "smtname": "wrapper.cpu.coreArea_fetch_fifo.logic_ram", "statebv": false, "type": "mem", "uninitialized": [{"offset": 0, "width": 512}], "width": 64}
-(declare-fun |rvfi_testbench#369#0| (|rvfi_testbench_s|) (Array (_ BitVec 3) (_ BitVec 64))) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
-(define-fun |rvfi_testbench_m wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (Array (_ BitVec 3) (_ BitVec 64)) (|rvfi_testbench#369#0| state))
-(define-fun |rvfi_testbench_m:R0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 3) ((_ extract 2 0) (|rvfi_testbench#215| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop [2:0]
-(define-fun |rvfi_testbench#370| ((state |rvfi_testbench_s|)) (_ BitVec 64) (select (|rvfi_testbench#369#0| state) (|rvfi_testbench_m:R0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$memrd$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2904$511_DATA
-(define-fun |rvfi_testbench_m:R0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#370| state))
-(define-fun |rvfi_testbench#371| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#219| state) (|rvfi_testbench#370| state) (|rvfi_testbench#153| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ram_spinal_port1[63:0]
-(define-fun |rvfi_testbench#372| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (|rvfi_testbench#220| state) (|rvfi_testbench#215| state) (|rvfi_testbench#112| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1174_Y
-(define-fun |rvfi_testbench#373| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000 (|rvfi_testbench#372| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_pop_sync_popReg[3:0]
-(define-fun |rvfi_testbench#374| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvadd (|rvfi_testbench#111| state) #b0001)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2971$528_Y
-(define-fun |rvfi_testbench#375| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (|rvfi_testbench#203| state) (|rvfi_testbench#374| state) (|rvfi_testbench#111| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1210_Y
-(define-fun |rvfi_testbench#376| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000 (|rvfi_testbench#375| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ptr_push[3:0]
-(define-fun |rvfi_testbench#377| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#116| state) #b1 (|rvfi_testbench#108| state))) ; $flatten\wrapper.\cpu.$procmux$1590_Y
-(define-fun |rvfi_testbench#378| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#234| state) #b0 (|rvfi_testbench#377| state))) ; $flatten\wrapper.\cpu.$procmux$1592_Y
-(define-fun |rvfi_testbench#379| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#378| state))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_cmdArea_reqSent[0:0]
-(define-fun |rvfi_testbench#380| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#232| state)) #b1) #b1 (|rvfi_testbench#107| state))) ; $flatten\wrapper.\cpu.$procmux$1622_Y
-(define-fun |rvfi_testbench#381| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0 (|rvfi_testbench#380| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_1_up_valid[0:0]
-(define-fun |rvfi_testbench#382| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvsub (|rvfi_testbench#117| state) (concat #b000 (|rvfi_testbench#118| state)))) ; $flatten\wrapper.\cpu.$sub$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2684$464_Y
-(define-fun |rvfi_testbench#383| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000 (|rvfi_testbench#382| state))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_inflight[3:0]
-(define-fun |rvfi_testbench#384| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b001 (|rvfi_testbench#190| state))) ; $flatten\wrapper.\cpu.$0\coreArea_dispatcher_hcs_init_value[2:0]
-(define-fun |rvfi_testbench#385| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#212| state)) #b1) (|rvfi_testbench#155| state) (|rvfi_testbench#58| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION[31:0]
-(define-fun |rvfi_testbench#386| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#33| state) #b0000000000000000000000000000000000000000000000000000000000000001)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2702$484_Y
-(define-fun |rvfi_testbench#387| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#19| state)) #b1) (|rvfi_testbench#386| state) (|rvfi_testbench#33| state))) ; $flatten\wrapper.\cpu.$procmux$1576_Y
-(define-fun |rvfi_testbench#388| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#387| state))) ; $flatten\wrapper.\cpu.$0\coreArea_rvfiPlugin_order[63:0]
-(define-fun |rvfi_testbench#389| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#10| state) #b11111111)) ; $auto$wreduce.cc:514:run$1944 [0]
-(define-fun |rvfi_testbench#390| ((state |rvfi_testbench_s|)) (_ BitVec 8) (bvadd (|rvfi_testbench#10| state) (concat #b0000000 (ite (|rvfi_testbench#389| state) #b1 #b0)))) ; $add$rvfi_testbench.sv:37$9_Y
-(define-fun |rvfi_testbench#391| ((state |rvfi_testbench_s|)) (_ BitVec 8) (ite (= ((_ extract 0 0) (|rvfi_testbench#11| state)) #b1) #b00000001 (|rvfi_testbench#390| state))) ; $0\cycle_reg[7:0]
-(define-fun |rvfi_testbench#392| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#204| state)) #b1) ((_ extract 2 0) (|rvfi_testbench#111| state)) (|rvfi_testbench#7| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_ADDR[2:0]$501
-(define-fun |rvfi_testbench#393| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#204| state)) #b1) (|rvfi_testbench#214| state) (|rvfi_testbench#6| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_DATA[63:0]$502
-(define-fun |rvfi_testbench#394| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#204| state)) #b1) #b1 #b0)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63]
-(define-fun |rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 3) (|rvfi_testbench#392| state)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_ADDR[2:0]$501
-(define-fun |rvfi_testbench_m:W0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#393| state)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_DATA[63:0]$502
-(define-fun |rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (concat (|rvfi_testbench#394| state) (|rvfi_testbench#394| state))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) ; { $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2896$499_EN[63:0]$503 [63] }
-(define-fun |rvfi_testbench#369#1| ((state |rvfi_testbench_s|)) (Array (_ BitVec 3) (_ BitVec 64)) (ite (= (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) #b0000000000000000000000000000000000000000000000000000000000000000) (|rvfi_testbench#369#0| state) (store (|rvfi_testbench#369#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) (bvor (bvand (|rvfi_testbench_m:W0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state)) (bvand (select (|rvfi_testbench#369#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state)) (bvnot (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state))))))) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
-(define-fun |rvfi_testbench#395| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (|rvfi_testbench#299| state) (|rvfi_testbench#27| state) (|rvfi_testbench#9| state))) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_ADDR[4:0]$490
-(define-fun |rvfi_testbench#396| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#299| state) (|rvfi_testbench#28| state) (|rvfi_testbench#8| state))) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_DATA[63:0]$491
-(define-fun |rvfi_testbench#397| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#299| state) #b1 #b0)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63]
-(define-fun |rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#395| state)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_ADDR[4:0]$490
-(define-fun |rvfi_testbench_m:W0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#396| state)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_DATA[63:0]$491
-(define-fun |rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (concat (|rvfi_testbench#397| state) (|rvfi_testbench#397| state))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) ; { $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2830$486_EN[63:0]$492 [63] }
-(define-fun |rvfi_testbench#269#1| ((state |rvfi_testbench_s|)) (Array (_ BitVec 5) (_ BitVec 64)) (ite (= (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) #b0000000000000000000000000000000000000000000000000000000000000000) (|rvfi_testbench#269#0| state) (store (|rvfi_testbench#269#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) (bvor (bvand (|rvfi_testbench_m:W0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state)) (bvand (select (|rvfi_testbench#269#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state)) (bvnot (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))))))) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
+(define-fun |rvfi_testbench_u 2| ((state |rvfi_testbench_s|)) Bool (or (|rvfi_testbench#30| state) (not (= ((_ extract 0 0) (|rvfi_testbench#396| state)) #b1)))) ; _witness_.check_flatten_checker_inst__assume_rvfi_insn_check_sv_141_60
+(define-fun |rvfi_testbench#400| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#370| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_7_up_valid[0:0]
+(define-fun |rvfi_testbench#401| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#344| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_6_up_valid[0:0]
+(define-fun |rvfi_testbench#402| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#316| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_5_up_valid[0:0]
+(define-fun |rvfi_testbench#403| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (|rvfi_testbench#223| state) (|rvfi_testbench#314| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_PC_PC[63:0]
+(define-fun |rvfi_testbench#404| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (concat (ite (|rvfi_testbench#201| state) #b1 #b0) (concat (ite (|rvfi_testbench#200| state) #b1 #b0) (ite (|rvfi_testbench#200| state) #b1 #b0))) (|rvfi_testbench#311| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE[2:0]
+(define-fun |rvfi_testbench#405| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) #b00) (|rvfi_testbench#310| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE[2:0]
+(define-fun |rvfi_testbench#406| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) ((_ extract 11 7) (|rvfi_testbench#65| state)) (|rvfi_testbench#309| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR[4:0]
+(define-fun |rvfi_testbench#407| ((state |rvfi_testbench_s|)) (_ BitVec 6) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (concat (ite (|rvfi_testbench#198| state) #b1 #b0) (concat (ite (|rvfi_testbench#197| state) #b1 #b0) (concat (ite (|rvfi_testbench#196| state) #b1 #b0) (concat (ite (|rvfi_testbench#195| state) #b1 #b0) (concat (ite (|rvfi_testbench#96| state) #b1 #b0) (ite (|rvfi_testbench#108| state) #b1 #b0)))))) (|rvfi_testbench#308| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_MicroCode[5:0]
+(define-fun |rvfi_testbench#408| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) #b0 (|rvfi_testbench#307| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_LEGAL[0:0]
+(define-fun |rvfi_testbench#409| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (|rvfi_testbench#65| state) (|rvfi_testbench#306| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION[31:0]
+(define-fun |rvfi_testbench#410| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (concat (ite (|rvfi_testbench#193| state) #b1 #b0) (concat (ite (|rvfi_testbench#190| state) #b1 #b0) (ite (|rvfi_testbench#192| state) #b1 #b0))) (|rvfi_testbench#305| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL[2:0]
+(define-fun |rvfi_testbench#411| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (concat #b0 (concat (ite (|rvfi_testbench#189| state) #b1 #b0) (ite (|rvfi_testbench#189| state) #b1 #b0))) (|rvfi_testbench#298| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT[2:0]
+(define-fun |rvfi_testbench#412| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (|rvfi_testbench#283| state) (|rvfi_testbench#293| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH[3:0]
+(define-fun |rvfi_testbench#413| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1) (|rvfi_testbench#222| state) (|rvfi_testbench#283| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH[3:0]
+(define-fun |rvfi_testbench#414| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#273| state) #b0000000000000000000000000000000000000000000000000000000000000100)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2960$537_Y
+(define-fun |rvfi_testbench#415| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1) (|rvfi_testbench#414| state) (|rvfi_testbench#273| state))) ; $flatten\wrapper.\cpu.$procmux$1792_Y
+(define-fun |rvfi_testbench#416| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#151| state) (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)) (|rvfi_testbench#415| state))) ; $flatten\wrapper.\cpu.$procmux$1795_Y
+(define-fun |rvfi_testbench#417| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#416| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pc_PC_cur[63:0]
+(define-fun |rvfi_testbench#418| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1) (|rvfi_testbench#273| state) (|rvfi_testbench#269| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_1_up_PC_PC[63:0]
+(define-fun |rvfi_testbench#419| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (ite (|rvfi_testbench#151| state) #b1 #b0))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_flushPending[0:0]
+(define-fun |rvfi_testbench#420| ((state |rvfi_testbench_s|)) (_ BitVec 2) (bvadd (|rvfi_testbench#262| state) #b01)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3317$621_Y
+(define-fun |rvfi_testbench#421| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#266| state) (|rvfi_testbench#420| state) (|rvfi_testbench#262| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1293_Y
+(define-fun |rvfi_testbench#422| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#151| state) #b00 (|rvfi_testbench#421| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1295_Y
+(define-fun |rvfi_testbench#423| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00 (|rvfi_testbench#422| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ptr_pop[1:0]
+(define-fun |rvfi_testbench#424| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1) (|rvfi_testbench#254| state) (|rvfi_testbench#291| state))) ; $flatten\wrapper.\cpu.$procmux$1831_Y
+(define-fun |rvfi_testbench#425| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#424| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_valid[0:0]
+(define-fun |rvfi_testbench#426| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#295| state) #b0 (|rvfi_testbench#256| state))) ; $flatten\wrapper.\cpu.$procmux$1839_Y
+(define-fun |rvfi_testbench#427| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (|rvfi_testbench#291| state) (|rvfi_testbench#426| state))) ; $flatten\wrapper.\cpu.$procmux$1841_Y
+(define-fun |rvfi_testbench#428| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#427| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_valid[0:0]
+(define-fun |rvfi_testbench#429| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#265| state)) #b1) (ite (|rvfi_testbench#264| state) #b1 #b0) (|rvfi_testbench#248| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1275_Y
+(define-fun |rvfi_testbench#430| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#151| state) #b0 (|rvfi_testbench#429| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1277_Y
+(define-fun |rvfi_testbench#431| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#430| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_pop_addressGen_rValid[0:0]
+(define-fun |rvfi_testbench#432| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#253| state) #b0 (|rvfi_testbench#247| state))) ; $flatten\wrapper.\cpu.$procmux$1819_Y
+(define-fun |rvfi_testbench#433| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#275| state)) #b1) (|rvfi_testbench#281| state) (|rvfi_testbench#432| state))) ; $flatten\wrapper.\cpu.$procmux$1821_Y
+(define-fun |rvfi_testbench#434| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#433| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_2_up_valid[0:0]
+; yosys-smt2-memory wrapper.cpu.coreArea_fetch_fifo.logic_ram 1 80 1 1 sync
+; yosys-smt2-witness {"path": ["\\wrapper", "\\cpu", "\\coreArea_fetch_fifo", "\\logic_ram"], "rom": false, "size": 2, "smtname": "wrapper.cpu.coreArea_fetch_fifo.logic_ram", "statebv": false, "type": "mem", "uninitialized": [{"offset": 0, "width": 160}], "width": 80}
+(declare-fun |rvfi_testbench#435#0| (|rvfi_testbench_s|) (Array (_ BitVec 1) (_ BitVec 80))) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
+(define-fun |rvfi_testbench_m wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (Array (_ BitVec 1) (_ BitVec 80)) (|rvfi_testbench#435#0| state))
+(define-fun |rvfi_testbench_m:R0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 1) ((_ extract 0 0) (|rvfi_testbench#262| state))) ; \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop [0]
+(define-fun |rvfi_testbench#436| ((state |rvfi_testbench_s|)) (_ BitVec 80) (select (|rvfi_testbench#435#0| state) (|rvfi_testbench_m:R0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$memrd$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3242$603_DATA
+(define-fun |rvfi_testbench_m:R0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 80) (|rvfi_testbench#436| state))
+(define-fun |rvfi_testbench#437| ((state |rvfi_testbench_s|)) (_ BitVec 80) (ite (|rvfi_testbench#266| state) (|rvfi_testbench#436| state) (|rvfi_testbench#244| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ram_spinal_port1[79:0]
+(define-fun |rvfi_testbench#438| ((state |rvfi_testbench_s|)) (_ BitVec 16) (bvadd (|rvfi_testbench#237| state) #b0000000000000001)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2968$539_Y
+(define-fun |rvfi_testbench#439| ((state |rvfi_testbench_s|)) (_ BitVec 16) (ite (= ((_ extract 0 0) (|rvfi_testbench#268| state)) #b1) (|rvfi_testbench#438| state) (|rvfi_testbench#237| state))) ; $flatten\wrapper.\cpu.$procmux$1778_Y
+(define-fun |rvfi_testbench#440| ((state |rvfi_testbench_s|)) (_ BitVec 16) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0000000000000000 (|rvfi_testbench#439| state))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_epoch[15:0]
+(define-fun |rvfi_testbench#441| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) ((_ extract 24 20) (|rvfi_testbench#65| state)) (|rvfi_testbench#233| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR[4:0]
+(define-fun |rvfi_testbench#442| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) ((_ extract 19 15) (|rvfi_testbench#65| state)) (|rvfi_testbench#231| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR[4:0]
+(define-fun |rvfi_testbench#443| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#257| state)) #b1) (ite (|rvfi_testbench#288| state) #b1 #b0) (|rvfi_testbench#230| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_4_up_Decoder_VALID[0:0]
+(define-fun |rvfi_testbench#444| ((state |rvfi_testbench_s|)) (_ BitVec 6) (bvneg (concat #b0 (|rvfi_testbench#309| state)))) ; $flatten\wrapper.\cpu.$neg$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2980$542_Y
+(define-fun |rvfi_testbench#445| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#444| state) #b000000) (bvlshr #b00000000000000000000000000000001 (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (|rvfi_testbench#444| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000001 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (concat ((_ extract 5 5) (|rvfi_testbench#444| state)) (|rvfi_testbench#444| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2980$543_Y
+(define-fun |rvfi_testbench#446| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvnot (|rvfi_testbench#445| state))) ; $flatten\wrapper.\cpu.$not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2980$544_Y
+(define-fun |rvfi_testbench#447| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvand (|rvfi_testbench#229| state) (|rvfi_testbench#446| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2980$545_Y
+(define-fun |rvfi_testbench#448| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvor (|rvfi_testbench#447| state) (|rvfi_testbench#445| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2980$548_Y
+(define-fun |rvfi_testbench#449| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#379| state) (|rvfi_testbench#448| state) (|rvfi_testbench#229| state))) ; $flatten\wrapper.\cpu.$procmux$1685_Y
+(define-fun |rvfi_testbench#450| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) (|rvfi_testbench#1| state) (|rvfi_testbench#449| state))) ; $flatten\wrapper.\cpu.$3$lookahead\coreArea_dispatcher_hcs_regBusy$523[31:0]$541
+(define-fun |rvfi_testbench#451| ((state |rvfi_testbench_s|)) (_ BitVec 6) (bvneg (concat #b0 (|rvfi_testbench#34| state)))) ; $flatten\wrapper.\cpu.$neg$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$551_Y
+(define-fun |rvfi_testbench#452| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#451| state) #b000000) (bvlshr #b00000000000000000000000000000001 (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (|rvfi_testbench#451| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000001 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (|rvfi_testbench#451| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$552_Y
+(define-fun |rvfi_testbench#453| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvnot (|rvfi_testbench#452| state))) ; $flatten\wrapper.\cpu.$not$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$553_Y
+(define-fun |rvfi_testbench#454| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvand (|rvfi_testbench#450| state) (|rvfi_testbench#453| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$554_Y
+(define-fun |rvfi_testbench#455| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (bvsge (|rvfi_testbench#451| state) #b000000) (bvlshr #b00000000000000000000000000000000 (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (|rvfi_testbench#451| state)))))))))))))))))))))))))))) (bvshl #b00000000000000000000000000000000 (bvneg (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (concat ((_ extract 5 5) (|rvfi_testbench#451| state)) (|rvfi_testbench#451| state))))))))))))))))))))))))))))))) ; $flatten\wrapper.\cpu.$shift$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$556_Y
+(define-fun |rvfi_testbench#456| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvor (|rvfi_testbench#454| state) (|rvfi_testbench#455| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2983$557_Y
+(define-fun |rvfi_testbench#457| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#380| state) (|rvfi_testbench#456| state) (|rvfi_testbench#450| state))) ; $flatten\wrapper.\cpu.$procmux$1667_Y
+(define-fun |rvfi_testbench#458| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) (|rvfi_testbench#0| state) (|rvfi_testbench#457| state))) ; $flatten\wrapper.\cpu.$4$lookahead\coreArea_dispatcher_hcs_regBusy$523[31:0]$550
+(define-fun |rvfi_testbench#459| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvand (|rvfi_testbench#458| state) (|rvfi_testbench#446| state))) ; $flatten\wrapper.\cpu.$and$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2986$563_Y
+(define-fun |rvfi_testbench#460| ((state |rvfi_testbench_s|)) (_ BitVec 32) (bvor (|rvfi_testbench#459| state) (|rvfi_testbench#445| state))) ; $flatten\wrapper.\cpu.$or$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2986$566_Y
+(define-fun |rvfi_testbench#461| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#379| state) (|rvfi_testbench#460| state) (|rvfi_testbench#458| state))) ; $flatten\wrapper.\cpu.$5$lookahead\coreArea_dispatcher_hcs_regBusy$523[31:0]$559
+(define-fun |rvfi_testbench#462| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (|rvfi_testbench#111| state) #b00000000000000000000000000000000 (|rvfi_testbench#461| state))) ; $flatten\wrapper.\cpu.$6$lookahead\coreArea_dispatcher_hcs_regBusy$523[31:0]$567
+(define-fun |rvfi_testbench#463| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00000000000000000000000000000000 (|rvfi_testbench#462| state))) ; $flatten\wrapper.\cpu.$0$lookahead\coreArea_dispatcher_hcs_regBusy$523[31:0]$528
+(define-fun |rvfi_testbench#464| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#275| state)) #b1) (|rvfi_testbench#269| state) (|rvfi_testbench#224| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_2_up_PC_PC[63:0]
+(define-fun |rvfi_testbench#465| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1) (|rvfi_testbench#224| state) (|rvfi_testbench#223| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_PC_PC[63:0]
+(define-fun |rvfi_testbench#466| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvadd (|rvfi_testbench#222| state) #b0001)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2993$568_Y
+(define-fun |rvfi_testbench#467| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (|rvfi_testbench#151| state) (|rvfi_testbench#466| state) (|rvfi_testbench#222| state))) ; $flatten\wrapper.\cpu.$procmux$1746_Y
+(define-fun |rvfi_testbench#468| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0000 (|rvfi_testbench#467| state))) ; $flatten\wrapper.\cpu.$0\coreArea_currentEpoch[3:0]
+(define-fun |rvfi_testbench#469| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#267| state) (|rvfi_testbench#262| state) (|rvfi_testbench#119| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1266_Y
+(define-fun |rvfi_testbench#470| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#151| state) #b00 (|rvfi_testbench#469| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1268_Y
+(define-fun |rvfi_testbench#471| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00 (|rvfi_testbench#470| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_pop_sync_popReg[1:0]
+(define-fun |rvfi_testbench#472| ((state |rvfi_testbench_s|)) (_ BitVec 2) (bvadd (|rvfi_testbench#118| state) #b01)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3314$620_Y
+(define-fun |rvfi_testbench#473| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#242| state) (|rvfi_testbench#472| state) (|rvfi_testbench#118| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1302_Y
+(define-fun |rvfi_testbench#474| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (|rvfi_testbench#151| state) #b00 (|rvfi_testbench#473| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$procmux$1304_Y
+(define-fun |rvfi_testbench#475| ((state |rvfi_testbench_s|)) (_ BitVec 2) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00 (|rvfi_testbench#474| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0\logic_ptr_push[1:0]
+(define-fun |rvfi_testbench#476| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#153| state) #b1 (|rvfi_testbench#115| state))) ; $flatten\wrapper.\cpu.$procmux$1760_Y
+(define-fun |rvfi_testbench#477| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#282| state) #b0 (|rvfi_testbench#476| state))) ; $flatten\wrapper.\cpu.$procmux$1762_Y
+(define-fun |rvfi_testbench#478| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#151| state) #b0 (|rvfi_testbench#477| state))) ; $flatten\wrapper.\cpu.$procmux$1764_Y
+(define-fun |rvfi_testbench#479| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#478| state))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_cmdArea_reqSent[0:0]
+(define-fun |rvfi_testbench#480| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (|rvfi_testbench#151| state) #b0 (|rvfi_testbench#114| state))) ; $flatten\wrapper.\cpu.$procmux$1809_Y
+(define-fun |rvfi_testbench#481| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#279| state)) #b1) #b1 (|rvfi_testbench#480| state))) ; $flatten\wrapper.\cpu.$procmux$1811_Y
+(define-fun |rvfi_testbench#482| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0 (|rvfi_testbench#481| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_1_up_valid[0:0]
+(define-fun |rvfi_testbench#483| ((state |rvfi_testbench_s|)) (_ BitVec 4) (bvsub (|rvfi_testbench#154| state) (concat #b000 (|rvfi_testbench#155| state)))) ; $flatten\wrapper.\cpu.$sub$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2965$538_Y
+(define-fun |rvfi_testbench#484| ((state |rvfi_testbench_s|)) (_ BitVec 4) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0000 (|rvfi_testbench#483| state))) ; $flatten\wrapper.\cpu.$0\coreArea_fetch_inflight[3:0]
+(define-fun |rvfi_testbench#485| ((state |rvfi_testbench_s|)) (_ BitVec 3) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b001 (|rvfi_testbench#228| state))) ; $flatten\wrapper.\cpu.$0\coreArea_dispatcher_hcs_init_value[2:0]
+(define-fun |rvfi_testbench#486| ((state |rvfi_testbench_s|)) (_ BitVec 32) (ite (= ((_ extract 0 0) (|rvfi_testbench#259| state)) #b1) ((_ extract 31 0) (|rvfi_testbench#244| state)) (|rvfi_testbench#65| state))) ; $flatten\wrapper.\cpu.$0\coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION[31:0]
+(define-fun |rvfi_testbench#487| ((state |rvfi_testbench_s|)) (_ BitVec 64) (bvadd (|rvfi_testbench#40| state) #b0000000000000000000000000000000000000000000000000000000000000001)) ; $flatten\wrapper.\cpu.$add$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:2996$569_Y
+(define-fun |rvfi_testbench#488| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (|rvfi_testbench#23| state) (|rvfi_testbench#487| state) (|rvfi_testbench#40| state))) ; $flatten\wrapper.\cpu.$procmux$1738_Y
+(define-fun |rvfi_testbench#489| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b0000000000000000000000000000000000000000000000000000000000000000 (|rvfi_testbench#488| state))) ; $flatten\wrapper.\cpu.$0\coreArea_rvfiPlugin_order[63:0]
+(define-fun |rvfi_testbench#490| ((state |rvfi_testbench_s|)) Bool (distinct (|rvfi_testbench#11| state) #b11111111)) ; $auto$wreduce.cc:514:run$2240 [0]
+(define-fun |rvfi_testbench#491| ((state |rvfi_testbench_s|)) (_ BitVec 8) (bvadd (|rvfi_testbench#11| state) (concat #b0000000 (ite (|rvfi_testbench#490| state) #b1 #b0)))) ; $add$rvfi_testbench.sv:37$9_Y
+(define-fun |rvfi_testbench#492| ((state |rvfi_testbench_s|)) (_ BitVec 8) (ite (= ((_ extract 0 0) (|rvfi_testbench#12| state)) #b1) #b00000001 (|rvfi_testbench#491| state))) ; $0\cycle_reg[7:0]
+(define-fun |rvfi_testbench#493| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#243| state)) #b1) ((_ extract 0 0) (|rvfi_testbench#118| state)) (|rvfi_testbench#8| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_ADDR[0:0]$593
+(define-fun |rvfi_testbench#494| ((state |rvfi_testbench_s|)) (_ BitVec 80) (ite (= ((_ extract 0 0) (|rvfi_testbench#243| state)) #b1) (concat (|rvfi_testbench#246| state) (|rvfi_testbench#245| state)) (|rvfi_testbench#7| state))) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_DATA[79:0]$594
+(define-fun |rvfi_testbench#495| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#243| state)) #b1) #b1 #b0)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79]
+(define-fun |rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 1) (|rvfi_testbench#493| state)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_ADDR[0:0]$593
+(define-fun |rvfi_testbench_m:W0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 80) (|rvfi_testbench#494| state)) ; $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_DATA[79:0]$594
+(define-fun |rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| ((state |rvfi_testbench_s|)) (_ BitVec 80) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (concat (|rvfi_testbench#495| state) (|rvfi_testbench#495| state))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) ; { $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] $flatten\wrapper.\cpu.\coreArea_fetch_fifo.$0$memwr$\logic_ram$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3234$591_EN[79:0]$595 [79] }
+(define-fun |rvfi_testbench#435#1| ((state |rvfi_testbench_s|)) (Array (_ BitVec 1) (_ BitVec 80)) (ite (= (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) #b00000000000000000000000000000000000000000000000000000000000000000000000000000000) (|rvfi_testbench#435#0| state) (store (|rvfi_testbench#435#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) (bvor (bvand (|rvfi_testbench_m:W0D wrapper.cpu.coreArea_fetch_fifo.logic_ram| state) (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state)) (bvand (select (|rvfi_testbench#435#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_fetch_fifo.logic_ram| state)) (bvnot (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_fetch_fifo.logic_ram| state))))))) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
+(define-fun |rvfi_testbench#496| ((state |rvfi_testbench_s|)) (_ BitVec 5) (ite (= ((_ extract 0 0) (|rvfi_testbench#377| state)) #b1) (|rvfi_testbench#34| state) (|rvfi_testbench#10| state))) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_ADDR[4:0]$575
+(define-fun |rvfi_testbench#497| ((state |rvfi_testbench_s|)) (_ BitVec 64) (ite (= ((_ extract 0 0) (|rvfi_testbench#377| state)) #b1) (|rvfi_testbench#35| state) (|rvfi_testbench#9| state))) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_DATA[63:0]$576
+(define-fun |rvfi_testbench#498| ((state |rvfi_testbench_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|rvfi_testbench#377| state)) #b1) #b1 #b0)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63]
+(define-fun |rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 5) (|rvfi_testbench#496| state)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_ADDR[4:0]$575
+(define-fun |rvfi_testbench_m:W0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (|rvfi_testbench#497| state)) ; $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_DATA[63:0]$576
+(define-fun |rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| ((state |rvfi_testbench_s|)) (_ BitVec 64) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (concat (|rvfi_testbench#498| state) (|rvfi_testbench#498| state))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) ; { $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] $flatten\wrapper.\cpu.\coreArea_srcPlugin_regfileread_regfile.$0$memwr$\mem$/Users/mahir/fun/borb/formal/cores/borb/../../cores/borb/CPU.sv:3152$571_EN[63:0]$577 [63] }
+(define-fun |rvfi_testbench#330#1| ((state |rvfi_testbench_s|)) (Array (_ BitVec 5) (_ BitVec 64)) (ite (= (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) #b0000000000000000000000000000000000000000000000000000000000000000) (|rvfi_testbench#330#0| state) (store (|rvfi_testbench#330#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) (bvor (bvand (|rvfi_testbench_m:W0D wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state) (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state)) (bvand (select (|rvfi_testbench#330#0| state) (|rvfi_testbench_m:W0A wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state)) (bvnot (|rvfi_testbench_m:W0M wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem| state))))))) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
 (define-fun |rvfi_testbench_a| ((state |rvfi_testbench_s|)) Bool (and
   (|rvfi_testbench_a 0| state)
   (|rvfi_testbench_a 1| state)
@@ -2139,6 +2471,8 @@
   (|rvfi_testbench_a 8| state)
   (|rvfi_testbench_a 9| state)
   (|rvfi_testbench_a 10| state)
+  (|rvfi_testbench_a 11| state)
+  (|rvfi_testbench_a 12| state)
 ))
 (define-fun |rvfi_testbench_u| ((state |rvfi_testbench_s|)) Bool (and
   (|rvfi_testbench_u 0| state)
@@ -2146,83 +2480,94 @@
   (|rvfi_testbench_u 2| state)
 ))
 (define-fun |rvfi_testbench_i| ((state |rvfi_testbench_s|)) Bool 
-  (= (|rvfi_testbench#10| state) #b00000000) ; cycle_reg
+  (= (|rvfi_testbench#11| state) #b00000000) ; cycle_reg
 )
 (define-fun |rvfi_testbench_h| ((state |rvfi_testbench_s|)) Bool true)
 (define-fun |rvfi_testbench_t| ((state |rvfi_testbench_s|) (next_state |rvfi_testbench_s|)) Bool (and
-  (= (|rvfi_testbench#321| state) (|rvfi_testbench#297| next_state)) ; $flatten/wrapper./cpu.$procdff$1918 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid
-  (= (|rvfi_testbench#294| state) (|rvfi_testbench#296| next_state)) ; $flatten/wrapper./cpu.$procdff$1893 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid
-  (= (|rvfi_testbench#322| state) (|rvfi_testbench#295| next_state)) ; $flatten/wrapper./cpu.$procdff$1919 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid
-  (= (|rvfi_testbench#259| state) (|rvfi_testbench#291| next_state)) ; $flatten/wrapper./cpu.$procdff$1901 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL
-  (= (|rvfi_testbench#261| state) (|rvfi_testbench#286| next_state)) ; $flatten/wrapper./cpu.$procdff$1902 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR
-  (= (|rvfi_testbench#266| state) (|rvfi_testbench#285| next_state)) ; $flatten/wrapper./cpu.$procdff$1903 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID
-  (= (|rvfi_testbench#265| state) (|rvfi_testbench#284| next_state)) ; $flatten/wrapper./cpu.$procdff$1867 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
-  (= (|rvfi_testbench#263| state) (|rvfi_testbench#283| next_state)) ; $flatten/wrapper./cpu.$procdff$1868 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
-  (= (|rvfi_testbench#102| state) (|rvfi_testbench#282| next_state)) ; $flatten/wrapper./cpu.$procdff$1869 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION
-  (= (|rvfi_testbench#258| state) (|rvfi_testbench#281| next_state)) ; $flatten/wrapper./cpu.$procdff$1866 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
-  (= (|rvfi_testbench#323| state) (|rvfi_testbench#280| next_state)) ; $flatten/wrapper./cpu.$procdff$1920 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid
-  (= (|rvfi_testbench#256| state) (|rvfi_testbench#268| next_state)) ; $flatten/wrapper./cpu.$procdff$1877 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC
-  (= (|rvfi_testbench#255| state) (|rvfi_testbench#267| next_state)) ; $flatten/wrapper./cpu.$procdff$1871 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU
-  (= (|rvfi_testbench#192| state) (|rvfi_testbench#266| next_state)) ; $flatten/wrapper./cpu.$procdff$1910 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID
-  (= (|rvfi_testbench#195| state) (|rvfi_testbench#265| next_state)) ; $flatten/wrapper./cpu.$procdff$1908 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
-  (= (|rvfi_testbench#254| state) (|rvfi_testbench#264| next_state)) ; $flatten/wrapper./cpu.$procdff$1906 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE
-  (= (|rvfi_testbench#193| state) (|rvfi_testbench#263| next_state)) ; $flatten/wrapper./cpu.$procdff$1909 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
-  (= (|rvfi_testbench#253| state) (|rvfi_testbench#262| next_state)) ; $flatten/wrapper./cpu.$procdff$1907 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE
-  (= (|rvfi_testbench#252| state) (|rvfi_testbench#261| next_state)) ; $flatten/wrapper./cpu.$procdff$1873 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR
-  (= (|rvfi_testbench#251| state) (|rvfi_testbench#260| next_state)) ; $flatten/wrapper./cpu.$procdff$1874 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode
-  (= (|rvfi_testbench#250| state) (|rvfi_testbench#259| next_state)) ; $flatten/wrapper./cpu.$procdff$1875 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL
-  (= (|rvfi_testbench#247| state) (|rvfi_testbench#258| next_state)) ; $flatten/wrapper./cpu.$procdff$1872 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
-  (= (|rvfi_testbench#324| state) (|rvfi_testbench#256| next_state)) ; $flatten/wrapper./cpu.$procdff$1884 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC
-  (= (|rvfi_testbench#325| state) (|rvfi_testbench#254| next_state)) ; $flatten/wrapper./cpu.$procdff$1880 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE
-  (= (|rvfi_testbench#326| state) (|rvfi_testbench#253| next_state)) ; $flatten/wrapper./cpu.$procdff$1881 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE
-  (= (|rvfi_testbench#327| state) (|rvfi_testbench#252| next_state)) ; $flatten/wrapper./cpu.$procdff$1914 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR
-  (= (|rvfi_testbench#328| state) (|rvfi_testbench#251| next_state)) ; $flatten/wrapper./cpu.$procdff$1878 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode
-  (= (|rvfi_testbench#329| state) (|rvfi_testbench#250| next_state)) ; $flatten/wrapper./cpu.$procdff$1882 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL
-  (= (|rvfi_testbench#330| state) (|rvfi_testbench#249| next_state)) ; $flatten/wrapper./cpu.$procdff$1883 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION
-  (= (|rvfi_testbench#331| state) (|rvfi_testbench#248| next_state)) ; $flatten/wrapper./cpu.$procdff$1879 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL
-  (= (|rvfi_testbench#332| state) (|rvfi_testbench#241| next_state)) ; $flatten/wrapper./cpu.$procdff$1916 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT
-  (= (|rvfi_testbench#335| state) (|rvfi_testbench#226| next_state)) ; $flatten/wrapper./cpu.$procdff$1925 \wrapper.cpu.coreArea_pc_PC_cur
-  (= (|rvfi_testbench#267| state) (|rvfi_testbench#224| next_state)) ; $flatten/wrapper./cpu.$procdff$1905 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU
-  (= (|rvfi_testbench#336| state) (|rvfi_testbench#221| next_state)) ; $flatten/wrapper./cpu.$procdff$1887 \wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC
-  (= (|rvfi_testbench#339| state) (|rvfi_testbench#215| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$1852 \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop
-  (= (|rvfi_testbench#341| state) (|rvfi_testbench#211| next_state)) ; $flatten/wrapper./cpu.$procdff$1922 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid
-  (= (|rvfi_testbench#343| state) (|rvfi_testbench#209| next_state)) ; $flatten/wrapper./cpu.$procdff$1921 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid
-  (= (|rvfi_testbench#345| state) (|rvfi_testbench#206| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$1854 \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid
-  (= (|rvfi_testbench#347| state) (|rvfi_testbench#205| next_state)) ; $flatten/wrapper./cpu.$procdff$1923 \wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid
-  (= (|rvfi_testbench#348| state) (|rvfi_testbench#195| next_state)) ; $flatten/wrapper./cpu.$procdff$1912 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR
-  (= (|rvfi_testbench#349| state) (|rvfi_testbench#193| next_state)) ; $flatten/wrapper./cpu.$procdff$1913 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR
-  (= (|rvfi_testbench#350| state) (|rvfi_testbench#192| next_state)) ; $flatten/wrapper./cpu.$procdff$1915 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID
-  (= (|rvfi_testbench#366| state) (|rvfi_testbench#191| next_state)) ; $flatten/wrapper./cpu.$procdff$1928 \wrapper.cpu.coreArea_dispatcher_hcs_regBusy
-  (= (|rvfi_testbench#367| state) (|rvfi_testbench#186| next_state)) ; $flatten/wrapper./cpu.$procdff$1885 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC
-  (= (|rvfi_testbench#248| state) (|rvfi_testbench#179| next_state)) ; $flatten/wrapper./cpu.$procdff$1911 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL
-  (= (|rvfi_testbench#368| state) (|rvfi_testbench#154| next_state)) ; $flatten/wrapper./cpu.$procdff$1886 \wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC
-  (= (|rvfi_testbench#371| state) (|rvfi_testbench#153| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$1856 \wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1
-  (= (|rvfi_testbench#260| state) (|rvfi_testbench#125| next_state)) ; $flatten/wrapper./cpu.$procdff$1904 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode
-  (= (|rvfi_testbench#373| state) (|rvfi_testbench#112| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$1855 \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg
-  (= (|rvfi_testbench#376| state) (|rvfi_testbench#111| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$1851 \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push
-  (= (|rvfi_testbench#379| state) (|rvfi_testbench#108| next_state)) ; $flatten/wrapper./cpu.$procdff$1927 \wrapper.cpu.coreArea_fetch_cmdArea_reqSent
-  (= (|rvfi_testbench#381| state) (|rvfi_testbench#107| next_state)) ; $flatten/wrapper./cpu.$procdff$1924 \wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid
-  (= (|rvfi_testbench#383| state) (|rvfi_testbench#106| next_state)) ; $flatten/wrapper./cpu.$procdff$1926 \wrapper.cpu.coreArea_fetch_inflight
-  (= (|rvfi_testbench#384| state) (|rvfi_testbench#103| next_state)) ; $flatten/wrapper./cpu.$procdff$1929 \wrapper.cpu.coreArea_dispatcher_hcs_init_value
-  (= (|rvfi_testbench#249| state) (|rvfi_testbench#102| next_state)) ; $flatten/wrapper./cpu.$procdff$1876 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION
-  (= (|rvfi_testbench#385| state) (|rvfi_testbench#58| next_state)) ; $flatten/wrapper./cpu.$procdff$1917 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION
-  (= (|rvfi_testbench#268| state) (|rvfi_testbench#52| next_state)) ; $flatten/wrapper./cpu.$procdff$1870 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC
-  (= (|rvfi_testbench#279| state) (|rvfi_testbench#37| next_state)) ; $flatten/wrapper./cpu.$procdff$1864 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
-  (= (|rvfi_testbench#185| state) (|rvfi_testbench#35| next_state)) ; $flatten/wrapper./cpu.$procdff$1863 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
-  (= (|rvfi_testbench#275| state) (|rvfi_testbench#34| next_state)) ; $flatten/wrapper./cpu.$procdff$1865 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
-  (= (|rvfi_testbench#388| state) (|rvfi_testbench#33| next_state)) ; $flatten/wrapper./cpu.$procdff$1930 \wrapper.cpu.coreArea_rvfiPlugin_order
-  (= (|rvfi_testbench#37| state) (|rvfi_testbench#32| next_state)) ; $flatten/wrapper./cpu.$procdff$1896 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2
-  (= (|rvfi_testbench#284| state) (|rvfi_testbench#31| next_state)) ; $flatten/wrapper./cpu.$procdff$1898 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR
-  (= (|rvfi_testbench#34| state) (|rvfi_testbench#30| next_state)) ; $flatten/wrapper./cpu.$procdff$1897 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1
-  (= (|rvfi_testbench#283| state) (|rvfi_testbench#29| next_state)) ; $flatten/wrapper./cpu.$procdff$1899 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR
-  (= (|rvfi_testbench#290| state) (|rvfi_testbench#28| next_state)) ; $flatten/wrapper./cpu.$procdff$1895 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data
-  (= (|rvfi_testbench#287| state) (|rvfi_testbench#27| next_state)) ; $flatten/wrapper./cpu.$procdff$1894 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address
-  (= (|rvfi_testbench#281| state) (|rvfi_testbench#19| next_state)) ; $flatten/wrapper./cpu.$procdff$1891 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
-  (= (|rvfi_testbench#52| state) (|rvfi_testbench#16| next_state)) ; $flatten/wrapper./cpu.$procdff$1892 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC
-  (= (|rvfi_testbench#282| state) (|rvfi_testbench#15| next_state)) ; $flatten/wrapper./cpu.$procdff$1900 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION
-  (= (|rvfi_testbench#391| state) (|rvfi_testbench#10| next_state)) ; $procdff$1849 \cycle_reg
-  (= (|rvfi_testbench#369#1| state) (|rvfi_testbench#369#0| next_state)) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
-  (= (|rvfi_testbench#269#1| state) (|rvfi_testbench#269#0| next_state)) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
+  (= (|rvfi_testbench#400| state) (|rvfi_testbench#372| next_state)) ; $flatten/wrapper./cpu.$procdff$2206 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_valid
+  (= (|rvfi_testbench#369| state) (|rvfi_testbench#371| next_state)) ; $flatten/wrapper./cpu.$procdff$2174 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_valid
+  (= (|rvfi_testbench#401| state) (|rvfi_testbench#370| next_state)) ; $flatten/wrapper./cpu.$procdff$2207 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_valid
+  (= (|rvfi_testbench#321| state) (|rvfi_testbench#350| next_state)) ; $flatten/wrapper./cpu.$procdff$2190 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR
+  (= (|rvfi_testbench#326| state) (|rvfi_testbench#349| next_state)) ; $flatten/wrapper./cpu.$procdff$2191 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_VALID
+  (= (|rvfi_testbench#325| state) (|rvfi_testbench#348| next_state)) ; $flatten/wrapper./cpu.$procdff$2141 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
+  (= (|rvfi_testbench#323| state) (|rvfi_testbench#347| next_state)) ; $flatten/wrapper./cpu.$procdff$2142 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
+  (= (|rvfi_testbench#319| state) (|rvfi_testbench#346| next_state)) ; $flatten/wrapper./cpu.$procdff$2189 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_LEGAL
+  (= (|rvfi_testbench#109| state) (|rvfi_testbench#345| next_state)) ; $flatten/wrapper./cpu.$procdff$2143 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION
+  (= (|rvfi_testbench#402| state) (|rvfi_testbench#341| next_state)) ; $flatten/wrapper./cpu.$procdff$2208 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_valid
+  (= (|rvfi_testbench#314| state) (|rvfi_testbench#329| next_state)) ; $flatten/wrapper./cpu.$procdff$2163 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_PC_PC
+  (= (|rvfi_testbench#313| state) (|rvfi_testbench#328| next_state)) ; $flatten/wrapper./cpu.$procdff$2144 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOBRANCH
+  (= (|rvfi_testbench#312| state) (|rvfi_testbench#327| next_state)) ; $flatten/wrapper./cpu.$procdff$2145 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Dispatch_SENDTOALU
+  (= (|rvfi_testbench#230| state) (|rvfi_testbench#326| next_state)) ; $flatten/wrapper./cpu.$procdff$2198 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_VALID
+  (= (|rvfi_testbench#233| state) (|rvfi_testbench#325| next_state)) ; $flatten/wrapper./cpu.$procdff$2196 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2_ADDR
+  (= (|rvfi_testbench#311| state) (|rvfi_testbench#324| next_state)) ; $flatten/wrapper./cpu.$procdff$2194 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE
+  (= (|rvfi_testbench#231| state) (|rvfi_testbench#323| next_state)) ; $flatten/wrapper./cpu.$procdff$2197 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1_ADDR
+  (= (|rvfi_testbench#310| state) (|rvfi_testbench#322| next_state)) ; $flatten/wrapper./cpu.$procdff$2195 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RS1TYPE
+  (= (|rvfi_testbench#309| state) (|rvfi_testbench#321| next_state)) ; $flatten/wrapper./cpu.$procdff$2147 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_RD_ADDR
+  (= (|rvfi_testbench#308| state) (|rvfi_testbench#320| next_state)) ; $flatten/wrapper./cpu.$procdff$2148 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_MicroCode
+  (= (|rvfi_testbench#307| state) (|rvfi_testbench#319| next_state)) ; $flatten/wrapper./cpu.$procdff$2149 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_LEGAL
+  (= (|rvfi_testbench#293| state) (|rvfi_testbench#318| next_state)) ; $flatten/wrapper./cpu.$procdff$2161 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH
+  (= (|rvfi_testbench#304| state) (|rvfi_testbench#317| next_state)) ; $flatten/wrapper./cpu.$procdff$2146 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
+  (= (|rvfi_testbench#403| state) (|rvfi_testbench#314| next_state)) ; $flatten/wrapper./cpu.$procdff$2164 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_PC_PC
+  (= (|rvfi_testbench#404| state) (|rvfi_testbench#311| next_state)) ; $flatten/wrapper./cpu.$procdff$2153 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2TYPE
+  (= (|rvfi_testbench#405| state) (|rvfi_testbench#310| next_state)) ; $flatten/wrapper./cpu.$procdff$2154 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1TYPE
+  (= (|rvfi_testbench#406| state) (|rvfi_testbench#309| next_state)) ; $flatten/wrapper./cpu.$procdff$2202 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR
+  (= (|rvfi_testbench#407| state) (|rvfi_testbench#308| next_state)) ; $flatten/wrapper./cpu.$procdff$2151 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_MicroCode
+  (= (|rvfi_testbench#408| state) (|rvfi_testbench#307| next_state)) ; $flatten/wrapper./cpu.$procdff$2155 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_LEGAL
+  (= (|rvfi_testbench#409| state) (|rvfi_testbench#306| next_state)) ; $flatten/wrapper./cpu.$procdff$2157 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION
+  (= (|rvfi_testbench#410| state) (|rvfi_testbench#305| next_state)) ; $flatten/wrapper./cpu.$procdff$2152 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_IMMSEL
+  (= (|rvfi_testbench#411| state) (|rvfi_testbench#298| next_state)) ; $flatten/wrapper./cpu.$procdff$2204 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_EXECUTION_UNIT
+  (= (|rvfi_testbench#412| state) (|rvfi_testbench#293| next_state)) ; $flatten/wrapper./cpu.$procdff$2156 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH
+  (= (|rvfi_testbench#413| state) (|rvfi_testbench#283| next_state)) ; $flatten/wrapper./cpu.$procdff$2158 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH
+  (= (|rvfi_testbench#417| state) (|rvfi_testbench#273| next_state)) ; $flatten/wrapper./cpu.$procdff$2213 \wrapper.cpu.coreArea_pc_PC_cur
+  (= (|rvfi_testbench#327| state) (|rvfi_testbench#271| next_state)) ; $flatten/wrapper./cpu.$procdff$2193 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU
+  (= (|rvfi_testbench#418| state) (|rvfi_testbench#269| next_state)) ; $flatten/wrapper./cpu.$procdff$2160 \wrapper.cpu.coreArea_pipeline_ctrl_1_up_PC_PC
+  (= (|rvfi_testbench#419| state) (|rvfi_testbench#268| next_state)) ; $flatten/wrapper./cpu.$procdff$2216 \wrapper.cpu.coreArea_fetch_flushPending
+  (= (|rvfi_testbench#423| state) (|rvfi_testbench#262| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$2130 \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_pop
+  (= (|rvfi_testbench#425| state) (|rvfi_testbench#258| next_state)) ; $flatten/wrapper./cpu.$procdff$2210 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_valid
+  (= (|rvfi_testbench#428| state) (|rvfi_testbench#256| next_state)) ; $flatten/wrapper./cpu.$procdff$2209 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_valid
+  (= (|rvfi_testbench#431| state) (|rvfi_testbench#248| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$2132 \wrapper.cpu.coreArea_fetch_fifo.logic_pop_addressGen_rValid
+  (= (|rvfi_testbench#434| state) (|rvfi_testbench#247| next_state)) ; $flatten/wrapper./cpu.$procdff$2211 \wrapper.cpu.coreArea_pipeline_ctrl_2_up_valid
+  (= (|rvfi_testbench#437| state) (|rvfi_testbench#244| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$2134 \wrapper.cpu.coreArea_fetch_fifo.logic_ram_spinal_port1
+  (= (|rvfi_testbench#440| state) (|rvfi_testbench#237| next_state)) ; $flatten/wrapper./cpu.$procdff$2215 \wrapper.cpu.coreArea_fetch_epoch
+  (= (|rvfi_testbench#441| state) (|rvfi_testbench#233| next_state)) ; $flatten/wrapper./cpu.$procdff$2200 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS2_ADDR
+  (= (|rvfi_testbench#442| state) (|rvfi_testbench#231| next_state)) ; $flatten/wrapper./cpu.$procdff$2201 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_RS1_ADDR
+  (= (|rvfi_testbench#443| state) (|rvfi_testbench#230| next_state)) ; $flatten/wrapper./cpu.$procdff$2203 \wrapper.cpu.coreArea_pipeline_ctrl_4_up_Decoder_VALID
+  (= (|rvfi_testbench#463| state) (|rvfi_testbench#229| next_state)) ; $flatten/wrapper./cpu.$procdff$2218 \wrapper.cpu.coreArea_dispatcher_hcs_regBusy
+  (= (|rvfi_testbench#464| state) (|rvfi_testbench#224| next_state)) ; $flatten/wrapper./cpu.$procdff$2159 \wrapper.cpu.coreArea_pipeline_ctrl_2_up_PC_PC
+  (= (|rvfi_testbench#465| state) (|rvfi_testbench#223| next_state)) ; $flatten/wrapper./cpu.$procdff$2165 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_PC_PC
+  (= (|rvfi_testbench#468| state) (|rvfi_testbench#222| next_state)) ; $flatten/wrapper./cpu.$procdff$2220 \wrapper.cpu.coreArea_currentEpoch
+  (= (|rvfi_testbench#305| state) (|rvfi_testbench#214| next_state)) ; $flatten/wrapper./cpu.$procdff$2199 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_IMMSEL
+  (= (|rvfi_testbench#328| state) (|rvfi_testbench#146| next_state)) ; $flatten/wrapper./cpu.$procdff$2183 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH
+  (= (|rvfi_testbench#317| state) (|rvfi_testbench#144| next_state)) ; $flatten/wrapper./cpu.$procdff$2184 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
+  (= (|rvfi_testbench#320| state) (|rvfi_testbench#124| next_state)) ; $flatten/wrapper./cpu.$procdff$2192 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_Decoder_MicroCode
+  (= (|rvfi_testbench#471| state) (|rvfi_testbench#119| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$2133 \wrapper.cpu.coreArea_fetch_fifo.logic_pop_sync_popReg
+  (= (|rvfi_testbench#475| state) (|rvfi_testbench#118| next_state)) ; $flatten/wrapper./cpu./coreArea_fetch_fifo.$procdff$2129 \wrapper.cpu.coreArea_fetch_fifo.logic_ptr_push
+  (= (|rvfi_testbench#479| state) (|rvfi_testbench#115| next_state)) ; $flatten/wrapper./cpu.$procdff$2217 \wrapper.cpu.coreArea_fetch_cmdArea_reqSent
+  (= (|rvfi_testbench#482| state) (|rvfi_testbench#114| next_state)) ; $flatten/wrapper./cpu.$procdff$2212 \wrapper.cpu.coreArea_pipeline_ctrl_1_up_valid
+  (= (|rvfi_testbench#484| state) (|rvfi_testbench#113| next_state)) ; $flatten/wrapper./cpu.$procdff$2214 \wrapper.cpu.coreArea_fetch_inflight
+  (= (|rvfi_testbench#485| state) (|rvfi_testbench#110| next_state)) ; $flatten/wrapper./cpu.$procdff$2219 \wrapper.cpu.coreArea_dispatcher_hcs_init_value
+  (= (|rvfi_testbench#306| state) (|rvfi_testbench#109| next_state)) ; $flatten/wrapper./cpu.$procdff$2150 \wrapper.cpu.coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION
+  (= (|rvfi_testbench#486| state) (|rvfi_testbench#65| next_state)) ; $flatten/wrapper./cpu.$procdff$2205 \wrapper.cpu.coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION
+  (= (|rvfi_testbench#329| state) (|rvfi_testbench#59| next_state)) ; $flatten/wrapper./cpu.$procdff$2186 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_PC_PC
+  (= (|rvfi_testbench#340| state) (|rvfi_testbench#44| next_state)) ; $flatten/wrapper./cpu.$procdff$2187 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
+  (= (|rvfi_testbench#220| state) (|rvfi_testbench#42| next_state)) ; $flatten/wrapper./cpu.$procdff$2185 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
+  (= (|rvfi_testbench#336| state) (|rvfi_testbench#41| next_state)) ; $flatten/wrapper./cpu.$procdff$2188 \wrapper.cpu.coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
+  (= (|rvfi_testbench#489| state) (|rvfi_testbench#40| next_state)) ; $flatten/wrapper./cpu.$procdff$2221 \wrapper.cpu.coreArea_rvfiPlugin_order
+  (= (|rvfi_testbench#44| state) (|rvfi_testbench#39| next_state)) ; $flatten/wrapper./cpu.$procdff$2177 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS2
+  (= (|rvfi_testbench#348| state) (|rvfi_testbench#38| next_state)) ; $flatten/wrapper./cpu.$procdff$2179 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS2_ADDR
+  (= (|rvfi_testbench#41| state) (|rvfi_testbench#37| next_state)) ; $flatten/wrapper./cpu.$procdff$2178 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_SrcPlugin_RS1
+  (= (|rvfi_testbench#347| state) (|rvfi_testbench#36| next_state)) ; $flatten/wrapper./cpu.$procdff$2180 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_RS1_ADDR
+  (= (|rvfi_testbench#362| state) (|rvfi_testbench#35| next_state)) ; $flatten/wrapper./cpu.$procdff$2176 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_data
+  (= (|rvfi_testbench#355| state) (|rvfi_testbench#34| next_state)) ; $flatten/wrapper./cpu.$procdff$2175 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_IntAlu_RESULT_address
+  (= (ite (|rvfi_testbench#151| state) #b1 #b0) (|rvfi_testbench#32| next_state)) ; $flatten/wrapper./cpu.$procdff$2172 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TAKEN
+  (= (concat (|rvfi_testbench#148| state) (|rvfi_testbench#221| state)) (|rvfi_testbench#31| next_state)) ; $flatten/wrapper./cpu.$procdff$2171 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Branch_BRANCH_TARGET
+  (= (|rvfi_testbench#144| state) (|rvfi_testbench#22| next_state)) ; $flatten/wrapper./cpu.$procdff$2170 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
+  (= (ite (|rvfi_testbench#149| state) #b1 #b0) (|rvfi_testbench#20| next_state)) ; $flatten/wrapper./cpu.$procdff$2181 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Common_TRAP
+  (= (|rvfi_testbench#59| state) (|rvfi_testbench#17| next_state)) ; $flatten/wrapper./cpu.$procdff$2173 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_PC_PC
+  (= (|rvfi_testbench#345| state) (|rvfi_testbench#16| next_state)) ; $flatten/wrapper./cpu.$procdff$2182 \wrapper.cpu.coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION
+  (= (|rvfi_testbench#492| state) (|rvfi_testbench#11| next_state)) ; $procdff$2127 \cycle_reg
+  (= (|rvfi_testbench#435#1| state) (|rvfi_testbench#435#0| next_state)) ; wrapper.cpu.coreArea_fetch_fifo.logic_ram
+  (= (|rvfi_testbench#330#1| state) (|rvfi_testbench#330#0| next_state)) ; wrapper.cpu.coreArea_srcPlugin_regfileread_regfile.mem
 )) ; end of module rvfi_testbench
 ; yosys-smt2-topmod rvfi_testbench
 ; end of yosys output

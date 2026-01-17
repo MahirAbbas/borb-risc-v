@@ -15,7 +15,13 @@ import borb.dispatch.Dispatch._
 import borb.execute.IntAlu.RESULT
 import borb.frontend.YESNO
 
+object Branch extends AreaObject {
+  val BRANCH_TAKEN = Payload(Bool())
+  val BRANCH_TARGET = Payload(UInt(64 bits))
+}
+
 case class Branch(node : CtrlLink, pc : PC) extends Area {
+  import Branch._
   val branchResolved = Bool()
   val logic = new node.Area {
     val src1 = up(RS1).asSInt
@@ -67,20 +73,27 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
     val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
+    val misaligned = target(1 downto 0) =/= 0
+    val willTrap = doJump && misaligned
+
+    down(TRAP) := willTrap
+    down(BRANCH_TAKEN) := doJump && !willTrap
+    down(BRANCH_TARGET) := target
     branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
-    jumpCmd.valid := doJump
+    jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
     jumpCmd.payload.target := target
     jumpCmd.payload.is_jump := isJump
     jumpCmd.payload.is_branch := isBranch
     
-
     when(up(LANE_SEL) && up(SENDTOBRANCH)) {
       when(isJump) {
+        val isX0 = up(RD_ADDR).asUInt === 0
         down(RESULT).address := up(RD_ADDR).asUInt
-        down(RESULT).data := (pcValue + 4).asBits
-        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)
+        down(RESULT).data := isX0 ? B(0, 64 bits) | (pcValue + 4).asBits
+        // Squash writeback if trapping
+        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
       }
       when(up(MicroCode) === uopAUIPC) {
         down(RESULT).address := up(RD_ADDR).asUInt

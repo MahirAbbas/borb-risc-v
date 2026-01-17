@@ -8,6 +8,7 @@ import borb.fetch.PC
 import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin
 import borb.execute.IntAlu
+import borb.execute.Branch
 
 case class Rvfi() extends Bundle {
   val valid = Bool()
@@ -90,8 +91,10 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
 
     val currentPc = up(PC.PC)
     io.rvfi.pc_rdata := currentPc.asBits
-    // Simple next PC for now
-    io.rvfi.pc_wdata := (currentPc + 4).asBits
+    // Report actual next PC based on branch outcome
+    val branchTaken = up(Branch.BRANCH_TAKEN)
+    val branchTarget = up(Branch.BRANCH_TARGET)
+    io.rvfi.pc_wdata := Mux(branchTaken, branchTarget.asBits, (currentPc + 4).asBits)
 
     io.rvfi.mem_addr := 0
     io.rvfi.mem_rmask := 0
