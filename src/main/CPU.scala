@@ -73,35 +73,42 @@ case class CPU() extends Component {
 
     decode.branchResolved := branch.branchResolved
 
-    // Flush Logic
-    // If a branch mispredicts (redirects), flush all instructions that were speculatively fetched (MAY_FLUSH)
+    // ========== Speculation Epoch Architecture ==========
+    // Clean, scalable speculation handling for in-order superscalar CPU
+    //
+    // Design:
+    // - Global epoch counter maintained here, passed to Fetch
+    // - Each instruction is tagged with SPEC_EPOCH when it enters the pipeline
+    // - When a branch is TAKEN (flushPipeline), epoch increments
+    // - All instructions with old epoch are flushed (their SPEC_EPOCH != currentEpoch)
+    
+    // Global speculation epoch (4-bit = supports 16 in-flight speculation points)
+    val currentEpoch = Reg(UInt(4 bits)) init 0
+    
+    // Flush Logic - fires when branch is taken
     val flushPipeline = branch.logic.jumpCmd.valid
     pc.jump << branch.logic.jumpCmd
     
+    // Increment epoch on taken branch
+    when(flushPipeline) {
+      currentEpoch := currentEpoch + 1
+    }
+    
+    // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.flush := flushPipeline
+    fetch.io.currentEpoch := currentEpoch
     
-    // Flush all upstream stages combinationally
-    //val upstreamStages = Array(3, 4, 5).map(pipeline.ctrl(_))
-    //upstreamStages.foreach { ctrl => 
-       //ctrl.throwWhen(flushPipeline)
-    //}
-
-    // Iterate over stages after Decode (Dispatch onwards) that might hold speculative instructions
-    // Note: Stage 6 (Execute/Branch) is EXCLUDED - the instruction that fires the flush has already
-    // executed. Stage 7 (Writeback) is also excluded - instructions there have committed architecturally.
-    // Only upstream stages (3,4,5) need to be flushed.
-    
-    // Flush State Machine: Extend the flush signal for enough cycles to clear stages 3, 4, 5
-    // When a branch fires at stage 6, speculative instructions may be in stages 3, 4, or 5.
-    // We need to keep throwing them until they've all been cleared (3 cycles).
-    val flushDelay1 = RegNext(flushPipeline) init False
-    val flushDelay2 = RegNext(flushDelay1) init False
-    val flushDelay3 = RegNext(flushDelay2) init False
-    val extendedFlush = flushPipeline || flushDelay1 || flushDelay2 || flushDelay3
-    
+    // Flush execution stages (Decode, Dispatch, Src) based on epoch match
+    // When a branch is taken, currentEpoch still has the OLD value (register update is next cycle)
+    // Speculative instructions have SPEC_EPOCH = old_epoch, so we throw if they MATCH
+    // After this cycle, currentEpoch increments, and new instructions get the new epoch
+    // Note: Stage 6 (Execute) is excluded - the branch has already executed
+    //       Stage 7 (Writeback) is excluded - architecturally committed
     val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
-    executionStages.foreach { ctrl => 
-       ctrl.throwWhen(ctrl(MAY_FLUSH) && extendedFlush)
+    executionStages.foreach { ctrl =>
+      // Throw if: flush is active AND instruction's epoch matches current (old) epoch
+      // These are the speculative instructions that need to be flushed
+      ctrl.throwWhen(flushPipeline && (ctrl(SPEC_EPOCH) === currentEpoch))
     }
     
     // Flush Fetch stages (PC in transit) unconditionally on redirect
@@ -129,7 +136,7 @@ case class CPU() extends Component {
         val rdaddr         = up(borb.execute.IntAlu.RESULT).address
         val lane_sel       = up(LANE_SEL)
         val commit         = up(COMMIT)
-        val flush          = up(MAY_FLUSH)
+        val specEpoch      = up(SPEC_EPOCH)  // Replaced MAY_FLUSH with SPEC_EPOCH
         val pc             = up(PC.PC)
         
         valid.simPublic()
@@ -140,7 +147,7 @@ case class CPU() extends Component {
         rdaddr.simPublic()
         lane_sel.simPublic()
         commit.simPublic()
-        flush.simPublic()
+        specEpoch.simPublic()
         pc.simPublic()
         
         // Debug signals
@@ -158,10 +165,10 @@ case class CPU() extends Component {
         branch.logic.pcValue.simPublic()
         branch.logic.target.simPublic()
         
-        pipeline.ctrl(6).up(borb.common.Common.MAY_FLUSH).simPublic()
+        // Epoch debug signals (replaced MAY_FLUSH)
+        pipeline.ctrl(6).up(borb.common.Common.SPEC_EPOCH).simPublic()
         pipeline.ctrl(6).up(borb.frontend.Decoder.MicroCode).simPublic()
-        pipeline.ctrl(5).up(borb.common.Common.MAY_FLUSH).simPublic()
-        pipeline.ctrl(7).up(borb.common.Common.MAY_FLUSH).simPublic()
+        pipeline.ctrl(5).up(borb.common.Common.SPEC_EPOCH).simPublic()
         
         // Fetch debug
         fetch.inflight.simPublic()

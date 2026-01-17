@@ -7,6 +7,7 @@ import spinal.lib.misc.pipeline._
 import borb.fetch.PC
 import borb.frontend.Decoder.INSTRUCTION
 import borb.memory._
+import borb.common.Common._
 import spinal.core.sim._
 
 object Fetch extends AreaObject {
@@ -18,6 +19,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   val io = new Bundle {
     val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
     val flush = Bool()
+    val currentEpoch = UInt(4 bits)  // Global speculation epoch from CPU
   }
 
   // Fetch Packet: instruction data + epoch tag
@@ -94,6 +96,10 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     
     val rawData = fifo.io.pop.payload.data
     INSTRUCTION := rawData(31 downto 0)
+    
+    // Tag instruction with current speculation epoch from CPU
+    // All downstream stages inherit this epoch for flush comparison
+    SPEC_EPOCH := io.currentEpoch
     
     // Pop from FIFO when:
     // 1. Stage fires downstream (normal flow), OR

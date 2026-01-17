@@ -223,7 +223,7 @@ object test_cpu_int_w_jumps_app extends App {
         val f_dsp = dut.cpu.coreArea.pipeline.ctrls(4).down.isFiring.toBoolean
         val r_busy = dut.cpu.coreArea.dispatcher.hcs.regBusy.toBigInt
         
-        val may_flush_ex = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.common.Common.MAY_FLUSH).toBoolean
+        val spec_epoch_ex = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.common.Common.SPEC_EPOCH).toBigInt.toLong
         val ucode_ex     = dut.cpu.coreArea.pipeline.ctrls(6).up(borb.frontend.Decoder.MicroCode).toEnum
         val flush_cmd    = dut.cpu.coreArea.branch.logic.jumpCmd.valid.toBoolean
         
