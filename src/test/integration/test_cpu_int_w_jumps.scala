@@ -139,45 +139,45 @@ object test_cpu_int_w_jumps_app extends App {
       (164, BigInt("00734463",16 )),   // blt  x6, x7, L_blt_t     # taken (signed)
       (168, BigInt("03700413",16 )),   // addi x8, x0, 55          # MUST BE SQUASHED
       //// L_blt_t:
-      //(172, BigInt("????????",16 )),   // addi x8, x0, 11          # x8 = 11
+      (172, BigInt("00b00413",16 )),   // addi x8, x0, 11          # x8 = 11
 
-      //(176, BigInt("????????",16 )),   // bltu x6, x7, L_bltu_t    # NOT taken (unsigned)
-      //(180, BigInt("????????",16 )),   // addi x9, x0, 22          # x9 = 22
-      //(184, BigInt("????????",16 )),   // j    L_after_bltu        # unconditional jump (or jal x0, ...)
-      //// L_bltu_t:
-      //(188, BigInt("????????",16 )),   // addi x9, x0, 99          # should never happen
-      //// L_after_bltu:
-      //(192, BigInt("????????",16 )),   // addi x10, x0, 0          # (optional marker / nop-ish)
+      (176, BigInt("00736663",16 )),   // bltu x6, x7, L_bltu_t    # NOT taken (unsigned)
+      (180, BigInt("01600493",16 )),   // addi x9, x0, 22          # x9 = 22
+      (184, BigInt("0080006f",16 )),   // j    L_after_bltu        # unconditional jump (or jal x0, ...)
+      // L_bltu_t:
+      (188, BigInt("06300493",16 )),   // addi x9, x0, 99          # should never happen
+      // L_after_bltu:
+      (192, BigInt("00000513",16 )),   // addi x10, x0, 0          # (optional marker / nop-ish)
 
       //// # --------------------------------
       //// # Forwarding into branch compare (critical)
       //// # --------------------------------
-      //(196, BigInt("????????",16 )),   // addi x11, x0, 5
-      //(200, BigInt("????????",16 )),   // addi x12, x0, 6
-      //(204, BigInt("????????",16 )),   // add  x13, x11, x12       # x13 = 11
-      //(208, BigInt("????????",16 )),   // beq  x13, x0, L_bad_fwd  # NOT taken (uses x13 immediately)
-      //(212, BigInt("????????",16 )),   // addi x14, x0, 33         # x14 = 33
-      //(216, BigInt("????????",16 )),   // j    L_fwd_ok
+      (196, BigInt("00500593",16 )),   // addi x11, x0, 5
+      (200, BigInt("00600613",16 )),   // addi x12, x0, 6
+      (204, BigInt("00c586b3",16 )),   // add  x13, x11, x12       # x13 = 11
+      (208, BigInt("00068663",16 )),   // beq  x13, x0, L_bad_fwd  # NOT taken (uses x13 immediately)
+      (212, BigInt("02100713",16 )),   // addi x14, x0, 33         # x14 = 33
+      (216, BigInt("0080006f",16 )),   // j    L_fwd_ok
       //// L_bad_fwd:
-      //(220, BigInt("????????",16 )),   // addi x14, x0, 999        # should never happen
+      (220, BigInt("3e700713",16 )),   // addi x14, x0, 999        # should never happen
       //// L_fwd_ok:
-      //(224, BigInt("????????",16 )),   // addi x15, x0, 0          # (optional marker)
+      (224, BigInt("00000793",16 )),   // addi x15, x0, 0          # (optional marker)
 
       //// # --------------------------------
       //// # Backward branch (loop) + exit
       //// # --------------------------------
-      //(228, BigInt("????????",16 )),   // addi x16, x0, 4          # count = 4
-      //(232, BigInt("????????",16 )),   // addi x17, x0, 0          # sum = 0
-      //// L_loop:
-      //(236, BigInt("????????",16 )),   // addi x17, x17, 3         # sum += 3
-      //(240, BigInt("????????",16 )),   // addi x16, x16, -1        # count--
-      //(244, BigInt("????????",16 )),   // bne  x16, x0, L_loop     # taken 3 times, not taken once
-      //// After loop: x17 = 12
+      (228, BigInt("00400813",16 )),   // addi x16, x0, 4          # count = 4
+      (232, BigInt("00000893",16 )),   // addi x17, x0, 0          # sum = 0
+      // L_loop:
+      (236, BigInt("00388893",16 )),   // addi x17, x17, 3         # sum += 3
+      (240, BigInt("fff80813",16 )),   // addi x16, x16, -1        # count--
+      (244, BigInt("fe081ce3",16 )),   // bne  x16, x0, L_loop     # taken 3 times, not taken once
+      // After loop: x17 = 12
 
-      //// # --------------------------------
-      //// # Done / park
-      //// # --------------------------------
-      //(248, BigInt("????????",16 ))    // j done (self-loop) or jal x0, 0
+      // # --------------------------------
+      // # Done / park
+      // # --------------------------------
+      (248, BigInt("0000006f",16 ))    // j done (self-loop) or jal x0, 0
     )
 
   
@@ -189,7 +189,7 @@ object test_cpu_int_w_jumps_app extends App {
     // We need to wait for clock edges. Since we generate clock manually, we can just sleep period.
     // Or we can use `dut.testClockDomain.waitSampling` if we exposed the clock domain appropriately, but easier to just loop and sleep.
     
-    for(i <- 0 to 195) {
+    for(i <- 0 to 245) {
        // Wait one clock cycle
        sleep(period)
        
