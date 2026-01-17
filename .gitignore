@@ -50,6 +50,8 @@ bin/
 !bug_waves/
 !bug_waves/*.vcd
 
+waveform-mcp/
+
 
 
 simWorkspace/

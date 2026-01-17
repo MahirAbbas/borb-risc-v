@@ -71,7 +71,7 @@ case class CPU() extends Component {
     }
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
-    pc.jump.setIdle()
+    //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
     val fetch = Fetch(
@@ -88,6 +88,53 @@ case class CPU() extends Component {
     val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
+    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
+
+    decode.branchResolved := branch.branchResolved
+
+    // ========== Speculation Epoch Architecture ==========
+    // Clean, scalable speculation handling for in-order superscalar CPU
+    //
+    // Design:
+    // - Global epoch counter maintained here, passed to Fetch
+    // - Each instruction is tagged with SPEC_EPOCH when it enters the pipeline
+    // - When a branch is TAKEN (flushPipeline), epoch increments
+    // - All instructions with old epoch are flushed (their SPEC_EPOCH != currentEpoch)
+    
+    // Global speculation epoch (4-bit = supports 16 in-flight speculation points)
+    val currentEpoch = Reg(UInt(4 bits)) init 0
+    
+    // Flush Logic - fires when branch is taken
+    val flushPipeline = branch.logic.jumpCmd.valid
+    pc.jump << branch.logic.jumpCmd
+    
+    // Increment epoch on taken branch
+    when(flushPipeline) {
+      currentEpoch := currentEpoch + 1
+    }
+    
+    // Connect epoch to Fetch so new instructions get tagged with current epoch
+    fetch.io.flush := flushPipeline
+    fetch.io.currentEpoch := currentEpoch
+    
+    // Flush execution stages (Decode, Dispatch, Src) based on epoch match
+    // When a branch is taken, currentEpoch still has the OLD value (register update is next cycle)
+    // Speculative instructions have SPEC_EPOCH = old_epoch, so we throw if they MATCH
+    // After this cycle, currentEpoch increments, and new instructions get the new epoch
+    // Note: Stage 6 (Execute) is excluded - the branch has already executed
+    //       Stage 7 (Writeback) is excluded - architecturally committed
+    val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
+    executionStages.foreach { ctrl =>
+      // Throw if: flush is active AND instruction's epoch matches current (old) epoch
+      // These are the speculative instructions that need to be flushed
+      ctrl.throwWhen(flushPipeline && (ctrl(SPEC_EPOCH) === currentEpoch))
+    }
+    
+    // Flush Fetch stages (PC in transit) unconditionally on redirect
+    val fetchStages = Array(1, 2).map(pipeline.ctrl(_))
+    fetchStages.foreach { ctrl =>
+       ctrl.throwWhen(flushPipeline)
+    }
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
@@ -114,15 +161,17 @@ case class CPU() extends Component {
 
       val readHere = new Area {
         import borb.common.Common._
-        val valid = up(borb.frontend.Decoder.VALID)
-        val immed = up(borb.dispatch.SrcPlugin.IMMED)
-        val sendtoalu = up(borb.dispatch.Dispatch.SENDTOALU)
-        val result = up(borb.execute.IntAlu.RESULT).data
-        val valid_result = up(borb.execute.IntAlu.RESULT).valid
-        val rdaddr = up(borb.execute.IntAlu.RESULT).address
-        val lane_sel = up(LANE_SEL)
-        val commit = up(COMMIT)
-
+        val valid          = up(borb.frontend.Decoder.VALID) 
+        val immed          = up(borb.dispatch.SrcPlugin.IMMED)
+        val sendtoalu      = up(borb.dispatch.Dispatch.SENDTOALU)
+        val result         = up(borb.execute.IntAlu.RESULT).data
+        val valid_result   = up(borb.execute.IntAlu.RESULT).valid
+        val rdaddr         = up(borb.execute.IntAlu.RESULT).address
+        val lane_sel       = up(LANE_SEL)
+        val commit         = up(COMMIT)
+        val specEpoch      = up(SPEC_EPOCH)  // Replaced MAY_FLUSH with SPEC_EPOCH
+        val pc             = up(PC.PC)
+        
         valid.simPublic()
         immed.simPublic()
         sendtoalu.simPublic()
@@ -131,6 +180,35 @@ case class CPU() extends Component {
         rdaddr.simPublic()
         lane_sel.simPublic()
         commit.simPublic()
+        specEpoch.simPublic()
+        pc.simPublic()
+        
+        // Debug signals
+        pipeline.ctrls.foreach { case (id, ctrl) =>
+           ctrl.isValid.simPublic()
+           ctrl.down.isFiring.simPublic()
+        }
+        pipeline.ctrl(3).up(PC.PC).simPublic() // Decode
+        pipeline.ctrl(4).up(PC.PC).simPublic() // Dispatch
+        pipeline.ctrl(5).up(PC.PC).simPublic() // Src
+        pipeline.ctrl(6).up(PC.PC).simPublic() // Ex
+        
+        dispatcher.hcs.regBusy.simPublic()
+        branch.logic.jumpCmd.valid.simPublic()
+        branch.logic.pcValue.simPublic()
+        branch.logic.target.simPublic()
+        
+        // Epoch debug signals (replaced MAY_FLUSH)
+        pipeline.ctrl(6).up(borb.common.Common.SPEC_EPOCH).simPublic()
+        pipeline.ctrl(6).up(borb.frontend.Decoder.MicroCode).simPublic()
+        pipeline.ctrl(5).up(borb.common.Common.SPEC_EPOCH).simPublic()
+        
+        // Fetch debug
+        fetch.inflight.simPublic()
+        fetch.epoch.simPublic()
+        fetch.fifo.io.availability.simPublic()
+        fetch.io.readCmd.cmd.valid.simPublic()
+        fetch.io.readCmd.rsp.valid.simPublic()
       }
     }
 

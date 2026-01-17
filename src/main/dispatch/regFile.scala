@@ -60,14 +60,13 @@ case class IntRegFile(dataWidth: Int) extends Component {
 
   // io.readerRS1.data := mem.readSync(address = io.readerRS1.address, enable = io.readerRS1.valid)
   // io.readerRS2.data := mem.readSync(address = io.readerRS2.address, enable = io.readerRS2.valid)
-  io.readerRS1.data := mem.readAsync(address = io.readerRS1.address)
-  io.readerRS2.data := mem.readAsync(address = io.readerRS2.address)
+  io.readerRS1.data := (io.readerRS1.address === 0) ? B(0, dataWidth bits) | mem.readAsync(address = io.readerRS1.address)
+  io.readerRS2.data := (io.readerRS2.address === 0) ? B(0, dataWidth bits) | mem.readAsync(address = io.readerRS2.address)
 
-  mem.write(
-    address = io.writer.address,
-    enable = io.writer.valid,
-    data = io.writer.data
-  )
+  when(io.writer.valid && io.writer.address =/= 0) {
+    mem.write(address = io.writer.address, data = io.writer.data)
+  }
+
 
   // Read logic
   // for (port <- io.reads) {

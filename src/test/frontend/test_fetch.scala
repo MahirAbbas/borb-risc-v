@@ -3,7 +3,7 @@ package test.frontend
 import spinal.core._
 import spinal.core.sim._
 import borb.fetch._
-import borb.LsuL1._
+// import borb.LsuL1._ // removed - unused
 import spinal.lib.misc.pipeline._
 import spinal.lib._
 import spinal.lib.sim._
@@ -28,6 +28,7 @@ case class frontEnd() extends Component {
   pc.exception.setIdle()
   pc.jump.setIdle()
   pc.flush.setIdle()
+  fetch.io.currentEpoch := 0  // Simple test - no epoch changes
   // ram.io.reads.cmd << fetch.io.readCmd.cmd
   fetch.io.readCmd.simPublic
   // ram.io.reads.rsp >> fetch.io.readCmd.rsp

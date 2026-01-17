@@ -1,0 +1,114 @@
+[info] welcome to sbt 1.10.11 (Azul Systems, Inc. Java 21.0.7)
+[info] loading settings for project borb-build-build from metals.sbt...
+[info] loading project definition from /Users/mahir/fun/borb/project/project
+[info] loading settings for project borb-build from metals.sbt...
+[info] loading project definition from /Users/mahir/fun/borb/project
+[success] Generated .bloop/borb-build.json
+[success] Total time: 1 s, completed 15 Jan 2026, 23:09:49
+[info] loading settings for project projectname from build.sbt...
+[info] set current project to myproject (in build file:/Users/mahir/fun/borb/)
+[info] compiling 3 Scala sources to /Users/mahir/fun/borb/target/scala-2.13/classes ...
+[info] done compiling
+[info] compiling 10 Scala sources to /Users/mahir/fun/borb/target/scala-2.13/classes ...
+[warn] 6 deprecations (since 2.13.3); re-run with -deprecation for details
+[warn] one warning found
+[info] done compiling
+[info] running (fork) test.frontend.test_cpu_int_w_jumps_app 
+[info] [Runtime] SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
+[info] [Runtime] JVM max memory : 8192.0MiB
+[info] [Runtime] Current date : 2026.01.15 23:09:54
+[info] [Progress] at 0.000 : Elaborate components
+[info] [Progress] at 0.472 : Checks and transforms
+[info] spinal.core.SpinalExit$.apply(Misc.scala:459)
+[info] spinal.core.SpinalError$.apply(Misc.scala:514)
+[info] spinal.core.internals.PhaseContext.checkPendingErrors(Phase.scala:178)
+[info] spinal.core.internals.PhaseContext.doPhase(Phase.scala:194)
+[info] spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$12(Phase.scala:3528)
+[info] spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$12$adapted(Phase.scala:3526)
+[info] scala.collection.IterableOnceOps.foreach(IterableOnce.scala:619)
+[info] scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:617)
+[info] scala.collection.AbstractIterable.foreach(Iterable.scala:935)
+[info] spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$7(Phase.scala:3526)
+[info] spinal.core.ScopeProperty$.sandbox(ScopeProperty.scala:71)
+[info] spinal.core.internals.SpinalVerilogBoot$.singleShot(Phase.scala:3457)
+[info] spinal.core.internals.SpinalVerilogBoot$.apply(Phase.scala:3426)
+[info] spinal.core.Spinal$.apply(Spinal.scala:468)
+[info] spinal.core.SpinalConfig.generateVerilog(Spinal.scala:226)
+[info] spinal.core.sim.SpinalSimConfig.compileCloned(SimBootstraps.scala:990)
+[info] spinal.core.sim.SpinalSimConfig.compile(SimBootstraps.scala:954)
+[info] test.frontend.test_cpu_int_w_jumps_app$.delayedEndpoint$test$frontend$test_cpu_int_w_jumps_app$1(test_cpu_int_w_jumps.scala:20)
+[info] test.frontend.test_cpu_int_w_jumps_app$delayedInit$body.apply(test_cpu_int_w_jumps.scala:19)
+[info] scala.Function0.apply$mcV$sp(Function0.scala:42)
+[info] scala.Function0.apply$mcV$sp$(Function0.scala:42)
+[info] scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)
+[info] scala.App.$anonfun$main$1(App.scala:98)
+[info] scala.App.$anonfun$main$1$adapted(App.scala:98)
+[info] scala.collection.IterableOnceOps.foreach(IterableOnce.scala:619)
+[info] scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:617)
+[info] scala.collection.AbstractIterable.foreach(Iterable.scala:935)
+[info] scala.App.main(App.scala:98)
+[info] scala.App.main$(App.scala:96)
+[info] test.frontend.test_cpu_int_w_jumps_app$.main(test_cpu_int_w_jumps.scala:19)
+[info] test.frontend.test_cpu_int_w_jumps_app.main(test_cpu_int_w_jumps.scala)
+[info] **********************************************************************************************
+[info] [Warning] Elaboration failed (2 errors).
+[info]           Spinal will restart with scala trace to help you to find the problem.
+[info] **********************************************************************************************
+[info] [Progress] at 0.514 : Elaborate components
+[info] [Progress] at 0.553 : Checks and transforms
+[error] Exception in thread "main" spinal.core.SpinalExit: 
+[error]  Error detected in phase PhaseCheckHierarchy
+[error] ********************************************************************************
+[error] ********************************************************************************
+[error] HIERARCHY VIOLATION (assignment):
+[error]   Attempted to assign to signal '(toplevel/cpu/coreArea_fetch_io_flush : in Bool)' (an instance of Bool),
+[error]   which is defined in component 'cpu' (parent: 'toplevel') with direction 'input',
+[error]   but is not assignable from component 'cpu' (parent: 'toplevel').
+[error]   (Assigned by expression: '(toplevel/cpu/coreArea_branch_logic_jumpCmd_valid :  Bool)')
+[error] To be assignable from component 'cpu' (parent: 'toplevel'), this signal must satisfy one of the following:
+[error]   1. Be a directionless signal defined directly within component 'cpu' (parent: 'toplevel').
+[error]   2. Be an 'out' or 'inout' port of component 'cpu' (parent: 'toplevel').
+[error]   3. Be an 'in' or 'inout' port of a direct child component of component 'cpu' (parent: 'toplevel').
+[error] Location of assignment:
+[error]     at borb.CPU$$anon$2.<init>(CPU.scala:81)
+[error]     at borb.CPU.<init>(CPU.scala:38)
+[error]     at test.frontend.TestCpuIntegration.<init>(test_cpu_integration.scala:24)
+[error]     at test.frontend.test_cpu_int_w_jumps_app$.$anonfun$new$1(test_cpu_int_w_jumps.scala:20)
+[error] ********************************************************************************
+[error] ********************************************************************************
+[error] Design's errors are listed above.
+[error] SpinalHDL compiler exit stack : 
+[error] 	at spinal.core.SpinalExit$.apply(Misc.scala:459)
+[error] 	at spinal.core.SpinalError$.apply(Misc.scala:514)
+[error] 	at spinal.core.internals.PhaseContext.checkPendingErrors(Phase.scala:178)
+[error] 	at spinal.core.internals.PhaseContext.doPhase(Phase.scala:194)
+[error] 	at spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$12(Phase.scala:3528)
+[error] 	at spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$12$adapted(Phase.scala:3526)
+[error] 	at scala.collection.IterableOnceOps.foreach(IterableOnce.scala:619)
+[error] 	at scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:617)
+[error] 	at scala.collection.AbstractIterable.foreach(Iterable.scala:935)
+[error] 	at spinal.core.internals.SpinalVerilogBoot$.$anonfun$singleShot$7(Phase.scala:3526)
+[error] 	at spinal.core.ScopeProperty$.sandbox(ScopeProperty.scala:71)
+[error] 	at spinal.core.internals.SpinalVerilogBoot$.singleShot(Phase.scala:3457)
+[error] 	at spinal.core.internals.SpinalVerilogBoot$.apply(Phase.scala:3452)
+[error] 	at spinal.core.Spinal$.apply(Spinal.scala:468)
+[error] 	at spinal.core.SpinalConfig.generateVerilog(Spinal.scala:226)
+[error] 	at spinal.core.sim.SpinalSimConfig.compileCloned(SimBootstraps.scala:990)
+[error] 	at spinal.core.sim.SpinalSimConfig.compile(SimBootstraps.scala:954)
+[error] 	at test.frontend.test_cpu_int_w_jumps_app$.delayedEndpoint$test$frontend$test_cpu_int_w_jumps_app$1(test_cpu_int_w_jumps.scala:20)
+[error] 	at test.frontend.test_cpu_int_w_jumps_app$delayedInit$body.apply(test_cpu_int_w_jumps.scala:19)
+[error] 	at scala.Function0.apply$mcV$sp(Function0.scala:42)
+[error] 	at scala.Function0.apply$mcV$sp$(Function0.scala:42)
+[error] 	at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)
+[error] 	at scala.App.$anonfun$main$1(App.scala:98)
+[error] 	at scala.App.$anonfun$main$1$adapted(App.scala:98)
+[error] 	at scala.collection.IterableOnceOps.foreach(IterableOnce.scala:619)
+[error] 	at scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:617)
+[error] 	at scala.collection.AbstractIterable.foreach(Iterable.scala:935)
+[error] 	at scala.App.main(App.scala:98)
+[error] 	at scala.App.main$(App.scala:96)
+[error] 	at test.frontend.test_cpu_int_w_jumps_app$.main(test_cpu_int_w_jumps.scala:19)
+[error] 	at test.frontend.test_cpu_int_w_jumps_app.main(test_cpu_int_w_jumps.scala)
+[error] nonzero exit code returned from runner: 1
+[error] (Compile / runMain) nonzero exit code returned from runner: 1
+[error] Total time: 5 s, completed 15 Jan 2026, 23:09:55

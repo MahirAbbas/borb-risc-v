@@ -10,7 +10,6 @@ import borb.frontend.Decoder._
 import borb.frontend.Decoder
 import borb.frontend.ExecutionUnitEnum
 // import borb.frontend.AluOp
-import borb.LsuL1.PC
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
 import borb.execute.IntAlu.RESULT
@@ -197,6 +196,10 @@ case class Dispatch(
       // Only clear busy when writeback actually commits (fires)
       when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {
         regBusy(wbRd) := False
+      }
+
+      when(up.isFiring && (rd =/= 0)) {
+        regBusy(rd.asUInt) := True
       }
 
       // val stage = hzRange.head

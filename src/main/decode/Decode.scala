@@ -127,6 +127,10 @@ case class Decoder(stage: CtrlLink) extends Area {
     down(Decoder.RS1_ADDR) := up(Decoder.INSTRUCTION)(19 downto 15)
     down(Decoder.RS2_ADDR) := up(Decoder.INSTRUCTION)(24 downto 20)
   }
+
+  // branchResolved signal - set by branch.scala when a branch resolves
+  // This was used by shadowLogic (now removed) but may be useful for future branch prediction
+  val branchResolved = Bool()
 }
 
 // case class DecompressedInstruction() extends Bundle{

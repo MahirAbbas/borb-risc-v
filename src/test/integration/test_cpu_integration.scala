@@ -59,7 +59,7 @@ case class TestCpuIntegration() extends Component {
 }
 
 object test_cpu_integration_app extends App {
-  SimConfig.withWave.compile(new TestCpuIntegration()).doSim { dut =>
+  SimConfig.withFstWave.compile(new TestCpuIntegration()).doSim { dut =>
     dut.io.clkEnable #= true
 
     // We need to drive dut.io.clk toggling.
