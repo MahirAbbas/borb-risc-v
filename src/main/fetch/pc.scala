@@ -48,19 +48,16 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
 
     // Priority: exception > flush > jump > sequential
 
-    PC.PC := PC_cur
-    when(down.isReady) {
+    when(exception.valid) {
+      PC_cur := exception.payload.vector
+    }.elsewhen(flush.valid) {
+      PC_cur := flush.payload.address
+    }.elsewhen(jump.valid) {
+      PC_cur := jump.payload.target
+    }.elsewhen(down.isReady) {
       PC_cur := PC_cur + 4
-      when(exception.valid) {
-        PC_cur := exception.payload.vector
-      }.elsewhen(flush.valid) {
-        PC_cur := flush.payload.address
-      }.elsewhen(jump.valid) {
-        PC_cur := jump.payload.target
-      }
-      down(PC.PC) := PC_cur
     }
-
+    down(PC.PC) := PC_cur
 
     // PC.FLUSH := jump.valid || flush.valid || exception.valid
   }

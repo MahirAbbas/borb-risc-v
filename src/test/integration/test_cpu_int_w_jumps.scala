@@ -117,27 +117,27 @@ object test_cpu_int_w_jumps_app extends App {
       //// # --------------------------------
       //// # Basic branches: taken/not-taken
       //// # --------------------------------
-      //(124, BigInt("00a00d93",16 )),   // addi x27, x0, 10         # x27 = 10
-      //(128, BigInt("00a00d93",16 )),   // addi x28, x0, 10         # x28 = 10
-      //(132, BigInt("01cd9a63",16 )),   // bne  x27, x28, L_bad_bne # NOT taken
-      //(136, BigInt("00100e93",16 )),   // addi x29, x0, 1          # x29 = 1
+      (124, BigInt("00a00d93",16 )),   // addi x27, x0, 10         # x27 = 10
+      (128, BigInt("00a00e13",16 )),   // addi x28, x0, 10         # x28 = 10
+      (132, BigInt("01cd9863",16 )),   // bne  x27, x28, L_bad_bne # NOT taken
+      (136, BigInt("00100e93",16 )),   // addi x29, x0, 1          # x29 = 1
 
-      //(140, BigInt("????????",16 )),   // beq  x27, x28, L_beq_t   # taken
-      //(144, BigInt("????????",16 )),   // addi x29, x29, 100       # MUST BE SQUASHED if beq taken
-
-      //// L_beq_t:
-      //(148, BigInt("????????",16 )),   // addi x29, x29, 2         # x29 = 3
+      (140, BigInt("01cd8663",16 )),   // beq  x27, x28, L_beq_t   # taken
+      (144, BigInt("064e8e93",16 )),   // addi x29, x29, 100       # MUST BE SQUASHED if beq taken # x29 = 101
 
       //// L_bad_bne:
-      //(152, BigInt("????????",16 )),   // addi x29, x0, 999        # should never happen (optional trap reg)
+      (148, BigInt("3e700e93",16 )),   // addi x29, x0, 999        # should never happen (optional trap reg)
+
+      //// L_beq_t:
+      (152, BigInt("002e8e93",16 )),   // addi x29, x29, 2         # x29 = 3
 
       //// # --------------------------------
       //// # Signed vs unsigned branch checks
       //// # --------------------------------
-      //(156, BigInt("????????",16 )),   // addi x6,  x0, -1         # x6 = -1 (0xFFFF...)
-      //(160, BigInt("????????",16 )),   // addi x7,  x0, 1          # x7 = 1
-      //(164, BigInt("????????",16 )),   // blt  x6, x7, L_blt_t     # taken (signed)
-      //(168, BigInt("????????",16 )),   // addi x8, x0, 55          # MUST BE SQUASHED
+      (156, BigInt("fff00313",16 )),   // addi x6,  x0, -1         # x6 = -1 (0xFFFF...)
+      (160, BigInt("00100393",16 )),   // addi x7,  x0, 1          # x7 = 1
+      (164, BigInt("00734463",16 )),   // blt  x6, x7, L_blt_t     # taken (signed)
+      (168, BigInt("03700413",16 )),   // addi x8, x0, 55          # MUST BE SQUASHED
       //// L_blt_t:
       //(172, BigInt("????????",16 )),   // addi x8, x0, 11          # x8 = 11
 
@@ -189,7 +189,7 @@ object test_cpu_int_w_jumps_app extends App {
     // We need to wait for clock edges. Since we generate clock manually, we can just sleep period.
     // Or we can use `dut.testClockDomain.waitSampling` if we exposed the clock domain appropriately, but easier to just loop and sleep.
     
-    for(i <- 0 to 145) {
+    for(i <- 0 to 195) {
        // Wait one clock cycle
        sleep(period)
        
@@ -238,7 +238,9 @@ object test_cpu_int_w_jumps_app extends App {
        // }
         
 
-       if(rh.commit.toBoolean == true){
+       // Only print if both COMMIT is true AND the stage is actually firing (not thrown)
+       val wb_isFiring = dut.cpu.coreArea.pipeline.ctrl(7).down.isFiring.toBoolean
+       if(rh.commit.toBoolean == true && wb_isFiring){
         println(s"RESULT.valid ${rh.valid_result.toBoolean}, RESULT.address ${rh.rdaddr.toLong}, RESULT.data ${rh.result.toLong}, IMMED: ${rh.immed.toLong}, LANE_SEL: ${rh.lane_sel.toBoolean}, COMMIT: ${rh.commit.toBoolean}, PC: ${rh.pc.toBigInt.toLong}")
 
        }

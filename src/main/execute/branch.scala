@@ -63,7 +63,10 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       is(uopBGEU) { isBranch := True }
       default     { isBranch := False }
     }
-    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH) && !up(MAY_FLUSH)
+    // MAY_FLUSH should NOT prevent branches from executing - it only marks 
+    // instructions that may be squashed. The flushing instruction completes normally
+    // (stage 6 is excluded from self-throw in CPU.scala).
+    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
     branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))

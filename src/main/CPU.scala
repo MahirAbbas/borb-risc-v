@@ -87,9 +87,21 @@ case class CPU() extends Component {
     //}
 
     // Iterate over stages after Decode (Dispatch onwards) that might hold speculative instructions
-    val executionStages = Array(3,4, 5, 6, 7).map(pipeline.ctrl(_))
+    // Note: Stage 6 (Execute/Branch) is EXCLUDED - the instruction that fires the flush has already
+    // executed. Stage 7 (Writeback) is also excluded - instructions there have committed architecturally.
+    // Only upstream stages (3,4,5) need to be flushed.
+    
+    // Flush State Machine: Extend the flush signal for enough cycles to clear stages 3, 4, 5
+    // When a branch fires at stage 6, speculative instructions may be in stages 3, 4, or 5.
+    // We need to keep throwing them until they've all been cleared (3 cycles).
+    val flushDelay1 = RegNext(flushPipeline) init False
+    val flushDelay2 = RegNext(flushDelay1) init False
+    val flushDelay3 = RegNext(flushDelay2) init False
+    val extendedFlush = flushPipeline || flushDelay1 || flushDelay2 || flushDelay3
+    
+    val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl => 
-       ctrl.throwWhen(ctrl(MAY_FLUSH) && flushPipeline)
+       ctrl.throwWhen(ctrl(MAY_FLUSH) && extendedFlush)
     }
     
     // Flush Fetch stages (PC in transit) unconditionally on redirect
