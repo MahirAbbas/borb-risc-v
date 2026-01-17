@@ -20,5 +20,5 @@
 ##   0:00:00  Skipping step 18..
 ##   0:00:00  Skipping step 19..
 ##   0:00:00  Checking assumptions in step 20..
-##   0:00:00  Checking assertions in step 20..
+##   0:00:01  Checking assertions in step 20..
 ##   0:00:02  Status: passed

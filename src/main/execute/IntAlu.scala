@@ -52,17 +52,18 @@ case class IntAlu(aluNode: CtrlLink) extends Area {
         uopSUB -> (SRC1.asSInt - SRC2.asSInt).asBits,
         uopSLT -> (SRC1.asSInt < SRC2.asSInt).asBits.resized,
         uopSLTU -> (SRC1.asUInt < SRC2.asUInt).asBits.resized,
-        uopADDW -> (SRC1.asSInt + SRC2.asSInt)(31 downto 0).resize(64).asBits,
-        uopSLLW -> (SRC1.asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0)
-          .resize(64)
-          .asBits,
-        uopSRAW -> (SRC1.asSInt >> SRC2(4 downto 0).asUInt)(31 downto 0)
-          .resize(64)
-          .asBits,
-        uopSRLW -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0)
-          .resize(64)
-          .asBits,
-        uopSUBW -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
+        // RV64I W-Instructions (32-bit operations, sign-extended result)
+        uopADDW -> (SRC1(31 downto 0).asSInt + SRC2(31 downto 0).asSInt).resize(64).asBits,
+        uopSUBW -> (SRC1(31 downto 0).asSInt - SRC2(31 downto 0).asSInt).resize(64).asBits,
+        uopADDIW -> (SRC1(31 downto 0).asSInt + IMMED(31 downto 0).asSInt).resize(64).asBits,
+
+        uopSLLW -> (SRC1(31 downto 0).asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0).asSInt.resize(64).asBits,
+        uopSRLW -> (SRC1(31 downto 0).asUInt |>> SRC2(4 downto 0).asUInt).asSInt.resize(64).asBits,
+        uopSRAW -> (SRC1(31 downto 0).asSInt >> SRC2(4 downto 0).asUInt).resize(64).asBits,
+
+        uopSLLIW -> (SRC1(31 downto 0).asUInt |<< IMMED(4 downto 0).asUInt)(31 downto 0).asSInt.resize(64).asBits,
+        uopSRLIW -> (SRC1(31 downto 0).asUInt |>> IMMED(4 downto 0).asUInt).asSInt.resize(64).asBits,
+        uopSRAIW -> (SRC1(31 downto 0).asSInt >> IMMED(4 downto 0).asUInt).resize(64).asBits,
         uopLUI -> (IMMED.asBits),
         uopAUIPC -> (IMMED.asSInt + borb.fetch.PC.PC.asSInt).asBits
       )

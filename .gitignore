@@ -33,6 +33,7 @@ out
 .metals
 project/metals.sbt
 
+
 # Eclipse
 bin/
 .classpath
@@ -57,5 +58,6 @@ waveform-mcp/
 simWorkspace/
 tmp/
 null
+formal/cores/borb/checks/*
 
 .DS_Store
