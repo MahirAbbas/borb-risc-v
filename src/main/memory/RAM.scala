@@ -47,7 +47,7 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
   val io = new Bundle {
     val reads = new RamFetchBus(addressWidth, dataWidth, idWidth)
     reads.setAsSlave()
-    val writes = slave(DataBus(addressWidth, dataWidth))
+    val writes = slave(DataBus(addressWidth, dataWidth, idWidth))
   }
 
   val memSize = 16 KiB
@@ -58,7 +58,7 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
 
   // READING (for instruction fetch)
   io.reads.rsp.payload.data := memory.readSync(
-    address = io.reads.cmd.payload.address(addressSize - 1 downto 0),
+    address = io.reads.cmd.payload.address(addressSize - 1 + 3 downto 3),
     enable = io.reads.cmd.valid
   )
   io.reads.cmd.ready := True
@@ -67,6 +67,8 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
   io.reads.rsp.valid := RegNext(io.reads.cmd.valid) init False
 
   // WRITING (for stores via DataBus)
+  // Word-aligned address for memory access
+  // WRITING (for stores via DataBus) OR READING (for Loads)
   // Word-aligned address for memory access
   val writeWordAddr = io.writes.cmd.payload.address(addressSize - 1 + 3 downto 3)
   
@@ -89,11 +91,20 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
     data = newWord,
     enable = io.writes.cmd.valid && io.writes.cmd.payload.write
   )
-  //val maskPort = memory.writePortWithMask(8)
   
-  // DataBus handshaking
+  // DataBus Read Logic (Loads)
+  // Uses synchronous read port (1 cycle latency)
+  val dBusReadData = memory.readSync(
+    address = writeWordAddr,
+    enable = io.writes.cmd.valid && !io.writes.cmd.payload.write
+  )
+  
+  // DataBus handshaking and response
   io.writes.cmd.ready := True
-  io.writes.rsp.valid := False  // No read response for stores
-  io.writes.rsp.payload.data := 0
+  
+  // Response valid 1 cycle after command if it was a read
+  io.writes.rsp.valid := RegNext(io.writes.cmd.valid && !io.writes.cmd.payload.write) init False
+  io.writes.rsp.payload.data := dBusReadData
+  io.writes.rsp.payload.id := RegNext(io.writes.cmd.payload.id)
 
 }

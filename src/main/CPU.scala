@@ -34,7 +34,7 @@ case class CPU() extends Component {
       new RamFetchBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     )
     val dBus = master(
-      borb.execute.DataBus(addressWidth = 64, dataWidth = 64)
+      borb.execute.DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     ).simPublic()
     val rvfi = out(Rvfi()).simPublic()
     val dbg = out(Dbg())
