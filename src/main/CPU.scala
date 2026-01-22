@@ -14,6 +14,7 @@ import borb.dispatch.SrcPlugin
 import borb.dispatch.SrcPlugin._
 import borb.formal._
 import spinal.core.sim._
+import spinal.lib.bus.amba4.axi._
 
 object CPU {
   def main(args: Array[String]) {

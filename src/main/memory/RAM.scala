@@ -108,3 +108,8 @@ class UnifiedRam(addressWidth: Int, dataWidth: Int, idWidth: Int)
   io.writes.rsp.payload.id := RegNext(io.writes.cmd.payload.id)
 
 }
+
+object RAM {
+  import spinal.lib.bus.amba4.axi._
+  val ram = Axi4SharedOnChipRam(dataWidth = 64, byteCount = 2 KiB, idWidth = 8, arwStage = false)
+}
