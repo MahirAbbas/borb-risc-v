@@ -73,28 +73,32 @@ case class Lsu(stage: CtrlLink) extends Area {
 
     // Raise Trap if misaligned
     val localTrap = misaligned && isStore
-    // down(TRAP) := up(TRAP) || localTrap // Moved to CPU.scala logic integration
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = effectiveAddr(2 downto 0)
 
-    // Generate write mask based on funct3 and address alignment
-    val writeMask = Bits(8 bits)
-    writeMask := up(MicroCode).muxDc(
-      uopSB -> (B"00000001" |<< byteOffset),
-      uopSH -> (B"00000011" |<< byteOffset),
-      uopSW -> (B"00001111" |<< byteOffset),
+    // Generate write mask (Normalized / Unshifted)
+    val rawWriteMask = Bits(8 bits)
+    rawWriteMask := up(MicroCode).muxDc(
+      uopSB -> B"00000001",
+      uopSH -> B"00000011",
+      uopSW -> B"00001111",
       uopSD -> B"11111111"
     )
 
+    // Shifted mask for dBus
+    val writeMask = rawWriteMask |<< byteOffset
+
     // Align store data to the correct byte lanes
-    val storeData = Bits(64 bits)
-    storeData := up(MicroCode).muxDc(
-      uopSB -> (up(RS2)(7 downto 0) << (byteOffset * 8)).resize(64),
-      uopSH -> (up(RS2)(15 downto 0) << (byteOffset * 8)).resize(64),
-      uopSW -> (up(RS2)(31 downto 0) << (byteOffset * 8)).resize(64),
+    val rawStoreData = Bits(64 bits)
+    rawStoreData := up(MicroCode).muxDc(
+      uopSB -> (up(RS2)(7 downto 0)).resize(64),
+      uopSH -> (up(RS2)(15 downto 0)).resize(64),
+      uopSW -> (up(RS2)(31 downto 0)).resize(64),
       uopSD -> up(RS2)
     )
+    
+    val storeData = rawStoreData |<< (byteOffset << 3)
 
     // Drive Data Bus Command
     // Suppress write if misaligned or trap pending
@@ -109,11 +113,12 @@ case class Lsu(stage: CtrlLink) extends Area {
     // Note: Flow doesn't have ready signal, it's always received
 
     // Propagate payloads for RVFI (only for Store instructions)
+    // riscv-formal expects NORMALIZED (unshifted) data and mask
     val isSendToAgu = up(SENDTOAGU)
     // Suppress RVFI side-effects if misaligned
     down(MEM_ADDR) := Mux(isSendToAgu && isStore, effectiveAddr, U(0, 64 bits))
-    down(MEM_WDATA) := Mux(isSendToAgu && isStore && !suppress, storeData, B(0, 64 bits))
-    down(MEM_WMASK) := Mux(isStore && !suppress, writeMask, B(0, 8 bits))
+    down(MEM_WDATA) := Mux(isSendToAgu && isStore && !suppress, rawStoreData, B(0, 64 bits))
+    down(MEM_WMASK) := Mux(isStore && !suppress, rawWriteMask, B(0, 8 bits))
     down(MEM_RMASK) := B(0, 8 bits)  // No read for stores
     down(MEM_RDATA) := B(0, 64 bits)  // No read data for stores
 

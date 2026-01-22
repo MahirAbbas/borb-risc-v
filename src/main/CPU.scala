@@ -36,7 +36,7 @@ case class CPU() extends Component {
     val dBus = master(
       borb.execute.DataBus(addressWidth = 64, dataWidth = 64)
     ).simPublic()
-    val rvfi = out(Rvfi())
+    val rvfi = out(Rvfi()).simPublic()
     val dbg = out(Dbg())
   }
 

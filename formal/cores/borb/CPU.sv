@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 0aecb52d3e7310c1f46c66c26955f00501997f4b
+// Git hash  : 673f1a2a6b31a82d03a19254135d06340b0a7106
 
 `timescale 1ns/1ps
 
@@ -402,12 +402,10 @@ module CPU (
   wire       [63:0]   _zz_coreArea_lsu_logic_effectiveAddr;
   wire       [63:0]   _zz_coreArea_lsu_logic_effectiveAddr_1;
   wire       [63:0]   _zz_coreArea_lsu_logic_effectiveAddr_2;
-  wire       [134:0]  _zz__zz_coreArea_lsu_logic_storeData;
-  wire       [6:0]    _zz__zz_coreArea_lsu_logic_storeData_1;
-  wire       [142:0]  _zz__zz_coreArea_lsu_logic_storeData_2;
-  wire       [6:0]    _zz__zz_coreArea_lsu_logic_storeData_3;
-  wire       [158:0]  _zz__zz_coreArea_lsu_logic_storeData_4;
-  wire       [6:0]    _zz__zz_coreArea_lsu_logic_storeData_5;
+  wire       [7:0]    _zz__zz_coreArea_lsu_logic_rawStoreData;
+  wire       [15:0]   _zz__zz_coreArea_lsu_logic_rawStoreData_1;
+  wire       [31:0]   _zz__zz_coreArea_lsu_logic_rawStoreData_2;
+  wire       [5:0]    _zz_coreArea_lsu_logic_storeData;
   wire       [63:0]   _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata;
   wire                coreArea_pipeline_ctrl_7_down_isValid;
   wire                coreArea_pipeline_ctrl_4_up_isCancel;
@@ -786,10 +784,12 @@ module CPU (
   reg                 _zz_coreArea_lsu_logic_misaligned;
   wire                coreArea_lsu_logic_localTrap;
   wire       [2:0]    coreArea_lsu_logic_byteOffset;
+  wire       [7:0]    coreArea_lsu_logic_rawWriteMask;
+  reg        [7:0]    _zz_coreArea_lsu_logic_rawWriteMask;
   wire       [7:0]    coreArea_lsu_logic_writeMask;
-  reg        [7:0]    _zz_coreArea_lsu_logic_writeMask;
+  wire       [63:0]   coreArea_lsu_logic_rawStoreData;
+  reg        [63:0]   _zz_coreArea_lsu_logic_rawStoreData;
   wire       [63:0]   coreArea_lsu_logic_storeData;
-  reg        [63:0]   _zz_coreArea_lsu_logic_storeData;
   reg        [3:0]    coreArea_currentEpoch;
   wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l144;
   wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l144;
@@ -978,12 +978,10 @@ module CPU (
   assign _zz_coreArea_lsu_logic_effectiveAddr = ($signed(_zz_coreArea_lsu_logic_effectiveAddr_1) + $signed(_zz_coreArea_lsu_logic_effectiveAddr_2));
   assign _zz_coreArea_lsu_logic_effectiveAddr_1 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
   assign _zz_coreArea_lsu_logic_effectiveAddr_2 = coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
-  assign _zz__zz_coreArea_lsu_logic_storeData = ({127'd0,coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[7 : 0]} <<< _zz__zz_coreArea_lsu_logic_storeData_1);
-  assign _zz__zz_coreArea_lsu_logic_storeData_1 = (coreArea_lsu_logic_byteOffset * 4'b1000);
-  assign _zz__zz_coreArea_lsu_logic_storeData_2 = ({127'd0,coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[15 : 0]} <<< _zz__zz_coreArea_lsu_logic_storeData_3);
-  assign _zz__zz_coreArea_lsu_logic_storeData_3 = (coreArea_lsu_logic_byteOffset * 4'b1000);
-  assign _zz__zz_coreArea_lsu_logic_storeData_4 = ({127'd0,coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[31 : 0]} <<< _zz__zz_coreArea_lsu_logic_storeData_5);
-  assign _zz__zz_coreArea_lsu_logic_storeData_5 = (coreArea_lsu_logic_byteOffset * 4'b1000);
+  assign _zz__zz_coreArea_lsu_logic_rawStoreData = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[7 : 0];
+  assign _zz__zz_coreArea_lsu_logic_rawStoreData_1 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[15 : 0];
+  assign _zz__zz_coreArea_lsu_logic_rawStoreData_2 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2[31 : 0];
+  assign _zz_coreArea_lsu_logic_storeData = ({3'd0,coreArea_lsu_logic_byteOffset} <<< 2'd3);
   assign _zz_coreArea_rvfiPlugin_io_rvfi_pc_wdata = (coreArea_pipeline_ctrl_7_up_PC_PC + 64'h0000000000000004);
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID = 32'h0000407f;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 = (coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000207f);
@@ -2798,55 +2796,57 @@ module CPU (
   assign coreArea_lsu_logic_localTrap = (coreArea_lsu_logic_misaligned && LSU_isStore);
   assign coreArea_lsu_logic_byteOffset = coreArea_lsu_logic_effectiveAddr[2 : 0];
   always @(*) begin
-    _zz_coreArea_lsu_logic_writeMask = 8'bxxxxxxxx;
+    _zz_coreArea_lsu_logic_rawWriteMask = 8'bxxxxxxxx;
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
       MicroCode_uopSB : begin
-        _zz_coreArea_lsu_logic_writeMask = (8'h01 <<< coreArea_lsu_logic_byteOffset);
+        _zz_coreArea_lsu_logic_rawWriteMask = 8'h01;
       end
       MicroCode_uopSH : begin
-        _zz_coreArea_lsu_logic_writeMask = (8'h03 <<< coreArea_lsu_logic_byteOffset);
+        _zz_coreArea_lsu_logic_rawWriteMask = 8'h03;
       end
       MicroCode_uopSW : begin
-        _zz_coreArea_lsu_logic_writeMask = (8'h0f <<< coreArea_lsu_logic_byteOffset);
+        _zz_coreArea_lsu_logic_rawWriteMask = 8'h0f;
       end
       MicroCode_uopSD : begin
-        _zz_coreArea_lsu_logic_writeMask = 8'hff;
+        _zz_coreArea_lsu_logic_rawWriteMask = 8'hff;
       end
       default : begin
       end
     endcase
   end
 
-  assign coreArea_lsu_logic_writeMask = _zz_coreArea_lsu_logic_writeMask;
+  assign coreArea_lsu_logic_rawWriteMask = _zz_coreArea_lsu_logic_rawWriteMask;
+  assign coreArea_lsu_logic_writeMask = (coreArea_lsu_logic_rawWriteMask <<< coreArea_lsu_logic_byteOffset);
   always @(*) begin
-    _zz_coreArea_lsu_logic_storeData = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
+    _zz_coreArea_lsu_logic_rawStoreData = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
       MicroCode_uopSB : begin
-        _zz_coreArea_lsu_logic_storeData = _zz__zz_coreArea_lsu_logic_storeData[63:0];
+        _zz_coreArea_lsu_logic_rawStoreData = {56'd0, _zz__zz_coreArea_lsu_logic_rawStoreData};
       end
       MicroCode_uopSH : begin
-        _zz_coreArea_lsu_logic_storeData = _zz__zz_coreArea_lsu_logic_storeData_2[63:0];
+        _zz_coreArea_lsu_logic_rawStoreData = {48'd0, _zz__zz_coreArea_lsu_logic_rawStoreData_1};
       end
       MicroCode_uopSW : begin
-        _zz_coreArea_lsu_logic_storeData = _zz__zz_coreArea_lsu_logic_storeData_4[63:0];
+        _zz_coreArea_lsu_logic_rawStoreData = {32'd0, _zz__zz_coreArea_lsu_logic_rawStoreData_2};
       end
       MicroCode_uopSD : begin
-        _zz_coreArea_lsu_logic_storeData = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
+        _zz_coreArea_lsu_logic_rawStoreData = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
       end
       default : begin
       end
     endcase
   end
 
-  assign coreArea_lsu_logic_storeData = _zz_coreArea_lsu_logic_storeData;
+  assign coreArea_lsu_logic_rawStoreData = _zz_coreArea_lsu_logic_rawStoreData;
+  assign coreArea_lsu_logic_storeData = (coreArea_lsu_logic_rawStoreData <<< _zz_coreArea_lsu_logic_storeData);
   assign coreArea_lsu_io_dBus_cmd_valid = (((LSU_isStore && coreArea_pipeline_ctrl_6_up_Decoder_VALID) && coreArea_pipeline_ctrl_6_up_Common_LANE_SEL) && (! coreArea_lsu_logic_misaligned));
   assign coreArea_lsu_io_dBus_cmd_payload_address = coreArea_lsu_logic_effectiveAddr;
   assign coreArea_lsu_io_dBus_cmd_payload_data = coreArea_lsu_logic_storeData;
   assign coreArea_lsu_io_dBus_cmd_payload_mask = coreArea_lsu_logic_writeMask;
   assign coreArea_lsu_io_dBus_cmd_payload_write = 1'b1;
   assign coreArea_pipeline_ctrl_6_down_LSU_MEM_ADDR = ((coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU && LSU_isStore) ? coreArea_lsu_logic_effectiveAddr : 64'h0);
-  assign coreArea_pipeline_ctrl_6_down_LSU_MEM_WDATA = (((coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU && LSU_isStore) && (! coreArea_lsu_logic_misaligned)) ? coreArea_lsu_logic_storeData : 64'h0);
-  assign coreArea_pipeline_ctrl_6_down_LSU_MEM_WMASK = ((LSU_isStore && (! coreArea_lsu_logic_misaligned)) ? coreArea_lsu_logic_writeMask : 8'h0);
+  assign coreArea_pipeline_ctrl_6_down_LSU_MEM_WDATA = (((coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU && LSU_isStore) && (! coreArea_lsu_logic_misaligned)) ? coreArea_lsu_logic_rawStoreData : 64'h0);
+  assign coreArea_pipeline_ctrl_6_down_LSU_MEM_WMASK = ((LSU_isStore && (! coreArea_lsu_logic_misaligned)) ? coreArea_lsu_logic_rawWriteMask : 8'h0);
   assign coreArea_pipeline_ctrl_6_down_LSU_MEM_RMASK = 8'h0;
   assign coreArea_pipeline_ctrl_6_down_LSU_MEM_RDATA = 64'h0;
   assign io_dBus_cmd_valid = coreArea_lsu_io_dBus_cmd_valid;
