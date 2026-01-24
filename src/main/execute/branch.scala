@@ -95,11 +95,6 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
         // Squash writeback if trapping
         down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
       }
-      when(up(MicroCode) === uopAUIPC) {
-        down(RESULT).address := up(RD_ADDR).asUInt
-        down(RESULT).data := (pcValue + imm).asBits
-        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID)
-      }
     }
   }
 }

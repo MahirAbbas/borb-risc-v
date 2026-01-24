@@ -19,6 +19,30 @@ module rvfi_wrapper (
     (* keep *) `rvformal_rand_reg [63:0] ibus_resp_addr;
     (* keep *) `rvformal_rand_reg [15:0] ibus_resp_id;
 
+    (* keep *) `rvformal_rand_reg        ibus_cmd_ready;
+    (* keep *) `rvformal_rand_reg        dbus_cmd_ready;
+    (* keep *) `rvformal_rand_reg        dbus_rsp_valid;
+    (* keep *) `rvformal_rand_reg [63:0] dbus_rsp_data;
+    
+    // Capture the command ID when a load fires, so response ID always matches
+    // This removes ID mismatch complexity from formal verification
+    wire        dbus_cmd_valid_internal;
+    wire [15:0] dbus_cmd_id_internal;
+    wire        dbus_cmd_write_internal;
+    reg  [15:0] dbus_pending_id;
+    
+    always @(posedge clock) begin
+        if (reset) begin
+            dbus_pending_id <= 16'd0;
+        end else if (dbus_cmd_valid_internal && dbus_cmd_ready && !dbus_cmd_write_internal) begin
+            // Capture ID when a load command is accepted
+            dbus_pending_id <= dbus_cmd_id_internal;
+        end
+    end
+    
+    // Response ID is always the pending ID (no random mismatch)
+    wire [15:0] dbus_rsp_id = dbus_pending_id;
+
     
     CPU cpu (
         .io_clk       (clock),
@@ -53,7 +77,7 @@ module rvfi_wrapper (
         
         // Ignored IOs
         .io_iBus_cmd_valid  (),
-        .io_iBus_cmd_ready  (1'b1),
+        .io_iBus_cmd_ready  (ibus_cmd_ready),
         .io_iBus_cmd_payload_address (),
         .io_iBus_cmd_payload_id      (),
         .io_iBus_rsp_valid  (ibus_resp_valid),
@@ -61,14 +85,17 @@ module rvfi_wrapper (
         .io_iBus_rsp_payload_address (ibus_resp_addr),
         .io_iBus_rsp_payload_id     (ibus_resp_id),
 
-        // Data Bus (dBus) - Added for LSU
-        .io_dBus_cmd_valid          (),
+        // Data Bus (dBus) - ID tracking for guaranteed response matching
+        .io_dBus_cmd_valid          (dbus_cmd_valid_internal),
+        .io_dBus_cmd_ready          (dbus_cmd_ready),
         .io_dBus_cmd_payload_address(),
         .io_dBus_cmd_payload_data   (),
         .io_dBus_cmd_payload_mask   (),
-        .io_dBus_cmd_payload_write  (),
-        .io_dBus_rsp_valid          (1'b0), // No responses in formal check unless modeled
-        .io_dBus_rsp_payload_data   (64'b0),
+        .io_dBus_cmd_payload_write  (dbus_cmd_write_internal),
+        .io_dBus_cmd_payload_id     (dbus_cmd_id_internal),
+        .io_dBus_rsp_valid          (dbus_rsp_valid),
+        .io_dBus_rsp_payload_data   (dbus_rsp_data),
+        .io_dBus_rsp_payload_id     (dbus_rsp_id),
         
         .io_dbg_commitValid (),
         .io_dbg_commitPc    (),

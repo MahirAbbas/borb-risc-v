@@ -78,7 +78,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
     io.rvfi.rs1_addr := up(Decoder.RS1_ADDR).asUInt
     io.rvfi.rs2_addr := up(Decoder.RS2_ADDR).asUInt
 
-    // CAPTURED operands from SrcPlugin
+    // Source operands from SrcPlugin (x0 masking is enforced in SrcPlugin's regfile read)
     io.rvfi.rs1_rdata := up(SrcPlugin.RS1)
     io.rvfi.rs2_rdata := up(SrcPlugin.RS2)
 

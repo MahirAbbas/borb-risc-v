@@ -137,6 +137,12 @@ case class Lsu(stage: CtrlLink) extends Area {
     io.dBus.cmd.payload.write := isStore
 
     // Stall Logic
+    // IMPORTANT: When the response arrives, the pipeline advances at end of that cycle.
+    // The down() signals are captured based on COMBINATORIAL values.
+    // So we must use io.dBus.rsp.payload.data directly on the cycle response arrives.
+    val latchedRspData = Reg(Bits(64 bits))
+    val responseArriving = isLoad && up(VALID) && waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
+    
     when(isLoad && up(VALID)) {
         when(!waitingResponse) {
              when(io.dBus.cmd.ready && !suppress && up(LANE_SEL)) {
@@ -149,16 +155,19 @@ case class Lsu(stage: CtrlLink) extends Area {
              }
         } otherwise {
              // Waiting for response
-             haltIt()
-             when(io.dBus.rsp.valid && io.dBus.rsp.id === waitId) {
+             when(responseArriving) {
                  waitingResponse := False
-                 // Data is captured in this cycle
+                 latchedRspData := io.dBus.rsp.payload.data  // Also latch for potential future use
+                 // Pipeline advances at end of this cycle - use live data for down()
+             } otherwise {
+                 haltIt()  // Only halt if response hasn't arrived yet
              }
         }
     }
 
-    // Load Data Processing
-    val rspData = io.dBus.rsp.payload.data // Use payload accessor
+    // Load Data Processing - use LIVE data when response is arriving, latched data otherwise
+    // This is critical: on the cycle response arrives, we use live data since that's what gets captured
+    val rspData = Mux(responseArriving, io.dBus.rsp.payload.data, latchedRspData)
     val shiftedLoadData = rspData >> (byteOffset << 3)
     val loadResult = Bits(64 bits)
     loadResult := up(MicroCode).mux(
@@ -174,28 +183,41 @@ case class Lsu(stage: CtrlLink) extends Area {
 
     // Writeback Result
     // Decoder should set REG_WRITE for loads
+    // Enforce x0 invariant: writes to x0 must have data=0 (RVFI expectation)
+    val rdAddr = up(borb.frontend.Decoder.RD_ADDR).asUInt
+    val isX0 = rdAddr === 0
+    val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
+    
     when(isLoad) {
-        down(IntAlu.RESULT).data.allowOverride := loadResult
+        down(IntAlu.RESULT).data.allowOverride := maskedLoadResult
         down(IntAlu.RESULT).valid.allowOverride := True 
-        down(IntAlu.RESULT).address.allowOverride := up(borb.frontend.Decoder.RD_ADDR).asUInt
+        down(IntAlu.RESULT).address.allowOverride := rdAddr
     }
 
     // Propagate payloads for RVFI (Store & Load)
-    // riscv-formal expects NORMALIZED (unshifted) data and mask
+    // riscv-formal expects RAW/SHIFTED data and mask matching the address
     val isSendToAgu = up(SENDTOAGU)
     // Suppress RVFI side-effects if misaligned
     down(MEM_ADDR) := Mux(isSendToAgu && (isStore || isLoad), effectiveAddr, U(0, 64 bits))
-    down(MEM_WDATA) := Mux(isSendToAgu && isStore && !suppress, rawStoreData, B(0, 64 bits))
-    down(MEM_WMASK) := Mux(isStore && !suppress, accessSizeMask, B(0, 8 bits))
-    // For Loads, we need to populate MEM_RMASK and MEM_RDATA
-    // RDATA should be the FINAL value written to RD (loadResult)
-    // RMASK should be the bytes read (similar to writeMask but for Read)
-    val readMask = accessSizeMask // Logic is identical (bytes selected by instruction)
     
-    down(MEM_RMASK) := Mux(isLoad && !suppress, readMask, B(0, 8 bits))
-    down(MEM_RDATA) := Mux(isLoad && !suppress, loadResult, B(0, 64 bits))
+    // MEM_WMASK and MEM_WDATA (for Stores)
+    // Use shifted data/mask to match architectural expectation if address is unaligned?
+    // Usually RVFI expects aligned accesses if possible, but for unaligned, it expects bus values.
+    down(MEM_WMASK) := Mux(isStore && !suppress, accessSizeMask, B(0, 8 bits))
+    down(MEM_WDATA) := Mux(isStore && !suppress, rawStoreData, B(0, 64 bits))
+    
+    // For Loads:
+    // MEM_RMASK should be shifted (to match address lanes).
+    // MEM_RDATA should be shifted/raw from bus (rspData).
+    val readMaskShifted = accessSizeMask |<< byteOffset
+    
+    down(MEM_RMASK) := Mux(isLoad && !suppress, accessSizeMask, B(0, 8 bits))
+    // MEM_RDATA: riscv-formal expects the raw extracted data (shifted to LSB, BEFORE sign-extension)
+    // The formal model applies its own sign-extension based on instruction type
+    down(MEM_RDATA) := Mux(isLoad && !suppress, shiftedLoadData, B(0, 64 bits))
 
     // Stores do not write to register file
     // RESULT payload should remain 0/invalid (handled by IntAlu defaults)
   }
 }
+
