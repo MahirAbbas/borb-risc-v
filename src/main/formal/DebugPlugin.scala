@@ -35,7 +35,7 @@ case class DebugPlugin(wbStage: CtrlLink) extends Area {
     io.dbg.commitPc := up(PC.PC)
     io.dbg.commitInsn := up(Decoder.INSTRUCTION)
 
-    val result = up(IntAlu.RESULT)
+    val result = up(borb.execute.WriteBack.RESULT)
     io.dbg.commitRd := result.valid ? result.address | U(0, 5 bits)
     io.dbg.commitWe := result.valid && up(
       COMMIT

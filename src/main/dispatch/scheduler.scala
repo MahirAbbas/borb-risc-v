@@ -12,7 +12,6 @@ import borb.frontend.ExecutionUnitEnum
 // import borb.frontend.AluOp
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
-import borb.execute.IntAlu.RESULT
 import scala.collection.mutable.ArrayBuffer
 import borb.common.MicroCode.uopADDI
 
@@ -190,8 +189,8 @@ case class Dispatch(
       }
 
       val wbStage = hzRange.last
-      val wbValid = wbStage(RESULT).valid
-      val wbRd = wbStage(RESULT).address
+      val wbValid = wbStage(borb.execute.WriteBack.RESULT).valid
+      val wbRd = wbStage(borb.execute.WriteBack.RESULT).address
 
       // Only clear busy when writeback actually commits (fires)
       when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {

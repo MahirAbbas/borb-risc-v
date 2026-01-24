@@ -7,6 +7,7 @@ import borb.frontend.Decoder._
 import borb.dispatch.SrcPlugin._
 import borb.common.MicroCode._
 import borb.common.Common._
+import borb.dispatch.RegFileWrite
 
 // Data Bus Command for Store operations
 case class DataBusCmd(addressWidth: Int, dataWidth: Int, idWidth: Int) extends Bundle {
@@ -43,9 +44,13 @@ object Lsu extends AreaObject {
   val MEM_RDATA = Payload(Bits(64 bits)).setName("LSU_MEM_RDATA")
 }
 
-case class Lsu(stage: CtrlLink) extends Area {
+case class Lsu(stage: CtrlLink) extends Area with FunctionalUnit {
   import Lsu._
   import borb.dispatch.Dispatch._
+  
+  def getWriteback(): Option[(Bool, RegFileWrite)] = {
+      None
+  }
 
   val io = new Bundle {
     val dBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
@@ -189,9 +194,9 @@ case class Lsu(stage: CtrlLink) extends Area {
     val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
     
     when(isLoad) {
-        down(IntAlu.RESULT).data.allowOverride := maskedLoadResult
-        down(IntAlu.RESULT).valid.allowOverride := True 
-        down(IntAlu.RESULT).address.allowOverride := rdAddr
+        down(WriteBack.RESULT).data.allowOverride := maskedLoadResult
+        down(WriteBack.RESULT).valid.allowOverride := True 
+        down(WriteBack.RESULT).address.allowOverride := rdAddr
     }
 
     // Propagate payloads for RVFI (Store & Load)

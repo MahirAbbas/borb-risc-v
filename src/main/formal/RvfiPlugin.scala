@@ -82,7 +82,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
     io.rvfi.rs1_rdata := up(SrcPlugin.RS1)
     io.rvfi.rs2_rdata := up(SrcPlugin.RS2)
 
-    val result = up(IntAlu.RESULT)
+    val result = up(borb.execute.WriteBack.RESULT)
     // Retire Packet Logic for RD
     // If result.valid is set, it writes to RD.
 

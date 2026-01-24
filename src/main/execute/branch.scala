@@ -12,16 +12,21 @@ import borb.common.Common._
 import borb.common.MicroCode._
 import borb.dispatch.SrcPlugin._
 import borb.dispatch.Dispatch._
-import borb.execute.IntAlu.RESULT
 import borb.frontend.YESNO
+import borb.dispatch.RegFileWrite
 
 object Branch extends AreaObject {
   val BRANCH_TAKEN = Payload(Bool())
   val BRANCH_TARGET = Payload(UInt(64 bits))
 }
 
-case class Branch(node : CtrlLink, pc : PC) extends Area {
+case class Branch(node : CtrlLink, pc : PC) extends Area with FunctionalUnit {  
   import Branch._
+
+  def getWriteback(): Option[(Bool, RegFileWrite)] = {
+      None
+  }
+
   val branchResolved = Bool()
   val logic = new node.Area {
     val src1 = up(RS1).asSInt
@@ -90,10 +95,10 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     when(up(LANE_SEL) && up(SENDTOBRANCH)) {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
-        down(RESULT).address := up(RD_ADDR).asUInt
-        down(RESULT).data := isX0 ? B(0, 64 bits) | (pcValue + 4).asBits
+        down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
+        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcValue + 4).asBits
         // Squash writeback if trapping
-        down(RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
+        down(WriteBack.RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
       }
     }
   }

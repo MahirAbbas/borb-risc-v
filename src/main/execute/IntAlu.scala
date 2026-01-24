@@ -12,18 +12,24 @@ import borb.frontend.ExecutionUnitEnum.ALU
 import borb.dispatch._
 import borb.common.MicroCode._
 import borb.common.Common._
+import spinal.lib.misc.plugin.FiberPlugin
 
 object IntAlu extends AreaObject {
-  val RESULT = Payload(new RegFileWrite())
+  // val RESULT = Payload(new RegFileWrite())
 
 }
-case class IntAlu(aluNode: CtrlLink) extends Area {
+case class IntAlu(aluNode: CtrlLink) extends FiberPlugin with FunctionalUnit {
   import IntAlu._
   val SRC1 = borb.dispatch.SrcPlugin.RS1
   val SRC2 = borb.dispatch.SrcPlugin.RS2
 
   // override val FUType = borb.frontend.ExecutionUnitEnum.ALU
   // import borb.execute.Execute._
+
+  def getWriteback(): Option[(Bool, RegFileWrite)] = {
+      // Placeholder for future phase
+      None 
+  }
 
   val aluNodeStage = new aluNode.Area {
     import borb.dispatch.Dispatch._
@@ -69,9 +75,9 @@ case class IntAlu(aluNode: CtrlLink) extends Area {
       )
     }
 
-    down(RESULT).address := 0
-    down(RESULT).data := 0
-    down(RESULT).valid := False
+    down(WriteBack.RESULT).address := 0
+    down(WriteBack.RESULT).data := 0
+    down(WriteBack.RESULT).valid := False
 
     // Only drive result if this instruction is dispatched to ALU
     when(up(VALID) === True && up(SENDTOALU)) {
@@ -79,9 +85,9 @@ case class IntAlu(aluNode: CtrlLink) extends Area {
       // Enforce x0 invariant: writes to x0 must have 0 data (architecturally).
       // This ensures RVFI sees the correct "ignore" behavior.
       val isX0 = up(RD_ADDR).asUInt === 0
-      down(RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
-      down(RESULT).address := up(RD_ADDR).asUInt
-      down(RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID)
+      down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
+      down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
+      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID)
     }
   }
 }

@@ -2,53 +2,19 @@ package borb.execute
 
 import spinal.core._
 import spinal.lib._
-// import borb.frontend.AluOp
+import spinal.lib.misc.pipeline._
+import borb.dispatch.RegFileWrite
 import scala.collection.mutable.ArrayBuffer
-import spinal.lib.misc.plugin.FiberPlugin
-import spinal.core.fiber.Fiber
-import borb.dispatch._
-import _root_.borb.common.MicroCode
-import _root_.borb.frontend.Decoder.RD_ADDR
-import spinal.lib.misc.pipeline.CtrlLink
+import spinal.lib.misc.plugin._
 
-// trait FunctionalUnit {
-//   val supportedUOPS: ArrayBuffer[MicroCode.E]
-//   def getUops: ArrayBuffer[MicroCode.E]
-//   // def add: MicroCode.E
-//   def add(op: MicroCode.E): Unit = {
-//     supportedUOPS += op
-//   }
-//
-//   val sel = Bool()
-// }
+trait FunctionalUnit {
+  // Marker trait for Functional Units
+  def getWriteback(): Option[(Bool, RegFileWrite)]
+}
 
-// trait ExecutionUnitTemplate {
-//   val sel = Bool()
-//   val functionalUnits = ArrayBuffer[FunctionalUnit]()
-//
-//   def getFUs: ArrayBuffer[FunctionalUnit] = functionalUnits
-//
-//   def add(fu: FunctionalUnit): Unit = {
-//     functionalUnits += fu
-//   }
-//
-//   // def writeBack(data: Bits): Unit
-//   // def getRegfile: Unit
-//
-// }
+class ExecutionUnit(executeStage: CtrlLink, writebackStage: CtrlLink, writePort: RegFileWrite, fus: Seq[FunctionalUnit]) extends FiberPlugin {
 
-// trait writeBackService {
-//   def createPort: Unit
-// }
-
-// class ExecutionUnit() extends Area with ExecutionUnitTemplate {
-//   val io = new Bundle {
-//     val regWrite = (new RegFileWrite())
-//   }
-//
-//
-//
-//   // override def writeBack(data: Bits): Unit = {
-//   //   writeback.write(data)
-//   // }
-// }
+  // Instantiate WriteBack service
+  // This reads WriteBack.RESULT from the writebackStage and drives the register file write port
+  val writeback = new WriteBack(writebackStage, writePort)
+}

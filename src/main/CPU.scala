@@ -16,6 +16,7 @@ import borb.formal._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
 import borb.core.CpuConfig
+import spinal.lib.misc.plugin.PluginHost
 
 object CPU {
   def main(args: Array[String]) {
@@ -44,6 +45,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     )).simPublic()
     val rvfi = out(Rvfi()).simPublic()
     val dbg = out(Dbg())
+    val perf = out(borb.core.PerfCountersBundle())
   }
 
   // We use a ClockingArea to handle the provided clock/reset
@@ -167,69 +169,47 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     debugPlugin.io.dbg.d_pc := pipeline.ctrl(3)(PC.PC) // Decode
     debugPlugin.io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
 
+    // Performance counters
+    val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
+    io.perf := perfCounters.counters
+    
+    // Wire event signals to performance counters
+    perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
+    perfCounters.fetchStall     := !fetch.fifo.io.pop.valid       // Fetch stalled waiting for instruction
+    perfCounters.memStall       := lsu.logic.waitingResponse     // Waiting for load response
+    perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
+    perfCounters.branchTaken    := branch.logic.doJump
+    perfCounters.pipelineFlush  := flushPipeline
+
     val write = pipeline.ctrl(7)
     //val dispCtrl = pipeline.ctrl(4)
 
+    import borb.execute.ExecutionUnit
+    val executionUnit = new ExecutionUnit(
+      pipeline.ctrl(6), 
+      pipeline.ctrl(7), 
+      srcPlugin.regfileread.regfile.io.writes(0),
+      Seq(intalu, lsu, branch)
+    )
+    // executionUnit.add(intalu)
+    // executionUnit.add(lsu)
+    // executionUnit.add(branch)
+
     import borb.execute.WriteBack
-    val writeback =
-      new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writer)
+    // val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0))
     val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
       fetch.io.readCmd.simPublic()
       pc.PC_cur.simPublic()
 
-      val readHere = new Area {
-        import borb.common.Common._
-        val valid          = up(borb.frontend.Decoder.VALID) 
-        val immed          = up(borb.dispatch.SrcPlugin.IMMED)
-        val sendtoalu      = up(borb.dispatch.Dispatch.SENDTOALU)
-        val result         = up(borb.execute.IntAlu.RESULT).data
-        val valid_result   = up(borb.execute.IntAlu.RESULT).valid
-        val rdaddr         = up(borb.execute.IntAlu.RESULT).address
-        val lane_sel       = up(LANE_SEL)
-        val commit         = up(COMMIT)
-        val specEpoch      = up(SPEC_EPOCH)  // Replaced MAY_FLUSH with SPEC_EPOCH
-        val pc             = up(PC.PC)
-        
-        valid.simPublic()
-        immed.simPublic()
-        sendtoalu.simPublic()
-        result.simPublic()
-        valid_result.simPublic()
-        rdaddr.simPublic()
-        lane_sel.simPublic()
-        commit.simPublic()
-        specEpoch.simPublic()
-        pc.simPublic()
-        
-        // Debug signals
-        pipeline.ctrls.foreach { case (id, ctrl) =>
-           ctrl.isValid.simPublic()
-           ctrl.down.isFiring.simPublic()
-        }
-        pipeline.ctrl(3).up(PC.PC).simPublic() // Decode
-        pipeline.ctrl(4).up(PC.PC).simPublic() // Dispatch
-        pipeline.ctrl(5).up(PC.PC).simPublic() // Src
-        pipeline.ctrl(6).up(PC.PC).simPublic() // Ex
-        
-        dispatcher.hcs.regBusy.simPublic()
-        branch.logic.jumpCmd.valid.simPublic()
-        branch.logic.pcValue.simPublic()
-        branch.logic.target.simPublic()
-        
-        // Epoch debug signals (replaced MAY_FLUSH)
-        pipeline.ctrl(6).up(borb.common.Common.SPEC_EPOCH).simPublic()
-        pipeline.ctrl(6).up(borb.frontend.Decoder.MicroCode).simPublic()
-        pipeline.ctrl(5).up(borb.common.Common.SPEC_EPOCH).simPublic()
-        
-        // Fetch debug
-        fetch.inflight.simPublic()
-        fetch.epoch.simPublic()
-        fetch.fifo.io.availability.simPublic()
-        fetch.io.readCmd.cmd.valid.simPublic()
-        fetch.io.readCmd.rsp.valid.simPublic()
-      }
+      val simDebug = new borb.formal.SimDebugPlugin(
+        write,
+        pipeline,
+        dispatcher,
+        branch,
+        fetch
+      )
     }
 
     // Connect Fetch to External Memory Bus

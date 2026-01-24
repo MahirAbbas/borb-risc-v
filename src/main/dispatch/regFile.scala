@@ -32,10 +32,7 @@ object IntRegFile extends AreaObject {
   val RegFile_RS1 = Payload(Bits(64 bits))
   val RegFile_RS2 = Payload(Bits(64 bits))
 }
-
-case class IntRegFile(dataWidth: Int) extends Component {
-
-  // val readers: ArrayBuffer[RegFileRead] = ArrayBuffer(RegFileRead())
+ // val readers: ArrayBuffer[RegFileRead] = ArrayBuffer(RegFileRead())
   // val writers: ArrayBuffer[RegFileWrite] = ArrayBuffer(RegFileWrite())
   //
   // def newRead() = {
@@ -49,38 +46,25 @@ case class IntRegFile(dataWidth: Int) extends Component {
   //   val reads = Vec(readers.map(e => slave(new RegFileRead())))
   //   val writes = Vec(writers.map(e => slave(new RegFileWrite())))
   // }
+case class IntRegFile(dataWidth: Int, readPorts: Int = 2, writePorts: Int = 1) extends Component {
 
   val io = new Bundle {
-    val readerRS1 = slave(new RegFileRead())
-    val readerRS2 = slave(new RegFileRead())
-    val writer = slave(new RegFileWrite())
+    val reads = Vec(slave(new RegFileRead()), readPorts)
+    val writes = Vec(slave(new RegFileWrite()), writePorts)
   }
   io.simPublic()
+  
   val mem = Mem.fill(32)(Bits(dataWidth bits)).simPublic()
 
-  // io.readerRS1.data := mem.readSync(address = io.readerRS1.address, enable = io.readerRS1.valid)
-  // io.readerRS2.data := mem.readSync(address = io.readerRS2.address, enable = io.readerRS2.valid)
-  io.readerRS1.data := (io.readerRS1.address === 0) ? B(0, dataWidth bits) | mem.readAsync(address = io.readerRS1.address)
-  io.readerRS2.data := (io.readerRS2.address === 0) ? B(0, dataWidth bits) | mem.readAsync(address = io.readerRS2.address)
-
-  when(io.writer.valid && io.writer.address =/= 0) {
-    mem.write(address = io.writer.address, data = io.writer.data)
+  // Read logic: x0 always returns 0
+  for (port <- io.reads) {
+    port.data := (port.address === 0) ? B(0, dataWidth bits) | mem.readAsync(port.address)
   }
 
-
-  // Read logic
-  // for (port <- io.reads) {
-  //   when(port.address === 0) {
-  //     port.data := 0
-  //   } otherwise {
-  //     port.data := mem.readAsync(port.address)
-  //   }
-  // }
-  //
-  // // Write logic
-  // for (w <- io.writes) {
-  //   when(w.valid && w.address =/= 0) {
-  //     mem.write(w.address, w.data)
-  //   }
-  // }
+  // Write logic: x0 writes are ignored
+  for (w <- io.writes) {
+    when(w.valid && w.address =/= 0) {
+      mem.write(w.address, w.data)
+    }
+  }
 }

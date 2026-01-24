@@ -22,7 +22,7 @@ case class PerfCountersBundle() extends Bundle {
   * Performance monitoring plugin.
   * 
   * Contains internal 64-bit registers for each counter.
-  * Exposes read-only output port for external observation.
+  * Exposes signals for event input and counter output.
   */
 case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   import borb.common.Common._
@@ -37,8 +37,6 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val branchesTaken = Reg(UInt(64 bits)) init 0
   val flushes       = Reg(UInt(64 bits)) init 0
   
-  // Increment logic - wired from pipeline signals
-  
   // cycles: always increments
   cycles := cycles + 1
   
@@ -49,35 +47,31 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
     }
   }
   
-  // Inputs for other counters (to be wired from CPU)
-  val io = new Bundle {
-    // Event inputs
-    val hazardStall   = in Bool()
-    val fetchStall    = in Bool()
-    val memStall      = in Bool()
-    val branchExecuted = in Bool()
-    val branchTaken   = in Bool()
-    val pipelineFlush = in Bool()
-    
-    // Output bundle
-    val counters = out(PerfCountersBundle())
-  }
+  // Event input signals (to be assigned from CPU)
+  val hazardStall    = Bool()
+  val fetchStall     = Bool()
+  val memStall       = Bool()
+  val branchExecuted = Bool()
+  val branchTaken    = Bool()
+  val pipelineFlush  = Bool()
   
   // Increment on events
-  when(io.hazardStall)    { stallsHazard  := stallsHazard + 1 }
-  when(io.fetchStall)     { stallsFetch   := stallsFetch + 1 }
-  when(io.memStall)       { stallsMem     := stallsMem + 1 }
-  when(io.branchExecuted) { branches      := branches + 1 }
-  when(io.branchTaken)    { branchesTaken := branchesTaken + 1 }
-  when(io.pipelineFlush)  { flushes       := flushes + 1 }
+  when(hazardStall)    { stallsHazard  := stallsHazard + 1 }
+  when(fetchStall)     { stallsFetch   := stallsFetch + 1 }
+  when(memStall)       { stallsMem     := stallsMem + 1 }
+  when(branchExecuted) { branches      := branches + 1 }
+  when(branchTaken)    { branchesTaken := branchesTaken + 1 }
+  when(pipelineFlush)  { flushes       := flushes + 1 }
   
-  // Wire registers to output bundle
-  io.counters.cycles        := cycles
-  io.counters.instret       := instret
-  io.counters.stallsHazard  := stallsHazard
-  io.counters.stallsFetch   := stallsFetch
-  io.counters.stallsMem     := stallsMem
-  io.counters.branches      := branches
-  io.counters.branchesTaken := branchesTaken
-  io.counters.flushes       := flushes
+  // Output bundle
+  val counters = PerfCountersBundle()
+  counters.cycles        := cycles
+  counters.instret       := instret
+  counters.stallsHazard  := stallsHazard
+  counters.stallsFetch   := stallsFetch
+  counters.stallsMem     := stallsMem
+  counters.branches      := branches
+  counters.branchesTaken := branchesTaken
+  counters.flushes       := flushes
 }
+

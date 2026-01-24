@@ -78,21 +78,21 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
     rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
 
-    regfile.io.readerRS1.address := rs1Reader.address
-    regfile.io.readerRS1.valid := rs1Reader.valid
+    regfile.io.reads(0).address := rs1Reader.address
+    regfile.io.reads(0).valid := rs1Reader.valid
     // Enforce x0 invariant: reads from x0 must be 0
     rs1Reader.data := (rs1Reader.address === 0) ? B(
       0,
       64 bits
-    ) | regfile.io.readerRS1.data
+    ) | regfile.io.reads(0).data
 
-    regfile.io.readerRS2.address := rs2Reader.address
-    regfile.io.readerRS2.valid := rs2Reader.valid
+    regfile.io.reads(1).address := rs2Reader.address
+    regfile.io.reads(1).valid := rs2Reader.valid
     // Enforce x0 invariant: reads from x0 must be 0
     rs2Reader.data := (rs2Reader.address === 0) ? B(
       0,
       64 bits
-    ) | regfile.io.readerRS2.data
+    ) | regfile.io.reads(1).data
 
   }
 
