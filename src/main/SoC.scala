@@ -106,7 +106,6 @@ case class SoC() extends Component {
 object SoC {
   def main(args: Array[String]) {
     val config = SpinalConfig(
-      targetDirectory = "formal/cores/borb",
       defaultConfigForClockDomains = ClockDomainConfig(
         resetKind = SYNC,
         resetActiveLevel = HIGH

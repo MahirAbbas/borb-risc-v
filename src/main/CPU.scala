@@ -15,6 +15,7 @@ import borb.dispatch.SrcPlugin._
 import borb.formal._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
+import borb.core.CpuConfig
 
 object CPU {
   def main(args: Array[String]) {
@@ -25,18 +26,22 @@ object CPU {
   }
 }
 
-case class CPU() extends Component {
+case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
   val io = new Bundle {
     val clk = in port Bool()
     val clkEnable = in port Bool()
     val reset = in port Bool()
-    val iBus = master(
-      new RamFetchBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
-    )
-    val dBus = master(
-      borb.execute.DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
-    ).simPublic()
+    val iBus = master(new RamFetchBus(
+      addressWidth = config.xlen, 
+      dataWidth = config.xlen, 
+      idWidth = config.fetchIdWidth
+    ))
+    val dBus = master(borb.execute.DataBus(
+      addressWidth = config.xlen,
+      dataWidth = config.xlen,
+      idWidth = config.dataIdWidth
+    )).simPublic()
     val rvfi = out(Rvfi()).simPublic()
     val dbg = out(Dbg())
   }
