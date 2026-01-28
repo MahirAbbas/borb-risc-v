@@ -21,7 +21,9 @@ BRANCH_CHECKS="insn_beq_ch0 insn_bne_ch0 insn_blt_ch0 insn_bge_ch0 insn_bltu_ch0
 STORE_CHECKS="insn_sb_ch0 insn_sh_ch0 insn_sw_ch0 insn_sd_ch0"
 LOAD_CHECKS="insn_lb_ch0 insn_lbu_ch0 insn_ld_ch0 insn_lh_ch0 insn_lhu_ch0 insn_lwu_ch0 insn_lw_ch0 "
 
-ALL_CHECKS="$ALU_CHECKS $BRANCH_CHECKS $STORE_CHECKS $LOAD_CHECKS"
+CONSISTENCY_CHECKS="reg_ch0 pc_fwd_ch0 pc_bwd_ch0 unique_ch0 causal_ch0 liveness_ch0"
+
+ALL_CHECKS="$ALU_CHECKS $BRANCH_CHECKS $STORE_CHECKS $LOAD_CHECKS $CONSISTENCY_CHECKS"
 
 # 4. Run checks
 echo "[3/3] Running Formal Checks..."

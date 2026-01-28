@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 9083df6da7bea67b2ab12f953082c0a13dec6b18
+// Git hash  : 0d9a6745fbcefe19a0a1dff11244dfb759d9c623
 
 `timescale 1ns/1ps
 
@@ -3771,6 +3771,9 @@ module IntRegFile (
   wire                when_regFile_l66;
   (* ram_style = "distributed" *) reg [63:0] mem [0:31];
 
+  initial begin
+    $readmemb("CPU.sv_toplevel_coreArea_srcPlugin_regfileread_regfile_mem.bin",mem);
+  end
   assign mem_spinal_port0 = mem[io_reads_0_address];
   assign mem_spinal_port1 = mem[io_reads_1_address];
   always @(posedge io_clk) begin

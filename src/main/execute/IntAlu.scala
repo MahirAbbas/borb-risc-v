@@ -67,9 +67,9 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       )
     }
 
-    down(WriteBack.RESULT).address := 0
-    down(WriteBack.RESULT).data := 0
-    down(WriteBack.RESULT).valid := False
+    down(WriteBack.RESULT).address.allowOverride := 0
+    down(WriteBack.RESULT).data.allowOverride := 0
+    down(WriteBack.RESULT).valid.allowOverride := False
 
     // Only drive result if this instruction is dispatched to ALU
     when(up(VALID) === True && up(SENDTOALU)) {

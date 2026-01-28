@@ -54,7 +54,7 @@ case class IntRegFile(dataWidth: Int, readPorts: Int = 2, writePorts: Int = 1) e
   }
   io.simPublic()
   
-  val mem = Mem.fill(32)(Bits(dataWidth bits)).simPublic()
+  val mem = Mem.fill(32)(Bits(dataWidth bits)).init(Seq.fill(32)(B(0, dataWidth bits)))
 
   // Read logic: x0 always returns 0
   for (port <- io.reads) {
