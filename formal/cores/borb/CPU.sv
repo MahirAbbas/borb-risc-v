@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 0d9a6745fbcefe19a0a1dff11244dfb759d9c623
+// Git hash  : 970e75e7d72200bedfdb07f49dbf2e42e3c1245a
 
 `timescale 1ns/1ps
 
@@ -880,6 +880,7 @@ module CPU (
   wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l148;
   wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l148;
   reg        [63:0]   coreArea_rvfiPlugin_order;
+  wire                coreArea_rvfiPlugin_wb_isCommitted;
   reg        [63:0]   coreArea_perfCounters_cycles;
   reg        [63:0]   coreArea_perfCounters_instret;
   reg        [63:0]   coreArea_perfCounters_stallsHazard;
@@ -3153,7 +3154,8 @@ module CPU (
   assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l142 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
   assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l148 = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l148 = coreArea_branch_logic_jumpCmd_valid;
-  assign coreArea_rvfiPlugin_io_rvfi_valid = coreArea_pipeline_ctrl_7_up_Common_COMMIT;
+  assign coreArea_rvfiPlugin_wb_isCommitted = (coreArea_pipeline_ctrl_7_up_Common_COMMIT && coreArea_pipeline_ctrl_7_down_isFiring);
+  assign coreArea_rvfiPlugin_io_rvfi_valid = coreArea_rvfiPlugin_wb_isCommitted;
   assign coreArea_rvfiPlugin_io_rvfi_order = coreArea_rvfiPlugin_order;
   assign coreArea_rvfiPlugin_io_rvfi_insn = coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
   assign coreArea_rvfiPlugin_io_rvfi_trap = coreArea_pipeline_ctrl_7_up_Common_TRAP;
@@ -3579,7 +3581,7 @@ module CPU (
         if(coreArea_branch_logic_jumpCmd_valid) begin
           coreArea_currentEpoch <= (coreArea_currentEpoch + 4'b0001);
         end
-        if(coreArea_pipeline_ctrl_7_up_Common_COMMIT) begin
+        if(coreArea_rvfiPlugin_wb_isCommitted) begin
           coreArea_rvfiPlugin_order <= (coreArea_rvfiPlugin_order + 64'h0000000000000001);
         end
         coreArea_perfCounters_cycles <= (coreArea_perfCounters_cycles + 64'h0000000000000001);

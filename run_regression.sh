@@ -5,11 +5,40 @@ set -e
 CORE_DIR="formal/cores/borb"
 CHECKS_DIR="$CORE_DIR/checks"
 
+# Parse arguments
+FAILED_ONLY=false
+SKIP_COMPILE=false
+
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --failed-only    Only run tests that failed in the previous run"
+    echo "  -h, --help       Show this help message"
+    exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --failed-only)
+            FAILED_ONLY=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "Unknown option: $1"
+            usage
+            ;;
+    esac
+done
+
 echo "=== Borb CPU Formal Regression ==="
 
 # 1. Regenerate Verilog from SpinalHDL source
-echo "[1/3] Compiling SpinalHDL to Verilog..."
-sbt "runMain borb.CPU"
+    echo "[1/3] Compiling SpinalHDL to Verilog..."
+    sbt "runMain borb.CPU"
 
 # 2. Re-generate formal checks (if needed, or just to be safe)
 echo "[2/3] Generating formal checks..."
@@ -25,19 +54,33 @@ CONSISTENCY_CHECKS="reg_ch0 pc_fwd_ch0 pc_bwd_ch0 unique_ch0 causal_ch0 liveness
 
 ALL_CHECKS="$ALU_CHECKS $BRANCH_CHECKS $STORE_CHECKS $LOAD_CHECKS $CONSISTENCY_CHECKS"
 
-# 4. Run checks
-echo "[3/3] Running Formal Checks..."
-echo "Targets: $ALL_CHECKS"
+# Determine which checks to run
+if [ "$FAILED_ONLY" = true ]; then
+    # Find previously failed tests
+    PREV_FAILED=$(find $CHECKS_DIR -name "FAIL" 2>/dev/null | while read f; do basename $(dirname "$f"); done | sort -u | tr '\n' ' ')
+    if [ -z "$PREV_FAILED" ]; then
+        echo "No previously failed tests found. Nothing to run."
+        exit 0
+    fi
+    CHECKS_TO_RUN="$PREV_FAILED"
+    echo "[3/3] Running previously failed checks only..."
+else
+    CHECKS_TO_RUN="$ALL_CHECKS"
+    echo "[3/3] Running Formal Checks..."
+fi
+
+echo "Targets: $CHECKS_TO_RUN"
 
 export PATH=$(pwd)/oss-cad-suite/bin:$PATH
 
-# Clean previous results for these specific checks
+# Clean previous results for checks we're about to run
 echo "Cleaning previous check results..."
-rm -rf $CHECKS_DIR/insn_*_ch0
+for check in $CHECKS_TO_RUN; do
+    rm -rf "$CHECKS_DIR/$check"
+done
 
-# Run make
 # Run make (ignore errors to let all run)
-make -C $CHECKS_DIR -j10 $ALL_CHECKS
+make -C $CHECKS_DIR -j10 $CHECKS_TO_RUN
 
 echo "=== Regression Results ==="
 FAILED_TESTS=$(find $CHECKS_DIR -name "FAIL" | sort)
@@ -52,3 +95,4 @@ else
     done
     exit 1
 fi
+

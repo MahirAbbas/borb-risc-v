@@ -20,10 +20,7 @@ case class CpuConfig(
   dataIdWidth: Int = 16,
   
   // Features
-  perfCountersEnabled: Boolean = true,
-  
-  // Formal verification
-  rvfiEnabled: Boolean = true
+  perfCountersEnabled: Boolean = true
 )
 
 object CpuConfig {

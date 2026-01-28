@@ -51,15 +51,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
   val order = Reg(UInt(64 bits)) init (0)
 
   val wb = new wbStage.Area {
-    // Valid gating: must be firing (no stall) and valid and committed
-    // We use COMMIT signal which we defined as the commit event.
-    // Also ensuring no TRAP (unless trap commits? Spec implies valid for trap instr).
-    // For now assuming normal retirement.
-    // User asked for "gated by reset" -> RegInit(0) for order handles it.
-    // rvfi_valid itself is combinatorial based on pipeline valid?
-    // If we want rvfi_valid=0 during reset, just ensure pipeline valid=0 during reset (Spinal default).
-
-    val isCommitted = up(COMMIT)
+    val isCommitted = up(COMMIT) && down.isFiring
 
     // Increment order on VALID commit
     when(isCommitted) {
