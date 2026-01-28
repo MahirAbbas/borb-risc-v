@@ -64,16 +64,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val pipeline = new StageCtrlPipeline()
     pipeline.ctrls.foreach(e => e._2.throwWhen(clockDomain.reset))
 
-    // Define Stages
-    // 0: PC
-    // 1: Fetch Cmd
-    // 2: Fetch Rsp
-    // 3: Decoder
-    // 4: Dispatch
-    // 5: SrcPlugin
-    // 6: IntAlu
-    // 7: Writeback
-    // Define Stages ...
     // Defaults for Execution Stages: LANE_SEL is False if not propagated (Bubble)
     import borb.common.Common._
     pipeline.ctrls.filter(_._1 >= 5).foreach { case (id, ctrl) =>
@@ -161,13 +151,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
 
-    val debugPlugin = new DebugPlugin(pipeline.ctrl(7))
+    val debugPlugin = new DebugPlugin(pipeline)
     io.dbg := debugPlugin.io.dbg
-
-    // Wire up PC signals from other stages for debug visibility
-    debugPlugin.io.dbg.f_pc := pipeline.ctrl(2)(PC.PC) // Fetch Rsp
-    debugPlugin.io.dbg.d_pc := pipeline.ctrl(3)(PC.PC) // Decode
-    debugPlugin.io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
 
     // Performance counters
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
@@ -184,19 +169,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val write = pipeline.ctrl(7)
     //val dispCtrl = pipeline.ctrl(4)
 
-    import borb.execute.ExecutionUnit
-    val executionUnit = new ExecutionUnit(
-      pipeline.ctrl(6), 
-      pipeline.ctrl(7), 
-      srcPlugin.regfileread.regfile.io.writes(0),
-      Seq(intalu, lsu, branch)
-    )
-    // executionUnit.add(intalu)
-    // executionUnit.add(lsu)
-    // executionUnit.add(branch)
-
     import borb.execute.WriteBack
-    // val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0))
+    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0))
     val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()

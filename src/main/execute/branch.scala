@@ -20,12 +20,8 @@ object Branch extends AreaObject {
   val BRANCH_TARGET = Payload(UInt(64 bits))
 }
 
-case class Branch(node : CtrlLink, pc : PC) extends Area with FunctionalUnit {  
+case class Branch(node : CtrlLink, pc : PC) extends Area {  
   import Branch._
-
-  def getWriteback(): Option[(Bool, RegFileWrite)] = {
-      None
-  }
 
   val branchResolved = Bool()
   val logic = new node.Area {

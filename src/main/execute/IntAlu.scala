@@ -18,18 +18,10 @@ object IntAlu extends AreaObject {
   // val RESULT = Payload(new RegFileWrite())
 
 }
-case class IntAlu(aluNode: CtrlLink) extends FiberPlugin with FunctionalUnit {
+case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
   import IntAlu._
   val SRC1 = borb.dispatch.SrcPlugin.RS1
   val SRC2 = borb.dispatch.SrcPlugin.RS2
-
-  // override val FUType = borb.frontend.ExecutionUnitEnum.ALU
-  // import borb.execute.Execute._
-
-  def getWriteback(): Option[(Bool, RegFileWrite)] = {
-      // Placeholder for future phase
-      None 
-  }
 
   val aluNodeStage = new aluNode.Area {
     import borb.dispatch.Dispatch._

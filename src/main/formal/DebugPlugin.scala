@@ -25,7 +25,8 @@ case class Dbg() extends Bundle {
   val wb_pc = UInt(64 bits)
 }
 
-case class DebugPlugin(wbStage: CtrlLink) extends Area {
+case class DebugPlugin(pipeline: StageCtrlPipeline) extends Area {
+  val wbStage = pipeline.ctrl(7)
   val io = new Bundle {
     val dbg = out(Dbg())
   }
@@ -45,7 +46,10 @@ case class DebugPlugin(wbStage: CtrlLink) extends Area {
     io.dbg.squashed := !up(LANE_SEL) || up(TRAP)
 
     io.dbg.wb_pc := up(PC.PC)
-
-    // Placeholder for other stages (need to be passed in or accessed)
   }
+
+  // Wire up PC signals from other stages for debug visibility
+  io.dbg.f_pc := pipeline.ctrl(2)(PC.PC) // Fetch Rsp
+  io.dbg.d_pc := pipeline.ctrl(3)(PC.PC) // Decode
+  io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
 }

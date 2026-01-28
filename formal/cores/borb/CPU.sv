@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 7a15d122fe3bad2a67424c6d3a9b5785e058f0df
+// Git hash  : 9083df6da7bea67b2ab12f953082c0a13dec6b18
 
 `timescale 1ns/1ps
 
@@ -619,9 +619,9 @@ module CPU (
   wire       [7:0]    coreArea_pipeline_ctrl_6_down_LSU_MEM_WMASK;
   wire       [63:0]   coreArea_pipeline_ctrl_6_down_LSU_MEM_ADDR;
   reg                 coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU;
-  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168;
-  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159;
-  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157;
+  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164;
+  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155;
+  reg                 _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153;
   wire       [0:0]    coreArea_pipeline_ctrl_6_down_Decoder_LEGAL;
   wire                coreArea_pipeline_ctrl_6_down_isFiring;
   wire       [63:0]   coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TARGET;
@@ -809,9 +809,9 @@ module CPU (
   wire       [63:0]   coreArea_srcPlugin_rs_rs1Data;
   wire       [63:0]   coreArea_srcPlugin_rs_rs2Data;
   reg        [63:0]   IntAlu_aluNodeStage_result;
-  wire                when_IntAlu_l40;
+  wire                when_IntAlu_l32;
   reg        [63:0]   _zz_IntAlu_aluNodeStage_result;
-  wire                when_IntAlu_l83;
+  wire                when_IntAlu_l75;
   wire                coreArea_branch_branchResolved;
   wire       [63:0]   coreArea_branch_logic_src1;
   wire       [63:0]   coreArea_branch_logic_src2;
@@ -829,7 +829,7 @@ module CPU (
   wire       [63:0]   coreArea_branch_logic_jumpCmd_payload_target;
   wire                coreArea_branch_logic_jumpCmd_payload_is_jump;
   wire                coreArea_branch_logic_jumpCmd_payload_is_branch;
-  wire                when_branch_l95;
+  wire                when_branch_l91;
   wire                coreArea_lsu_io_dBus_cmd_valid;
   wire                coreArea_lsu_io_dBus_cmd_ready;
   wire       [63:0]   coreArea_lsu_io_dBus_cmd_payload_address;
@@ -859,12 +859,12 @@ module CPU (
   wire                coreArea_lsu_logic_fireLoad;
   reg        [63:0]   coreArea_lsu_logic_latchedRspData;
   wire                coreArea_lsu_logic_responseArriving;
-  wire                when_Lsu_l151;
-  wire                when_Lsu_l152;
-  wire                when_Lsu_l153;
-  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157;
-  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159;
-  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168;
+  wire                when_Lsu_l147;
+  wire                when_Lsu_l148;
+  wire                when_Lsu_l149;
+  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153;
+  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155;
+  wire                coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164;
   wire       [63:0]   coreArea_lsu_logic_rspData;
   wire       [63:0]   coreArea_lsu_logic_shiftedLoadData;
   wire       [63:0]   coreArea_lsu_logic_loadResult;
@@ -874,11 +874,11 @@ module CPU (
   wire       [63:0]   coreArea_lsu_logic_maskedLoadResult;
   wire       [7:0]    coreArea_lsu_logic_readMaskShifted;
   reg        [3:0]    coreArea_currentEpoch;
-  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l152;
-  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l152;
-  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l152;
-  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l158;
-  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l158;
+  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l142;
+  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l142;
+  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l142;
+  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l148;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l148;
   reg        [63:0]   coreArea_rvfiPlugin_order;
   reg        [63:0]   coreArea_perfCounters_cycles;
   reg        [63:0]   coreArea_perfCounters_instret;
@@ -2455,33 +2455,33 @@ module CPU (
   `endif
 
   always @(*) begin
-    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168 = 1'b0;
-    if(when_Lsu_l151) begin
-      if(!when_Lsu_l152) begin
+    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164 = 1'b0;
+    if(when_Lsu_l147) begin
+      if(!when_Lsu_l148) begin
         if(!coreArea_lsu_logic_responseArriving) begin
-          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168 = 1'b1;
+          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164 = 1'b1;
         end
       end
     end
   end
 
   always @(*) begin
-    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159 = 1'b0;
-    if(when_Lsu_l151) begin
-      if(when_Lsu_l152) begin
-        if(!when_Lsu_l153) begin
-          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159 = 1'b1;
+    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155 = 1'b0;
+    if(when_Lsu_l147) begin
+      if(when_Lsu_l148) begin
+        if(!when_Lsu_l149) begin
+          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155 = 1'b1;
         end
       end
     end
   end
 
   always @(*) begin
-    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157 = 1'b0;
-    if(when_Lsu_l151) begin
-      if(when_Lsu_l152) begin
-        if(when_Lsu_l153) begin
-          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157 = 1'b1;
+    _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153 = 1'b0;
+    if(when_Lsu_l147) begin
+      if(when_Lsu_l148) begin
+        if(when_Lsu_l149) begin
+          _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153 = 1'b1;
         end
       end
     end
@@ -2696,12 +2696,12 @@ module CPU (
   assign coreArea_srcPlugin_rs_rs2Data = ((coreArea_pipeline_ctrl_5_up_Decoder_RS2TYPE == RSTYPE_RS_INT) ? coreArea_srcPlugin_rs2Reader_data : 64'h0);
   always @(*) begin
     IntAlu_aluNodeStage_result = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
-    if(when_IntAlu_l40) begin
+    if(when_IntAlu_l32) begin
       IntAlu_aluNodeStage_result = _zz_IntAlu_aluNodeStage_result;
     end
   end
 
-  assign when_IntAlu_l40 = (coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU == 1'b1);
+  assign when_IntAlu_l32 = (coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU == 1'b1);
   always @(*) begin
     _zz_IntAlu_aluNodeStage_result = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
@@ -2802,10 +2802,10 @@ module CPU (
 
   always @(*) begin
     coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_address = 5'h0;
-    if(when_IntAlu_l83) begin
+    if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
     end
-    if(when_branch_l95) begin
+    if(when_branch_l91) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
       end
@@ -2817,10 +2817,10 @@ module CPU (
 
   always @(*) begin
     coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = 64'h0;
-    if(when_IntAlu_l83) begin
+    if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : IntAlu_aluNodeStage_result);
     end
-    if(when_branch_l95) begin
+    if(when_branch_l91) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : _zz_coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data);
       end
@@ -2832,10 +2832,10 @@ module CPU (
 
   always @(*) begin
     coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_valid = 1'b0;
-    if(when_IntAlu_l83) begin
+    if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_valid = ((coreArea_pipeline_ctrl_6_up_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
     end
-    if(when_branch_l95) begin
+    if(when_branch_l91) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_valid = (((coreArea_pipeline_ctrl_6_down_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID) && (! coreArea_branch_logic_willTrap));
       end
@@ -2845,7 +2845,7 @@ module CPU (
     end
   end
 
-  assign when_IntAlu_l83 = ((coreArea_pipeline_ctrl_6_up_Decoder_VALID == 1'b1) && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU);
+  assign when_IntAlu_l75 = ((coreArea_pipeline_ctrl_6_up_Decoder_VALID == 1'b1) && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOALU);
   assign coreArea_branch_logic_src1 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
   assign coreArea_branch_logic_src2 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
   assign coreArea_branch_logic_src1U = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
@@ -2939,7 +2939,7 @@ module CPU (
   assign coreArea_branch_logic_jumpCmd_payload_target = coreArea_branch_logic_target;
   assign coreArea_branch_logic_jumpCmd_payload_is_jump = coreArea_branch_logic_isJump;
   assign coreArea_branch_logic_jumpCmd_payload_is_branch = coreArea_branch_logic_isBranch;
-  assign when_branch_l95 = (coreArea_pipeline_ctrl_6_up_Common_LANE_SEL && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
+  assign when_branch_l91 = (coreArea_pipeline_ctrl_6_up_Common_LANE_SEL && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
   assign coreArea_lsu_logic_effectiveAddr = _zz_coreArea_lsu_logic_effectiveAddr;
   always @(*) begin
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
@@ -3083,12 +3083,12 @@ module CPU (
   assign coreArea_lsu_io_dBus_cmd_payload_id = (LSU_isStore ? 16'h0 : coreArea_lsu_logic_nextId);
   assign coreArea_lsu_io_dBus_cmd_payload_write = LSU_isStore;
   assign coreArea_lsu_logic_responseArriving = ((((LSU_isLoad && coreArea_pipeline_ctrl_6_up_Decoder_VALID) && coreArea_lsu_logic_waitingResponse) && coreArea_lsu_io_dBus_rsp_valid) && (coreArea_lsu_io_dBus_rsp_payload_id == coreArea_lsu_logic_waitId));
-  assign when_Lsu_l151 = (LSU_isLoad && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
-  assign when_Lsu_l152 = (! coreArea_lsu_logic_waitingResponse);
-  assign when_Lsu_l153 = ((coreArea_lsu_io_dBus_cmd_ready && (! coreArea_lsu_logic_misaligned)) && coreArea_pipeline_ctrl_6_up_Common_LANE_SEL);
-  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157;
-  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159;
-  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168;
+  assign when_Lsu_l147 = (LSU_isLoad && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
+  assign when_Lsu_l148 = (! coreArea_lsu_logic_waitingResponse);
+  assign when_Lsu_l149 = ((coreArea_lsu_io_dBus_cmd_ready && (! coreArea_lsu_logic_misaligned)) && coreArea_pipeline_ctrl_6_up_Common_LANE_SEL);
+  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153;
+  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155;
+  assign coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164 = _zz_coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164;
   assign coreArea_lsu_logic_rspData = (coreArea_lsu_logic_responseArriving ? coreArea_lsu_io_dBus_rsp_payload_data : coreArea_lsu_logic_latchedRspData);
   assign coreArea_lsu_logic_shiftedLoadData = (coreArea_lsu_logic_rspData >>> _zz_coreArea_lsu_logic_shiftedLoadData);
   always @(*) begin
@@ -3148,11 +3148,11 @@ module CPU (
   assign coreArea_pc_jump_payload_is_branch = coreArea_branch_logic_jumpCmd_payload_is_branch;
   assign coreArea_fetch_io_flush = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_fetch_io_currentEpoch = coreArea_currentEpoch;
-  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l152 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l152 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l152 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l158 = coreArea_branch_logic_jumpCmd_valid;
-  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l158 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l142 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l142 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l142 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
+  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l148 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l148 = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_rvfiPlugin_io_rvfi_valid = coreArea_pipeline_ctrl_7_up_Common_COMMIT;
   assign coreArea_rvfiPlugin_io_rvfi_order = coreArea_rvfiPlugin_order;
   assign coreArea_rvfiPlugin_io_rvfi_insn = coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
@@ -3203,6 +3203,9 @@ module CPU (
   assign coreArea_debugPlugin_io_dbg_commitWdata = (coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_valid ? coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_data : 64'h0);
   assign coreArea_debugPlugin_io_dbg_squashed = ((! coreArea_pipeline_ctrl_7_up_Common_LANE_SEL) || coreArea_pipeline_ctrl_7_up_Common_TRAP);
   assign coreArea_debugPlugin_io_dbg_wb_pc = coreArea_pipeline_ctrl_7_up_PC_PC;
+  assign coreArea_debugPlugin_io_dbg_f_pc = coreArea_pipeline_ctrl_2_down_PC_PC;
+  assign coreArea_debugPlugin_io_dbg_d_pc = coreArea_pipeline_ctrl_3_down_PC_PC;
+  assign coreArea_debugPlugin_io_dbg_x_pc = coreArea_pipeline_ctrl_6_down_PC_PC;
   assign io_dbg_commitValid = coreArea_debugPlugin_io_dbg_commitValid;
   assign io_dbg_commitPc = coreArea_debugPlugin_io_dbg_commitPc;
   assign io_dbg_commitInsn = coreArea_debugPlugin_io_dbg_commitInsn;
@@ -3214,9 +3217,6 @@ module CPU (
   assign io_dbg_d_pc = coreArea_debugPlugin_io_dbg_d_pc;
   assign io_dbg_x_pc = coreArea_debugPlugin_io_dbg_x_pc;
   assign io_dbg_wb_pc = coreArea_debugPlugin_io_dbg_wb_pc;
-  assign coreArea_debugPlugin_io_dbg_f_pc = coreArea_pipeline_ctrl_2_down_PC_PC;
-  assign coreArea_debugPlugin_io_dbg_d_pc = coreArea_pipeline_ctrl_3_down_PC_PC;
-  assign coreArea_debugPlugin_io_dbg_x_pc = coreArea_pipeline_ctrl_6_down_PC_PC;
   assign coreArea_perfCounters_counters_cycles = coreArea_perfCounters_cycles;
   assign coreArea_perfCounters_counters_instret = coreArea_perfCounters_instret;
   assign coreArea_perfCounters_counters_stallsHazard = coreArea_perfCounters_stallsHazard;
@@ -3250,16 +3250,16 @@ module CPU (
   assign coreArea_fetch_io_readCmd_rsp_payload_data = io_iBus_rsp_payload_data;
   assign coreArea_fetch_io_readCmd_rsp_payload_address = io_iBus_rsp_payload_address;
   assign coreArea_fetch_io_readCmd_rsp_payload_id = io_iBus_rsp_payload_id;
-  assign coreArea_pipeline_ctrl_5_up_forgetOne = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_5_up_cancel = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_4_up_forgetOne = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_4_up_cancel = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_3_up_forgetOne = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_3_up_cancel = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l152);
-  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l158,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
-  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l158,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
-  assign coreArea_pipeline_ctrl_1_up_forgetOne = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l158);
-  assign coreArea_pipeline_ctrl_1_up_cancel = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l158);
+  assign coreArea_pipeline_ctrl_5_up_forgetOne = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_5_up_cancel = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_4_up_forgetOne = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_4_up_cancel = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_3_up_forgetOne = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_3_up_cancel = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l142);
+  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l148,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
+  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l148,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
+  assign coreArea_pipeline_ctrl_1_up_forgetOne = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l148);
+  assign coreArea_pipeline_ctrl_1_up_cancel = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l148);
   always @(*) begin
     coreArea_pipeline_ctrl_0_down_ready = coreArea_pipeline_ctrl_1_up_ready;
     if(when_StageLink_l71) begin
@@ -3336,7 +3336,7 @@ module CPU (
   end
 
   assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80);
-  assign when_CtrlLink_l198 = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l158);
+  assign when_CtrlLink_l198 = (|coreArea_pipeline_ctrl_1_throwWhen_CPU_l148);
   assign coreArea_pipeline_ctrl_1_down_PC_PC = coreArea_pipeline_ctrl_1_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_2_down_valid = coreArea_pipeline_ctrl_2_up_valid;
@@ -3356,7 +3356,7 @@ module CPU (
   end
 
   assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95);
-  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l158,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
+  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l148,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92});
   assign coreArea_pipeline_ctrl_2_down_PC_PC = coreArea_pipeline_ctrl_2_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_3_down_valid = coreArea_pipeline_ctrl_3_up_valid;
@@ -3366,7 +3366,7 @@ module CPU (
   end
 
   assign coreArea_pipeline_ctrl_3_up_ready = coreArea_pipeline_ctrl_3_down_isReady;
-  assign when_CtrlLink_l198_2 = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l152);
+  assign when_CtrlLink_l198_2 = (|coreArea_pipeline_ctrl_3_throwWhen_CPU_l142);
   assign coreArea_pipeline_ctrl_3_down_PC_PC = coreArea_pipeline_ctrl_3_up_PC_PC;
   assign coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH;
@@ -3388,7 +3388,7 @@ module CPU (
   end
 
   assign when_CtrlLink_l191_2 = (|coreArea_pipeline_ctrl_4_haltRequest_scheduler_l214);
-  assign when_CtrlLink_l198_3 = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l152);
+  assign when_CtrlLink_l198_3 = (|coreArea_pipeline_ctrl_4_throwWhen_CPU_l142);
   assign coreArea_pipeline_ctrl_4_down_PC_PC = coreArea_pipeline_ctrl_4_up_PC_PC;
   assign coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH;
@@ -3409,7 +3409,7 @@ module CPU (
   end
 
   assign coreArea_pipeline_ctrl_5_up_ready = coreArea_pipeline_ctrl_5_down_isReady;
-  assign when_CtrlLink_l198_4 = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l152);
+  assign when_CtrlLink_l198_4 = (|coreArea_pipeline_ctrl_5_throwWhen_CPU_l142);
   assign coreArea_pipeline_ctrl_5_down_PC_PC = coreArea_pipeline_ctrl_5_up_PC_PC;
   assign coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH;
@@ -3439,7 +3439,7 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191_3 = (|{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l168,{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l159,coreArea_pipeline_ctrl_6_haltRequest_Lsu_l157}});
+  assign when_CtrlLink_l191_3 = (|{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l164,{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l155,coreArea_pipeline_ctrl_6_haltRequest_Lsu_l153}});
   assign coreArea_pipeline_ctrl_6_down_PC_PC = coreArea_pipeline_ctrl_6_up_PC_PC;
   assign coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_6_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH;
@@ -3564,9 +3564,9 @@ module CPU (
         if(when_scheduler_l250) begin
           coreArea_dispatcher_hcs_regBusy <= 32'h0;
         end
-        if(when_Lsu_l151) begin
-          if(when_Lsu_l152) begin
-            if(when_Lsu_l153) begin
+        if(when_Lsu_l147) begin
+          if(when_Lsu_l148) begin
+            if(when_Lsu_l149) begin
               coreArea_lsu_logic_waitingResponse <= 1'b1;
               coreArea_lsu_logic_nextId <= (coreArea_lsu_logic_nextId + 16'h0001);
             end
@@ -3646,9 +3646,9 @@ module CPU (
 
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
-      if(when_Lsu_l151) begin
-        if(when_Lsu_l152) begin
-          if(when_Lsu_l153) begin
+      if(when_Lsu_l147) begin
+        if(when_Lsu_l148) begin
+          if(when_Lsu_l149) begin
             coreArea_lsu_logic_waitId <= coreArea_lsu_logic_nextId;
           end
         end else begin

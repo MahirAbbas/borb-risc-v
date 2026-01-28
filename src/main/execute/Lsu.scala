@@ -44,13 +44,9 @@ object Lsu extends AreaObject {
   val MEM_RDATA = Payload(Bits(64 bits)).setName("LSU_MEM_RDATA")
 }
 
-case class Lsu(stage: CtrlLink) extends Area with FunctionalUnit {
+case class Lsu(stage: CtrlLink) extends Area {
   import Lsu._
   import borb.dispatch.Dispatch._
-  
-  def getWriteback(): Option[(Bool, RegFileWrite)] = {
-      None
-  }
 
   val io = new Bundle {
     val dBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
