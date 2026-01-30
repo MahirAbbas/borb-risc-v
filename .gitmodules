@@ -1,3 +1,9 @@
 [submodule "riscv-formal"]
 	path = riscv-formal
 	url = https://github.com/YosysHQ/riscv-formal
+[submodule "verif/riscv-arch-test"]
+	path = verif/riscv-arch-test
+	url = https://github.com/riscv-non-isa/riscv-arch-test
+[submodule "verif/tenstorrent-riscv-arch-tests"]
+	path = verif/tenstorrent-riscv-arch-tests
+	url = https://github.com/tenstorrent/riscv_arch_tests
