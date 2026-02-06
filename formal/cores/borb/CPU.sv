@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 7d6efd27fc0aa61ddbf628e409fdf948fc12eb0f
+// Git hash  : f5838fd185b76adae772b72bdfe5804e8cb6b2cb
 
 `timescale 1ns/1ps
 
@@ -48,16 +48,23 @@ module CPU (
   output wire [63:0]   io_rvfi_mem_rdata,
   output wire [63:0]   io_rvfi_mem_wdata,
   output wire          io_dbg_commitValid,
+  output wire [63:0]   io_dbg_commitOrder,
   output wire [63:0]   io_dbg_commitPc,
   output wire [31:0]   io_dbg_commitInsn,
   output wire [4:0]    io_dbg_commitRd,
   output wire          io_dbg_commitWe,
   output wire [63:0]   io_dbg_commitWdata,
+  output wire          io_dbg_commitTrap,
   output wire          io_dbg_squashed,
   output wire [63:0]   io_dbg_f_pc,
   output wire [63:0]   io_dbg_d_pc,
   output wire [63:0]   io_dbg_x_pc,
   output wire [63:0]   io_dbg_wb_pc,
+  output wire [63:0]   io_dbg_memAddr,
+  output wire [7:0]    io_dbg_memRmask,
+  output wire [7:0]    io_dbg_memWmask,
+  output wire [63:0]   io_dbg_memRdata,
+  output wire [63:0]   io_dbg_memWdata,
   output wire [63:0]   io_perf_cycles,
   output wire [63:0]   io_perf_instret,
   output wire [63:0]   io_perf_stallsHazard,
@@ -88,16 +95,23 @@ module CPU (
   (* keep , syn_keep *) output wire [63:0]   coreArea_rvfiPlugin_io_rvfi_mem_rdata /* synthesis syn_keep = 1 */ ,
   (* keep , syn_keep *) output wire [63:0]   coreArea_rvfiPlugin_io_rvfi_mem_wdata /* synthesis syn_keep = 1 */ ,
   output wire          coreArea_debugPlugin_io_dbg_commitValid,
+  output wire [63:0]   coreArea_debugPlugin_io_dbg_commitOrder,
   output wire [63:0]   coreArea_debugPlugin_io_dbg_commitPc,
   output wire [31:0]   coreArea_debugPlugin_io_dbg_commitInsn,
   output wire [4:0]    coreArea_debugPlugin_io_dbg_commitRd,
   output wire          coreArea_debugPlugin_io_dbg_commitWe,
   output wire [63:0]   coreArea_debugPlugin_io_dbg_commitWdata,
+  output wire          coreArea_debugPlugin_io_dbg_commitTrap,
   output wire          coreArea_debugPlugin_io_dbg_squashed,
   output wire [63:0]   coreArea_debugPlugin_io_dbg_f_pc,
   output wire [63:0]   coreArea_debugPlugin_io_dbg_d_pc,
   output wire [63:0]   coreArea_debugPlugin_io_dbg_x_pc,
-  output wire [63:0]   coreArea_debugPlugin_io_dbg_wb_pc
+  output wire [63:0]   coreArea_debugPlugin_io_dbg_wb_pc,
+  output wire [63:0]   coreArea_debugPlugin_io_dbg_memAddr,
+  output wire [7:0]    coreArea_debugPlugin_io_dbg_memRmask,
+  output wire [7:0]    coreArea_debugPlugin_io_dbg_memWmask,
+  output wire [63:0]   coreArea_debugPlugin_io_dbg_memRdata,
+  output wire [63:0]   coreArea_debugPlugin_io_dbg_memWdata
 );
   localparam MicroCode_uopNOP = 6'd0;
   localparam MicroCode_uopLUI = 6'd1;
@@ -881,6 +895,8 @@ module CPU (
   wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l148;
   reg        [63:0]   coreArea_rvfiPlugin_order;
   wire                coreArea_rvfiPlugin_wb_isCommitted;
+  reg        [63:0]   coreArea_debugPlugin_order;
+  wire                coreArea_debugPlugin_wb_isCommitted;
   reg        [63:0]   coreArea_perfCounters_cycles;
   reg        [63:0]   coreArea_perfCounters_instret;
   reg        [63:0]   coreArea_perfCounters_stallsHazard;
@@ -3197,28 +3213,43 @@ module CPU (
   assign io_rvfi_mem_wmask = coreArea_rvfiPlugin_io_rvfi_mem_wmask;
   assign io_rvfi_mem_rdata = coreArea_rvfiPlugin_io_rvfi_mem_rdata;
   assign io_rvfi_mem_wdata = coreArea_rvfiPlugin_io_rvfi_mem_wdata;
-  assign coreArea_debugPlugin_io_dbg_commitValid = coreArea_pipeline_ctrl_7_up_Common_COMMIT;
+  assign coreArea_debugPlugin_wb_isCommitted = (coreArea_pipeline_ctrl_7_up_Common_COMMIT && coreArea_pipeline_ctrl_7_down_isFiring);
+  assign coreArea_debugPlugin_io_dbg_commitValid = coreArea_debugPlugin_wb_isCommitted;
+  assign coreArea_debugPlugin_io_dbg_commitOrder = coreArea_debugPlugin_order;
   assign coreArea_debugPlugin_io_dbg_commitPc = coreArea_pipeline_ctrl_7_up_PC_PC;
   assign coreArea_debugPlugin_io_dbg_commitInsn = coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
   assign coreArea_debugPlugin_io_dbg_commitRd = (coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_valid ? coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_address : 5'h0);
   assign coreArea_debugPlugin_io_dbg_commitWe = (coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_valid && coreArea_pipeline_ctrl_7_up_Common_COMMIT);
   assign coreArea_debugPlugin_io_dbg_commitWdata = (coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_valid ? coreArea_pipeline_ctrl_7_up_WriteBack_RESULT_data : 64'h0);
+  assign coreArea_debugPlugin_io_dbg_commitTrap = coreArea_pipeline_ctrl_7_up_Common_TRAP;
   assign coreArea_debugPlugin_io_dbg_squashed = ((! coreArea_pipeline_ctrl_7_up_Common_LANE_SEL) || coreArea_pipeline_ctrl_7_up_Common_TRAP);
   assign coreArea_debugPlugin_io_dbg_wb_pc = coreArea_pipeline_ctrl_7_up_PC_PC;
+  assign coreArea_debugPlugin_io_dbg_memAddr = coreArea_pipeline_ctrl_7_up_LSU_MEM_ADDR;
+  assign coreArea_debugPlugin_io_dbg_memRmask = coreArea_pipeline_ctrl_7_up_LSU_MEM_RMASK;
+  assign coreArea_debugPlugin_io_dbg_memWmask = coreArea_pipeline_ctrl_7_up_LSU_MEM_WMASK;
+  assign coreArea_debugPlugin_io_dbg_memRdata = coreArea_pipeline_ctrl_7_up_LSU_MEM_RDATA;
+  assign coreArea_debugPlugin_io_dbg_memWdata = coreArea_pipeline_ctrl_7_up_LSU_MEM_WDATA;
   assign coreArea_debugPlugin_io_dbg_f_pc = coreArea_pipeline_ctrl_2_down_PC_PC;
   assign coreArea_debugPlugin_io_dbg_d_pc = coreArea_pipeline_ctrl_3_down_PC_PC;
   assign coreArea_debugPlugin_io_dbg_x_pc = coreArea_pipeline_ctrl_6_down_PC_PC;
   assign io_dbg_commitValid = coreArea_debugPlugin_io_dbg_commitValid;
+  assign io_dbg_commitOrder = coreArea_debugPlugin_io_dbg_commitOrder;
   assign io_dbg_commitPc = coreArea_debugPlugin_io_dbg_commitPc;
   assign io_dbg_commitInsn = coreArea_debugPlugin_io_dbg_commitInsn;
   assign io_dbg_commitRd = coreArea_debugPlugin_io_dbg_commitRd;
   assign io_dbg_commitWe = coreArea_debugPlugin_io_dbg_commitWe;
   assign io_dbg_commitWdata = coreArea_debugPlugin_io_dbg_commitWdata;
+  assign io_dbg_commitTrap = coreArea_debugPlugin_io_dbg_commitTrap;
   assign io_dbg_squashed = coreArea_debugPlugin_io_dbg_squashed;
   assign io_dbg_f_pc = coreArea_debugPlugin_io_dbg_f_pc;
   assign io_dbg_d_pc = coreArea_debugPlugin_io_dbg_d_pc;
   assign io_dbg_x_pc = coreArea_debugPlugin_io_dbg_x_pc;
   assign io_dbg_wb_pc = coreArea_debugPlugin_io_dbg_wb_pc;
+  assign io_dbg_memAddr = coreArea_debugPlugin_io_dbg_memAddr;
+  assign io_dbg_memRmask = coreArea_debugPlugin_io_dbg_memRmask;
+  assign io_dbg_memWmask = coreArea_debugPlugin_io_dbg_memWmask;
+  assign io_dbg_memRdata = coreArea_debugPlugin_io_dbg_memRdata;
+  assign io_dbg_memWdata = coreArea_debugPlugin_io_dbg_memWdata;
   assign coreArea_perfCounters_counters_cycles = coreArea_perfCounters_cycles;
   assign coreArea_perfCounters_counters_instret = coreArea_perfCounters_instret;
   assign coreArea_perfCounters_counters_stallsHazard = coreArea_perfCounters_stallsHazard;
@@ -3508,6 +3539,7 @@ module CPU (
       coreArea_lsu_logic_nextId <= 16'h0001;
       coreArea_currentEpoch <= 4'b0000;
       coreArea_rvfiPlugin_order <= 64'h0;
+      coreArea_debugPlugin_order <= 64'h0;
       coreArea_perfCounters_cycles <= 64'h0;
       coreArea_perfCounters_instret <= 64'h0;
       coreArea_perfCounters_stallsHazard <= 64'h0;
@@ -3583,6 +3615,9 @@ module CPU (
         end
         if(coreArea_rvfiPlugin_wb_isCommitted) begin
           coreArea_rvfiPlugin_order <= (coreArea_rvfiPlugin_order + 64'h0000000000000001);
+        end
+        if(coreArea_debugPlugin_wb_isCommitted) begin
+          coreArea_debugPlugin_order <= (coreArea_debugPlugin_order + 64'h0000000000000001);
         end
         coreArea_perfCounters_cycles <= (coreArea_perfCounters_cycles + 64'h0000000000000001);
         if(coreArea_pipeline_ctrl_7_up_Common_COMMIT) begin

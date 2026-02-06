@@ -11,6 +11,7 @@ case class SoC() extends Component {
     val clk = in port Bool()
     val clkEnable = in port Bool()
     val reset = in port Bool()
+    val dbg = out(DebugArea())
   }
 
   // CPU-side Config (16-bit ID)
@@ -40,6 +41,7 @@ case class SoC() extends Component {
     cpu.io.clk := io.clk
     cpu.io.clkEnable := io.clkEnable
     cpu.io.reset := io.reset
+    io.dbg := cpu.io.dbg
 
     // Shims: Bridge CPU Generic Buses to AXI (CPU Config)
     val fetchShim = new RamFetchBusToAxi4Shared(cpuAxiConfig)

@@ -8,14 +8,17 @@ import borb.fetch.PC
 import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin
 import borb.execute.IntAlu
+import borb.execute.Lsu
 
-case class Dbg() extends Bundle {
+case class DebugArea() extends Bundle {
   val commitValid = Bool()
+  val commitOrder = UInt(64 bits)
   val commitPc = UInt(64 bits)
   val commitInsn = Bits(32 bits)
   val commitRd = UInt(5 bits)
   val commitWe = Bool()
   val commitWdata = Bits(64 bits)
+  val commitTrap = Bool()
   val squashed = Bool()
 
   // Optional: stage PCs / valids
@@ -23,16 +26,31 @@ case class Dbg() extends Bundle {
   val d_pc = UInt(64 bits)
   val x_pc = UInt(64 bits)
   val wb_pc = UInt(64 bits)
+
+  // Memory access (from LSU payloads)
+  val memAddr = UInt(64 bits)
+  val memRmask = Bits(8 bits)
+  val memWmask = Bits(8 bits)
+  val memRdata = Bits(64 bits)
+  val memWdata = Bits(64 bits)
 }
 
 case class DebugPlugin(pipeline: StageCtrlPipeline) extends Area {
   val wbStage = pipeline.ctrl(7)
   val io = new Bundle {
-    val dbg = out(Dbg())
+    val dbg = out(DebugArea())
   }
 
+  val order = Reg(UInt(64 bits)) init (0)
+
   val wb = new wbStage.Area {
-    io.dbg.commitValid := up(COMMIT)
+    val isCommitted = up(COMMIT) && down.isFiring
+    when(isCommitted) {
+      order := order + 1
+    }
+
+    io.dbg.commitValid := isCommitted
+    io.dbg.commitOrder := order
     io.dbg.commitPc := up(PC.PC)
     io.dbg.commitInsn := up(Decoder.INSTRUCTION)
 
@@ -42,10 +60,17 @@ case class DebugPlugin(pipeline: StageCtrlPipeline) extends Area {
       COMMIT
     ) // Only valid write if committed
     io.dbg.commitWdata := result.valid ? result.data | B(0, 64 bits)
+    io.dbg.commitTrap := up(TRAP)
 
     io.dbg.squashed := !up(LANE_SEL) || up(TRAP)
 
     io.dbg.wb_pc := up(PC.PC)
+
+    io.dbg.memAddr := up(Lsu.MEM_ADDR)
+    io.dbg.memRmask := up(Lsu.MEM_RMASK)
+    io.dbg.memWmask := up(Lsu.MEM_WMASK)
+    io.dbg.memRdata := up(Lsu.MEM_RDATA)
+    io.dbg.memWdata := up(Lsu.MEM_WDATA)
   }
 
   // Wire up PC signals from other stages for debug visibility

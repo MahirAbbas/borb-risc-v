@@ -44,7 +44,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       idWidth = config.dataIdWidth
     )).simPublic()
     val rvfi = out(Rvfi()).simPublic()
-    val dbg = out(Dbg())
+    val dbg = out(DebugArea())
     val perf = out(borb.core.PerfCountersBundle())
   }
 
