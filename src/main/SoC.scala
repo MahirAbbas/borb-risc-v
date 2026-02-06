@@ -2,6 +2,7 @@ package borb
 
 import spinal.core._
 import spinal.lib._
+import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
 import borb.memory._
 
@@ -66,6 +67,8 @@ case class SoC() extends Component {
       byteCount = 16 KiB,
       idWidth = 17
     )
+    import spinal.core.sim._
+    ram.ram.simPublic()
     
     // Connect Arbiter to RAM with Address Resizing (64 -> 14 bits)
     ram.io.axi.arw.valid   := arbiter.io.output.arw.valid

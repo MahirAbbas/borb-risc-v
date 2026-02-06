@@ -11,7 +11,7 @@ lazy val projectname = (project in file("."))
   .settings(
     name := "myproject", 
     Compile / scalaSource := baseDirectory.value / "src",
-    libraryDependencies ++= Seq(spinalCore, spinalLib, spinalIdslPlugin)
+    libraryDependencies ++= Seq(spinalCore, spinalLib, spinalIdslPlugin, "org.scalatest" %% "scalatest" % "3.2.14" % Test)
   )
 
 fork := true

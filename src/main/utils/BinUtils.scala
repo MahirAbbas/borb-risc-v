@@ -2,6 +2,7 @@ package borb.utils
 
 import spinal.core._
 import spinal.lib._
+import spinal.core.sim._
 import java.nio.file.{Files, Paths}
 
 object BinUtils {
@@ -27,11 +28,22 @@ object BinUtils {
       
       val addr = (offset + i) / widthBytes
       if (addr < memory.wordCount) {
-        memory.initBigInt(addr, wordValue)
+        memory.setBigInt(addr.toLong, wordValue)
       } else {
         // Warning or Error? For now silent or print
         // println(f"Warning: Address $addr%x out of bounds for memory loading")
       }
     }
+  }
+
+  def getSymbolAddress(elfFile: String, symbol: String): BigInt = {
+    import scala.sys.process._
+    val cmd = s"riscv64-unknown-elf-nm $elfFile"
+    val output = cmd.!!
+    val regex = (s"""([0-9a-fA-F]+) . $symbol$$""").r
+    
+    output.linesIterator.collectFirst {
+      case regex(addr) => BigInt(addr, 16)
+    }.getOrElse(throw new RuntimeException(s"Symbol $symbol not found in $elfFile"))
   }
 }

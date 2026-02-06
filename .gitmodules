@@ -7,3 +7,6 @@
 [submodule "verif/tenstorrent-riscv-arch-tests"]
 	path = verif/tenstorrent-riscv-arch-tests
 	url = https://github.com/tenstorrent/riscv_arch_tests
+[submodule "verif/sail-riscv"]
+	path = verif/sail-riscv
+	url = https://github.com/riscv/sail-riscv.git
