@@ -64,7 +64,7 @@ case class SoC() extends Component {
     // RAM
     val ram = Axi4SharedOnChipRam(
       dataWidth = 64,
-      byteCount = 16 KiB,
+      byteCount = 256 KiB,
       idWidth = 17
     )
     import spinal.core.sim._
