@@ -20,6 +20,7 @@ src_managed/
 project/boot/
 project/project
 project/plugins/project/
+riscof_work/
 
 verif/
 # Scala-IDE specific

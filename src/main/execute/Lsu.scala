@@ -137,6 +137,11 @@ case class Lsu(stage: CtrlLink) extends Area {
     io.dBus.cmd.payload.id := Mux(isStore, U(0, 16 bits), nextId)
     io.dBus.cmd.payload.write := isStore
 
+    // Stores must wait for command acceptance. Otherwise writes can be dropped
+    // when the bus is temporarily not ready.
+    val storeBlocked = isStore && up(VALID) && up(LANE_SEL) && !suppress && !io.dBus.cmd.ready
+    haltWhen(storeBlocked)
+
     // Stall Logic
     // IMPORTANT: When the response arrives, the pipeline advances at end of that cycle.
     // The down() signals are captured based on COMBINATORIAL values.
@@ -221,4 +226,3 @@ case class Lsu(stage: CtrlLink) extends Area {
     // RESULT payload should remain 0/invalid (handled by IntAlu defaults)
   }
 }
-

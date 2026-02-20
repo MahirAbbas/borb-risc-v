@@ -95,7 +95,8 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     haltWhen(!packetValid)
     
     val rawData = fifo.io.pop.payload.data
-    INSTRUCTION := rawData(31 downto 0)
+    // iBus returns 64-bit beats. Select the 32-bit half based on PC[2].
+    INSTRUCTION := Mux(rspStage(PC.PC)(2), rawData(63 downto 32), rawData(31 downto 0))
     
     // Tag instruction with current speculation epoch from CPU
     // All downstream stages inherit this epoch for flush comparison

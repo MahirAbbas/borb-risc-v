@@ -78,6 +78,12 @@ if [[ -d "$(pwd)/oss-cad-suite/bin" ]]; then
   export PATH="$(pwd)/oss-cad-suite/bin:$PATH"
 fi
 
+# Set python version for riscof
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+  pyenv shell 3.8.18
+fi
+
 echo "=== Borb RISCOF Run ==="
 
 if [[ "$SKIP_GEN" = false ]]; then
