@@ -62,13 +62,15 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
   val coreArea = new ClockingArea(coreClockDomain) {
     val pipeline = new StageCtrlPipeline()
-    pipeline.ctrls.foreach(e => e._2.throwWhen(clockDomain.reset))
 
     // Defaults for Execution Stages: LANE_SEL is False if not propagated (Bubble)
     import borb.common.Common._
-    pipeline.ctrls.filter(_._1 >= 5).foreach { case (id, ctrl) =>
-      // "insertNode" like logic if we had one, but here we just init the register for stages > Dispatch(4)
-      ctrl.up(LANE_SEL).setAsReg().init(False)
+    pipeline.ctrls.filter(_._1 >= 5).foreach { 
+      case (id, ctrl) => ctrl.up(LANE_SEL).setAsReg().init(False)
+
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach { 
+      case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
     }
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
@@ -190,6 +192,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     io.iBus.cmd << fetch.io.readCmd.cmd
     io.iBus.rsp >> fetch.io.readCmd.rsp
 
+    pipeline.ctrls.drop(1).foreach(e => e._2.throwWhen(clockDomain.reset))
     // Build the pipeline
     pipeline.build()
   }

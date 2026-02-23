@@ -73,7 +73,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     // MAY_FLUSH should NOT prevent branches from executing - it only marks 
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
-    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH)
+    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID)
     val misaligned = target(1 downto 0) =/= 0
     val willTrap = doJump && misaligned
 

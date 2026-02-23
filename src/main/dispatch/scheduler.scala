@@ -184,7 +184,7 @@ case class Dispatch(
       val valid = up(Decoder.VALID)
       val rd = up(Decoder.RD_ADDR)
 
-      when(up.isFiring && (rd =/= 0)) {
+      when(up.isFiring && (rd =/= 0) && (up(Decoder.RDTYPE) =/= borb.frontend.REGFILE.RDTYPE.RD_NA)) {
         regBusy(rd.asUInt) := True
       }
 
