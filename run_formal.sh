@@ -8,12 +8,15 @@ CHECKS_DIR="$CORE_DIR/checks"
 # Parse arguments
 FAILED_ONLY=false
 SKIP_COMPILE=false
+CHECKS_OVERRIDE=""
 
 usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
     echo "  --failed-only    Only run tests that failed in the previous run"
+    echo "  --skip-compile   Skip SpinalHDL -> Verilog generation (sbt runMain borb.CPU)"
+    echo "  --checks <list>  Run only these checks (space or comma-separated)"
     echo "  -h, --help       Show this help message"
     exit 0
 }
@@ -23,6 +26,14 @@ while [[ $# -gt 0 ]]; do
         --failed-only)
             FAILED_ONLY=true
             shift
+            ;;
+        --skip-compile)
+            SKIP_COMPILE=true
+            shift
+            ;;
+        --checks)
+            CHECKS_OVERRIDE="$2"
+            shift 2
             ;;
         -h|--help)
             usage
@@ -37,8 +48,12 @@ done
 echo "=== Borb CPU Formal Regression ==="
 
 # 1. Regenerate Verilog from SpinalHDL source
+if [ "$SKIP_COMPILE" = true ]; then
+    echo "[1/3] Skipping SpinalHDL compile"
+else
     echo "[1/3] Compiling SpinalHDL to Verilog..."
     sbt "runMain borb.CPU"
+fi
 
 # 2. Re-generate formal checks (if needed, or just to be safe)
 echo "[2/3] Generating formal checks..."
@@ -55,7 +70,10 @@ CONSISTENCY_CHECKS="reg_ch0 pc_fwd_ch0 pc_bwd_ch0 unique_ch0 causal_ch0 liveness
 ALL_CHECKS="$ALU_CHECKS $BRANCH_CHECKS $STORE_CHECKS $LOAD_CHECKS $CONSISTENCY_CHECKS"
 
 # Determine which checks to run
-if [ "$FAILED_ONLY" = true ]; then
+if [ -n "$CHECKS_OVERRIDE" ]; then
+    CHECKS_TO_RUN=$(echo "$CHECKS_OVERRIDE" | tr ',' ' ')
+    echo "[3/3] Running user-selected checks..."
+elif [ "$FAILED_ONLY" = true ]; then
     # Find previously failed tests
     PREV_FAILED=$(find $CHECKS_DIR -name "FAIL" 2>/dev/null | while read f; do basename $(dirname "$f"); done | sort -u | tr '\n' ' ')
     if [ -z "$PREV_FAILED" ]; then
@@ -82,6 +100,14 @@ done
 # Run make (ignore errors to let all run)
 make -C $CHECKS_DIR -j10 $CHECKS_TO_RUN
 
+# Convert generated counterexample traces to FST for faster viewing.
+if command -v vcd2fst >/dev/null 2>&1; then
+    find "$CHECKS_DIR" -path "*/engine_0/trace.vcd" -type f | while read -r vcd; do
+        fst="${vcd%.vcd}.fst"
+        vcd2fst "$vcd" "$fst" >/dev/null 2>&1 || true
+    done
+fi
+
 echo "=== Regression Results ==="
 FAILED_TESTS=$(find $CHECKS_DIR -name "FAIL" | sort)
 
@@ -95,4 +121,3 @@ else
     done
     exit 1
 fi
-

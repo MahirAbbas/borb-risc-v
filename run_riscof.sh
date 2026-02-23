@@ -13,6 +13,7 @@ SKIP_BUILD=false
 SKIP_VALIDATE=false
 CLEAN=false
 CLEAN_BUILD=true
+TESTS=""
 
 usage() {
   echo "Usage: $0 [OPTIONS]"
@@ -23,6 +24,8 @@ usage() {
   echo "  --no-clean-build  Do not clean before Verilator build"
   echo "  --skip-validate   Skip riscof validateyaml step"
   echo "  --clean           Pass --clean to riscof run"
+  echo "  --tests <list>    Run only selected tests (name fragments, comma-separated)"
+  echo "                    Example: --tests add-01.S,addi-01.S"
   echo "  --config <path>   Path to config.ini (default: $CONFIG_PATH)"
   echo "  --suite <path>    Path to riscv-test-suite (default: $SUITE_PATH)"
   echo "  --env <path>      Path to env dir (default: $ENV_PATH)"
@@ -51,6 +54,10 @@ while [[ $# -gt 0 ]]; do
     --clean)
       CLEAN=true
       shift
+      ;;
+    --tests)
+      TESTS="$2"
+      shift 2
       ;;
     --config)
       CONFIG_PATH="$2"
@@ -114,6 +121,60 @@ echo "[4/4] Running RISCOF..."
 RUN_CMD=(riscof run --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH")
 if [[ "$CLEAN" = true ]]; then
   RUN_CMD+=(--clean)
+fi
+
+if [[ -n "$TESTS" ]]; then
+  WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work_subset_$(date +%Y%m%d_%H%M%S)"
+  mkdir -p "$WORK_DIR"
+  FULL_TESTLIST="$WORK_DIR/test_list.yaml"
+  SUBSET_TESTLIST="$WORK_DIR/test_list.subset.yaml"
+
+  if [[ ! -f "$FULL_TESTLIST" ]]; then
+    echo "Generating full test list first..."
+    riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
+  fi
+
+  echo "Selecting subset tests: $TESTS"
+  python3 - "$FULL_TESTLIST" "$SUBSET_TESTLIST" "$TESTS" <<'PY'
+import sys
+import yaml
+import os
+import fnmatch
+
+full, out, tests = sys.argv[1], sys.argv[2], sys.argv[3]
+needles = [t.strip() for t in tests.split(",") if t.strip()]
+
+with open(full, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+picked = {}
+for test_path, meta in data.items():
+    base = os.path.basename(test_path)
+    matched = False
+    for n in needles:
+        if "*" in n or "?" in n:
+            if fnmatch.fnmatch(base, n) or fnmatch.fnmatch(test_path, n):
+                matched = True
+                break
+        else:
+            if base == n or test_path.endswith(n):
+                matched = True
+                break
+    if matched:
+        picked[test_path] = meta
+
+if not picked:
+    print("No tests matched requested filters:", ", ".join(needles), file=sys.stderr)
+    sys.exit(2)
+
+with open(out, "w", encoding="utf-8") as f:
+    yaml.safe_dump(picked, f, sort_keys=False)
+
+print(f"Wrote subset testlist: {out} ({len(picked)} tests)")
+PY
+
+  RUN_CMD+=(--work-dir="$WORK_DIR")
+  RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
 fi
 
 "${RUN_CMD[@]}"

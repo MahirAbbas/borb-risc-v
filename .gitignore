@@ -22,6 +22,9 @@ project/project
 project/plugins/project/
 riscof_work/
 CPU.sv
+formal/cores/borb/CPU.sv
+*.sv
+*.v
 
 verif/
 # Scala-IDE specific

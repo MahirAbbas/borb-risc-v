@@ -158,103 +158,41 @@ case class Dispatch(
   }
   case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32)
       extends Area {
+    // Derive a combinational busy map from younger in-flight stages.
+    // This avoids sticky scoreboard bits after flushes/stalls.
+    val regBusy = Bits(regCount bits)
+    regBusy.clearAll()
+    for (stage <- hzRange.tail) {
+      val stValid = stage.up.isValid && stage(Decoder.VALID) && stage(borb.common.Common.LANE_SEL)
+      val stRd = stage(Decoder.RD_ADDR)
+      val stWritesIntRd = stValid &&
+        (stage(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+        (stRd =/= 0)
+      when(stWritesIntRd) {
+        regBusy(stRd.asUInt) := True
+      }
+    }
 
-    // ===============================================================
-    // 1. The "scoreboard": one bit per register to indicate busy
-    // ===============================================================
-    val regBusy = Reg(Bits(regCount bits)) init (0)
-
-    // ===============================================================
-    // 2. Each cycle, update busy bits based on writes in pipeline
-    // ===============================================================
-
-    // Step 1: detect writes (set busy)
-    // for (stage <- hzRange) {
-    //   val valid = stage(Decoder.VALID)
-    //   val rd    = stage(Decoder.RD_ADDR)
-    // //   // val writes = stage == hzRange.last // or use a .writesResult flag if earlier stages also write
-
-    //   when(valid && (rd =/= 0)) {
-    //     regBusy(rd.asUInt) := True
-    //   }
-    // }
-    // Step 2: detect completions (clear busy)
     val writes = new dispatchNode.Area {
-      // val stage = dispatchNode
-      val valid = up(Decoder.VALID)
+      val valid = up.isValid && up(Decoder.VALID)
       val rd = up(Decoder.RD_ADDR)
-
-      when(up.isFiring && (rd =/= 0) && (up(Decoder.RDTYPE) =/= borb.frontend.REGFILE.RDTYPE.RD_NA)) {
-        regBusy(rd.asUInt) := True
-      }
-
-      val wbStage = hzRange.last
-      val wbValid = wbStage(borb.execute.WriteBack.RESULT).valid
-      val wbRd = wbStage(borb.execute.WriteBack.RESULT).address
-
-      // Only clear busy when writeback actually commits (fires)
-      when(wbStage.down.isFiring && wbValid && (wbRd =/= 0)) {
-        regBusy(wbRd) := False
-      }
-
-      when(up.isFiring && (rd =/= 0)) {
-        regBusy(rd.asUInt) := True
-      }
-
-      // val stage = hzRange.head
+      val rs1Type = up(Decoder.RS1TYPE)
+      val rs2Type = up(Decoder.RS2TYPE)
       val rs1 = up(Decoder.RS1_ADDR)
       val rs2 = up(Decoder.RS2_ADDR)
-      val rs1Busy = regBusy(rs1.asUInt)
-      val rs2Busy = regBusy(rs2.asUInt)
+
+      val rs1Busy = (rs1Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+        (rs1 =/= 0) && regBusy(rs1.asUInt)
+      val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+        (rs2 =/= 0) && regBusy(rs2.asUInt)
 
       val hazard = valid && (rs1Busy || rs2Busy)
       hazard.simPublic()
 
-      // down(Decoder.VALID) := (!hazard)
       haltWhen(hazard)
-
-      // pipeline.links.last.down.ready := !hazard
-
-    }
-    // Step 2: detect completions (clear busy)
-    import borb.execute.IntAlu._
-
-    // ===============================================================
-    // 3. For each consumer stage, stall if its sources are busy
-    // ===============================================================
-    // val hazards = RegInit(Bits(hzRange.size bits)) init(0)
-    // for ((stage,i) <- hzRange.zipWithIndex) {
-    //   val valid = stage(Decoder.VALID)
-    //   val rs1   = stage(Decoder.RS1_ADDR)
-    //   val rs2   = stage(Decoder.RS2_ADDR)
-
-    //   val rs1Busy = regBusy(rs1.asUInt)
-    //   val rs2Busy = regBusy(rs2.asUInt)
-    //   val hazard  = valid && (rs1Busy || rs2Busy)
-    //   hazards(i) := valid && (rs1Busy || rs2Busy)
-
-    //   // hzRange.head.haltWhen(hazard)
-    // }
-    // hzRange.head.haltWhen(hazards.orR)
-
-    val hazards = RegInit(Bits(hzRange.size bits)) init (0)
-
-    val stall = new Area {
-
-      // stage.haltWhen(hazard)
-      // hzRange.take(2).tail.head.haltWhen(hazard)
-      // TODO: NEED HALT DISPATCH. CANDIDATES AND SLOT architecture
     }
 
-    val init = Counter(1 to 5)
-    when(init =/= 5) {
-      init.increment()
-      regBusy.clearAll()
-      // hazards.clearAll()
-    }
     regBusy.simPublic()
-    val inValue = init.value
-    inValue.simPublic()
   }
   val hcs = new HazardChecker(hzRange, 32)
 
