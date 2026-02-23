@@ -27,7 +27,12 @@ class RamFetchBusToAxi4Shared(axiConfig: Axi4Config) extends Component {
   // unless we want strict "shim" behavior. 
   // Let's implement passthrough for Fetch as it's less risky for deadlock vs Load/Store.
   
-  io.axi.arw.valid   := io.fetch.cmd.valid
+  // Track request addresses so responses carry the originating beat address.
+  val reqAddrQ = StreamFifo(UInt(axiConfig.addressWidth bits), depth = 8)
+  reqAddrQ.io.push.valid := io.fetch.cmd.valid && io.axi.arw.ready
+  reqAddrQ.io.push.payload := io.fetch.cmd.address
+
+  io.axi.arw.valid   := io.fetch.cmd.valid && reqAddrQ.io.push.ready
   io.axi.arw.addr    := io.fetch.cmd.address
   io.axi.arw.id      := io.fetch.cmd.id.resized
   io.axi.arw.len     := 0
@@ -40,14 +45,15 @@ class RamFetchBusToAxi4Shared(axiConfig: Axi4Config) extends Component {
   // io.axi.arw.region  := 0
   io.axi.arw.write   := False
   
-  io.fetch.cmd.ready := io.axi.arw.ready
+  io.fetch.cmd.ready := io.axi.arw.ready && reqAddrQ.io.push.ready
 
-  io.fetch.rsp.valid   := io.axi.r.valid
+  io.fetch.rsp.valid   := io.axi.r.valid && reqAddrQ.io.pop.valid
   io.fetch.rsp.data    := io.axi.r.data
-  io.fetch.rsp.address := 0 
+  io.fetch.rsp.address := reqAddrQ.io.pop.payload
   io.fetch.rsp.id      := io.axi.r.id.resized
   
-  io.axi.r.ready := True
+  reqAddrQ.io.pop.ready := io.axi.r.valid && reqAddrQ.io.pop.valid
+  io.axi.r.ready := reqAddrQ.io.pop.valid
 
   io.axi.w.valid := False
   io.axi.w.data := 0

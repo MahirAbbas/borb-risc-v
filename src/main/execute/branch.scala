@@ -31,6 +31,8 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     val src2U = up(RS2).asUInt
     val pcValue = up(PC.PC)
     val imm = up(IMMED).asUInt
+    val insn = up(INSTRUCTION)
+    val bImm = S(insn(31) ## insn(7) ## insn(30 downto 25) ## insn(11 downto 8) ## False).resize(64)
 
     val condition = Bool()
     switch(up(MicroCode)) {
@@ -48,8 +50,12 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       is(uopJALR) { 
         target := (src1U.asSInt + imm.asSInt).asUInt 
         target(0) := False
-        
-        }
+      }
+      is(uopBEQ, uopBNE, uopBLT, uopBGE, uopBLTU, uopBGEU) {
+        // Compute B-type immediate directly from instruction bits to avoid
+        // stage-crossing immediate aliasing on control-flow ops.
+        target := (pcValue.asSInt + bImm).asUInt
+      }
       default     { target := (pcValue.asSInt + imm.asSInt).asUInt }
     }
 

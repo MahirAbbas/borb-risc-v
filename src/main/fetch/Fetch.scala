@@ -26,6 +26,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   case class FetchPacket() extends Bundle {
     val data = Bits(dataWidth bits)
     val epoch = UInt(16 bits)
+    val beatAddr = UInt(addressWidth bits)
   }
   
   val fifo = StreamFifo(FetchPacket(), depth = 2)
@@ -36,15 +37,15 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   val rspFire = io.readCmd.rsp.valid
   inflight := inflight + U(cmdFire) - U(rspFire)
 
-  // Epoch/ID Handshake logic
-  // Delay epoch increment by one cycle to prevent race conditions
-  // where a stale response on the flush cycle accidentally gets the new epoch
+  // Epoch/ID handshake:
+  // - bump epoch on redirect
+  // - treat current cycle as the new epoch for stale filtering
+  //   so late responses from the old path are dropped immediately.
   val epoch = RegInit(U(0, 16 bits))
-  val flushPending = RegNext(io.flush) init False
-  
-  when(flushPending) {
+  when(io.flush) {
     epoch := epoch + 1
   }
+  val activeEpoch = epoch + U(io.flush)
 
   // Connect memory response to FIFO
   // Push ALL responses with their epoch tag (no filtering at push time)
@@ -52,6 +53,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   fifo.io.push.valid := io.readCmd.rsp.valid
   fifo.io.push.payload.data := io.readCmd.rsp.data
   fifo.io.push.payload.epoch := rspEpoch
+  fifo.io.push.payload.beatAddr := io.readCmd.rsp.address
   
   // Also flush FIFO storage when io.flush is asserted
   fifo.io.flush := io.flush
@@ -78,32 +80,46 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     // Request once per 64-bit beat (not once per 32-bit instruction).
     io.readCmd.cmd.valid := cmdStage.up.isValid && needReq && (fifo.io.availability > inflight) && !io.flush
     io.readCmd.cmd.payload.address := beatAddr
-    io.readCmd.cmd.payload.id := epoch
+    io.readCmd.cmd.payload.id := activeEpoch
 
     // If this PC needs a new beat, stall until the request is accepted.
     haltWhen(needReq && !io.readCmd.cmd.fire)
   }
 
   val rspArea = new rspStage.Area {
-    // Keep one beat locally so both 32-bit halves can be consumed.
+    // Keep one beat locally so either 32-bit half can be consumed in any order.
+    // This avoids losing an instruction when control flow jumps from +4 back to +0
+    // within the same 64-bit fetch beat.
     val holdValid = RegInit(False)
     val holdData = Reg(Bits(dataWidth bits)) init (0)
     val holdEpoch = Reg(UInt(16 bits)) init (0)
+    val holdBeatAddr = Reg(UInt(addressWidth bits)) init (0)
 
     when(io.flush) {
       holdValid := False
     }
 
-    val useHold = holdValid
+    // Invalidate cached beat if its speculation epoch is stale.
+    when(holdValid && (holdEpoch =/= activeEpoch)) {
+      holdValid := False
+    }
+
+    val beatAddr = UInt(addressWidth bits)
+    beatAddr := rspStage(PC.PC)
+    beatAddr(2 downto 0) := 0
+
+    val useHold = holdValid && (holdBeatAddr === beatAddr)
     val srcValid = useHold || fifo.io.pop.valid
     val srcData = useHold ? holdData | fifo.io.pop.payload.data
     val srcEpoch = useHold ? holdEpoch | fifo.io.pop.payload.epoch
-    val stalePacket = srcValid && (srcEpoch =/= epoch)
+    val srcBeatAddr = useHold ? holdBeatAddr | fifo.io.pop.payload.beatAddr
+    val stalePacket = srcValid && (srcEpoch =/= activeEpoch)
+    val beatMismatch = srcValid && (srcBeatAddr =/= beatAddr)
 
     // Drop stale packets and keep PC/insn in sync by throwing stage entry.
     throwWhen(stalePacket)
 
-    // Halt until we have data, except when stale data is being discarded.
+    // Halt until we have data. If a packet is for a different beat, drop it.
     haltWhen(!srcValid && !stalePacket)
 
     // iBus returns 64-bit beats. Select the 32-bit half based on PC[2].
@@ -113,20 +129,24 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     // All downstream stages inherit this epoch for flush comparison
     SPEC_EPOCH := io.currentEpoch
     
-    val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket
-    val keepForUpperHalf = takeInsn && !rspStage(PC.PC)(2)
+    val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket && !beatMismatch
+    val loadHoldFromFifo = takeInsn && !useHold
 
-    when(stalePacket) {
+    when((stalePacket || beatMismatch) && useHold) {
+      // Drop stale/mismatched hold packet.
       holdValid := False
-    }.elsewhen(takeInsn) {
-      holdValid := keepForUpperHalf
-      when(keepForUpperHalf) {
-        holdData := srcData
-        holdEpoch := srcEpoch
-      }
+    }.elsewhen((stalePacket || beatMismatch) && !useHold) {
+      // Drop stale FIFO packet.
+      holdValid := False
+    }.elsewhen(loadHoldFromFifo) {
+      // Cache fetched beat for potential same-beat control flow changes.
+      holdValid := True
+      holdData := srcData
+      holdEpoch := srcEpoch
+      holdBeatAddr := beatAddr
     }
 
-    // Pop only when source is FIFO (not hold) and we consume or discard.
-    fifo.io.pop.ready := !useHold && (takeInsn || stalePacket)
+    // Pop only when source is FIFO (not hold) and we consume or discard it.
+    fifo.io.pop.ready := !useHold && (takeInsn || stalePacket || beatMismatch)
   }
 }

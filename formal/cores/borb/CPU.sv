@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : b4c04ac0a8b58e503d2bd8962b33485b93f04c36
+// Git hash  : aeb3223ebd7e0438144eebc668040fa04797109a
 
 `timescale 1ns/1ps
 
@@ -202,6 +202,7 @@ module CPU (
   wire                coreArea_fetch_fifo_io_pop_valid;
   wire       [63:0]   coreArea_fetch_fifo_io_pop_payload_data;
   wire       [15:0]   coreArea_fetch_fifo_io_pop_payload_epoch;
+  wire       [63:0]   coreArea_fetch_fifo_io_pop_payload_beatAddr;
   wire       [1:0]    coreArea_fetch_fifo_io_occupancy;
   wire       [1:0]    coreArea_fetch_fifo_io_availability;
   wire       [63:0]   coreArea_srcPlugin_regfileread_regfile_io_reads_0_data;
@@ -211,6 +212,8 @@ module CPU (
   wire       [0:0]    _zz_coreArea_fetch_inflight_2;
   wire       [3:0]    _zz_coreArea_fetch_inflight_3;
   wire       [0:0]    _zz_coreArea_fetch_inflight_4;
+  wire       [15:0]   _zz_coreArea_fetch_activeEpoch;
+  wire       [0:0]    _zz_coreArea_fetch_activeEpoch_1;
   wire       [3:0]    _zz_coreArea_fetch_io_readCmd_cmd_valid;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1;
@@ -452,12 +455,15 @@ module CPU (
   wire       [63:0]   _zz__zz_IntAlu_aluNodeStage_result_55;
   wire       [63:0]   _zz__zz_IntAlu_aluNodeStage_result_56;
   wire       [63:0]   _zz__zz_IntAlu_aluNodeStage_result_57;
+  wire       [12:0]   _zz_coreArea_branch_logic_bImm;
   wire       [63:0]   _zz_coreArea_branch_logic_target;
   wire       [63:0]   _zz_coreArea_branch_logic_target_1;
   wire       [63:0]   _zz_coreArea_branch_logic_target_2;
   wire       [63:0]   _zz_coreArea_branch_logic_target_3;
   wire       [63:0]   _zz_coreArea_branch_logic_target_4;
   wire       [63:0]   _zz_coreArea_branch_logic_target_5;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_6;
+  wire       [63:0]   _zz_coreArea_branch_logic_target_7;
   wire       [63:0]   _zz_coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data;
   wire       [63:0]   _zz_coreArea_lsu_logic_effectiveAddr;
   wire       [63:0]   _zz_coreArea_lsu_logic_effectiveAddr_1;
@@ -497,13 +503,13 @@ module CPU (
   wire       [4:0]    coreArea_pipeline_ctrl_5_down_Decoder_RS1_ADDR;
   wire       [5:0]    coreArea_pipeline_ctrl_5_down_Decoder_MicroCode;
   wire       [0:0]    coreArea_pipeline_ctrl_5_down_Decoder_LEGAL;
+  wire       [3:0]    coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH;
   wire       [63:0]   coreArea_pipeline_ctrl_5_down_PC_PC;
   wire                coreArea_pipeline_ctrl_5_down_isValid;
   wire                coreArea_pipeline_ctrl_5_down_isReady;
   reg        [4:0]    coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR;
   reg        [4:0]    coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR;
   reg        [1:0]    coreArea_pipeline_ctrl_6_up_Decoder_RDTYPE;
-  reg        [31:0]   coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RS2_ADDR;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RS1_ADDR;
   wire       [4:0]    coreArea_pipeline_ctrl_4_down_Decoder_RD_ADDR;
@@ -514,6 +520,7 @@ module CPU (
   wire       [1:0]    coreArea_pipeline_ctrl_4_down_Decoder_RDTYPE;
   wire       [0:0]    coreArea_pipeline_ctrl_4_down_Decoder_LEGAL;
   wire                coreArea_pipeline_ctrl_4_down_Decoder_VALID;
+  wire       [3:0]    coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH;
   wire       [31:0]   coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION;
   wire       [63:0]   coreArea_pipeline_ctrl_4_down_PC_PC;
   wire                coreArea_pipeline_ctrl_4_down_isValid;
@@ -527,6 +534,7 @@ module CPU (
   reg        [1:0]    coreArea_pipeline_ctrl_5_up_Decoder_RDTYPE;
   reg        [0:0]    coreArea_pipeline_ctrl_5_up_Decoder_LEGAL;
   reg        [31:0]   coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION;
+  wire       [3:0]    coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH;
   wire                coreArea_pipeline_ctrl_3_down_isValid;
   wire                coreArea_pipeline_ctrl_3_down_isReady;
   reg        [5:0]    coreArea_pipeline_ctrl_4_up_Decoder_MicroCode;
@@ -619,9 +627,6 @@ module CPU (
   reg        [31:0]   coreArea_pipeline_ctrl_7_up_Decoder_INSTRUCTION;
   wire                coreArea_pipeline_ctrl_7_down_isFiring;
   wire                coreArea_pipeline_ctrl_7_up_Common_COMMIT;
-  wire       [3:0]    coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH;
-  wire       [3:0]    coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH;
-  wire       [3:0]    coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH;
   wire                coreArea_pipeline_ctrl_6_down_Common_TRAP;
   wire       [63:0]   coreArea_pipeline_ctrl_6_down_LSU_MEM_RDATA;
   wire       [7:0]    coreArea_pipeline_ctrl_6_down_LSU_MEM_RMASK;
@@ -638,6 +643,7 @@ module CPU (
   wire                coreArea_pipeline_ctrl_6_down_Branch_BRANCH_TAKEN;
   reg                 coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH;
   reg                 coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
+  reg        [31:0]   coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
   reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
   reg        [63:0]   coreArea_pipeline_ctrl_6_up_PC_PC;
   reg        [63:0]   coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
@@ -715,8 +721,8 @@ module CPU (
   wire                coreArea_pipeline_ctrl_3_down_Decoder_VALID;
   wire                coreArea_pipeline_ctrl_2_down_isFiring;
   wire       [3:0]    coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH;
-  wire       [63:0]   coreArea_pipeline_ctrl_2_down_PC_PC;
   wire       [31:0]   coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
+  wire       [63:0]   coreArea_pipeline_ctrl_2_down_PC_PC;
   wire                coreArea_pipeline_ctrl_1_up_isValid;
   wire       [63:0]   coreArea_pipeline_ctrl_1_down_PC_PC;
   wire       [63:0]   coreArea_pipeline_ctrl_0_down_PC_PC;
@@ -744,23 +750,31 @@ module CPU (
   reg        [3:0]    coreArea_fetch_inflight;
   wire                coreArea_fetch_cmdFire;
   reg        [15:0]   coreArea_fetch_epoch;
-  reg                 coreArea_fetch_flushPending;
+  wire       [15:0]   coreArea_fetch_activeEpoch;
   reg                 coreArea_fetch_cmdArea_requestedBeatValid;
   reg        [63:0]   coreArea_fetch_cmdArea_requestedBeatAddr;
   reg        [63:0]   coreArea_fetch_cmdArea_beatAddr;
   wire                coreArea_fetch_cmdArea_needReq;
-  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l84;
+  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l86;
   reg                 coreArea_fetch_rspArea_holdValid;
   reg        [63:0]   coreArea_fetch_rspArea_holdData;
   reg        [15:0]   coreArea_fetch_rspArea_holdEpoch;
+  reg        [63:0]   coreArea_fetch_rspArea_holdBeatAddr;
+  wire                when_Fetch_l103;
+  reg        [63:0]   coreArea_fetch_rspArea_beatAddr;
+  wire                coreArea_fetch_rspArea_useHold;
   wire                coreArea_fetch_rspArea_srcValid;
   wire       [63:0]   coreArea_fetch_rspArea_srcData;
   wire       [15:0]   coreArea_fetch_rspArea_srcEpoch;
+  wire       [63:0]   coreArea_fetch_rspArea_srcBeatAddr;
   wire                coreArea_fetch_rspArea_stalePacket;
-  wire                coreArea_pipeline_ctrl_2_throwWhen_Fetch_l104;
-  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l107;
+  wire                coreArea_fetch_rspArea_beatMismatch;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_Fetch_l120;
+  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l123;
   wire                coreArea_fetch_rspArea_takeInsn;
-  wire                coreArea_fetch_rspArea_keepForUpperHalf;
+  wire                coreArea_fetch_rspArea_loadHoldFromFifo;
+  wire                when_Fetch_l135;
+  wire                when_Fetch_l138;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_2;
@@ -844,6 +858,7 @@ module CPU (
   wire       [63:0]   coreArea_branch_logic_src1U;
   wire       [63:0]   coreArea_branch_logic_src2U;
   wire       [63:0]   coreArea_branch_logic_imm;
+  wire       [63:0]   coreArea_branch_logic_bImm;
   reg                 coreArea_branch_logic_condition;
   reg        [63:0]   coreArea_branch_logic_target;
   reg                 coreArea_branch_logic_isJump;
@@ -855,7 +870,7 @@ module CPU (
   wire       [63:0]   coreArea_branch_logic_jumpCmd_payload_target;
   wire                coreArea_branch_logic_jumpCmd_payload_is_jump;
   wire                coreArea_branch_logic_jumpCmd_payload_is_branch;
-  wire                when_branch_l91;
+  wire                when_branch_l97;
   wire                coreArea_lsu_io_dBus_cmd_valid;
   wire                coreArea_lsu_io_dBus_cmd_ready;
   wire       [63:0]   coreArea_lsu_io_dBus_cmd_payload_address;
@@ -902,11 +917,11 @@ module CPU (
   wire       [63:0]   coreArea_lsu_logic_maskedLoadResult;
   wire       [7:0]    coreArea_lsu_logic_readMaskShifted;
   reg        [3:0]    coreArea_currentEpoch;
-  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l144;
-  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l144;
-  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l144;
-  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l150;
-  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l150;
+  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l141;
+  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l141;
+  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l141;
+  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l147;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l147;
   reg        [63:0]   coreArea_rvfiPlugin_order;
   wire                coreArea_rvfiPlugin_wb_isCommitted;
   reg        [63:0]   coreArea_debugPlugin_order;
@@ -933,13 +948,13 @@ module CPU (
   wire       [63:0]   coreArea_perfCounters_counters_branches;
   wire       [63:0]   coreArea_perfCounters_counters_branchesTaken;
   wire       [63:0]   coreArea_perfCounters_counters_flushes;
-  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_6_throwWhen_CPU_l195;
-  wire                coreArea_pipeline_ctrl_7_throwWhen_CPU_l195;
+  wire                coreArea_pipeline_ctrl_1_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_3_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_4_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_5_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_6_throwWhen_CPU_l192;
+  wire                coreArea_pipeline_ctrl_7_throwWhen_CPU_l192;
   wire                coreArea_pipeline_ctrl_7_up_forgetOne;
   wire                coreArea_pipeline_ctrl_6_up_forgetOne;
   wire                coreArea_pipeline_ctrl_5_up_forgetOne;
@@ -1057,6 +1072,8 @@ module CPU (
   assign _zz_coreArea_fetch_inflight_1 = {3'd0, _zz_coreArea_fetch_inflight_2};
   assign _zz_coreArea_fetch_inflight_4 = coreArea_fetch_io_readCmd_rsp_valid;
   assign _zz_coreArea_fetch_inflight_3 = {3'd0, _zz_coreArea_fetch_inflight_4};
+  assign _zz_coreArea_fetch_activeEpoch_1 = coreArea_fetch_io_flush;
+  assign _zz_coreArea_fetch_activeEpoch = {15'd0, _zz_coreArea_fetch_activeEpoch_1};
   assign _zz_coreArea_fetch_io_readCmd_cmd_valid = {2'd0, coreArea_fetch_fifo_io_availability};
   assign _zz__zz_coreArea_srcPlugin_immsel_sext = {coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION[31 : 12],12'h0};
   assign _zz__zz_coreArea_srcPlugin_immsel_sext_1 = coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION[31 : 20];
@@ -1121,12 +1138,15 @@ module CPU (
   assign _zz__zz_IntAlu_aluNodeStage_result_55 = ($signed(_zz__zz_IntAlu_aluNodeStage_result_56) + $signed(_zz__zz_IntAlu_aluNodeStage_result_57));
   assign _zz__zz_IntAlu_aluNodeStage_result_56 = coreArea_pipeline_ctrl_6_down_SrcPlugin_IMMED;
   assign _zz__zz_IntAlu_aluNodeStage_result_57 = coreArea_pipeline_ctrl_6_down_PC_PC;
+  assign _zz_coreArea_branch_logic_bImm = {{{{coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION[31],coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION[7]},coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION[30 : 25]},coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION[11 : 8]},1'b0};
   assign _zz_coreArea_branch_logic_target = ($signed(_zz_coreArea_branch_logic_target_1) + $signed(_zz_coreArea_branch_logic_target_2));
   assign _zz_coreArea_branch_logic_target_1 = coreArea_branch_logic_src1U;
   assign _zz_coreArea_branch_logic_target_2 = coreArea_branch_logic_imm;
-  assign _zz_coreArea_branch_logic_target_3 = ($signed(_zz_coreArea_branch_logic_target_4) + $signed(_zz_coreArea_branch_logic_target_5));
+  assign _zz_coreArea_branch_logic_target_3 = ($signed(_zz_coreArea_branch_logic_target_4) + $signed(coreArea_branch_logic_bImm));
   assign _zz_coreArea_branch_logic_target_4 = coreArea_pipeline_ctrl_6_up_PC_PC;
-  assign _zz_coreArea_branch_logic_target_5 = coreArea_branch_logic_imm;
+  assign _zz_coreArea_branch_logic_target_5 = ($signed(_zz_coreArea_branch_logic_target_6) + $signed(_zz_coreArea_branch_logic_target_7));
+  assign _zz_coreArea_branch_logic_target_6 = coreArea_pipeline_ctrl_6_up_PC_PC;
+  assign _zz_coreArea_branch_logic_target_7 = coreArea_branch_logic_imm;
   assign _zz_coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = (coreArea_pipeline_ctrl_6_up_PC_PC + 64'h0000000000000004);
   assign _zz_coreArea_lsu_logic_effectiveAddr = ($signed(_zz_coreArea_lsu_logic_effectiveAddr_1) + $signed(_zz_coreArea_lsu_logic_effectiveAddr_2));
   assign _zz_coreArea_lsu_logic_effectiveAddr_1 = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
@@ -1324,20 +1344,22 @@ module CPU (
   assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_163 = (coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION & 32'h4000704c);
   assign _zz__zz_coreArea_pipeline_ctrl_3_down_Decoder_MicroCode_4_164 = 32'h40005000;
   StreamFifo coreArea_fetch_fifo (
-    .io_push_valid         (coreArea_fetch_io_readCmd_rsp_valid             ), //i
-    .io_push_ready         (coreArea_fetch_fifo_io_push_ready               ), //o
-    .io_push_payload_data  (coreArea_fetch_io_readCmd_rsp_payload_data[63:0]), //i
-    .io_push_payload_epoch (coreArea_fetch_io_readCmd_rsp_payload_id[15:0]  ), //i
-    .io_pop_valid          (coreArea_fetch_fifo_io_pop_valid                ), //o
-    .io_pop_ready          (coreArea_fetch_fifo_io_pop_ready                ), //i
-    .io_pop_payload_data   (coreArea_fetch_fifo_io_pop_payload_data[63:0]   ), //o
-    .io_pop_payload_epoch  (coreArea_fetch_fifo_io_pop_payload_epoch[15:0]  ), //o
-    .io_flush              (coreArea_fetch_io_flush                         ), //i
-    .io_occupancy          (coreArea_fetch_fifo_io_occupancy[1:0]           ), //o
-    .io_availability       (coreArea_fetch_fifo_io_availability[1:0]        ), //o
-    .io_clk                (io_clk                                          ), //i
-    .io_reset              (io_reset                                        ), //i
-    .io_clkEnable          (io_clkEnable                                    )  //i
+    .io_push_valid            (coreArea_fetch_io_readCmd_rsp_valid                ), //i
+    .io_push_ready            (coreArea_fetch_fifo_io_push_ready                  ), //o
+    .io_push_payload_data     (coreArea_fetch_io_readCmd_rsp_payload_data[63:0]   ), //i
+    .io_push_payload_epoch    (coreArea_fetch_io_readCmd_rsp_payload_id[15:0]     ), //i
+    .io_push_payload_beatAddr (coreArea_fetch_io_readCmd_rsp_payload_address[63:0]), //i
+    .io_pop_valid             (coreArea_fetch_fifo_io_pop_valid                   ), //o
+    .io_pop_ready             (coreArea_fetch_fifo_io_pop_ready                   ), //i
+    .io_pop_payload_data      (coreArea_fetch_fifo_io_pop_payload_data[63:0]      ), //o
+    .io_pop_payload_epoch     (coreArea_fetch_fifo_io_pop_payload_epoch[15:0]     ), //o
+    .io_pop_payload_beatAddr  (coreArea_fetch_fifo_io_pop_payload_beatAddr[63:0]  ), //o
+    .io_flush                 (coreArea_fetch_io_flush                            ), //i
+    .io_occupancy             (coreArea_fetch_fifo_io_occupancy[1:0]              ), //o
+    .io_availability          (coreArea_fetch_fifo_io_availability[1:0]           ), //o
+    .io_clk                   (io_clk                                             ), //i
+    .io_reset                 (io_reset                                           ), //i
+    .io_clkEnable             (io_clkEnable                                       )  //i
   );
   IntRegFile coreArea_srcPlugin_regfileread_regfile (
     .io_reads_0_valid    (coreArea_srcPlugin_rs1Reader_valid                          ), //i
@@ -2614,6 +2636,7 @@ module CPU (
   assign coreArea_pc_flush_valid = 1'b0;
   assign coreArea_pc_flush_payload_address = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
   assign coreArea_fetch_cmdFire = (coreArea_fetch_io_readCmd_cmd_valid && coreArea_fetch_io_readCmd_cmd_ready);
+  assign coreArea_fetch_activeEpoch = (coreArea_fetch_epoch + _zz_coreArea_fetch_activeEpoch);
   always @(*) begin
     coreArea_fetch_cmdArea_beatAddr = coreArea_pipeline_ctrl_1_down_PC_PC;
     coreArea_fetch_cmdArea_beatAddr[2 : 0] = 3'b000;
@@ -2622,19 +2645,30 @@ module CPU (
   assign coreArea_fetch_cmdArea_needReq = ((! coreArea_fetch_cmdArea_requestedBeatValid) || (coreArea_fetch_cmdArea_beatAddr != coreArea_fetch_cmdArea_requestedBeatAddr));
   assign coreArea_fetch_io_readCmd_cmd_valid = (((coreArea_pipeline_ctrl_1_up_isValid && coreArea_fetch_cmdArea_needReq) && (coreArea_fetch_inflight < _zz_coreArea_fetch_io_readCmd_cmd_valid)) && (! coreArea_fetch_io_flush));
   assign coreArea_fetch_io_readCmd_cmd_payload_address = coreArea_fetch_cmdArea_beatAddr;
-  assign coreArea_fetch_io_readCmd_cmd_payload_id = coreArea_fetch_epoch;
-  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l84 = (coreArea_fetch_cmdArea_needReq && (! coreArea_fetch_cmdFire));
-  assign coreArea_fetch_rspArea_srcValid = (coreArea_fetch_rspArea_holdValid || coreArea_fetch_fifo_io_pop_valid);
-  assign coreArea_fetch_rspArea_srcData = (coreArea_fetch_rspArea_holdValid ? coreArea_fetch_rspArea_holdData : coreArea_fetch_fifo_io_pop_payload_data);
-  assign coreArea_fetch_rspArea_srcEpoch = (coreArea_fetch_rspArea_holdValid ? coreArea_fetch_rspArea_holdEpoch : coreArea_fetch_fifo_io_pop_payload_epoch);
-  assign coreArea_fetch_rspArea_stalePacket = (coreArea_fetch_rspArea_srcValid && (coreArea_fetch_rspArea_srcEpoch != coreArea_fetch_epoch));
-  assign coreArea_pipeline_ctrl_2_throwWhen_Fetch_l104 = coreArea_fetch_rspArea_stalePacket;
-  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l107 = ((! coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket));
+  assign coreArea_fetch_io_readCmd_cmd_payload_id = coreArea_fetch_activeEpoch;
+  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l86 = (coreArea_fetch_cmdArea_needReq && (! coreArea_fetch_cmdFire));
+  assign when_Fetch_l103 = (coreArea_fetch_rspArea_holdValid && (coreArea_fetch_rspArea_holdEpoch != coreArea_fetch_activeEpoch));
+  always @(*) begin
+    coreArea_fetch_rspArea_beatAddr = coreArea_pipeline_ctrl_2_down_PC_PC;
+    coreArea_fetch_rspArea_beatAddr[2 : 0] = 3'b000;
+  end
+
+  assign coreArea_fetch_rspArea_useHold = (coreArea_fetch_rspArea_holdValid && (coreArea_fetch_rspArea_holdBeatAddr == coreArea_fetch_rspArea_beatAddr));
+  assign coreArea_fetch_rspArea_srcValid = (coreArea_fetch_rspArea_useHold || coreArea_fetch_fifo_io_pop_valid);
+  assign coreArea_fetch_rspArea_srcData = (coreArea_fetch_rspArea_useHold ? coreArea_fetch_rspArea_holdData : coreArea_fetch_fifo_io_pop_payload_data);
+  assign coreArea_fetch_rspArea_srcEpoch = (coreArea_fetch_rspArea_useHold ? coreArea_fetch_rspArea_holdEpoch : coreArea_fetch_fifo_io_pop_payload_epoch);
+  assign coreArea_fetch_rspArea_srcBeatAddr = (coreArea_fetch_rspArea_useHold ? coreArea_fetch_rspArea_holdBeatAddr : coreArea_fetch_fifo_io_pop_payload_beatAddr);
+  assign coreArea_fetch_rspArea_stalePacket = (coreArea_fetch_rspArea_srcValid && (coreArea_fetch_rspArea_srcEpoch != coreArea_fetch_activeEpoch));
+  assign coreArea_fetch_rspArea_beatMismatch = (coreArea_fetch_rspArea_srcValid && (coreArea_fetch_rspArea_srcBeatAddr != coreArea_fetch_rspArea_beatAddr));
+  assign coreArea_pipeline_ctrl_2_throwWhen_Fetch_l120 = coreArea_fetch_rspArea_stalePacket;
+  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l123 = ((! coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket));
   assign coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = (coreArea_pipeline_ctrl_2_down_PC_PC[2] ? coreArea_fetch_rspArea_srcData[63 : 32] : coreArea_fetch_rspArea_srcData[31 : 0]);
   assign coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH = coreArea_fetch_io_currentEpoch;
-  assign coreArea_fetch_rspArea_takeInsn = ((coreArea_pipeline_ctrl_2_down_isFiring && coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket));
-  assign coreArea_fetch_rspArea_keepForUpperHalf = (coreArea_fetch_rspArea_takeInsn && (! coreArea_pipeline_ctrl_2_down_PC_PC[2]));
-  assign coreArea_fetch_fifo_io_pop_ready = ((! coreArea_fetch_rspArea_holdValid) && (coreArea_fetch_rspArea_takeInsn || coreArea_fetch_rspArea_stalePacket));
+  assign coreArea_fetch_rspArea_takeInsn = (((coreArea_pipeline_ctrl_2_down_isFiring && coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket)) && (! coreArea_fetch_rspArea_beatMismatch));
+  assign coreArea_fetch_rspArea_loadHoldFromFifo = (coreArea_fetch_rspArea_takeInsn && (! coreArea_fetch_rspArea_useHold));
+  assign when_Fetch_l135 = ((coreArea_fetch_rspArea_stalePacket || coreArea_fetch_rspArea_beatMismatch) && coreArea_fetch_rspArea_useHold);
+  assign when_Fetch_l138 = ((coreArea_fetch_rspArea_stalePacket || coreArea_fetch_rspArea_beatMismatch) && (! coreArea_fetch_rspArea_useHold));
+  assign coreArea_fetch_fifo_io_pop_ready = ((! coreArea_fetch_rspArea_useHold) && ((coreArea_fetch_rspArea_takeInsn || coreArea_fetch_rspArea_stalePacket) || coreArea_fetch_rspArea_beatMismatch));
   assign coreArea_pipeline_ctrl_3_down_Decoder_VALID = (|{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000005f) == 32'h00000017),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000007f) == 32'h0000006f),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID) == 32'h00000003),{(_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 == _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2),{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3,{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4,_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5}}}}}});
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1 = 1'b0;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL = _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
@@ -2922,7 +2956,7 @@ module CPU (
     if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
     end
-    if(when_branch_l91) begin
+    if(when_branch_l97) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_address = coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR;
       end
@@ -2937,7 +2971,7 @@ module CPU (
     if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : IntAlu_aluNodeStage_result);
     end
-    if(when_branch_l91) begin
+    if(when_branch_l97) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data = ((coreArea_pipeline_ctrl_6_up_Decoder_RD_ADDR == 5'h0) ? 64'h0 : _zz_coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_data);
       end
@@ -2952,7 +2986,7 @@ module CPU (
     if(when_IntAlu_l75) begin
       coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_valid = ((coreArea_pipeline_ctrl_6_up_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID);
     end
-    if(when_branch_l91) begin
+    if(when_branch_l97) begin
       if(coreArea_branch_logic_isJump) begin
         coreArea_pipeline_ctrl_6_down_WriteBack_RESULT_valid = (((coreArea_pipeline_ctrl_6_down_Decoder_LEGAL == YESNO_Y) && coreArea_pipeline_ctrl_6_up_Decoder_VALID) && (! coreArea_branch_logic_willTrap));
       end
@@ -2968,6 +3002,7 @@ module CPU (
   assign coreArea_branch_logic_src1U = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1;
   assign coreArea_branch_logic_src2U = coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2;
   assign coreArea_branch_logic_imm = coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED;
+  assign coreArea_branch_logic_bImm = {{51{_zz_coreArea_branch_logic_bImm[12]}}, _zz_coreArea_branch_logic_bImm};
   always @(*) begin
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
       MicroCode_uopBEQ : begin
@@ -3000,8 +3035,11 @@ module CPU (
         coreArea_branch_logic_target = _zz_coreArea_branch_logic_target;
         coreArea_branch_logic_target[0] = 1'b0;
       end
-      default : begin
+      MicroCode_uopBEQ, MicroCode_uopBNE, MicroCode_uopBLT, MicroCode_uopBGE, MicroCode_uopBLTU, MicroCode_uopBGEU : begin
         coreArea_branch_logic_target = _zz_coreArea_branch_logic_target_3;
+      end
+      default : begin
+        coreArea_branch_logic_target = _zz_coreArea_branch_logic_target_5;
       end
     endcase
   end
@@ -3056,7 +3094,7 @@ module CPU (
   assign coreArea_branch_logic_jumpCmd_payload_target = coreArea_branch_logic_target;
   assign coreArea_branch_logic_jumpCmd_payload_is_jump = coreArea_branch_logic_isJump;
   assign coreArea_branch_logic_jumpCmd_payload_is_branch = coreArea_branch_logic_isBranch;
-  assign when_branch_l91 = (coreArea_pipeline_ctrl_6_up_Common_LANE_SEL && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
+  assign when_branch_l97 = (coreArea_pipeline_ctrl_6_up_Common_LANE_SEL && coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOBRANCH);
   assign coreArea_lsu_logic_effectiveAddr = _zz_coreArea_lsu_logic_effectiveAddr;
   always @(*) begin
     case(coreArea_pipeline_ctrl_6_up_Decoder_MicroCode)
@@ -3267,11 +3305,11 @@ module CPU (
   assign coreArea_pc_jump_payload_is_branch = coreArea_branch_logic_jumpCmd_payload_is_branch;
   assign coreArea_fetch_io_flush = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_fetch_io_currentEpoch = coreArea_currentEpoch;
-  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l144 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l144 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l144 = (coreArea_branch_logic_jumpCmd_valid && (coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH == coreArea_currentEpoch));
-  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l150 = coreArea_branch_logic_jumpCmd_valid;
-  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l150 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l141 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l141 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l141 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l147 = coreArea_branch_logic_jumpCmd_valid;
+  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l147 = coreArea_branch_logic_jumpCmd_valid;
   assign coreArea_rvfiPlugin_wb_isCommitted = (coreArea_pipeline_ctrl_7_up_Common_COMMIT && coreArea_pipeline_ctrl_7_down_isFiring);
   assign coreArea_rvfiPlugin_io_rvfi_valid = coreArea_rvfiPlugin_wb_isCommitted;
   assign coreArea_rvfiPlugin_io_rvfi_order = coreArea_rvfiPlugin_order;
@@ -3385,27 +3423,27 @@ module CPU (
   assign coreArea_fetch_io_readCmd_rsp_payload_data = io_iBus_rsp_payload_data;
   assign coreArea_fetch_io_readCmd_rsp_payload_address = io_iBus_rsp_payload_address;
   assign coreArea_fetch_io_readCmd_rsp_payload_id = io_iBus_rsp_payload_id;
-  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_6_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_7_throwWhen_CPU_l195 = io_reset;
-  assign coreArea_pipeline_ctrl_7_up_forgetOne = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l195);
-  assign coreArea_pipeline_ctrl_7_up_cancel = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l195);
-  assign coreArea_pipeline_ctrl_6_up_forgetOne = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l195);
-  assign coreArea_pipeline_ctrl_6_up_cancel = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l195);
-  assign coreArea_pipeline_ctrl_5_up_forgetOne = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l195,coreArea_pipeline_ctrl_5_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_5_up_cancel = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l195,coreArea_pipeline_ctrl_5_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_4_up_forgetOne = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l195,coreArea_pipeline_ctrl_4_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_4_up_cancel = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l195,coreArea_pipeline_ctrl_4_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_3_up_forgetOne = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l195,coreArea_pipeline_ctrl_3_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_3_up_cancel = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l195,coreArea_pipeline_ctrl_3_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l104}});
-  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l104}});
-  assign coreArea_pipeline_ctrl_1_up_forgetOne = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
-  assign coreArea_pipeline_ctrl_1_up_cancel = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
+  assign coreArea_pipeline_ctrl_1_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_2_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_3_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_4_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_5_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_6_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_7_throwWhen_CPU_l192 = io_reset;
+  assign coreArea_pipeline_ctrl_7_up_forgetOne = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l192);
+  assign coreArea_pipeline_ctrl_7_up_cancel = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l192);
+  assign coreArea_pipeline_ctrl_6_up_forgetOne = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l192);
+  assign coreArea_pipeline_ctrl_6_up_cancel = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l192);
+  assign coreArea_pipeline_ctrl_5_up_forgetOne = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l192,coreArea_pipeline_ctrl_5_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_5_up_cancel = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l192,coreArea_pipeline_ctrl_5_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_4_up_forgetOne = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l192,coreArea_pipeline_ctrl_4_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_4_up_cancel = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l192,coreArea_pipeline_ctrl_4_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_3_up_forgetOne = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l192,coreArea_pipeline_ctrl_3_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_3_up_cancel = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l192,coreArea_pipeline_ctrl_3_throwWhen_CPU_l141});
+  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l192,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l147,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l120}});
+  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l192,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l147,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l120}});
+  assign coreArea_pipeline_ctrl_1_up_forgetOne = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l192,coreArea_pipeline_ctrl_1_throwWhen_CPU_l147});
+  assign coreArea_pipeline_ctrl_1_up_cancel = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l192,coreArea_pipeline_ctrl_1_throwWhen_CPU_l147});
   always @(*) begin
     coreArea_pipeline_ctrl_0_down_ready = coreArea_pipeline_ctrl_1_up_ready;
     if(when_StageLink_l71) begin
@@ -3481,8 +3519,8 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l84);
-  assign when_CtrlLink_l198 = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
+  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l86);
+  assign when_CtrlLink_l198 = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l192,coreArea_pipeline_ctrl_1_throwWhen_CPU_l147});
   assign coreArea_pipeline_ctrl_1_down_PC_PC = coreArea_pipeline_ctrl_1_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_2_down_valid = coreArea_pipeline_ctrl_2_up_valid;
@@ -3501,8 +3539,8 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l107);
-  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l104}});
+  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l123);
+  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l192,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l147,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l120}});
   assign coreArea_pipeline_ctrl_2_down_PC_PC = coreArea_pipeline_ctrl_2_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_3_down_valid = coreArea_pipeline_ctrl_3_up_valid;
@@ -3512,7 +3550,7 @@ module CPU (
   end
 
   assign coreArea_pipeline_ctrl_3_up_ready = coreArea_pipeline_ctrl_3_down_isReady;
-  assign when_CtrlLink_l198_2 = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l195,coreArea_pipeline_ctrl_3_throwWhen_CPU_l144});
+  assign when_CtrlLink_l198_2 = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l192,coreArea_pipeline_ctrl_3_throwWhen_CPU_l141});
   assign coreArea_pipeline_ctrl_3_down_PC_PC = coreArea_pipeline_ctrl_3_up_PC_PC;
   assign coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_3_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_3_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH;
@@ -3534,7 +3572,7 @@ module CPU (
   end
 
   assign when_CtrlLink_l191_2 = (|coreArea_pipeline_ctrl_4_haltRequest_scheduler_l192);
-  assign when_CtrlLink_l198_3 = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l195,coreArea_pipeline_ctrl_4_throwWhen_CPU_l144});
+  assign when_CtrlLink_l198_3 = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l192,coreArea_pipeline_ctrl_4_throwWhen_CPU_l141});
   assign coreArea_pipeline_ctrl_4_down_PC_PC = coreArea_pipeline_ctrl_4_up_PC_PC;
   assign coreArea_pipeline_ctrl_4_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_4_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_4_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_4_up_Common_SPEC_EPOCH;
@@ -3556,7 +3594,7 @@ module CPU (
   end
 
   assign coreArea_pipeline_ctrl_5_up_ready = coreArea_pipeline_ctrl_5_down_isReady;
-  assign when_CtrlLink_l198_4 = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l195,coreArea_pipeline_ctrl_5_throwWhen_CPU_l144});
+  assign when_CtrlLink_l198_4 = (|{coreArea_pipeline_ctrl_5_throwWhen_CPU_l192,coreArea_pipeline_ctrl_5_throwWhen_CPU_l141});
   assign coreArea_pipeline_ctrl_5_down_PC_PC = coreArea_pipeline_ctrl_5_up_PC_PC;
   assign coreArea_pipeline_ctrl_5_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_5_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_5_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH;
@@ -3591,7 +3629,7 @@ module CPU (
   end
 
   assign when_CtrlLink_l191_3 = (|{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l169,{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l160,{coreArea_pipeline_ctrl_6_haltRequest_Lsu_l158,coreArea_pipeline_ctrl_6_haltRequest_Lsu_l143}}});
-  assign when_CtrlLink_l198_5 = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l195);
+  assign when_CtrlLink_l198_5 = (|coreArea_pipeline_ctrl_6_throwWhen_CPU_l192);
   assign coreArea_pipeline_ctrl_6_down_PC_PC = coreArea_pipeline_ctrl_6_up_PC_PC;
   assign coreArea_pipeline_ctrl_6_down_Decoder_INSTRUCTION = coreArea_pipeline_ctrl_6_up_Decoder_INSTRUCTION;
   assign coreArea_pipeline_ctrl_6_down_Common_SPEC_EPOCH = coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH;
@@ -3614,7 +3652,7 @@ module CPU (
   end
 
   assign coreArea_pipeline_ctrl_7_up_ready = coreArea_pipeline_ctrl_7_down_isReady;
-  assign when_CtrlLink_l198_6 = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l195);
+  assign when_CtrlLink_l198_6 = (|coreArea_pipeline_ctrl_7_throwWhen_CPU_l192);
   assign coreArea_pipeline_ctrl_7_down_Decoder_VALID = coreArea_pipeline_ctrl_7_up_Decoder_VALID;
   assign coreArea_pipeline_ctrl_7_down_Decoder_RDTYPE = coreArea_pipeline_ctrl_7_up_Decoder_RDTYPE;
   assign coreArea_pipeline_ctrl_7_down_Decoder_RD_ADDR = coreArea_pipeline_ctrl_7_up_Decoder_RD_ADDR;
@@ -3660,12 +3698,12 @@ module CPU (
       coreArea_pc_PC_cur <= 64'h0;
       coreArea_fetch_inflight <= 4'b0000;
       coreArea_fetch_epoch <= 16'h0;
-      coreArea_fetch_flushPending <= 1'b0;
       coreArea_fetch_cmdArea_requestedBeatValid <= 1'b0;
       coreArea_fetch_cmdArea_requestedBeatAddr <= 64'h0;
       coreArea_fetch_rspArea_holdValid <= 1'b0;
       coreArea_fetch_rspArea_holdData <= 64'h0;
       coreArea_fetch_rspArea_holdEpoch <= 16'h0;
+      coreArea_fetch_rspArea_holdBeatAddr <= 64'h0;
       coreArea_lsu_logic_waitingResponse <= 1'b0;
       coreArea_lsu_logic_nextId <= 16'h0001;
       coreArea_currentEpoch <= 4'b0000;
@@ -3703,8 +3741,7 @@ module CPU (
           end
         end
         coreArea_fetch_inflight <= (_zz_coreArea_fetch_inflight - _zz_coreArea_fetch_inflight_3);
-        coreArea_fetch_flushPending <= coreArea_fetch_io_flush;
-        if(coreArea_fetch_flushPending) begin
+        if(coreArea_fetch_io_flush) begin
           coreArea_fetch_epoch <= (coreArea_fetch_epoch + 16'h0001);
         end
         if(coreArea_fetch_cmdFire) begin
@@ -3717,14 +3754,20 @@ module CPU (
         if(coreArea_fetch_io_flush) begin
           coreArea_fetch_rspArea_holdValid <= 1'b0;
         end
-        if(coreArea_fetch_rspArea_stalePacket) begin
+        if(when_Fetch_l103) begin
+          coreArea_fetch_rspArea_holdValid <= 1'b0;
+        end
+        if(when_Fetch_l135) begin
           coreArea_fetch_rspArea_holdValid <= 1'b0;
         end else begin
-          if(coreArea_fetch_rspArea_takeInsn) begin
-            coreArea_fetch_rspArea_holdValid <= coreArea_fetch_rspArea_keepForUpperHalf;
-            if(coreArea_fetch_rspArea_keepForUpperHalf) begin
+          if(when_Fetch_l138) begin
+            coreArea_fetch_rspArea_holdValid <= 1'b0;
+          end else begin
+            if(coreArea_fetch_rspArea_loadHoldFromFifo) begin
+              coreArea_fetch_rspArea_holdValid <= 1'b1;
               coreArea_fetch_rspArea_holdData <= coreArea_fetch_rspArea_srcData;
               coreArea_fetch_rspArea_holdEpoch <= coreArea_fetch_rspArea_srcEpoch;
+              coreArea_fetch_rspArea_holdBeatAddr <= coreArea_fetch_rspArea_beatAddr;
             end
           end
         end
@@ -3980,10 +4023,12 @@ module StreamFifo (
   output wire          io_push_ready,
   input  wire [63:0]   io_push_payload_data,
   input  wire [15:0]   io_push_payload_epoch,
+  input  wire [63:0]   io_push_payload_beatAddr,
   output wire          io_pop_valid,
   input  wire          io_pop_ready,
   output wire [63:0]   io_pop_payload_data,
   output wire [15:0]   io_pop_payload_epoch,
+  output wire [63:0]   io_pop_payload_beatAddr,
   input  wire          io_flush,
   output wire [1:0]    io_occupancy,
   output wire [1:0]    io_availability,
@@ -3992,8 +4037,8 @@ module StreamFifo (
   input  wire          io_clkEnable
 );
 
-  reg        [79:0]   logic_ram_spinal_port1;
-  wire       [79:0]   _zz_logic_ram_port;
+  reg        [143:0]  logic_ram_spinal_port1;
+  wire       [143:0]  _zz_logic_ram_port;
   reg                 _zz_1;
   wire                logic_ptr_doPush;
   wire                logic_ptr_doPop;
@@ -4010,6 +4055,7 @@ module StreamFifo (
   wire       [0:0]    logic_push_onRam_write_payload_address;
   wire       [63:0]   logic_push_onRam_write_payload_data_data;
   wire       [15:0]   logic_push_onRam_write_payload_data_epoch;
+  wire       [63:0]   logic_push_onRam_write_payload_data_beatAddr;
   wire                logic_pop_addressGen_valid;
   reg                 logic_pop_addressGen_ready;
   wire       [0:0]    logic_pop_addressGen_payload;
@@ -4024,18 +4070,20 @@ module StreamFifo (
   wire       [0:0]    logic_pop_sync_readPort_cmd_payload;
   wire       [63:0]   logic_pop_sync_readPort_rsp_data;
   wire       [15:0]   logic_pop_sync_readPort_rsp_epoch;
-  wire       [79:0]   _zz_logic_pop_sync_readPort_rsp_data;
+  wire       [63:0]   logic_pop_sync_readPort_rsp_beatAddr;
+  wire       [143:0]  _zz_logic_pop_sync_readPort_rsp_data;
   wire                logic_pop_addressGen_toFlowFire_valid;
   wire       [0:0]    logic_pop_addressGen_toFlowFire_payload;
   wire                logic_pop_sync_readArbitation_translated_valid;
   wire                logic_pop_sync_readArbitation_translated_ready;
   wire       [63:0]   logic_pop_sync_readArbitation_translated_payload_data;
   wire       [15:0]   logic_pop_sync_readArbitation_translated_payload_epoch;
+  wire       [63:0]   logic_pop_sync_readArbitation_translated_payload_beatAddr;
   wire                logic_pop_sync_readArbitation_fire;
   reg        [1:0]    logic_pop_sync_popReg;
-  reg [79:0] logic_ram [0:1];
+  reg [143:0] logic_ram [0:1];
 
-  assign _zz_logic_ram_port = {logic_push_onRam_write_payload_data_epoch,logic_push_onRam_write_payload_data_data};
+  assign _zz_logic_ram_port = {logic_push_onRam_write_payload_data_beatAddr,{logic_push_onRam_write_payload_data_epoch,logic_push_onRam_write_payload_data_data}};
   always @(posedge io_clk) begin
     if(io_clkEnable) begin
       if(_zz_1) begin
@@ -4070,6 +4118,7 @@ module StreamFifo (
   assign logic_push_onRam_write_payload_address = logic_ptr_push[0:0];
   assign logic_push_onRam_write_payload_data_data = io_push_payload_data;
   assign logic_push_onRam_write_payload_data_epoch = io_push_payload_epoch;
+  assign logic_push_onRam_write_payload_data_beatAddr = io_push_payload_beatAddr;
   assign logic_pop_addressGen_valid = (! logic_ptr_empty);
   assign logic_pop_addressGen_payload = logic_ptr_pop[0:0];
   assign logic_pop_addressGen_fire = (logic_pop_addressGen_valid && logic_pop_addressGen_ready);
@@ -4087,6 +4136,7 @@ module StreamFifo (
   assign _zz_logic_pop_sync_readPort_rsp_data = logic_ram_spinal_port1;
   assign logic_pop_sync_readPort_rsp_data = _zz_logic_pop_sync_readPort_rsp_data[63 : 0];
   assign logic_pop_sync_readPort_rsp_epoch = _zz_logic_pop_sync_readPort_rsp_data[79 : 64];
+  assign logic_pop_sync_readPort_rsp_beatAddr = _zz_logic_pop_sync_readPort_rsp_data[143 : 80];
   assign logic_pop_addressGen_toFlowFire_valid = logic_pop_addressGen_fire;
   assign logic_pop_addressGen_toFlowFire_payload = logic_pop_addressGen_payload;
   assign logic_pop_sync_readPort_cmd_valid = logic_pop_addressGen_toFlowFire_valid;
@@ -4095,10 +4145,12 @@ module StreamFifo (
   assign logic_pop_sync_readArbitation_ready = logic_pop_sync_readArbitation_translated_ready;
   assign logic_pop_sync_readArbitation_translated_payload_data = logic_pop_sync_readPort_rsp_data;
   assign logic_pop_sync_readArbitation_translated_payload_epoch = logic_pop_sync_readPort_rsp_epoch;
+  assign logic_pop_sync_readArbitation_translated_payload_beatAddr = logic_pop_sync_readPort_rsp_beatAddr;
   assign io_pop_valid = logic_pop_sync_readArbitation_translated_valid;
   assign logic_pop_sync_readArbitation_translated_ready = io_pop_ready;
   assign io_pop_payload_data = logic_pop_sync_readArbitation_translated_payload_data;
   assign io_pop_payload_epoch = logic_pop_sync_readArbitation_translated_payload_epoch;
+  assign io_pop_payload_beatAddr = logic_pop_sync_readArbitation_translated_payload_beatAddr;
   assign logic_pop_sync_readArbitation_fire = (logic_pop_sync_readArbitation_valid && logic_pop_sync_readArbitation_ready);
   assign logic_ptr_popOnIo = logic_pop_sync_popReg;
   assign io_occupancy = logic_ptr_occupancy;

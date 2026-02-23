@@ -131,17 +131,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     fetch.io.flush := flushPipeline
     fetch.io.currentEpoch := currentEpoch
     
-    // Flush execution stages (Decode, Dispatch, Src) based on epoch match
-    // When a branch is taken, currentEpoch still has the OLD value (register update is next cycle)
-    // Speculative instructions have SPEC_EPOCH = old_epoch, so we throw if they MATCH
-    // After this cycle, currentEpoch increments, and new instructions get the new epoch
-    // Note: Stage 6 (Execute) is excluded - the branch has already executed
-    //       Stage 7 (Writeback) is excluded - architecturally committed
+    // Flush execution stages (Decode, Dispatch, Src) unconditionally on redirect.
+    // In this in-order pipeline, stages 3..5 only hold younger instructions when
+    // stage 6 resolves a branch/jump, so all must be squashed.
+    // Note: Stage 6 (Execute) is excluded - the redirecting instruction executes.
+    //       Stage 7 (Writeback) is excluded - older committed state.
     val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl =>
-      // Throw if: flush is active AND instruction's epoch matches current (old) epoch
-      // These are the speculative instructions that need to be flushed
-      ctrl.throwWhen(flushPipeline && (ctrl(SPEC_EPOCH) === currentEpoch))
+      ctrl.throwWhen(flushPipeline)
     }
     
     // Flush Fetch stages (PC in transit) unconditionally on redirect

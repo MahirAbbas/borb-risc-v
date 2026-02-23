@@ -66,13 +66,13 @@ case class SoC() extends Component {
     // RAM
     val ram = Axi4SharedOnChipRam(
       dataWidth = 64,
-      byteCount = 256 KiB,
+      byteCount = 8 MiB,
       idWidth = 17
     )
     import spinal.core.sim._
     ram.ram.simPublic()
     
-    // Connect Arbiter to RAM with Address Resizing (64 -> 14 bits)
+    // Connect Arbiter to RAM with address resize to the RAM address bus width.
     ram.io.axi.arw.valid   := arbiter.io.output.arw.valid
     ram.io.axi.arw.addr    := arbiter.io.output.arw.addr.resized
     ram.io.axi.arw.id      := arbiter.io.output.arw.id
