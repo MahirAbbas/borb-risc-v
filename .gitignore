@@ -21,6 +21,7 @@ project/boot/
 project/project
 project/plugins/project/
 riscof_work/
+CPU.sv
 
 verif/
 # Scala-IDE specific

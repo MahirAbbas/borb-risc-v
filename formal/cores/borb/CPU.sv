@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.12.3    git head : 591e64062329e5e2e2b81f4d52422948053edb97
 // Component : CPU
-// Git hash  : 3796b24b4bdc11718edbdf6141ecea0247a39b44
+// Git hash  : c08879e1d18f236218c2d3b05a8f44847dd9af18
 
 `timescale 1ns/1ps
 
@@ -211,6 +211,7 @@ module CPU (
   wire       [0:0]    _zz_coreArea_fetch_inflight_2;
   wire       [3:0]    _zz_coreArea_fetch_inflight_3;
   wire       [0:0]    _zz_coreArea_fetch_inflight_4;
+  wire       [60:0]   _zz_coreArea_fetch_cmdArea_beatAddr;
   wire       [3:0]    _zz_coreArea_fetch_io_readCmd_cmd_valid;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID;
   wire       [31:0]   _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1;
@@ -597,6 +598,7 @@ module CPU (
   wire                coreArea_pipeline_ctrl_3_down_isFiring;
   wire                coreArea_pipeline_ctrl_3_up_isValid;
   wire                coreArea_pipeline_ctrl_2_up_isValid;
+  wire                coreArea_pipeline_ctrl_1_down_isFiring;
   wire                coreArea_pipeline_ctrl_0_down_isFiring;
   wire                coreArea_pipeline_ctrl_0_up_isValid;
   reg        [3:0]    coreArea_pipeline_ctrl_7_up_Common_SPEC_EPOCH;
@@ -709,9 +711,8 @@ module CPU (
   wire       [3:0]    coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH;
   wire       [63:0]   coreArea_pipeline_ctrl_2_down_PC_PC;
   wire       [31:0]   coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION;
-  wire       [63:0]   coreArea_pipeline_ctrl_1_down_PC_PC;
   wire                coreArea_pipeline_ctrl_1_up_isValid;
-  wire                coreArea_pipeline_ctrl_1_down_isFiring;
+  wire       [63:0]   coreArea_pipeline_ctrl_1_down_PC_PC;
   wire       [63:0]   coreArea_pipeline_ctrl_0_down_PC_PC;
   wire                coreArea_pipeline_ctrl_0_down_isReady;
   wire                coreArea_pipeline_ctrl_0_up_valid;
@@ -738,12 +739,22 @@ module CPU (
   wire                coreArea_fetch_cmdFire;
   reg        [15:0]   coreArea_fetch_epoch;
   reg                 coreArea_fetch_flushPending;
-  reg                 coreArea_fetch_cmdArea_reqSent;
-  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80;
-  wire                coreArea_fetch_rspArea_epochMatch;
+  reg                 coreArea_fetch_cmdArea_requestedBeatValid;
+  reg        [63:0]   coreArea_fetch_cmdArea_requestedBeatAddr;
+  wire       [63:0]   coreArea_fetch_cmdArea_beatAddr;
+  wire                coreArea_fetch_cmdArea_needReq;
+  wire                coreArea_pipeline_ctrl_1_haltRequest_Fetch_l82;
+  reg                 coreArea_fetch_rspArea_holdValid;
+  reg        [63:0]   coreArea_fetch_rspArea_holdData;
+  reg        [15:0]   coreArea_fetch_rspArea_holdEpoch;
+  wire                coreArea_fetch_rspArea_srcValid;
+  wire       [63:0]   coreArea_fetch_rspArea_srcData;
+  wire       [15:0]   coreArea_fetch_rspArea_srcEpoch;
   wire                coreArea_fetch_rspArea_stalePacket;
-  wire                coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92;
-  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95;
+  wire                coreArea_pipeline_ctrl_2_throwWhen_Fetch_l102;
+  wire                coreArea_pipeline_ctrl_2_haltRequest_Fetch_l105;
+  wire                coreArea_fetch_rspArea_takeInsn;
+  wire                coreArea_fetch_rspArea_keepForUpperHalf;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
   wire       [0:0]    _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_2;
@@ -1041,6 +1052,7 @@ module CPU (
   assign _zz_coreArea_fetch_inflight_1 = {3'd0, _zz_coreArea_fetch_inflight_2};
   assign _zz_coreArea_fetch_inflight_4 = coreArea_fetch_io_readCmd_rsp_valid;
   assign _zz_coreArea_fetch_inflight_3 = {3'd0, _zz_coreArea_fetch_inflight_4};
+  assign _zz_coreArea_fetch_cmdArea_beatAddr = (coreArea_pipeline_ctrl_1_down_PC_PC >>> 2'd3);
   assign _zz_coreArea_fetch_io_readCmd_cmd_valid = {2'd0, coreArea_fetch_fifo_io_availability};
   assign _zz_coreArea_dispatcher_hcs_init_valueNext_1 = coreArea_dispatcher_hcs_init_willIncrement;
   assign _zz_coreArea_dispatcher_hcs_init_valueNext = {2'd0, _zz_coreArea_dispatcher_hcs_init_valueNext_1};
@@ -2537,17 +2549,23 @@ module CPU (
   assign coreArea_pc_flush_valid = 1'b0;
   assign coreArea_pc_flush_payload_address = 64'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;
   assign coreArea_fetch_cmdFire = (coreArea_fetch_io_readCmd_cmd_valid && coreArea_fetch_io_readCmd_cmd_ready);
-  assign coreArea_fetch_io_readCmd_cmd_valid = (((coreArea_pipeline_ctrl_1_up_isValid && (! coreArea_fetch_cmdArea_reqSent)) && (coreArea_fetch_inflight < _zz_coreArea_fetch_io_readCmd_cmd_valid)) && (! coreArea_fetch_io_flush));
-  assign coreArea_fetch_io_readCmd_cmd_payload_address = coreArea_pipeline_ctrl_1_down_PC_PC;
+  assign coreArea_fetch_cmdArea_beatAddr = ({3'd0,_zz_coreArea_fetch_cmdArea_beatAddr} <<< 2'd3);
+  assign coreArea_fetch_cmdArea_needReq = ((! coreArea_fetch_cmdArea_requestedBeatValid) || (coreArea_fetch_cmdArea_beatAddr != coreArea_fetch_cmdArea_requestedBeatAddr));
+  assign coreArea_fetch_io_readCmd_cmd_valid = (((coreArea_pipeline_ctrl_1_up_isValid && coreArea_fetch_cmdArea_needReq) && (coreArea_fetch_inflight < _zz_coreArea_fetch_io_readCmd_cmd_valid)) && (! coreArea_fetch_io_flush));
+  assign coreArea_fetch_io_readCmd_cmd_payload_address = coreArea_fetch_cmdArea_beatAddr;
   assign coreArea_fetch_io_readCmd_cmd_payload_id = coreArea_fetch_epoch;
-  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80 = ((! coreArea_fetch_cmdArea_reqSent) && (! coreArea_fetch_cmdFire));
-  assign coreArea_fetch_rspArea_epochMatch = (coreArea_fetch_fifo_io_pop_payload_epoch == coreArea_fetch_epoch);
-  assign coreArea_fetch_rspArea_stalePacket = (coreArea_fetch_fifo_io_pop_valid && (! coreArea_fetch_rspArea_epochMatch));
-  assign coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92 = coreArea_fetch_rspArea_stalePacket;
-  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95 = (! coreArea_fetch_fifo_io_pop_valid);
-  assign coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = (coreArea_pipeline_ctrl_2_down_PC_PC[2] ? coreArea_fetch_fifo_io_pop_payload_data[63 : 32] : coreArea_fetch_fifo_io_pop_payload_data[31 : 0]);
+  assign coreArea_pipeline_ctrl_1_haltRequest_Fetch_l82 = (coreArea_fetch_cmdArea_needReq && (! coreArea_fetch_cmdFire));
+  assign coreArea_fetch_rspArea_srcValid = (coreArea_fetch_rspArea_holdValid || coreArea_fetch_fifo_io_pop_valid);
+  assign coreArea_fetch_rspArea_srcData = (coreArea_fetch_rspArea_holdValid ? coreArea_fetch_rspArea_holdData : coreArea_fetch_fifo_io_pop_payload_data);
+  assign coreArea_fetch_rspArea_srcEpoch = (coreArea_fetch_rspArea_holdValid ? coreArea_fetch_rspArea_holdEpoch : coreArea_fetch_fifo_io_pop_payload_epoch);
+  assign coreArea_fetch_rspArea_stalePacket = (coreArea_fetch_rspArea_srcValid && (coreArea_fetch_rspArea_srcEpoch != coreArea_fetch_epoch));
+  assign coreArea_pipeline_ctrl_2_throwWhen_Fetch_l102 = coreArea_fetch_rspArea_stalePacket;
+  assign coreArea_pipeline_ctrl_2_haltRequest_Fetch_l105 = ((! coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket));
+  assign coreArea_pipeline_ctrl_2_down_Decoder_INSTRUCTION = (coreArea_pipeline_ctrl_2_down_PC_PC[2] ? coreArea_fetch_rspArea_srcData[63 : 32] : coreArea_fetch_rspArea_srcData[31 : 0]);
   assign coreArea_pipeline_ctrl_2_down_Common_SPEC_EPOCH = coreArea_fetch_io_currentEpoch;
-  assign coreArea_fetch_fifo_io_pop_ready = (coreArea_pipeline_ctrl_2_down_isFiring || coreArea_fetch_rspArea_stalePacket);
+  assign coreArea_fetch_rspArea_takeInsn = ((coreArea_pipeline_ctrl_2_down_isFiring && coreArea_fetch_rspArea_srcValid) && (! coreArea_fetch_rspArea_stalePacket));
+  assign coreArea_fetch_rspArea_keepForUpperHalf = (coreArea_fetch_rspArea_takeInsn && (! coreArea_pipeline_ctrl_2_down_PC_PC[2]));
+  assign coreArea_fetch_fifo_io_pop_ready = ((! coreArea_fetch_rspArea_holdValid) && (coreArea_fetch_rspArea_takeInsn || coreArea_fetch_rspArea_stalePacket));
   assign coreArea_pipeline_ctrl_3_down_Decoder_VALID = (|{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000005f) == 32'h00000017),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & 32'h0000007f) == 32'h0000006f),{((coreArea_pipeline_ctrl_3_down_Decoder_INSTRUCTION & _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID) == 32'h00000003),{(_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_1 == _zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_2),{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_3,{_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_4,_zz_coreArea_pipeline_ctrl_3_down_Decoder_VALID_5}}}}}});
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1 = 1'b0;
   assign _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL = _zz_coreArea_pipeline_ctrl_3_down_Decoder_LEGAL_1;
@@ -3328,8 +3346,8 @@ module CPU (
   assign coreArea_pipeline_ctrl_4_up_cancel = (|{coreArea_pipeline_ctrl_4_throwWhen_CPU_l195,coreArea_pipeline_ctrl_4_throwWhen_CPU_l144});
   assign coreArea_pipeline_ctrl_3_up_forgetOne = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l195,coreArea_pipeline_ctrl_3_throwWhen_CPU_l144});
   assign coreArea_pipeline_ctrl_3_up_cancel = (|{coreArea_pipeline_ctrl_3_throwWhen_CPU_l195,coreArea_pipeline_ctrl_3_throwWhen_CPU_l144});
-  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92}});
-  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92}});
+  assign coreArea_pipeline_ctrl_2_up_forgetOne = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l102}});
+  assign coreArea_pipeline_ctrl_2_up_cancel = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l102}});
   assign coreArea_pipeline_ctrl_1_up_forgetOne = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
   assign coreArea_pipeline_ctrl_1_up_cancel = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
   always @(*) begin
@@ -3407,7 +3425,7 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l80);
+  assign when_CtrlLink_l191 = (|coreArea_pipeline_ctrl_1_haltRequest_Fetch_l82);
   assign when_CtrlLink_l198 = (|{coreArea_pipeline_ctrl_1_throwWhen_CPU_l195,coreArea_pipeline_ctrl_1_throwWhen_CPU_l150});
   assign coreArea_pipeline_ctrl_1_down_PC_PC = coreArea_pipeline_ctrl_1_up_PC_PC;
   always @(*) begin
@@ -3427,8 +3445,8 @@ module CPU (
     end
   end
 
-  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l95);
-  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l92}});
+  assign when_CtrlLink_l191_1 = (|coreArea_pipeline_ctrl_2_haltRequest_Fetch_l105);
+  assign when_CtrlLink_l198_1 = (|{coreArea_pipeline_ctrl_2_throwWhen_CPU_l195,{coreArea_pipeline_ctrl_2_throwWhen_CPU_l150,coreArea_pipeline_ctrl_2_throwWhen_Fetch_l102}});
   assign coreArea_pipeline_ctrl_2_down_PC_PC = coreArea_pipeline_ctrl_2_up_PC_PC;
   always @(*) begin
     coreArea_pipeline_ctrl_3_down_valid = coreArea_pipeline_ctrl_3_up_valid;
@@ -3582,7 +3600,11 @@ module CPU (
       coreArea_fetch_inflight <= 4'b0000;
       coreArea_fetch_epoch <= 16'h0;
       coreArea_fetch_flushPending <= 1'b0;
-      coreArea_fetch_cmdArea_reqSent <= 1'b0;
+      coreArea_fetch_cmdArea_requestedBeatValid <= 1'b0;
+      coreArea_fetch_cmdArea_requestedBeatAddr <= 64'h0;
+      coreArea_fetch_rspArea_holdValid <= 1'b0;
+      coreArea_fetch_rspArea_holdData <= 64'h0;
+      coreArea_fetch_rspArea_holdEpoch <= 16'h0;
       coreArea_dispatcher_hcs_regBusy <= 32'h0;
       coreArea_dispatcher_hcs_init_value <= 3'b001;
       coreArea_lsu_logic_waitingResponse <= 1'b0;
@@ -3627,13 +3649,25 @@ module CPU (
           coreArea_fetch_epoch <= (coreArea_fetch_epoch + 16'h0001);
         end
         if(coreArea_fetch_cmdFire) begin
-          coreArea_fetch_cmdArea_reqSent <= 1'b1;
-        end
-        if(coreArea_pipeline_ctrl_1_down_isFiring) begin
-          coreArea_fetch_cmdArea_reqSent <= 1'b0;
+          coreArea_fetch_cmdArea_requestedBeatValid <= 1'b1;
+          coreArea_fetch_cmdArea_requestedBeatAddr <= coreArea_fetch_cmdArea_beatAddr;
         end
         if(coreArea_fetch_io_flush) begin
-          coreArea_fetch_cmdArea_reqSent <= 1'b0;
+          coreArea_fetch_cmdArea_requestedBeatValid <= 1'b0;
+        end
+        if(coreArea_fetch_io_flush) begin
+          coreArea_fetch_rspArea_holdValid <= 1'b0;
+        end
+        if(coreArea_fetch_rspArea_stalePacket) begin
+          coreArea_fetch_rspArea_holdValid <= 1'b0;
+        end else begin
+          if(coreArea_fetch_rspArea_takeInsn) begin
+            coreArea_fetch_rspArea_holdValid <= coreArea_fetch_rspArea_keepForUpperHalf;
+            if(coreArea_fetch_rspArea_keepForUpperHalf) begin
+              coreArea_fetch_rspArea_holdData <= coreArea_fetch_rspArea_srcData;
+              coreArea_fetch_rspArea_holdEpoch <= coreArea_fetch_rspArea_srcEpoch;
+            end
+          end
         end
         if(when_scheduler_l187) begin
           coreArea_dispatcher_hcs_regBusy[coreArea_pipeline_ctrl_4_up_Decoder_RD_ADDR] <= 1'b1;

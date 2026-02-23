@@ -57,54 +57,76 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   fifo.io.flush := io.flush
 
   val cmdArea = new cmdStage.Area {
-    val reqSent = RegInit(False)
+    val requestedBeatValid = RegInit(False)
+    val requestedBeatAddr = Reg(UInt(addressWidth bits)) init(0)
+
+    // 64-bit fetch beat base address
+    val beatAddr = UInt(addressWidth bits)
+    beatAddr := cmdStage(PC.PC)
+    beatAddr(2 downto 0) := 0
+    val needReq = !requestedBeatValid || (beatAddr =/= requestedBeatAddr)
+
     when(io.readCmd.cmd.fire) {
-      reqSent := True
-    }
-    when(cmdStage.down.isFiring) {
-      reqSent := False
+      requestedBeatValid := True
+      requestedBeatAddr := beatAddr
     }
 
-    // Explicitly clear reqSent on flush
     when(io.flush) {
-      reqSent := False
+      requestedBeatValid := False
     }
 
-    // Only send request if we haven't sent it yet and there is space in FIFO (accounting for inflight)
-    // Do NOT send on flush cycle - wait for redirected PC next cycle.
-    io.readCmd.cmd.valid := cmdStage.up.isValid && !reqSent && (fifo.io.availability > inflight) && !io.flush
-    io.readCmd.cmd.payload.address := cmdStage(PC.PC)
+    // Request once per 64-bit beat (not once per 32-bit instruction).
+    io.readCmd.cmd.valid := cmdStage.up.isValid && needReq && (fifo.io.availability > inflight) && !io.flush
+    io.readCmd.cmd.payload.address := beatAddr
     io.readCmd.cmd.payload.id := epoch
-    
-    // Halt if we haven't successfully sent the request yet
-    haltWhen(!reqSent && !io.readCmd.cmd.fire)
+
+    // If this PC needs a new beat, stall until the request is accepted.
+    haltWhen(needReq && !io.readCmd.cmd.fire)
   }
 
   val rspArea = new rspStage.Area {
-    // Check epoch at pop time - only accept if epoch matches current epoch
-    val packetValid = fifo.io.pop.valid
-    val packetEpoch = fifo.io.pop.payload.epoch
-    val epochMatch = packetEpoch === epoch
-    
-    // If we have a stale packet, THROW the stage to discard both the stale PC 
-    // and the stale instruction, keeping them in sync
-    val stalePacket = packetValid && !epochMatch
+    // Keep one beat locally so both 32-bit halves can be consumed.
+    val holdValid = RegInit(False)
+    val holdData = Reg(Bits(dataWidth bits)) init (0)
+    val holdEpoch = Reg(UInt(16 bits)) init (0)
+
+    when(io.flush) {
+      holdValid := False
+    }
+
+    val useHold = holdValid
+    val srcValid = useHold || fifo.io.pop.valid
+    val srcData = useHold ? holdData | fifo.io.pop.payload.data
+    val srcEpoch = useHold ? holdEpoch | fifo.io.pop.payload.epoch
+    val stalePacket = srcValid && (srcEpoch =/= epoch)
+
+    // Drop stale packets and keep PC/insn in sync by throwing stage entry.
     throwWhen(stalePacket)
-    
-    // Halt until we have a valid instruction (but not for wrong epoch - that's a throw)
-    haltWhen(!packetValid)
-    
-    val rawData = fifo.io.pop.payload.data
+
+    // Halt until we have data, except when stale data is being discarded.
+    haltWhen(!srcValid && !stalePacket)
+
     // iBus returns 64-bit beats. Select the 32-bit half based on PC[2].
-    INSTRUCTION := Mux(rspStage(PC.PC)(2), rawData(63 downto 32), rawData(31 downto 0))
+    INSTRUCTION := Mux(rspStage(PC.PC)(2), srcData(63 downto 32), srcData(31 downto 0))
     
     // Tag instruction with current speculation epoch from CPU
     // All downstream stages inherit this epoch for flush comparison
     SPEC_EPOCH := io.currentEpoch
     
-    // Pop from FIFO when:
-    // 1. Stage fires downstream (normal flow), OR
-    // 2. We have a stale packet (epoch mismatch) - discard it (throw handles the PC)
-    fifo.io.pop.ready := rspStage.down.isFiring || stalePacket
+    val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket
+    val keepForUpperHalf = takeInsn && !rspStage(PC.PC)(2)
+
+    when(stalePacket) {
+      holdValid := False
+    }.elsewhen(takeInsn) {
+      holdValid := keepForUpperHalf
+      when(keepForUpperHalf) {
+        holdData := srcData
+        holdEpoch := srcEpoch
+      }
+    }
+
+    // Pop only when source is FIFO (not hold) and we consume or discard.
+    fifo.io.pop.ready := !useHold && (takeInsn || stalePacket)
   }
 }
