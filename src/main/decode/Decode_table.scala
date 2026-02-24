@@ -56,6 +56,7 @@ object RV32I {
   val CSRRS = M"-----------------010-----1110011"
   val CSRRC = M"-----------------011-----1110011"
   val CSRRWI = M"-----------------101-----1110011"
+  val CSRRSI = M"-----------------110-----1110011"
   val CSRRCI = M"-----------------111-----1110011"
 
 }
@@ -137,6 +138,8 @@ object RV64D {}
 object DecodeTable {
   import RV32I._
   import RV64I._
+  import RV32M._
+  import RV64M._
   import REGFILE._
   import Imm_Select._
   import YESNO._
@@ -255,6 +258,19 @@ object DecodeTable {
   XOR        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopXOR , N, N, N, N),
   SRA        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSRA , N, N, N, N),
   SRL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSRL , N, N, N, N),
+  MUL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMUL , N, N, N, N),
+  MULH       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMULH, N, N, N, N),
+  MULHSU     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMULHSU, N, N, N, N),
+  MULHU      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMULHU, N, N, N, N),
+  DIV        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIV , N, N, N, N),
+  DIVU       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIVU, N, N, N, N),
+  REM        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREM , N, N, N, N),
+  REMU       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMU, N, N, N, N),
+  MULW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMULW, N, Y, N, N),
+  DIVW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIVW, N, Y, N, N),
+  DIVUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIVUW, N, Y, N, N),
+  REMW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMW, N, Y, N, N),
+  REMUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMUW, N, Y, N, N),
                                                                                                                               
   AUIPC      ->        List(Y, N, ExecutionUnitEnum.ALU,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopAUIPC,N, N, N, N),
   JAL        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , uopJAL , Y, N, N, N),
@@ -266,6 +282,13 @@ object DecodeTable {
   BGEU       ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBGEU, Y, N, N, N),
   BLT        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBLT , Y, N, N, N),
   BLTU       ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_NA , RSTYPE.RS_INT , RSTYPE.RS_INT , N, B_IMM , uopBLTU, Y, N, N, N),
+
+  CSRRW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopCSRRW , N, N, N, N),
+  CSRRS      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopCSRRS , N, N, N, N),
+  CSRRC      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopCSRRC , N, N, N, N),
+  CSRRWI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopCSRRWI, N, N, N, N),
+  CSRRSI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopCSRRSI, N, N, N, N),
+  CSRRCI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopCSRRCI, N, N, N, N),
                                                                                                                               
   // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
   // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),

@@ -60,7 +60,7 @@ echo "[2/3] Generating formal checks..."
 (cd $CORE_DIR && python3 ../../../riscv-formal/checks/genchecks.py)
 
 # 3. Define check groups
-ALU_CHECKS="insn_add_ch0 insn_addi_ch0 insn_and_ch0 insn_andi_ch0 insn_auipc_ch0 insn_lui_ch0 insn_or_ch0 insn_ori_ch0 insn_sll_ch0 insn_slli_ch0 insn_slt_ch0 insn_slti_ch0 insn_sltiu_ch0 insn_sltu_ch0 insn_sra_ch0 insn_srai_ch0 insn_srl_ch0 insn_srli_ch0 insn_sub_ch0 insn_xor_ch0 insn_xori_ch0 insn_addiw_ch0 insn_addw_ch0 insn_subw_ch0 insn_sllw_ch0 insn_srlw_ch0 insn_sraw_ch0 insn_slliw_ch0 insn_srliw_ch0 insn_sraiw_ch0"
+ALU_CHECKS="insn_add_ch0 insn_addi_ch0 insn_and_ch0 insn_andi_ch0 insn_auipc_ch0 insn_lui_ch0 insn_or_ch0 insn_ori_ch0 insn_sll_ch0 insn_slli_ch0 insn_slt_ch0 insn_slti_ch0 insn_sltiu_ch0 insn_sltu_ch0 insn_sra_ch0 insn_srai_ch0 insn_srl_ch0 insn_srli_ch0 insn_sub_ch0 insn_xor_ch0 insn_xori_ch0 insn_addiw_ch0 insn_addw_ch0 insn_subw_ch0 insn_sllw_ch0 insn_srlw_ch0 insn_sraw_ch0 insn_slliw_ch0 insn_srliw_ch0 insn_sraiw_ch0 insn_mul_ch0 insn_mulh_ch0 insn_mulhsu_ch0 insn_mulhu_ch0 insn_div_ch0 insn_divu_ch0 insn_rem_ch0 insn_remu_ch0 insn_mulw_ch0 insn_divw_ch0 insn_divuw_ch0 insn_remw_ch0 insn_remuw_ch0"
 BRANCH_CHECKS="insn_beq_ch0 insn_bne_ch0 insn_blt_ch0 insn_bge_ch0 insn_bltu_ch0 insn_bgeu_ch0 insn_jal_ch0 insn_jalr_ch0"
 STORE_CHECKS="insn_sb_ch0 insn_sh_ch0 insn_sw_ch0 insn_sd_ch0"
 LOAD_CHECKS="insn_lb_ch0 insn_lbu_ch0 insn_ld_ch0 insn_lh_ch0 insn_lhu_ch0 insn_lwu_ch0 insn_lw_ch0 "
@@ -119,5 +119,7 @@ else
         # Extract test name (e.g. formal/cores/borb/checks/insn_jal_ch0/FAIL -> insn_jal_ch0)
         echo "  - $(basename $(dirname $test))"
     done
+    echo "Generating formal debug reports..."
+    python3 scripts/riscv_failure_report.py formal --checks-dir "$CHECKS_DIR" || true
     exit 1
 fi

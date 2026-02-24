@@ -127,8 +127,9 @@ case class Lsu(stage: CtrlLink) extends Area {
     val fireLoad = isLoad && up(VALID) && !waitingResponse
 
     // Drive Data Bus Command
-    // Suppress write if misaligned or trap pending
-    val suppress = misaligned 
+    // Suppress memory side effects for traps (misaligned or illegal instruction).
+    val illegalInsn = up(INSTRUCTION)(1 downto 0) =/= B"11"
+    val suppress = misaligned || illegalInsn
     
     io.dBus.cmd.valid := (isStore || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress
     io.dBus.cmd.payload.address := effectiveAddr
@@ -194,7 +195,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     val isX0 = rdAddr === 0
     val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
     
-    when(isLoad) {
+    when(isLoad && !illegalInsn) {
         down(WriteBack.RESULT).data.allowOverride := maskedLoadResult
         down(WriteBack.RESULT).valid.allowOverride := True 
         down(WriteBack.RESULT).address.allowOverride := rdAddr

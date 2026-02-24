@@ -14,6 +14,8 @@ SKIP_VALIDATE=false
 CLEAN=false
 CLEAN_BUILD=true
 TESTS=""
+REPORT_RERUN=false
+SKIP_REPORT=false
 
 usage() {
   echo "Usage: $0 [OPTIONS]"
@@ -24,6 +26,8 @@ usage() {
   echo "  --no-clean-build  Do not clean before Verilator build"
   echo "  --skip-validate   Skip riscof validateyaml step"
   echo "  --clean           Pass --clean to riscof run"
+  echo "  --report-rerun    Re-run failing tests while generating debug reports (slow)"
+  echo "  --skip-report     Skip post-run failure report generation"
   echo "  --tests <list>    Run only selected tests (name fragments, comma-separated)"
   echo "                    Example: --tests add-01.S,addi-01.S"
   echo "  --config <path>   Path to config.ini (default: $CONFIG_PATH)"
@@ -53,6 +57,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --clean)
       CLEAN=true
+      shift
+      ;;
+    --report-rerun)
+      REPORT_RERUN=true
+      shift
+      ;;
+    --skip-report)
+      SKIP_REPORT=true
       shift
       ;;
     --tests)
@@ -177,6 +189,24 @@ PY
   RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
 fi
 
+set +e
 "${RUN_CMD[@]}"
+RUN_STATUS=$?
+set -e
+
+if [[ "$SKIP_REPORT" = false ]]; then
+  echo "Generating RISCOF debug reports..."
+  REPORT_ARGS=()
+  if [[ -n "${WORK_DIR:-}" ]]; then
+    REPORT_ARGS+=(--workdir "$WORK_DIR")
+  fi
+  if [[ "$REPORT_RERUN" = false ]]; then
+    REPORT_ARGS+=(--no-rerun)
+  fi
+  python3 scripts/riscv_failure_report.py riscof "${REPORT_ARGS[@]}" || true
+else
+  echo "Skipping RISCOF debug report generation"
+fi
 
 echo "=== RISCOF complete ==="
+exit "$RUN_STATUS"

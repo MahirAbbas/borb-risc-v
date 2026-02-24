@@ -71,4 +71,12 @@ else
 fi
 
 echo "[3/3] Running Tenstorrent scaffold..."
+set +e
 python3 "$ROOT_DIR/scripts/tenstorrent_borb_runner.py" "${RUNNER_ARGS[@]}"
+RUN_STATUS=$?
+set -e
+
+echo "[4/4] Generating failure reports..."
+python3 "$ROOT_DIR/scripts/riscv_failure_report.py" tenstorrent || true
+
+exit "$RUN_STATUS"
