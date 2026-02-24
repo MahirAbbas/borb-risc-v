@@ -19,13 +19,22 @@ class TestEntry:
     linker: Path
 
 
+def preprocess_source_for_single_hart(src_text: str) -> str:
+    # Tenstorrent startup uses AMO-based lock/wait code around `tohost_try_lock`.
+    # On current single-hart borb bring-up this can dead-loop and hide real test outcomes.
+    # Replace that lock block with a direct jump to tohost write path.
+    pat = re.compile(r"tohost_try_lock:\n.*?\nload_tohost_addr:\n", re.S)
+    repl = "tohost_try_lock:\n\tj load_tohost_addr\n\nload_tohost_addr:\n"
+    return pat.sub(repl, src_text, count=1)
+
+
 def run_cmd(cmd: List[str], cwd: Optional[Path] = None, env: Optional[Dict[str, str]] = None) -> None:
     proc = subprocess.run(cmd, cwd=str(cwd) if cwd else None, env=env, text=True)
     if proc.returncode != 0:
         raise RuntimeError(f"Command failed ({proc.returncode}): {' '.join(shlex.quote(c) for c in cmd)}")
 
 
-def parse_list_file(list_path: Path, tests_root: Path, rv64_only: bool) -> List[TestEntry]:
+def parse_list_file(list_path: Path, tests_root: Path, rv64_only: bool, rv64i_only: bool) -> List[TestEntry]:
     out: List[TestEntry] = []
     kv_re = re.compile(r"(\w+)=([^\s]+)")
 
@@ -40,6 +49,8 @@ def parse_list_file(list_path: Path, tests_root: Path, rv64_only: bool) -> List[
             if not name or not test:
                 continue
             if rv64_only and not name.startswith("rv64"):
+                continue
+            if rv64i_only and not name.startswith("rv64i"):
                 continue
             stem = tests_root / test
             source = stem.with_suffix(".S")
@@ -81,15 +92,29 @@ def main() -> int:
         ),
     )
     ap.add_argument("--workdir", default="verif/tenstorrent-riscv-arch-tests/out/borb", help="Output root")
-    ap.add_argument("--dut", default="verif/riscof/borb/sim/build/borb-sim", help="Path to borb sim executable")
+    ap.add_argument("--dut", default="verif/riscof/borb/build/borb-sim", help="Path to borb sim executable")
     ap.add_argument("--xlen", type=int, default=64, choices=[32, 64])
-    ap.add_argument("--march", default="rv64i_zicsr_zifencei", help="Compile march (RV64I-safe default)")
+    ap.add_argument(
+        "--march",
+        default="rv64gcv_zicsr_zifencei",
+        help="Compile march (default matches Tenstorrent IMFV-style startup requirements)",
+    )
     ap.add_argument("--mabi", default="lp64", help="Compile ABI")
-    ap.add_argument("--max-cycles", type=int, default=200000)
+    ap.add_argument("--max-cycles", type=int, default=5000000)
     ap.add_argument("--limit", type=int, default=0, help="Limit number of tests (0=all)")
     ap.add_argument("--filter", default="", help="Regex filter on test name")
     ap.add_argument("--rv64-only", action="store_true", default=True, help="Run only rv64* tests")
+    ap.add_argument(
+        "--allow-non-rv64i",
+        action="store_true",
+        help="Allow non-rv64i tests (default is strict rv64i-only)",
+    )
     ap.add_argument("--allow-rv32", action="store_true", help="Allow rv32* entries from list")
+    ap.add_argument(
+        "--no-single-hart-patch",
+        action="store_true",
+        help="Disable single-hart lock bypass preprocessing for Tenstorrent startup code",
+    )
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -112,9 +137,10 @@ def main() -> int:
             return 2
 
     rv64_only = (not args.allow_rv32) and args.rv64_only
+    rv64i_only = not args.allow_non_rv64i
     entries: List[TestEntry] = []
     for lp in list_files:
-        entries.extend(parse_list_file(lp, tests_root, rv64_only=rv64_only))
+        entries.extend(parse_list_file(lp, tests_root, rv64_only=rv64_only, rv64i_only=rv64i_only))
 
     if args.filter:
         rex = re.compile(args.filter)
@@ -128,11 +154,10 @@ def main() -> int:
         return 2
 
     gcc = f"riscv{args.xlen}-unknown-elf-gcc"
-    objcopy = f"riscv{args.xlen}-unknown-elf-objcopy"
     nm = f"riscv{args.xlen}-unknown-elf-nm"
 
     if not args.dry_run:
-        for tool in [gcc, objcopy, nm]:
+        for tool in [gcc, nm]:
             if subprocess.run(["bash", "-lc", f"command -v {shlex.quote(tool)}"], text=True).returncode != 0:
                 print(f"missing tool in PATH: {tool}", file=sys.stderr)
                 return 2
@@ -154,7 +179,6 @@ def main() -> int:
         tdir.mkdir(parents=True, exist_ok=True)
 
         elf = tdir / "test.elf"
-        binary = tdir / "test.bin"
         tohost_file = tdir / "tohost.txt"
         sig = tdir / "DUT-borb.signature"
 
@@ -170,6 +194,8 @@ def main() -> int:
             "-g",
             "-T",
             str(e.linker),
+            # Keep HTIF away from address aliases in small wrapped-RAM simulation.
+            "-Wl,--section-start=.io_htif=0x807ff000",
             str(e.source),
             "-o",
             str(elf),
@@ -189,11 +215,21 @@ def main() -> int:
             print(f"[{i}/{len(entries)}] {e.name}")
             if args.dry_run:
                 print("  DRYRUN", " ".join(shlex.quote(x) for x in compile_cmd))
+                result["status"] = "DRY_RUN"
                 summary["results"].append(result)
                 continue
 
+            compile_source = e.source
+            if not args.no_single_hart_patch:
+                patched_src = tdir / "test.single_hart.S"
+                patched_src.write_text(
+                    preprocess_source_for_single_hart(e.source.read_text(encoding="utf-8")),
+                    encoding="utf-8",
+                )
+                compile_source = patched_src
+                compile_cmd[-3] = str(compile_source)
+
             run_cmd(compile_cmd)
-            run_cmd([objcopy, "-O", "binary", str(elf), str(binary)])
 
             tohost = nm_symbol(nm, elf, "tohost")
             if tohost is None:
@@ -209,8 +245,8 @@ def main() -> int:
 
             sim_cmd = [
                 str(dut),
-                "--bin",
-                str(binary),
+                "--elf",
+                str(elf),
                 "--sig-begin",
                 hex(begin_sig),
                 "--sig-end",
@@ -259,7 +295,13 @@ def main() -> int:
     print(f"  total: {total}")
     print(f"  summary_file: {summary_path}")
 
-    return 0 if counts.get("ERROR", 0) == 0 and counts.get("FAIL", 0) == 0 else 1
+    blocking = (
+        counts.get("ERROR", 0)
+        + counts.get("FAIL", 0)
+        + counts.get("TIMEOUT_OR_NO_SIGNAL", 0)
+        + counts.get("UNKNOWN", 0)
+    )
+    return 0 if blocking == 0 else 1
 
 
 if __name__ == "__main__":

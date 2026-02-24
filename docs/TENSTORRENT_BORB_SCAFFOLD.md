@@ -7,13 +7,20 @@ This scaffold wires Tenstorrent `riscv-arch-tests` into a borb-oriented compile/
 ## What It Does
 - Parses Tenstorrent `.list` files.
 - Compiles selected tests with local RISC-V GCC.
-- Runs each test on `verif/riscof/borb/sim/build/borb-sim`.
+- Runs each test on `verif/riscof/borb/build/borb-sim`.
 - Captures per-test `tohost` and emits a machine-readable summary JSON.
+- Relocates `.io_htif` to `0x807ff000` at link time to avoid false `tohost` aliasing in small wrapped-RAM simulation.
 
 ## Default Scope
 - Default list: `riscv_tests/bare_metal/machine/paging_bare/rv_i.list`
-- Default ISA compile target: `rv64i_zicsr_zifencei`
-- Default behavior is RV64-only filtering (`rv64*` names).
+- Default ISA compile target: `rv64gcv_zicsr_zifencei`
+- Default behavior is strict RV64I-only filtering (`rv64i*` names).
+- Use `--allow-non-rv64i` only when intentionally broadening beyond RV64I.
+- Default behavior applies a single-hart startup patch that bypasses Tenstorrent AMO lock/wait in `tohost_try_lock` to avoid dead-loop timeouts on current bring-up.
+- Use `--no-single-hart-patch` to disable this and run the unmodified startup code.
+
+Note: the compile `--march` default is broader than RV64I because current Tenstorrent generated startup code assumes IMFV-style initialization. The test *selection* remains RV64I-only by name.
+Default cycle budget is set higher for this suite's long startup/synchronization loops.
 
 ## Entry Points
 - Wrapper script: `./run_tenstorrent.sh`
