@@ -72,6 +72,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 5).foreach { 
       case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
     }
+    // Keep speculation epoch instruction-local across stalls/flushes.
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(SPEC_EPOCH).setAsReg().init(0)
+    }
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
     //pc.jump.setIdle()
@@ -142,17 +146,21 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl =>
       ctrl.throwWhen(flushPipeline)
+      ctrl.haltWhen(flushPipeline)
     }
 
-    // Safety net: kill any stale-epoch op that slipped past fetch/decode flush.
-    // This prevents post-redirect younger instructions from committing side effects.
-    execStage.throwWhen(!execEpochMatches)
-    pipeline.ctrl(7).throwWhen(pipeline.ctrl(7)(SPEC_EPOCH) =/= currentEpoch)
+    // Safety net:
+    // 1) kill any stale-epoch op that slipped past fetch/decode flush
+    // 2) kill one-cycle younger op that can leak into stage 6 right after redirect
+    //    due to same-cycle throw/transfer ordering in upstream stages.
+    val flushPipelineD = RegNext(flushPipeline) init(False)
+    execStage.throwWhen(!execEpochMatches || flushPipelineD)
     
     // Flush Fetch stages (PC in transit) unconditionally on redirect
     val fetchStages = Array(1, 2).map(pipeline.ctrl(_))
     fetchStages.foreach { ctrl =>
        ctrl.throwWhen(flushPipeline)
+       ctrl.haltWhen(flushPipeline)
     }
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))

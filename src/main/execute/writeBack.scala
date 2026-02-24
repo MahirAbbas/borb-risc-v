@@ -13,12 +13,9 @@ object WriteBack extends AreaObject {
 
 case class WriteBack(wbNode: CtrlLink, writePort: RegFileWrite) extends Area {
   val logic = new wbNode.Area {
-     // Initialize TRAP to False (no traps implemented yet)
-     up(TRAP) := False
-     
-     // Derive COMMIT
-     // COMMIT is valid only if valid lane and no trap
-     up(COMMIT) := !up(TRAP) && up(LANE_SEL)
+     // Retire every lane-selected instruction (including traps).
+     // Traps still suppress register writeback via RESULT.valid path below.
+     up(COMMIT) := up(LANE_SEL)
      
      // Drive write port
      writePort.address := up(WriteBack.RESULT).address
