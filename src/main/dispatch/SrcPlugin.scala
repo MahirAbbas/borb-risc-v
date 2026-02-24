@@ -108,6 +108,6 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
 
     down(RS1) := rs1Data
     down(RS2) := rs2Data
-    IMMED := immsel.sext
+    down(IMMED) := immsel.sext
   }
 }

@@ -78,7 +78,8 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     }
 
     // Request once per 64-bit beat (not once per 32-bit instruction).
-    io.readCmd.cmd.valid := cmdStage.up.isValid && needReq && (fifo.io.availability > inflight) && !io.flush
+    // Keep at most one fetch beat in-flight to preserve PC/data alignment.
+    io.readCmd.cmd.valid := cmdStage.up.isValid && needReq && (inflight === 0) && !io.flush
     io.readCmd.cmd.payload.address := beatAddr
     io.readCmd.cmd.payload.id := activeEpoch
 
@@ -119,15 +120,17 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     // Drop stale packets and keep PC/insn in sync by throwing stage entry.
     throwWhen(stalePacket)
 
-    // Halt until we have data. If a packet is for a different beat, drop it.
-    haltWhen(!srcValid && !stalePacket)
+    // Halt until we have data for the requested beat.
+    // If FIFO/hold provides a different beat, don't let that mismatched
+    // instruction advance with the current PC; discard it first.
+    haltWhen((!srcValid || beatMismatch) && !stalePacket)
 
     // iBus returns 64-bit beats. Select the 32-bit half based on PC[2].
-    INSTRUCTION := Mux(rspStage(PC.PC)(2), srcData(63 downto 32), srcData(31 downto 0))
+    rspStage.down(INSTRUCTION) := Mux(rspStage(PC.PC)(2), srcData(63 downto 32), srcData(31 downto 0))
     
     // Tag instruction with current speculation epoch from CPU
     // All downstream stages inherit this epoch for flush comparison
-    SPEC_EPOCH := io.currentEpoch
+    rspStage.down(SPEC_EPOCH) := io.currentEpoch
     
     val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket && !beatMismatch
     val loadHoldFromFifo = takeInsn && !useHold

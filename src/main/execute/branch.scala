@@ -79,14 +79,18 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     // MAY_FLUSH should NOT prevent branches from executing - it only marks 
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
-    val doJump = (isJump || (isBranch && condition)) && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID)
+    // Redirect must be one-shot per retired branch/jump.
+    // Gate with down.isFiring so stalled execute cycles don't re-issue redirects.
+    val isBrUnit = up(EXECUTION_UNIT) === ExecutionUnitEnum.BR
+    val doJump = (isJump || (isBranch && condition)) &&
+      isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && down.isFiring
     val misaligned = target(1 downto 0) =/= 0
     val willTrap = doJump && misaligned
 
     // down(TRAP) := willTrap // Moved to CPU.scala logic integration
     down(BRANCH_TAKEN) := doJump && !willTrap
     down(BRANCH_TARGET) := target
-    branchResolved := (isJump || isBranch) && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
+    branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && down.isFiring
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
     jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
@@ -94,7 +98,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     jumpCmd.payload.is_jump := isJump
     jumpCmd.payload.is_branch := isBranch
     
-    when(up(LANE_SEL) && up(SENDTOBRANCH)) {
+    when(isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH)) {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address := up(RD_ADDR).asUInt

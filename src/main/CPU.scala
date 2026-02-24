@@ -118,9 +118,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Global speculation epoch (4-bit = supports 16 in-flight speculation points)
     val currentEpoch = Reg(UInt(4 bits)) init 0
     
-    // Flush Logic - fires when branch is taken
-    val flushPipeline = branch.logic.jumpCmd.valid
-    pc.jump << branch.logic.jumpCmd
+    // Flush Logic - fires when a non-stale branch/jump redirects.
+    val execEpochMatches = pipeline.ctrl(6)(SPEC_EPOCH) === currentEpoch
+    val flushPipeline = branch.logic.jumpCmd.valid && execEpochMatches
+    pc.jump.valid := branch.logic.jumpCmd.valid && execEpochMatches
+    pc.jump.payload := branch.logic.jumpCmd.payload
     
     // Increment epoch on taken branch
     when(flushPipeline) {
@@ -140,6 +142,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     executionStages.foreach { ctrl =>
       ctrl.throwWhen(flushPipeline)
     }
+
+    // Safety net: kill any stale-epoch op that slipped past fetch/decode flush.
+    // This prevents post-redirect younger instructions from committing side effects.
+    execStage.throwWhen(!execEpochMatches)
+    pipeline.ctrl(7).throwWhen(pipeline.ctrl(7)(SPEC_EPOCH) =/= currentEpoch)
     
     // Flush Fetch stages (PC in transit) unconditionally on redirect
     val fetchStages = Array(1, 2).map(pipeline.ctrl(_))
