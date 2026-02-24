@@ -19,7 +19,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   val io = new Bundle {
     val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
     val flush = Bool()
-    val currentEpoch = UInt(4 bits)  // Global speculation epoch from CPU
+    val currentEpoch = UInt(16 bits)  // Global speculation epoch from CPU
   }
 
   // Fetch Packet: instruction data + epoch tag
@@ -128,9 +128,9 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
     // iBus returns 64-bit beats. Select the 32-bit half based on PC[2].
     rspStage.down(INSTRUCTION) := Mux(rspStage(PC.PC)(2), srcData(63 downto 32), srcData(31 downto 0))
     
-    // Tag instruction with current speculation epoch from CPU
-    // All downstream stages inherit this epoch for flush comparison
-    rspStage.down(SPEC_EPOCH) := io.currentEpoch
+    // Preserve the fetch packet epoch so stale control-flow ops can't be
+    // re-tagged as current after a redirect.
+    rspStage.down(SPEC_EPOCH) := srcEpoch
     
     val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket && !beatMismatch
     val loadHoldFromFifo = takeInsn && !useHold

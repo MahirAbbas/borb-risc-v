@@ -8,5 +8,5 @@ object Common extends AreaObject {
   val COMMIT   = Payload(Bool())
   val TRAP     = Payload(Bool())
   val LANE_SEL = Payload(Bool())
-  val SPEC_EPOCH = Payload(UInt(4 bits))  // Speculation epoch for branch handling
+  val SPEC_EPOCH = Payload(UInt(16 bits))  // Speculation epoch for branch handling
 }

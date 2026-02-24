@@ -115,8 +115,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // - When a branch is TAKEN (flushPipeline), epoch increments
     // - All instructions with old epoch are flushed (their SPEC_EPOCH != currentEpoch)
     
-    // Global speculation epoch (4-bit = supports 16 in-flight speculation points)
-    val currentEpoch = Reg(UInt(4 bits)) init 0
+    // Global speculation epoch. Keep this wide enough to avoid wraparound
+    // aliasing under branch-heavy tests.
+    val currentEpoch = Reg(UInt(16 bits)) init 0
     
     // Flush Logic - fires when a non-stale branch/jump redirects.
     val execEpochMatches = pipeline.ctrl(6)(SPEC_EPOCH) === currentEpoch
