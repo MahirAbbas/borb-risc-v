@@ -47,13 +47,28 @@ class RamFetchBusToAxi4Shared(axiConfig: Axi4Config) extends Component {
   
   io.fetch.cmd.ready := io.axi.arw.ready && reqAddrQ.io.push.ready
 
-  io.fetch.rsp.valid   := io.axi.r.valid && reqAddrQ.io.pop.valid
-  io.fetch.rsp.data    := io.axi.r.data
-  io.fetch.rsp.address := reqAddrQ.io.pop.payload
-  io.fetch.rsp.id      := io.axi.r.id.resized
-  
-  reqAddrQ.io.pop.ready := io.axi.r.valid && reqAddrQ.io.pop.valid
   io.axi.r.ready := reqAddrQ.io.pop.valid
+  reqAddrQ.io.pop.ready := io.axi.r.fire
+
+  // Align response metadata with the exact R beat that fired. Without this
+  // register, the FIFO pop payload can advance combinationally on pop.fire and
+  // appear one request ahead of io.axi.r.data.
+  val rspValidReg = RegInit(False)
+  val rspDataReg = Reg(Bits(axiConfig.dataWidth bits)) init(0)
+  val rspAddrReg = Reg(UInt(axiConfig.addressWidth bits)) init(0)
+  val rspIdReg = Reg(UInt(16 bits)) init(0)
+
+  rspValidReg := io.axi.r.fire
+  when(io.axi.r.fire) {
+    rspDataReg := io.axi.r.data
+    rspAddrReg := reqAddrQ.io.pop.payload
+    rspIdReg := io.axi.r.id.resized
+  }
+
+  io.fetch.rsp.valid   := rspValidReg
+  io.fetch.rsp.data    := rspDataReg
+  io.fetch.rsp.address := rspAddrReg
+  io.fetch.rsp.id      := rspIdReg
 
   io.axi.w.valid := False
   io.axi.w.data := 0

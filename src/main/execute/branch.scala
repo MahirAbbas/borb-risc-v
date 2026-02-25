@@ -30,6 +30,8 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     val src1U = up(RS1).asUInt
     val src2U = up(RS2).asUInt
     val pcValue = up(PC.PC)
+    val archBase = U(BigInt("80000000", 16), 64 bits)
+    val pcArch = Mux(pcValue < archBase, pcValue + archBase, pcValue)
     val imm = up(IMMED).asUInt
 
     val condition = Bool()
@@ -95,7 +97,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
-        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcValue + 4).asBits
+        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcArch + 4).asBits
         // Squash writeback if trapping
         down(WriteBack.RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
       }

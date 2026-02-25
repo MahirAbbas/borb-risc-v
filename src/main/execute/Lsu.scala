@@ -50,6 +50,7 @@ case class Lsu(stage: CtrlLink) extends Area {
 
   val io = new Bundle {
     val dBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
+    val pmpFault = Bool()
   }
 
   val logic = new stage.Area {
@@ -87,7 +88,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     )
 
     // Raise trap on any misaligned memory access.
-    val localTrap = misaligned && (isStore || isLoad)
+    val localTrap = (misaligned || io.pmpFault) && (isStore || isLoad)
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = effectiveAddr(2 downto 0)
@@ -134,7 +135,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(INSTRUCTION)(1 downto 0) =/= B"11"
-    val suppress = misaligned || illegalInsn
+    val suppress = misaligned || illegalInsn || io.pmpFault
     
     io.dBus.cmd.valid := (isStore || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress
     io.dBus.cmd.payload.address := effectiveAddr
@@ -155,7 +156,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     val latchedRspData = Reg(Bits(64 bits))
     val responseArriving = isLoad && up(VALID) && waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
     
-    when(isLoad && up(VALID)) {
+    when(isLoad && up(VALID) && !suppress) {
         when(!waitingResponse) {
              when(io.dBus.cmd.ready && !suppress && up(LANE_SEL)) {
                  waitingResponse := True
@@ -175,6 +176,10 @@ case class Lsu(stage: CtrlLink) extends Area {
                  haltIt()  // Only halt if response hasn't arrived yet
              }
         }
+    }
+    when(isLoad && up(VALID) && suppress) {
+      // Faulting/suppressed loads must not enter the response wait state.
+      waitingResponse := False
     }
 
     // Load Data Processing - use LIVE data when response is arriving, latched data otherwise
@@ -200,7 +205,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     val isX0 = rdAddr === 0
     val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
     
-    when(isLoad && !illegalInsn) {
+    when(isLoad && !illegalInsn && !suppress) {
         down(WriteBack.RESULT).data.allowOverride := maskedLoadResult
         down(WriteBack.RESULT).valid.allowOverride := True 
         down(WriteBack.RESULT).address.allowOverride := rdAddr
