@@ -114,6 +114,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       // Minimal machine-mode trap causes used by current RISCOF tests.
       val CAUSE_MISALIGNED_FETCH = U(0, 64 bits)
       val CAUSE_ILLEGAL_INSTRUCTION = U(2, 64 bits)
+      val CAUSE_MISALIGNED_LOAD = U(4, 64 bits)
       val CAUSE_MISALIGNED_STORE = U(6, 64 bits)
       val ARCH_BASE = U(BigInt("80000000", 16), 64 bits)
 
@@ -215,19 +216,24 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       }
 
       val trapFromBranch = branch.logic.willTrap
-      val trapFromStoreMisalign = lsu.logic.localTrap && up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
       val insn = up(borb.frontend.Decoder.INSTRUCTION)
+      val trapFromLoadMisalign = lsu.logic.localTrap && lsu.logic.isLoad && up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
+      val trapFromStoreMisalign = lsu.logic.localTrap && lsu.logic.isStore && up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
       // RISCOF privilege tests place 16-bit marker instructions in RV64I streams.
       // Without C decode enabled, treat non-32b opcodes as illegal instruction traps.
       val trapFromIllegalInsn = up.isFiring && (insn(1 downto 0) =/= B"11")
       val trapFromEcall = up.isFiring && insn === B"32'h00000073"
       val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
-      val trapFire = up.isFiring && (trapFromBranch || trapFromStoreMisalign || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
+      val mretFire = up.isFiring && insn === B"32'h30200073"
+      val mretTarget = csrMepc.asUInt
+      val trapFire = up.isFiring && (trapFromBranch || trapFromLoadMisalign || trapFromStoreMisalign || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
 
       val trapCause = Bits(64 bits)
       trapCause := CAUSE_MISALIGNED_STORE.asBits
       when(trapFromBranch) {
         trapCause := CAUSE_MISALIGNED_FETCH.asBits
+      } elsewhen(trapFromLoadMisalign) {
+        trapCause := CAUSE_MISALIGNED_LOAD.asBits
       } elsewhen(trapFromIllegalInsn) {
         trapCause := CAUSE_ILLEGAL_INSTRUCTION.asBits
       } elsewhen(trapFromEbreak) {
@@ -240,13 +246,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       // expect architectural addresses in trap CSRs.
       val pcRaw = up(borb.fetch.PC.PC)
       val branchTargetRaw = branch.logic.target
-      val storeAddrRaw = lsu.logic.effectiveAddr
+      val memAddrRaw = lsu.logic.effectiveAddr
       val pcArch = Mux(pcRaw < ARCH_BASE, pcRaw + ARCH_BASE, pcRaw)
       val branchTargetArch = Mux(branchTargetRaw < ARCH_BASE, branchTargetRaw + ARCH_BASE, branchTargetRaw)
-      val storeAddrArch = Mux(storeAddrRaw < ARCH_BASE, storeAddrRaw + ARCH_BASE, storeAddrRaw)
+      val memAddrArch = Mux(memAddrRaw < ARCH_BASE, memAddrRaw + ARCH_BASE, memAddrRaw)
 
       val trapTval = Bits(64 bits)
-      trapTval := storeAddrArch.asBits
+      trapTval := memAddrArch.asBits
       when(trapFromBranch) {
         trapTval := branchTargetArch.asBits
       } elsewhen(trapFromIllegalInsn) {
@@ -256,9 +262,23 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       }
 
       when(trapFire) {
+        val nextMstatus = Bits(64 bits)
+        nextMstatus := csrMstatus
+        nextMstatus(7) := csrMstatus(3) // MPIE <= MIE
+        nextMstatus(3) := False         // MIE <= 0
+        nextMstatus(12 downto 11) := B"11" // MPP <= M
+        csrMstatus := nextMstatus
         csrMepc := pcArch.asBits
         csrMcause := trapCause
         csrMtval := trapTval
+      }
+      when(mretFire) {
+        val nextMstatus = Bits(64 bits)
+        nextMstatus := csrMstatus
+        nextMstatus(3) := csrMstatus(7) // MIE <= MPIE
+        nextMstatus(7) := True          // MPIE <= 1
+        nextMstatus(12 downto 11) := B"00" // MPP <= U
+        csrMstatus := nextMstatus
       }
 
       val mtvecBase = csrMtvec.asUInt & U(BigInt("FFFFFFFFFFFFFFFC", 16), 64 bits)
@@ -266,7 +286,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pc.exception.valid.allowOverride := trapFire
       pc.exception.payload.vector.allowOverride := trapVector
 
-      down(TRAP) := trapFromBranch || trapFromStoreMisalign || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
+      down(TRAP) := trapFromBranch || trapFromLoadMisalign || trapFromStoreMisalign || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
     }
 
     decode.branchResolved := branch.branchResolved
@@ -288,15 +308,21 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val execEpochMatches = pipeline.ctrl(6)(SPEC_EPOCH) === currentEpoch
     val flushPipeline = branch.logic.jumpCmd.valid && execEpochMatches
     val trapRedirect = trapLogic.trapFire && execEpochMatches
-    val redirectPipeline = flushPipeline || trapRedirect
-    pc.jump.valid := branch.logic.jumpCmd.valid && execEpochMatches
-    pc.jump.payload := branch.logic.jumpCmd.payload
+    val mretRedirect = trapLogic.mretFire && execEpochMatches
+    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect
+    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect
+    pc.jump.payload.target := mretRedirect ? trapLogic.mretTarget | branch.logic.jumpCmd.payload.target
+    pc.jump.payload.is_jump := mretRedirect || branch.logic.jumpCmd.payload.is_jump
+    pc.jump.payload.is_branch := (!mretRedirect) && branch.logic.jumpCmd.payload.is_branch
     
     // Increment epoch on taken branch
     when(flushPipeline) {
       currentEpoch := currentEpoch + 1
     }
     when(trapRedirect) {
+      currentEpoch := currentEpoch + 1
+    }
+    when(mretRedirect) {
       currentEpoch := currentEpoch + 1
     }
     

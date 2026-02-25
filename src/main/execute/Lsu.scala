@@ -65,17 +65,29 @@ case class Lsu(stage: CtrlLink) extends Area {
       default -> False
     ).setName("LSU_isStore")
 
+    // Load Logic
+    val isLoad = up(MicroCode).mux(
+      uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
+      uopLBU -> True, uopLHU -> True, uopLWU -> True,
+      default -> False
+    ).setName("LSU_isLoad")
+
     // Misalignment Check
     val misaligned = Bool()
     misaligned := up(MicroCode).mux(
+      uopLH -> (effectiveAddr(0) =/= False),
+      uopLHU -> (effectiveAddr(0) =/= False),
       uopSH -> (effectiveAddr(0) =/= False),
+      uopLW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopLWU -> (effectiveAddr(1 downto 0) =/= 0),
       uopSW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopLD -> (effectiveAddr(2 downto 0) =/= 0),
       uopSD -> (effectiveAddr(2 downto 0) =/= 0),
       default -> False
     )
 
-    // Raise Trap if misaligned
-    val localTrap = misaligned && isStore
+    // Raise trap on any misaligned memory access.
+    val localTrap = misaligned && (isStore || isLoad)
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = effectiveAddr(2 downto 0)
@@ -111,13 +123,6 @@ case class Lsu(stage: CtrlLink) extends Area {
     )
     
     val storeData = rawStoreData |<< (byteOffset << 3)
-
-    // Load Logic
-    val isLoad = up(MicroCode).mux(
-      uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
-      uopLBU -> True, uopLHU -> True, uopLWU -> True,
-      default -> False
-    ).setName("LSU_isLoad")
 
     val waitingResponse = RegInit(False)
     val nextId = Reg(UInt(16 bits)) init 1
