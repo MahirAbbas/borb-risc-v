@@ -493,13 +493,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val trapFromEcall = up.isFiring && insn === B"32'h00000073"
       val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
       // Decode marks unknown instructions as invalid. Trap true 32-bit illegal
-      // words (opcode bits 11). Also trap the RV arch-test 16-bit marker words
-      // (0x0001) that can appear in either half of a fetched 32-bit beat.
+      // words (opcode bits 11) but ignore handled SYSTEM ops and 16-bit marker
+      // bubble words used by arch-test scaffolding in RV64I streams.
       val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
-      val hasMarkerLow = insn(15 downto 0) === B"16'h0001"
-      val hasMarkerHigh = insn(31 downto 16) === B"16'h0001"
-      val isIllegalWord = (insn(1 downto 0) === B"11") || hasMarkerLow || hasMarkerHigh
-      val trapFromIllegal32 = !up(VALID) && isIllegalWord && !isHandledSystem
+      val trapFromIllegal32 = !up(VALID) && (insn(1 downto 0) === B"11") && !isHandledSystem
       val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
       val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
       val mretTarget = csrMepc.asUInt

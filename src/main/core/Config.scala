@@ -22,7 +22,12 @@ case class CpuConfig(
   // Features
   perfCountersEnabled: Boolean = true,
   mExtensionEnabled: Boolean = true,
-  dExtensionEnabled: Boolean = false
+  dExtensionEnabled: Boolean = false,
+
+  // Floating-point scaffold (not integrated into CPU pipeline yet)
+  fpuEnabled: Boolean = false,
+  fpuFlen: Int = 64,
+  fpuIssueTagWidth: Int = 4
 )
 
 object CpuConfig {
