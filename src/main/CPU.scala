@@ -82,13 +82,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
     }
-    // Keep instruction/decode legality aligned with PC across stalls/flushes.
-    pipeline.ctrls.filter(_._1 >= 3).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.INSTRUCTION).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.VALID).setAsReg().init(False)
-    }
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
     //pc.jump.setIdle()
@@ -141,9 +134,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       // Machine CSRs (minimal set required by RISCOF/Tenstorrent scaffolds).
       val csrMstatus = Reg(Bits(64 bits)) init(0)
-      // Include C in misa so the arch-test trap handler computes compressed
-      // illegal-instruction step sizes correctly when it encounters 16b markers.
-      val misaBase = BigInt("8000000000000104", 16)
+      // Baseline misa for RV64I (M/D bits are conditionally OR'ed below).
+      val misaBase = BigInt("8000000000000100", 16)
       val misaM = if (config.mExtensionEnabled) BigInt("0000000000001000", 16) else BigInt(0)
       val misaD = if (config.dExtensionEnabled) BigInt("0000000000000008", 16) else BigInt(0)
       val csrMisa = Reg(Bits(64 bits)) init(B(misaBase | misaM | misaD, 64 bits))
@@ -157,7 +149,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val csrSatp = Reg(Bits(64 bits)) init(0)
       // PMP CSR storage (RV64): pmpcfg0,2,4,6,8,10,12,14 + pmpaddr0..63.
       val pmpCfgBytes = Vec.fill(64)(Reg(Bits(8 bits)) init(0))
-      val pmpAddrRegs = Vec.fill(64)(Reg(Bits(64 bits)) init(0))
+      // PMP reset value is WARL/implementation-defined. Use all-ones so
+      // default NAPOT top-entry setup remains permissive until tests program it.
+      val pmpAddrRegs = Vec.fill(64)(Reg(Bits(64 bits)) init(B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits)))
+      // Match Spike's effective PMP entry count used by the compliance flow.
+      val pmpImplementedEntries = 16
       // Current effective privilege mode (M=3, U=0).
       val currentPriv = Reg(UInt(2 bits)) init(PRV_M)
 
@@ -175,7 +171,24 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         val out = Bits(64 bits)
         out := 0
         for(i <- 0 until 8) {
-          out((i * 8 + 7) downto (i * 8)) := pmpCfgBytes(group * 8 + i)
+          val idx = group * 8 + i
+          if(idx < pmpImplementedEntries) {
+            out((i * 8 + 7) downto (i * 8)) := pmpCfgBytes(idx)
+          } else {
+            out((i * 8 + 7) downto (i * 8)) := 0
+          }
+        }
+        out
+      }
+
+      // mepc[0] is always zero. When C is not advertised in misa, IALIGN=32
+      // and mepc[1] must read as zero (including the implicit mret read).
+      def mepcMasked(raw: Bits): Bits = {
+        val out = Bits(64 bits)
+        out := raw
+        out(0) := False
+        when(!csrMisa(2)) {
+          out(1) := False
         }
         out
       }
@@ -189,15 +202,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h302") { out := csrMedeleg }
           is(U"12'h305") { out := csrMtvec }
           is(U"12'h340") { out := csrMscratch }
-          is(U"12'h341") { out := csrMepc }
+          is(U"12'h341") { out := mepcMasked(csrMepc) }
           is(U"12'h342") { out := csrMcause }
           is(U"12'h343") { out := csrMtval }
           is(U"12'h344") { out := csrMip }
           is(U"12'h180") { out := csrSatp }
           is(U"12'h3A0") { out := pmpCfgReadWord(0) }
-          is(U"12'h3A1") { out := pmpCfgReadWord(0) }
           is(U"12'h3A2") { out := pmpCfgReadWord(1) }
-          is(U"12'h3A3") { out := pmpCfgReadWord(1) }
           is(U"12'h3A4") { out := pmpCfgReadWord(2) }
           is(U"12'h3A6") { out := pmpCfgReadWord(3) }
           is(U"12'h3A8") { out := pmpCfgReadWord(4) }
@@ -205,7 +216,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AC") { out := pmpCfgReadWord(6) }
           is(U"12'h3AE") { out := pmpCfgReadWord(7) }
           for(i <- 0 until 64) {
-            is(U(0x3B0 + i, 12 bits)) { out := pmpAddrRegs(i) }
+            is(U(0x3B0 + i, 12 bits)) {
+              if(i < pmpImplementedEntries) {
+                out := pmpAddrRegs(i)
+              } else {
+                out := 0
+              }
+            }
           }
         }
         out
@@ -226,21 +243,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h344") { ok := True }
           is(U"12'h180") { ok := True }
           is(U"12'h3A0") { ok := True }
-          is(U"12'h3A1") { ok := True }
           is(U"12'h3A2") { ok := True }
-          is(U"12'h3A3") { ok := True }
           is(U"12'h3A4") { ok := True }
-          is(U"12'h3A5") { ok := True }
           is(U"12'h3A6") { ok := True }
-          is(U"12'h3A7") { ok := True }
           is(U"12'h3A8") { ok := True }
-          is(U"12'h3A9") { ok := True }
           is(U"12'h3AA") { ok := True }
-          is(U"12'h3AB") { ok := True }
           is(U"12'h3AC") { ok := True }
-          is(U"12'h3AD") { ok := True }
           is(U"12'h3AE") { ok := True }
-          is(U"12'h3AF") { ok := True }
           for(i <- 0 until 64) {
             is(U(0x3B0 + i, 12 bits)) { ok := True }
           }
@@ -288,7 +297,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           csrWriteEn := csrZimm =/= 0
         }
       }
-      val csrIllegal = isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
+      val csrIllegal = up(VALID) && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
 
       val csrFire = up.isFiring && epochMatches && up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isCsrOp
       when(csrFire && !csrIllegal && csrWriteEn) {
@@ -306,15 +315,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3A0") {
             for(i <- 0 until 8) {
               val idx = i
-              when(!pmpCfgBytes(idx)(7)) {
-                pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
-              }
-            }
-          }
-          is(U"12'h3A1") {
-            for(i <- 0 until 8) {
-              val idx = i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -322,15 +323,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3A2") {
             for(i <- 0 until 8) {
               val idx = 8 + i
-              when(!pmpCfgBytes(idx)(7)) {
-                pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
-              }
-            }
-          }
-          is(U"12'h3A3") {
-            for(i <- 0 until 8) {
-              val idx = 8 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -338,7 +331,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3A4") {
             for(i <- 0 until 8) {
               val idx = 16 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -346,7 +339,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3A6") {
             for(i <- 0 until 8) {
               val idx = 24 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -354,7 +347,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3A8") {
             for(i <- 0 until 8) {
               val idx = 32 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -362,7 +355,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AA") {
             for(i <- 0 until 8) {
               val idx = 40 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -370,7 +363,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AC") {
             for(i <- 0 until 8) {
               val idx = 48 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -378,7 +371,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AE") {
             for(i <- 0 until 8) {
               val idx = 56 + i
-              when(!pmpCfgBytes(idx)(7)) {
+              when((idx < pmpImplementedEntries) && !pmpCfgBytes(idx)(7)) {
                 pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
               }
             }
@@ -387,7 +380,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
             is(U(0x3B0 + i, 12 bits)) {
               val selfLocked = pmpCfgBytes(i)(7)
               val nextTorLocked = if(i < 63) (pmpCfgBytes(i + 1)(7) && (pmpCfgBytes(i + 1)(4 downto 3) === B"01")) else False
-              when(!(selfLocked || nextTorLocked)) {
+              when((i < pmpImplementedEntries) && !(selfLocked || nextTorLocked)) {
                 pmpAddrRegs(i) := csrWriteData
               }
             }
@@ -414,8 +407,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val dataPriv = Mux((currentPriv === PRV_M) && mstatusMprv, mstatusMpp, currentPriv)
       val instPriv = currentPriv
 
-      def pmpAllow(addrRaw: UInt, priv: UInt, needX: Bool, needR: Bool, needW: Bool): Bool = {
-        val addr = Mux(addrRaw < ARCH_BASE, addrRaw + ARCH_BASE, addrRaw)
+      def pmpAllow(addrRaw: UInt, priv: UInt, needX: Bool, needR: Bool, needW: Bool, accessBytes: UInt): Bool = {
+        val addrLo = Mux(addrRaw < ARCH_BASE, addrRaw + ARCH_BASE, addrRaw)
+        val bytes = accessBytes.max(U(1, 64 bits))
+        val addrHi = addrLo + (bytes - U(1, 64 bits))
         val hitVec = Vec(Bool(), 64)
         val permVec = Vec(Bool(), 64)
 
@@ -430,7 +425,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           val prev = if(i == 0) U(0, 64 bits) else pmpAddrRegs(i - 1).asUInt
 
           val torLo = prev |<< 2
-          val torHi = entry |<< 2
+          val torHiExcl = entry |<< 2
           val na4Lo = entry |<< 2
           val na4Hi = (entry |<< 2) + U(3, 64 bits)
 
@@ -441,29 +436,41 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           val napotSpan = (napotMask |<< 3) | U(7, 64 bits)
           val napotTop = napotBase + napotSpan
 
-          val hit = Bool()
-          hit := False
+          val hitAny = Bool()
+          val fullMatch = Bool()
+          hitAny := False
+          fullMatch := False
           switch(a) {
-            is(B"00") { hit := False } // OFF
+            is(B"00") { hitAny := False } // OFF
             is(B"01") { // TOR
-              if(i == 0) hit := addr < torHi
-              else hit := (addr >= torLo) && (addr < torHi)
+              val torNonEmpty = torHiExcl =/= U(0, 64 bits)
+              val torHi = torHiExcl - U(1, 64 bits)
+              hitAny := torNonEmpty && (addrLo <= torHi) && (addrHi >= torLo)
+              fullMatch := torNonEmpty && (addrLo >= torLo) && (addrHi <= torHi)
             }
             is(B"10") { // NA4
-              hit := (addr >= na4Lo) && (addr <= na4Hi)
+              hitAny := (addrLo <= na4Hi) && (addrHi >= na4Lo)
+              fullMatch := (addrLo >= na4Lo) && (addrHi <= na4Hi)
             }
             default {   // NAPOT
-              hit := (addr >= napotBase) && (addr <= napotTop)
+              hitAny := (addrLo <= napotTop) && (addrHi >= napotBase)
+              fullMatch := (addrLo >= napotBase) && (addrHi <= napotTop)
             }
           }
 
           val reqPerm = (!needX || x) && (!needR || r) && (!needW || w)
-          val mPerm = l ? reqPerm | True
+          val accessOk = fullMatch && reqPerm
+          val mPerm = l ? accessOk | True
           val suPerm = reqPerm
           val perm = (priv === PRV_M) ? mPerm | suPerm
 
-          hitVec(i) := hit
-          permVec(i) := perm
+          if(i < pmpImplementedEntries) {
+            hitVec(i) := hitAny
+            permVec(i) := perm
+          } else {
+            hitVec(i) := False
+            permVec(i) := False
+          }
         }
 
         var allowExpr: Bool = (priv === PRV_M)
@@ -473,11 +480,32 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         allowExpr
       }
 
-      val pmpExecAllowed = pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False)
-      val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False)
-      val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True)
+      val loadBytes = UInt(64 bits)
+      loadBytes := U(1, 64 bits)
+      switch(up(MicroCode)) {
+        is(uopLH) { loadBytes := U(2, 64 bits) }
+        is(uopLHU) { loadBytes := U(2, 64 bits) }
+        is(uopLW) { loadBytes := U(4, 64 bits) }
+        is(uopLWU) { loadBytes := U(4, 64 bits) }
+        is(uopLD) { loadBytes := U(8, 64 bits) }
+      }
 
-      val pmpExecFault = up.isFiring && up(VALID) && up(LANE_SEL) && !pmpExecAllowed
+      val storeBytes = UInt(64 bits)
+      storeBytes := U(1, 64 bits)
+      switch(up(MicroCode)) {
+        is(uopSH) { storeBytes := U(2, 64 bits) }
+        is(uopSW) { storeBytes := U(4, 64 bits) }
+        is(uopSD) { storeBytes := U(8, 64 bits) }
+      }
+
+      // RV64I only (no compressed execution): instruction fetch width is 4 bytes.
+      val pmpExecAllowed = pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
+      val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
+      val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
+
+      // Instruction-access faults are checked at fetch/execute boundary and
+      // must not depend on decode validity of fetched bits.
+      val pmpExecFault = up.isFiring && up(LANE_SEL) && !pmpExecAllowed
       val pmpLoadFault = aguFire && lsu.logic.isLoad && !pmpLoadAllowed
       val pmpStoreFault = aguFire && lsu.logic.isStore && !pmpStoreAllowed
       val pmpDataFault = pmpLoadFault || pmpStoreFault
@@ -492,17 +520,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val mretIllegal = mretInsn && (currentPriv =/= PRV_M)
       val trapFromEcall = up.isFiring && insn === B"32'h00000073"
       val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
-      // Decode marks unknown instructions as invalid. Trap true 32-bit illegal
-      // words (opcode bits 11). Also trap the RV arch-test 16-bit marker words
-      // (0x0001) that can appear in either half of a fetched 32-bit beat.
+      // Decode marks unknown instructions as invalid. Treat any non-system
+      // decode miss as illegal instruction.
       val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
-      val hasMarkerLow = insn(15 downto 0) === B"16'h0001"
-      val hasMarkerHigh = insn(31 downto 16) === B"16'h0001"
-      val isIllegalWord = (insn(1 downto 0) === B"11") || hasMarkerLow || hasMarkerHigh
-      val trapFromIllegal32 = !up(VALID) && isIllegalWord && !isHandledSystem
+      val trapFromIllegal32 = !up(VALID) && !isHandledSystem
       val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
       val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
-      val mretTarget = csrMepc.asUInt
+      val mretTarget = mepcMasked(csrMepc).asUInt
       val trapFire = up.isFiring && epochMatches && (trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
 
       val trapCause = Bits(64 bits)
