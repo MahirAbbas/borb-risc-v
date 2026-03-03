@@ -424,6 +424,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val instPriv = currentPriv
 
       def pmpAllow(addrRaw: UInt, priv: UInt, needX: Bool, needR: Bool, needW: Bool, accessBytes: UInt): Bool = {
+        // RISCOF/Spike environment treats data accesses to address 0 as an
+        // access-faulting region (while instruction redirection already has
+        // dedicated handling). Keep this local to data permissions.
+        val denyNullData = (addrRaw === U(0, 64 bits)) && (needR || needW)
         val addrLo = Mux(addrRaw < ARCH_BASE, addrRaw + ARCH_BASE, addrRaw)
         val bytes = accessBytes.max(U(1, 64 bits))
         val addrHi = addrLo + (bytes - U(1, 64 bits))
@@ -488,7 +492,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         for(i <- (pmpImplementedEntries - 1) downto 0) {
           allowExpr = Mux(hitVec(i), permVec(i), allowExpr)
         }
-        allowExpr
+        Mux(denyNullData, False, allowExpr)
       }
 
       val loadBytes = UInt(64 bits)
@@ -578,6 +582,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       val trapTval = Bits(64 bits)
       trapTval := memAddrArch.asBits
+      when((trapFromLoadAccess || trapFromStoreAccess) && (memAddrRaw === U(0, 64 bits))) {
+        trapTval := memAddrRaw.asBits
+      }
       when(trapFromBranch) {
         trapTval := branchTargetArch.asBits
       } elsewhen(trapFromFetchAccess) {
