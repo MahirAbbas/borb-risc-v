@@ -20,7 +20,7 @@ object Branch extends AreaObject {
   val BRANCH_TARGET = Payload(UInt(64 bits))
 }
 
-case class Branch(node : CtrlLink, pc : PC) extends Area {  
+case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) extends Area {
   import Branch._
 
   val branchResolved = Bool()
@@ -79,7 +79,7 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
     val execFire = up.isFiring
     val doJump = (isJump || (isBranch && condition)) &&
       isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire
-    val misaligned = target(1 downto 0) =/= 0
+    val misaligned = if(withCompressed) (target(0) =/= False) else (target(1 downto 0) =/= 0)
     val willTrap = doJump && misaligned
 
     // down(TRAP) := willTrap // Moved to CPU.scala logic integration
@@ -97,7 +97,8 @@ case class Branch(node : CtrlLink, pc : PC) extends Area {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
-        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcArch + 4).asBits
+        val linkStep = Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
+        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcArch + linkStep).asBits
         // Squash writeback if trapping
         down(WriteBack.RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
       }

@@ -17,6 +17,7 @@ case class uop() extends Bundle {
 object Decoder extends AreaObject {
 
   val INSTRUCTION = Payload(Bits(32 bits))
+  val IS_COMPRESSED = Payload(Bool())
 
   val LEGAL = Payload(YESNO())
   val IS_FP = Payload(YESNO())
@@ -71,7 +72,7 @@ object YESNO extends SpinalEnum {
 //
 // }
 
-case class Decoder(stage: CtrlLink) extends Area {
+case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int = 64) extends Area {
   import DecodeTable._
   import ExecutionUnitEnum._
   import Decoder._
@@ -112,11 +113,35 @@ case class Decoder(stage: CtrlLink) extends Area {
   val trap = new stage.Area {}
 
   val decodeLane = new stage.Area {
-      VALID := Symplify(INSTRUCTION, all)
+    val decodeInst = Bits(32 bits)
+    decodeInst := up(INSTRUCTION)
+    val isCompressed = up(INSTRUCTION)(1 downto 0) =/= B"11"
+    val rvc = RVC(up(INSTRUCTION)(15 downto 0), xlen = xlen)
+
+    if(withCompressed) {
+      when(isCompressed) {
+        decodeInst := rvc.inst
+      }
+    }
+
+    val decodeIllegal = Bool()
+    decodeIllegal := False
+    if(withCompressed) {
+      decodeIllegal := isCompressed && rvc.illegal
+    }
+
+    down(INSTRUCTION).allowOverride := decodeInst
+    if(withCompressed) {
+      down(IS_COMPRESSED) := isCompressed && !rvc.illegal
+    } else {
+      down(IS_COMPRESSED) := False
+    }
+    VALID := Symplify(decodeInst, all) && !decodeIllegal
+
     for (spec <- specs) {
       // down(spec._2).assignDontCare()
       // when(up.isFiring) {
-        down(spec._2).assignFromBits(spec._1.build(up(INSTRUCTION), all).asBits)
+        down(spec._2).assignFromBits(spec._1.build(decodeInst, all).asBits)
       // }
     }
 

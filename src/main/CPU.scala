@@ -87,7 +87,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
     }
 
-    val pc = new PC(pipeline.ctrl(0), addressWidth = 64)
+    val pc = new PC(pipeline.ctrl(0), addressWidth = 64, withCompressed = config.cExtensionEnabled)
     //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
@@ -95,17 +95,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(1),
       pipeline.ctrl(2),
       addressWidth = 64,
-      dataWidth = 64
+      dataWidth = 64,
+      withCompressed = config.cExtensionEnabled
     )
+    pc.sequentialStep := fetch.io.pcStep
     // RAM is external (via io.iAxi/io.dAxi)
 
-    val decode = new Decoder(pipeline.ctrl(3))
+    val decode = new Decoder(pipeline.ctrl(3), withCompressed = config.cExtensionEnabled, xlen = config.xlen)
 
     val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
     val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
-    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
+    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
     val lsu = new borb.execute.Lsu(pipeline.ctrl(6))
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
@@ -138,11 +140,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       // Machine CSRs (minimal set required by RISCOF/Tenstorrent scaffolds).
       val csrMstatus = Reg(Bits(64 bits)) init(0)
-      // Baseline misa for RV64I (M/D bits are conditionally OR'ed below).
+      // Baseline misa for RV64I (C/M/D bits are conditionally OR'ed below).
       val misaBase = BigInt("8000000000000100", 16)
+      val misaC = if (config.cExtensionEnabled) BigInt("0000000000000004", 16) else BigInt(0)
       val misaM = if (config.mExtensionEnabled) BigInt("0000000000001000", 16) else BigInt(0)
       val misaD = if (config.dExtensionEnabled) BigInt("0000000000000008", 16) else BigInt(0)
-      val csrMisa = Reg(Bits(64 bits)) init(B(misaBase | misaM | misaD, 64 bits))
+      val csrMisa = Reg(Bits(64 bits)) init(B(misaBase | misaC | misaM | misaD, 64 bits))
       val csrMedeleg = Reg(Bits(64 bits)) init(0)
       val csrMtvec = Reg(Bits(64 bits)) init(0)
       val csrMscratch = Reg(Bits(64 bits)) init(0)
@@ -517,8 +520,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopSD) { storeBytes := U(8, 64 bits) }
       }
 
-      // RV64I only (no compressed execution): instruction fetch width is 4 bytes.
-      val pmpExecAllowed = pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
+      // Instruction fetch permission uses the current instruction length.
+      val fetchBytes = Mux(up(borb.frontend.Decoder.IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
+      val pmpExecAllowed = pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = fetchBytes)
       val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
       val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
 
