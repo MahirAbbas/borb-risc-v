@@ -10,6 +10,7 @@ import borb.frontend.Decoder._
 import borb.dispatch._
 import borb.execute.IntAlu
 import borb.execute.IntAlu._
+import borb.execute.{DataBus, DataBusCmd}
 import borb.dispatch.SrcPlugin
 import borb.dispatch.SrcPlugin._
 import borb.formal._
@@ -29,21 +30,24 @@ object CPU {
 }
 
 case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
+  private val cpuAxiConfig = Axi4Config(
+    addressWidth = config.xlen,
+    dataWidth = config.xlen,
+    idWidth = 16,
+    useId = true,
+    useRegion = false,
+    useLock = false,
+    useQos = false,
+    useProt = false,
+    useCache = false
+  )
 
   val io = new Bundle {
     val clk = in port Bool()
     val clkEnable = in port Bool()
     val reset = in port Bool()
-    val iBus = master(new RamFetchBus(
-      addressWidth = config.xlen, 
-      dataWidth = config.xlen, 
-      idWidth = config.fetchIdWidth
-    ))
-    val dBus = master(borb.execute.DataBus(
-      addressWidth = config.xlen,
-      dataWidth = config.xlen,
-      idWidth = config.dataIdWidth
-    )).simPublic()
+    val iAxi = master(Axi4Shared(cpuAxiConfig))
+    val dAxi = master(Axi4Shared(cpuAxiConfig)).simPublic()
     val rvfi = out(Rvfi()).simPublic()
     val dbg = out(DebugArea())
     val perf = out(borb.core.PerfCountersBundle())
@@ -93,7 +97,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       addressWidth = 64,
       dataWidth = 64
     )
-    // RAM is external (via io.iBus)
+    // RAM is external (via io.iAxi/io.dAxi)
 
     val decode = new Decoder(pipeline.ctrl(3))
 
@@ -104,9 +108,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc)
     val lsu = new borb.execute.Lsu(pipeline.ctrl(6))
 
-    // Connect LSU data bus to external port
-    io.dBus.cmd << lsu.io.dBus.cmd
-    lsu.io.dBus.rsp << io.dBus.rsp
+    val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
+    lsuBus.cmd << lsu.io.dBus.cmd
+    lsu.io.dBus.rsp << lsuBus.rsp
 
     // Global speculation epoch. Keep this wide enough to avoid wraparound
     // aliasing under branch-heavy tests.
@@ -732,9 +736,128 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       )
     }
 
-    // Connect Fetch to External Memory Bus
-    io.iBus.cmd << fetch.io.readCmd.cmd
-    io.iBus.rsp >> fetch.io.readCmd.rsp
+    // Fetch -> AXI4Shared bridge (read-only)
+    val fetchReqAddrQ = StreamFifo(UInt(64 bits), depth = 8)
+    fetchReqAddrQ.io.push.valid := fetch.io.readCmd.cmd.valid && io.iAxi.arw.ready
+    fetchReqAddrQ.io.push.payload := fetch.io.readCmd.cmd.address
+
+    io.iAxi.arw.valid := fetch.io.readCmd.cmd.valid && fetchReqAddrQ.io.push.ready
+    io.iAxi.arw.addr := fetch.io.readCmd.cmd.address
+    io.iAxi.arw.id := fetch.io.readCmd.cmd.id.resized
+    io.iAxi.arw.len := 0
+    io.iAxi.arw.size := log2Up(config.xlen / 8)
+    io.iAxi.arw.burst := Axi4.burst.INCR
+    io.iAxi.arw.write := False
+    fetch.io.readCmd.cmd.ready := io.iAxi.arw.ready && fetchReqAddrQ.io.push.ready
+
+    io.iAxi.r.ready := fetchReqAddrQ.io.pop.valid
+    fetchReqAddrQ.io.pop.ready := io.iAxi.r.fire
+
+    val fetchRspValid = RegInit(False)
+    val fetchRspData = Reg(Bits(64 bits)) init(0)
+    val fetchRspAddr = Reg(UInt(64 bits)) init(0)
+    val fetchRspId = Reg(UInt(16 bits)) init(0)
+
+    fetchRspValid := io.iAxi.r.fire
+    when(io.iAxi.r.fire) {
+      fetchRspData := io.iAxi.r.data
+      fetchRspAddr := fetchReqAddrQ.io.pop.payload
+      fetchRspId := io.iAxi.r.id.resized
+    }
+
+    fetch.io.readCmd.rsp.valid := fetchRspValid
+    fetch.io.readCmd.rsp.data := fetchRspData
+    fetch.io.readCmd.rsp.address := fetchRspAddr
+    fetch.io.readCmd.rsp.id := fetchRspId
+
+    io.iAxi.w.valid := False
+    io.iAxi.w.data := 0
+    io.iAxi.w.strb := 0
+    io.iAxi.w.last := False
+    io.iAxi.b.ready := True
+
+    // LSU DataBus -> AXI4Shared bridge
+    val dCmd = lsuBus.cmd
+    val dRsp = lsuBus.rsp
+
+    object DMemAxiState extends SpinalEnum {
+      val idle, sendWrite, waitWriteResp, sendRead, waitReadResp = newElement()
+    }
+    import DMemAxiState._
+    val dAxiState = RegInit(idle)
+    val dActiveCmd = Reg(DataBusCmd(64, 64, 16))
+    val dArwFired = RegInit(False)
+    val dWFired = RegInit(False)
+
+    dCmd.ready := False
+
+    io.dAxi.arw.valid := False
+    io.dAxi.arw.id := dActiveCmd.id.resized
+    io.dAxi.arw.addr := dActiveCmd.address
+    io.dAxi.arw.len := 0
+    io.dAxi.arw.size := log2Up(config.xlen / 8)
+    io.dAxi.arw.burst := Axi4.burst.INCR
+    io.dAxi.arw.write := dActiveCmd.write
+
+    io.dAxi.w.valid := False
+    io.dAxi.w.data := dActiveCmd.data
+    io.dAxi.w.strb := dActiveCmd.mask
+    io.dAxi.w.last := True
+
+    io.dAxi.b.ready := False
+    io.dAxi.r.ready := False
+
+    dRsp.valid := False
+    dRsp.data := io.dAxi.r.data
+    dRsp.id := io.dAxi.r.id.resized
+
+    switch(dAxiState) {
+      is(idle) {
+        dCmd.ready := True
+        dArwFired := False
+        dWFired := False
+        when(dCmd.valid) {
+          dActiveCmd := dCmd.payload
+          when(dCmd.write) {
+            dAxiState := sendWrite
+          } otherwise {
+            dAxiState := sendRead
+          }
+        }
+      }
+
+      is(sendWrite) {
+        io.dAxi.arw.valid := !dArwFired
+        io.dAxi.w.valid := !dWFired
+        when(io.dAxi.arw.fire) { dArwFired := True }
+        when(io.dAxi.w.fire) { dWFired := True }
+        when((dArwFired || io.dAxi.arw.fire) && (dWFired || io.dAxi.w.fire)) {
+          dAxiState := waitWriteResp
+        }
+      }
+
+      is(waitWriteResp) {
+        io.dAxi.b.ready := True
+        when(io.dAxi.b.valid) {
+          dAxiState := idle
+        }
+      }
+
+      is(sendRead) {
+        io.dAxi.arw.valid := True
+        when(io.dAxi.arw.ready) {
+          dAxiState := waitReadResp
+        }
+      }
+
+      is(waitReadResp) {
+        io.dAxi.r.ready := True
+        when(io.dAxi.r.valid) {
+          dRsp.valid := True
+          dAxiState := idle
+        }
+      }
+    }
 
     pipeline.ctrls.drop(1).foreach(e => e._2.throwWhen(clockDomain.reset))
     // Build the pipeline

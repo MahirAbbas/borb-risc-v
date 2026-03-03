@@ -43,13 +43,6 @@ case class SoC() extends Component {
     cpu.io.reset := io.reset
     io.dbg := cpu.io.dbg
 
-    // Shims: Bridge CPU Generic Buses to AXI (CPU Config)
-    val fetchShim = new RamFetchBusToAxi4Shared(cpuAxiConfig)
-    fetchShim.io.fetch <> cpu.io.iBus
-
-    val lsuShim = new DataBusToAxi4Shared(cpuAxiConfig)
-    lsuShim.io.dBus <> cpu.io.dBus
-
     // Arbiter (2 Inputs -> 1 Output)
     val arbiter = new Axi4SharedArbiter(
       outputConfig = socAxiConfig,
@@ -59,9 +52,9 @@ case class SoC() extends Component {
       routeBufferSize = 4
     )
     
-    // Connect Shims to Arbiter
-    arbiter.io.sharedInputs(0) <> fetchShim.io.axi
-    arbiter.io.sharedInputs(1) <> lsuShim.io.axi
+    // Connect CPU AXI masters to Arbiter
+    arbiter.io.sharedInputs(0) <> cpu.io.iAxi
+    arbiter.io.sharedInputs(1) <> cpu.io.dAxi
 
     // RAM
     val ram = Axi4SharedOnChipRam(
