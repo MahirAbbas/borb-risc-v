@@ -16,6 +16,9 @@ object Fetch extends AreaObject {
 
 case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, dataWidth: Int) extends Area {
   import Fetch._
+  val ARCH_BASE = U(BigInt("80000000", 16), addressWidth bits)
+  def archAddr(addr: UInt): UInt = Mux(addr < ARCH_BASE, addr + ARCH_BASE, addr)
+
   val io = new Bundle {
     val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
     val flush = Bool()
@@ -61,7 +64,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
   val cmdArea = new cmdStage.Area {
     // 64-bit fetch beat base address
     val beatAddr = UInt(addressWidth bits)
-    beatAddr := cmdStage(PC.PC)
+    beatAddr := archAddr(cmdStage(PC.PC))
     beatAddr(2 downto 0) := 0
 
     // Correctness-first mode: always (re)request the current beat.
@@ -76,7 +79,7 @@ case class Fetch(cmdStage: CtrlLink, rspStage: CtrlLink, addressWidth: Int, data
 
   val rspArea = new rspStage.Area {
     val beatAddr = UInt(addressWidth bits)
-    beatAddr := rspStage(PC.PC)
+    beatAddr := archAddr(rspStage(PC.PC))
     beatAddr(2 downto 0) := 0
 
     val srcValid = fifo.io.pop.valid
