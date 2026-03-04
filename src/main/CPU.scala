@@ -583,8 +583,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopLW) { loadBytes := U(4, 64 bits) }
         is(uopLWU) { loadBytes := U(4, 64 bits) }
         is(uopLD) { loadBytes := U(8, 64 bits) }
-        is(uopAMOADDW) { loadBytes := U(4, 64 bits) }
-        is(uopAMOADDD) { loadBytes := U(8, 64 bits) }
       }
 
       val storeBytes = UInt(64 bits)
@@ -593,8 +591,38 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopSH) { storeBytes := U(2, 64 bits) }
         is(uopSW) { storeBytes := U(4, 64 bits) }
         is(uopSD) { storeBytes := U(8, 64 bits) }
-        is(uopAMOADDW) { storeBytes := U(4, 64 bits) }
-        is(uopAMOADDD) { storeBytes := U(8, 64 bits) }
+      }
+      val atomicWordAccess = up(MicroCode).mux(
+        uopAMOSWAPW -> True,
+        uopAMOADDW -> True,
+        uopAMOXORW -> True,
+        uopAMOANDW -> True,
+        uopAMOORW -> True,
+        uopAMOMINW -> True,
+        uopAMOMAXW -> True,
+        uopAMOMINUW -> True,
+        uopAMOMAXUW -> True,
+        default -> False
+      )
+      val atomicDoubleAccess = up(MicroCode).mux(
+        uopAMOSWAPD -> True,
+        uopAMOADDD -> True,
+        uopAMOXORD -> True,
+        uopAMOANDD -> True,
+        uopAMOORD -> True,
+        uopAMOMIND -> True,
+        uopAMOMAXD -> True,
+        uopAMOMINUD -> True,
+        uopAMOMAXUD -> True,
+        default -> False
+      )
+      when(atomicWordAccess) {
+        loadBytes := U(4, 64 bits)
+        storeBytes := U(4, 64 bits)
+      }
+      when(atomicDoubleAccess) {
+        loadBytes := U(8, 64 bits)
+        storeBytes := U(8, 64 bits)
       }
 
       val pmpExecAllowed = if(config.cExtensionEnabled) {
@@ -611,6 +639,27 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       } else {
         pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
       }
+      val isAmoOp = up(MicroCode).mux(
+        uopAMOSWAPW -> True,
+        uopAMOADDW -> True,
+        uopAMOXORW -> True,
+        uopAMOANDW -> True,
+        uopAMOORW -> True,
+        uopAMOMINW -> True,
+        uopAMOMAXW -> True,
+        uopAMOMINUW -> True,
+        uopAMOMAXUW -> True,
+        uopAMOSWAPD -> True,
+        uopAMOADDD -> True,
+        uopAMOXORD -> True,
+        uopAMOANDD -> True,
+        uopAMOORD -> True,
+        uopAMOMIND -> True,
+        uopAMOMAXD -> True,
+        uopAMOMINUD -> True,
+        uopAMOMAXUD -> True,
+        default -> False
+      )
       val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
       val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
 
@@ -618,12 +667,17 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       // must not depend on decode validity of fetched bits.
       val latePcZeroFetch = up.isFiring && up(LANE_SEL) && sawNonZeroPc && (up(borb.fetch.PC.PC) === U(0, 64 bits))
       val pmpExecFault = up.isFiring && up(LANE_SEL) && (!pmpExecAllowed || latePcZeroFetch)
-      val pmpLoadFault = aguFire && lsu.logic.isLoad && !pmpLoadAllowed
-      val pmpStoreFault = aguFire && lsu.logic.isStore && !pmpStoreAllowed
+      val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
+      // AMOs must report store/AMO access-fault class, even when the failed
+      // permission check is on the read side.
+      val pmpStoreFault = aguFire && (
+        (lsu.logic.isStore && !isAmoOp && !pmpStoreAllowed) ||
+        (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed))
+      )
       val pmpDataFault = pmpLoadFault || pmpStoreFault
       lsu.io.pmpFault := pmpDataFault
 
-      val trapFromLoadMisalign = lsu.logic.misaligned && lsu.logic.isLoad && aguFire
+      val trapFromLoadMisalign = lsu.logic.misaligned && lsu.logic.isLoad && !isAmoOp && aguFire
       val trapFromStoreMisalign = lsu.logic.misaligned && lsu.logic.isStore && aguFire
       val trapFromLoadAccess = pmpLoadFault
       val trapFromStoreAccess = pmpStoreFault

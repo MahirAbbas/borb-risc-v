@@ -55,10 +55,27 @@ case class Lsu(stage: CtrlLink) extends Area {
   }
 
   val logic = new stage.Area {
-    val isAmoAddW = up(MicroCode) === uopAMOADDW
-    val isAmoAddD = up(MicroCode) === uopAMOADDD
-    val isAmo = isAmoAddW || isAmoAddD
-    val amoIsWord = isAmoAddW
+    val amoSwapW = up(MicroCode) === uopAMOSWAPW
+    val amoSwapD = up(MicroCode) === uopAMOSWAPD
+    val amoAddW = up(MicroCode) === uopAMOADDW
+    val amoAddD = up(MicroCode) === uopAMOADDD
+    val amoXorW = up(MicroCode) === uopAMOXORW
+    val amoXorD = up(MicroCode) === uopAMOXORD
+    val amoAndW = up(MicroCode) === uopAMOANDW
+    val amoAndD = up(MicroCode) === uopAMOANDD
+    val amoOrW = up(MicroCode) === uopAMOORW
+    val amoOrD = up(MicroCode) === uopAMOORD
+    val amoMinW = up(MicroCode) === uopAMOMINW
+    val amoMinD = up(MicroCode) === uopAMOMIND
+    val amoMaxW = up(MicroCode) === uopAMOMAXW
+    val amoMaxD = up(MicroCode) === uopAMOMAXD
+    val amoMinuW = up(MicroCode) === uopAMOMINUW
+    val amoMinuD = up(MicroCode) === uopAMOMINUD
+    val amoMaxuW = up(MicroCode) === uopAMOMAXUW
+    val amoMaxuD = up(MicroCode) === uopAMOMAXUD
+
+    val amoIsWord = amoSwapW || amoAddW || amoXorW || amoAndW || amoOrW || amoMinW || amoMaxW || amoMinuW || amoMaxuW
+    val isAmo = amoIsWord || amoSwapD || amoAddD || amoXorD || amoAndD || amoOrD || amoMinD || amoMaxD || amoMinuD || amoMaxuD
 
     // Address Generation: RS1 + sign-extended immediate for normal loads/stores,
     // RS1 only for AMOs.
@@ -93,8 +110,24 @@ case class Lsu(stage: CtrlLink) extends Area {
       uopSW -> (effectiveAddr(1 downto 0) =/= 0),
       uopLD -> (effectiveAddr(2 downto 0) =/= 0),
       uopSD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOSWAPW -> (effectiveAddr(1 downto 0) =/= 0),
       uopAMOADDW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOXORW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOANDW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOORW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOMINW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOMAXW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOMINUW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOMAXUW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOSWAPD -> (effectiveAddr(2 downto 0) =/= 0),
       uopAMOADDD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOXORD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOANDD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOORD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOMIND -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOMAXD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOMINUD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOMAXUD -> (effectiveAddr(2 downto 0) =/= 0),
       default -> False
     )
 
@@ -118,8 +151,24 @@ case class Lsu(stage: CtrlLink) extends Area {
       uopLW -> B"00001111",
       uopLWU -> B"00001111",
       uopLD -> B"11111111",
+      uopAMOSWAPW -> B"00001111",
       uopAMOADDW -> B"00001111",
+      uopAMOXORW -> B"00001111",
+      uopAMOANDW -> B"00001111",
+      uopAMOORW -> B"00001111",
+      uopAMOMINW -> B"00001111",
+      uopAMOMAXW -> B"00001111",
+      uopAMOMINUW -> B"00001111",
+      uopAMOMAXUW -> B"00001111",
+      uopAMOSWAPD -> B"11111111",
       uopAMOADDD -> B"11111111",
+      uopAMOXORD -> B"11111111",
+      uopAMOANDD -> B"11111111",
+      uopAMOORD -> B"11111111",
+      uopAMOMIND -> B"11111111",
+      uopAMOMAXD -> B"11111111",
+      uopAMOMINUD -> B"11111111",
+      uopAMOMAXUD -> B"11111111",
       default -> B(0, 8 bits)
     )
 
@@ -201,7 +250,7 @@ case class Lsu(stage: CtrlLink) extends Area {
       waitingResponse := False
     }
 
-    // AMOADD implementation: read old value, compute/store new value, write old
+    // AMO implementation: read old value, compute/store new value, write old
     // value to rd after store command is accepted.
     val amoResponseArriving = isAmo && up(VALID) && amoWaitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === amoWaitId)
     when(isAmo && up(VALID) && !suppress) {
@@ -220,13 +269,39 @@ case class Lsu(stage: CtrlLink) extends Area {
           val shifted = rspData >> (byteOffset << 3)
           val oldWord = shifted(31 downto 0)
           val rs2Word = up(RS2)(31 downto 0)
-          val newWord = (oldWord.asUInt + rs2Word.asUInt).asBits
+          val oldWordS = oldWord.asSInt
+          val rs2WordS = rs2Word.asSInt
+          val oldD = shifted
+          val rs2D = up(RS2)
+          val oldDS = oldD.asSInt
+          val rs2DS = rs2D.asSInt
+
+          val newWord = Bits(32 bits)
+          newWord := oldWord
+          when(amoSwapW) { newWord := rs2Word }
+          when(amoAddW) { newWord := (oldWord.asUInt + rs2Word.asUInt).asBits }
+          when(amoXorW) { newWord := oldWord ^ rs2Word }
+          when(amoAndW) { newWord := oldWord & rs2Word }
+          when(amoOrW) { newWord := oldWord | rs2Word }
+          when(amoMinW) { newWord := Mux(oldWordS < rs2WordS, oldWord, rs2Word) }
+          when(amoMaxW) { newWord := Mux(oldWordS > rs2WordS, oldWord, rs2Word) }
+          when(amoMinuW) { newWord := Mux(oldWord.asUInt < rs2Word.asUInt, oldWord, rs2Word) }
+          when(amoMaxuW) { newWord := Mux(oldWord.asUInt > rs2Word.asUInt, oldWord, rs2Word) }
+
+          val newD = Bits(64 bits)
+          newD := oldD
+          when(amoSwapD) { newD := rs2D }
+          when(amoAddD) { newD := (oldD.asUInt + rs2D.asUInt).asBits }
+          when(amoXorD) { newD := oldD ^ rs2D }
+          when(amoAndD) { newD := oldD & rs2D }
+          when(amoOrD) { newD := oldD | rs2D }
+          when(amoMinD) { newD := Mux(oldDS < rs2DS, oldD, rs2D) }
+          when(amoMaxD) { newD := Mux(oldDS > rs2DS, oldD, rs2D) }
+          when(amoMinuD) { newD := Mux(oldD.asUInt < rs2D.asUInt, oldD, rs2D) }
+          when(amoMaxuD) { newD := Mux(oldD.asUInt > rs2D.asUInt, oldD, rs2D) }
+
           amoWbData := Mux(amoIsWord, oldWord.asSInt.resize(64).asBits, shifted)
-          amoStoreData := Mux(
-            amoIsWord,
-            newWord.resize(64),
-            (shifted.asUInt + up(RS2).asUInt).asBits
-          )
+          amoStoreData := Mux(amoIsWord, newWord.resize(64), newD)
           amoWaitingResponse := False
           amoStorePending := True
           haltIt()
