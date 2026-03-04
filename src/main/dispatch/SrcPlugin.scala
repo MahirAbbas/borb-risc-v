@@ -55,6 +55,7 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     // when(up.isFiring) {
     sext := up(IMMSEL)
       .muxDc(
+        Imm_Select.N_IMM -> S(0, 64 bits),
         Imm_Select.I_IMM -> imm.i_sext,
         Imm_Select.S_IMM -> imm.s_sext,
         Imm_Select.B_IMM -> imm.b_sext,

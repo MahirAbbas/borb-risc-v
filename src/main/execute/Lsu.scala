@@ -55,24 +55,32 @@ case class Lsu(stage: CtrlLink) extends Area {
   }
 
   val logic = new stage.Area {
-    // Address Generation: RS1 + sign-extended immediate
-    val effectiveAddr = (up(RS1).asSInt + up(IMMED).asSInt).asUInt
+    val isAmoAddW = up(MicroCode) === uopAMOADDW
+    val isAmoAddD = up(MicroCode) === uopAMOADDD
+    val isAmo = isAmoAddW || isAmoAddD
+    val amoIsWord = isAmoAddW
+
+    // Address Generation: RS1 + sign-extended immediate for normal loads/stores,
+    // RS1 only for AMOs.
+    val effectiveAddr = Mux(isAmo, up(RS1).asUInt, (up(RS1).asSInt + up(IMMED).asSInt).asUInt)
 
     // Extract funct3 from MicroCode to determine access size
-    val isStore = up(MicroCode).mux(
+    val isStoreBase = up(MicroCode).mux(
       uopSB -> True,
       uopSH -> True,
       uopSW -> True,
       uopSD -> True,
       default -> False
-    ).setName("LSU_isStore")
+    )
+    val isStore = (isStoreBase || isAmo).setName("LSU_isStore")
 
     // Load Logic
-    val isLoad = up(MicroCode).mux(
+    val isLoadBase = up(MicroCode).mux(
       uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
       uopLBU -> True, uopLHU -> True, uopLWU -> True,
       default -> False
-    ).setName("LSU_isLoad")
+    )
+    val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
 
     // Misalignment Check
     val misaligned = Bool()
@@ -85,6 +93,8 @@ case class Lsu(stage: CtrlLink) extends Area {
       uopSW -> (effectiveAddr(1 downto 0) =/= 0),
       uopLD -> (effectiveAddr(2 downto 0) =/= 0),
       uopSD -> (effectiveAddr(2 downto 0) =/= 0),
+      uopAMOADDW -> (effectiveAddr(1 downto 0) =/= 0),
+      uopAMOADDD -> (effectiveAddr(2 downto 0) =/= 0),
       default -> False
     )
 
@@ -108,6 +118,8 @@ case class Lsu(stage: CtrlLink) extends Area {
       uopLW -> B"00001111",
       uopLWU -> B"00001111",
       uopLD -> B"11111111",
+      uopAMOADDW -> B"00001111",
+      uopAMOADDD -> B"11111111",
       default -> B(0, 8 bits)
     )
 
@@ -129,25 +141,31 @@ case class Lsu(stage: CtrlLink) extends Area {
     val waitingResponse = RegInit(False)
     val nextId = Reg(UInt(16 bits)) init 1
     val waitId = Reg(UInt(16 bits))
-
-    // Firing logic
-    val fireLoad = isLoad && up(VALID) && !waitingResponse
+    val amoWaitingResponse = RegInit(False)
+    val amoWaitId = Reg(UInt(16 bits)) init 0
+    val amoStorePending = RegInit(False)
+    val amoStoreData = Reg(Bits(64 bits)) init 0
+    val amoWbData = Reg(Bits(64 bits)) init 0
 
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val suppress = misaligned || illegalInsn || io.pmpFault
+    // Firing logic
+    val fireLoad = isLoadBase && up(VALID) && !waitingResponse
+    val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && !suppress && !amoWaitingResponse && !amoStorePending
+    val amoIssueStore = isAmo && up(VALID) && up(LANE_SEL) && !suppress && amoStorePending
     
-    io.dBus.cmd.valid := (isStore || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress
+    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress) || amoIssueLoad || amoIssueStore
     io.dBus.cmd.payload.address := effectiveAddr
-    io.dBus.cmd.payload.data := storeData
+    io.dBus.cmd.payload.data := Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData)
     io.dBus.cmd.payload.mask := writeMask
-    io.dBus.cmd.payload.id := Mux(isStore, U(0, 16 bits), nextId)
-    io.dBus.cmd.payload.write := isStore
+    io.dBus.cmd.payload.id := Mux((isStoreBase || amoIssueStore), U(0, 16 bits), nextId)
+    io.dBus.cmd.payload.write := isStoreBase || amoIssueStore
 
     // Stores must wait for command acceptance. Otherwise writes can be dropped
     // when the bus is temporarily not ready.
-    val storeBlocked = isStore && up(VALID) && up(LANE_SEL) && !suppress && !io.dBus.cmd.ready
+    val storeBlocked = isStoreBase && up(VALID) && up(LANE_SEL) && !suppress && !io.dBus.cmd.ready
     haltWhen(storeBlocked)
 
     // Stall Logic
@@ -155,9 +173,9 @@ case class Lsu(stage: CtrlLink) extends Area {
     // The down() signals are captured based on COMBINATORIAL values.
     // So we must use io.dBus.rsp.payload.data directly on the cycle response arrives.
     val latchedRspData = Reg(Bits(64 bits))
-    val responseArriving = isLoad && up(VALID) && waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
+    val responseArriving = isLoadBase && up(VALID) && waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
     
-    when(isLoad && up(VALID) && !suppress) {
+    when(isLoadBase && up(VALID) && !suppress) {
         when(!waitingResponse) {
              when(io.dBus.cmd.ready && !suppress && up(LANE_SEL)) {
                  waitingResponse := True
@@ -178,9 +196,54 @@ case class Lsu(stage: CtrlLink) extends Area {
              }
         }
     }
-    when(isLoad && up(VALID) && suppress) {
+    when(isLoadBase && up(VALID) && suppress) {
       // Faulting/suppressed loads must not enter the response wait state.
       waitingResponse := False
+    }
+
+    // AMOADD implementation: read old value, compute/store new value, write old
+    // value to rd after store command is accepted.
+    val amoResponseArriving = isAmo && up(VALID) && amoWaitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === amoWaitId)
+    when(isAmo && up(VALID) && !suppress) {
+      when(!amoWaitingResponse && !amoStorePending) {
+        when(io.dBus.cmd.ready && up(LANE_SEL)) {
+          amoWaitingResponse := True
+          amoWaitId := nextId
+          nextId := nextId + 1
+          haltIt()
+        } otherwise {
+          haltIt()
+        }
+      } elsewhen(amoWaitingResponse) {
+        when(amoResponseArriving) {
+          val rspData = io.dBus.rsp.payload.data
+          val shifted = rspData >> (byteOffset << 3)
+          val oldWord = shifted(31 downto 0)
+          val rs2Word = up(RS2)(31 downto 0)
+          val newWord = (oldWord.asUInt + rs2Word.asUInt).asBits
+          amoWbData := Mux(amoIsWord, oldWord.asSInt.resize(64).asBits, shifted)
+          amoStoreData := Mux(
+            amoIsWord,
+            newWord.resize(64),
+            (shifted.asUInt + up(RS2).asUInt).asBits
+          )
+          amoWaitingResponse := False
+          amoStorePending := True
+          haltIt()
+        } otherwise {
+          haltIt()
+        }
+      } elsewhen(amoStorePending) {
+        when(io.dBus.cmd.ready && up(LANE_SEL)) {
+          amoStorePending := False
+        } otherwise {
+          haltIt()
+        }
+      }
+    }
+    when(isAmo && up(VALID) && suppress) {
+      amoWaitingResponse := False
+      amoStorePending := False
     }
 
     // Load Data Processing - use LIVE data when response is arriving, latched data otherwise
@@ -206,10 +269,15 @@ case class Lsu(stage: CtrlLink) extends Area {
     val isX0 = rdAddr === 0
     val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
     
-    when(isLoad && !illegalInsn && !suppress) {
+    when(isLoadBase && !illegalInsn && !suppress) {
         down(WriteBack.RESULT).data.allowOverride := maskedLoadResult
         down(WriteBack.RESULT).valid.allowOverride := True 
         down(WriteBack.RESULT).address.allowOverride := rdAddr
+    }
+    when(isAmo && !illegalInsn && !suppress && amoStorePending && io.dBus.cmd.ready && up(LANE_SEL)) {
+      down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | amoWbData
+      down(WriteBack.RESULT).valid.allowOverride := True
+      down(WriteBack.RESULT).address.allowOverride := rdAddr
     }
 
     // Propagate payloads for RVFI (Store & Load)

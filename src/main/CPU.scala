@@ -583,6 +583,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopLW) { loadBytes := U(4, 64 bits) }
         is(uopLWU) { loadBytes := U(4, 64 bits) }
         is(uopLD) { loadBytes := U(8, 64 bits) }
+        is(uopAMOADDW) { loadBytes := U(4, 64 bits) }
+        is(uopAMOADDD) { loadBytes := U(8, 64 bits) }
       }
 
       val storeBytes = UInt(64 bits)
@@ -591,6 +593,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopSH) { storeBytes := U(2, 64 bits) }
         is(uopSW) { storeBytes := U(4, 64 bits) }
         is(uopSD) { storeBytes := U(8, 64 bits) }
+        is(uopAMOADDW) { storeBytes := U(4, 64 bits) }
+        is(uopAMOADDD) { storeBytes := U(8, 64 bits) }
       }
 
       val pmpExecAllowed = if(config.cExtensionEnabled) {
@@ -631,7 +635,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       // Decode marks unknown instructions as invalid. Treat any non-system
       // decode miss as illegal instruction.
       val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
-      val trapFromIllegal32 = !up(VALID) && !isHandledSystem
+      val atomicOpcode = insn(6 downto 0) === B"0101111"
+      val trapFromAtomicDisabled = if(config.aExtensionEnabled) False else atomicOpcode
+      val trapFromIllegal32 = (!up(VALID) && !isHandledSystem) || trapFromAtomicDisabled
       val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
       val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
       val mretTarget = mepcMasked(csrMepc).asUInt

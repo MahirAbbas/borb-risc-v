@@ -117,16 +117,16 @@ object RV32A {
 }
 object RV64A {
   val LRD = M"00010--00000-----011-----0101111"
-  val SCD = M"00011--00000-----011-----0101111"
-  val AMOSWAPD = M"00001--00000-----011-----0101111"
-  val AMOADDD = M"00000--00000-----011-----0101111"
-  val AMOXORD = M"00100--00000-----011-----0101111"
-  val AMOANDD = M"01100--00000-----011-----0101111"
-  val AMOORD = M"01000--00000-----011-----0101111"
-  val AMOMIND = M"10000--00000-----011-----0101111"
-  val AMOMAXD = M"10100--00000-----011-----0101111"
-  val AMOMINUD = M"11000--00000-----011-----0101111"
-  val AMOMAXUD = M"11100--00000-----011-----0101111"
+  val SCD = M"00011------------011-----0101111"
+  val AMOSWAPD = M"00001------------011-----0101111"
+  val AMOADDD = M"00000------------011-----0101111"
+  val AMOXORD = M"00100------------011-----0101111"
+  val AMOANDD = M"01100------------011-----0101111"
+  val AMOORD = M"01000------------011-----0101111"
+  val AMOMIND = M"10000------------011-----0101111"
+  val AMOMAXD = M"10100------------011-----0101111"
+  val AMOMINUD = M"11000------------011-----0101111"
+  val AMOMAXUD = M"11100------------011-----0101111"
 
 }
 object RV32F {}
@@ -141,6 +141,8 @@ object DecodeTable {
   import RV64I._
   import RV32M._
   import RV64M._
+  import RV32A._
+  import RV64A._
   import REGFILE._
   import Imm_Select._
   import YESNO._
@@ -162,21 +164,7 @@ object DecodeTable {
   //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | ren3 | | | | | |  | | | |
   //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
   //       List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT,  N, I_IMM, uopADD,   N, N  X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
-  val nop = Seq(
-    N,
-    N,
-    ExecutionUnitEnum.NA,
-    RDTYPE.RD_NA,
-    RSTYPE.RS_NA,
-    RSTYPE.RS_NA,
-    N,
-    N_IMM,
-    uopNOP,
-    N,
-    N,
-    N,
-    N
-  )
+  val nop = Seq( N, N, ExecutionUnitEnum.NA, RDTYPE.RD_NA, RSTYPE.RS_NA, RSTYPE.RS_NA, N, N_IMM, uopNOP, N, N, N, N)
 
   val X_table: Seq[(MaskedLiteral, Seq[Any])] = Seq(
     //                                                             frs3_en
@@ -272,6 +260,8 @@ object DecodeTable {
   DIVUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIVUW, N, Y, N, N),
   REMW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMW, N, Y, N, N),
   REMUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMUW, N, Y, N, N),
+  AMOADDW    ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopAMOADDW, N, N, N, Y),
+  AMOADDD    ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopAMOADDD, N, N, N, Y),
                                                                                                                               
   AUIPC      ->        List(Y, N, ExecutionUnitEnum.ALU,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopAUIPC,N, N, N, N),
   JAL        ->        List(Y, N, ExecutionUnitEnum.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , uopJAL , Y, N, N, N),

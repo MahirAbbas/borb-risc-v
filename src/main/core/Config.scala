@@ -21,7 +21,7 @@ case class CpuConfig(
   
   // Features
   perfCountersEnabled: Boolean = true,
-  aExtensionEnabled: Boolean = false,
+  aExtensionEnabled: Boolean = true,
   mExtensionEnabled: Boolean = true,
   fExtensionEnabled: Boolean = false,
   dExtensionEnabled: Boolean = false,
