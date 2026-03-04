@@ -10,3 +10,6 @@
 [submodule "verif/sail-riscv"]
 	path = verif/sail-riscv
 	url = https://github.com/riscv/sail-riscv.git
+[submodule "waveform-mcp"]
+	path = waveform-mcp
+	url = https://github.com/ynivin/waveform-mcp
