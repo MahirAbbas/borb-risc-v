@@ -38,8 +38,8 @@ CORE_TICKS get_time(void) {
   return stop_cycles - start_cycles;
 }
 
-secs_ret time_in_secs(CORE_TICKS ticks) {
-  return ((secs_ret)ticks) / ((secs_ret)EE_TICKS_PER_SEC);
+ee_u32 time_in_secs(CORE_TICKS ticks) {
+  return (ee_u32)(ticks / EE_TICKS_PER_SEC);
 }
 
 void portable_init(core_portable *p, int *argc, char *argv[]) {
@@ -50,4 +50,13 @@ void portable_init(core_portable *p, int *argc, char *argv[]) {
 
 void portable_fini(core_portable *p) {
   p->portable_id = 0;
+}
+
+void *portable_malloc(ee_size_t size) {
+  (void)size;
+  return NULL;
+}
+
+void portable_free(void *p) {
+  (void)p;
 }
