@@ -599,17 +599,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val pcArch = Mux(pcRaw < ARCH_BASE, pcRaw + ARCH_BASE, pcRaw)
       val branchTargetArch = Mux(branchTargetRaw < ARCH_BASE, branchTargetRaw + ARCH_BASE, branchTargetRaw)
       val memAddrArch = Mux(memAddrRaw < ARCH_BASE, memAddrRaw + ARCH_BASE, memAddrRaw)
-      val upperParcelFetchFault = trapFromFetchAccess &&
-        (if(config.cExtensionEnabled) True else False) &&
-        (pcRaw =/= U(0, 64 bits)) &&
-        pmpAllow(pcRaw - U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
-        !pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
       val secondParcelFetchFault = trapFromFetchAccess &&
         (if(config.cExtensionEnabled) True else False) &&
-        (pcRaw =/= U(0, 64 bits)) &&
+        (up(borb.frontend.Decoder.DECODED_INSTRUCTION)(1 downto 0) === B"11") &&
         pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
         !pmpAllow(pcRaw + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
-
       val trapTval = Bits(64 bits)
       trapTval := memAddrArch.asBits
       when((trapFromLoadAccess || trapFromStoreAccess) && (memAddrRaw === U(0, 64 bits))) {
@@ -619,8 +613,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         trapTval := branchTargetArch.asBits
       } elsewhen(trapFromFetchAccess) {
         trapTval := Mux(
-          upperParcelFetchFault,
-          (pcArch - U(2, 64 bits)).asBits,
+          secondParcelFetchFault,
+          (pcArch + U(2, 64 bits)).asBits,
           (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
         )
       } elsewhen(trapFromIllegalInsn) {
@@ -647,19 +641,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         nextMstatus(3) := False         // MIE <= 0
         nextMstatus(12 downto 11) := currentPriv.asBits // MPP <= previous privilege
         csrMstatus := nextMstatus
-        csrMepc := Mux(
-          latePcZeroFetch,
-          pcRaw.asBits,
-          Mux(
-            secondParcelFetchFault,
-            (pcArch + U(2, 64 bits)).asBits,
-            Mux(
-              upperParcelFetchFault,
-            (pcArch + U(2, 64 bits)).asBits,
-            pcArch.asBits
-            )
-          )
-        )
+        csrMepc := (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
         csrMcause := trapCause
         csrMtval := trapTval
       }
