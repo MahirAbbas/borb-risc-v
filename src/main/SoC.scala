@@ -5,6 +5,7 @@ import spinal.lib._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
 import borb.memory._
+import borb.core.PerfCountersBundle
 
 case class SoC() extends Component {
   val io = new Bundle {
@@ -12,6 +13,7 @@ case class SoC() extends Component {
     val clkEnable = in port Bool()
     val reset = in port Bool()
     val dbg = out(DebugArea())
+    val perf = out(PerfCountersBundle())
   }
 
   // CPU-side Config (16-bit ID)
@@ -42,6 +44,7 @@ case class SoC() extends Component {
     cpu.io.clkEnable := io.clkEnable
     cpu.io.reset := io.reset
     io.dbg := cpu.io.dbg
+    io.perf := cpu.io.perf
 
     // Arbiter (2 Inputs -> 1 Output)
     val arbiter = new Axi4SharedArbiter(

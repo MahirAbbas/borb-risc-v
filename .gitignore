@@ -27,6 +27,25 @@ formal/cores/borb/CPU.sv
 *.v
 
 verif/
+!verif/
+verif/*
+!verif/benchmarks/
+verif/benchmarks/*
+!verif/benchmarks/coremark/
+!verif/benchmarks/coremark/README.md
+!verif/benchmarks/coremark/port/
+!verif/benchmarks/coremark/port/*.S
+!verif/benchmarks/coremark/port/*.c
+!verif/benchmarks/coremark/port/*.h
+!verif/benchmarks/coremark/port/*.ld
+verif/benchmarks/coremark/out/
+!verif/riscof/
+verif/riscof/*
+!verif/riscof/borb/
+verif/riscof/borb/*
+!verif/riscof/borb/sim/
+verif/riscof/borb/sim/*
+!verif/riscof/borb/sim/borb_sim.cpp
 # Scala-IDE specific
 .scala_dependencies
 .worksheet

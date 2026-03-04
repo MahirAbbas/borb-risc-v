@@ -16,6 +16,12 @@ case class PerfCountersBundle() extends Bundle {
   val branches      = UInt(64 bits)
   val branchesTaken = UInt(64 bits)
   val flushes       = UInt(64 bits)
+  val loads         = UInt(64 bits)
+  val stores        = UInt(64 bits)
+  val jumps         = UInt(64 bits)
+  val csrOps        = UInt(64 bits)
+  val mulDivOps     = UInt(64 bits)
+  val trapCommits   = UInt(64 bits)
 }
 
 /**
@@ -26,6 +32,7 @@ case class PerfCountersBundle() extends Bundle {
   */
 case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   import borb.common.Common._
+  import borb.common.MicroCode._
   
   // Internal counter registers
   val cycles        = Reg(UInt(64 bits)) init 0
@@ -36,6 +43,12 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val branches      = Reg(UInt(64 bits)) init 0
   val branchesTaken = Reg(UInt(64 bits)) init 0
   val flushes       = Reg(UInt(64 bits)) init 0
+  val loads         = Reg(UInt(64 bits)) init 0
+  val stores        = Reg(UInt(64 bits)) init 0
+  val jumps         = Reg(UInt(64 bits)) init 0
+  val csrOps        = Reg(UInt(64 bits)) init 0
+  val mulDivOps     = Reg(UInt(64 bits)) init 0
+  val trapCommits   = Reg(UInt(64 bits)) init 0
   
   // cycles: always increments
   cycles := cycles + 1
@@ -44,6 +57,30 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val wbArea = new wbStage.Area {
     when(up(COMMIT)) {
       instret := instret + 1
+
+      switch(up(borb.frontend.Decoder.MicroCode)) {
+        is(uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD) {
+          loads := loads + 1
+        }
+        is(uopSB, uopSH, uopSW, uopSD) {
+          stores := stores + 1
+        }
+        is(uopJAL, uopJALR) {
+          jumps := jumps + 1
+        }
+        is(uopCSRRW, uopCSRRS, uopCSRRC, uopCSRRWI, uopCSRRSI, uopCSRRCI) {
+          csrOps := csrOps + 1
+        }
+        is(
+          uopMUL, uopMULH, uopMULHSU, uopMULHU, uopDIV, uopDIVU, uopREM, uopREMU,
+          uopMULW, uopDIVW, uopDIVUW, uopREMW, uopREMUW
+        ) {
+          mulDivOps := mulDivOps + 1
+        }
+      }
+      when(up(TRAP)) {
+        trapCommits := trapCommits + 1
+      }
     }
   }
   
@@ -73,5 +110,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   counters.branches      := branches
   counters.branchesTaken := branchesTaken
   counters.flushes       := flushes
+  counters.loads         := loads
+  counters.stores        := stores
+  counters.jumps         := jumps
+  counters.csrOps        := csrOps
+  counters.mulDivOps     := mulDivOps
+  counters.trapCommits   := trapCommits
 }
-

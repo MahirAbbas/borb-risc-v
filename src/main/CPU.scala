@@ -115,6 +115,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lsuBus.cmd << lsu.io.dBus.cmd
     lsu.io.dBus.rsp << lsuBus.rsp
 
+    // Always-on hardware counters; software/profile tooling can sample them
+    // selectively (benchmark flows only).
+    val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
+    io.perf := perfCounters.counters
+
     // Global speculation epoch. Keep this wide enough to avoid wraparound
     // aliasing under branch-heavy tests.
     val currentEpoch = Reg(UInt(16 bits)) init 0
@@ -223,6 +228,39 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AA") { out := pmpCfgReadWord(5) }
           is(U"12'h3AC") { out := pmpCfgReadWord(6) }
           is(U"12'h3AE") { out := pmpCfgReadWord(7) }
+          // Counter/timer CSR views used by benchmarking/profiling software.
+          is(U"12'hB00") { out := perfCounters.counters.cycles.asBits }         // mcycle
+          is(U"12'hB02") { out := perfCounters.counters.instret.asBits }        // minstret
+          is(U"12'hB03") { out := perfCounters.counters.stallsHazard.asBits }   // mhpmcounter3
+          is(U"12'hB04") { out := perfCounters.counters.stallsFetch.asBits }    // mhpmcounter4
+          is(U"12'hB05") { out := perfCounters.counters.stallsMem.asBits }      // mhpmcounter5
+          is(U"12'hB06") { out := perfCounters.counters.branches.asBits }       // mhpmcounter6
+          is(U"12'hB07") { out := perfCounters.counters.branchesTaken.asBits }  // mhpmcounter7
+          is(U"12'hB08") { out := perfCounters.counters.flushes.asBits }        // mhpmcounter8
+          is(U"12'hB09") { out := perfCounters.counters.loads.asBits }          // mhpmcounter9
+          is(U"12'hB0A") { out := perfCounters.counters.stores.asBits }         // mhpmcounter10
+          is(U"12'hB0B") { out := perfCounters.counters.jumps.asBits }          // mhpmcounter11
+          is(U"12'hB0C") { out := perfCounters.counters.csrOps.asBits }         // mhpmcounter12
+          is(U"12'hB0D") { out := perfCounters.counters.mulDivOps.asBits }      // mhpmcounter13
+          is(U"12'hB0E") { out := perfCounters.counters.trapCommits.asBits }    // mhpmcounter14
+          is(U"12'hB80") { out := perfCounters.counters.cycles(63 downto 32).asBits.resized }        // mcycleh
+          is(U"12'hB82") { out := perfCounters.counters.instret(63 downto 32).asBits.resized }       // minstreth
+          is(U"12'hB83") { out := perfCounters.counters.stallsHazard(63 downto 32).asBits.resized }  // mhpmcounter3h
+          is(U"12'hB84") { out := perfCounters.counters.stallsFetch(63 downto 32).asBits.resized }   // mhpmcounter4h
+          is(U"12'hB85") { out := perfCounters.counters.stallsMem(63 downto 32).asBits.resized }     // mhpmcounter5h
+          is(U"12'hB86") { out := perfCounters.counters.branches(63 downto 32).asBits.resized }      // mhpmcounter6h
+          is(U"12'hB87") { out := perfCounters.counters.branchesTaken(63 downto 32).asBits.resized } // mhpmcounter7h
+          is(U"12'hB88") { out := perfCounters.counters.flushes(63 downto 32).asBits.resized }       // mhpmcounter8h
+          is(U"12'hB89") { out := perfCounters.counters.loads(63 downto 32).asBits.resized }         // mhpmcounter9h
+          is(U"12'hB8A") { out := perfCounters.counters.stores(63 downto 32).asBits.resized }        // mhpmcounter10h
+          is(U"12'hB8B") { out := perfCounters.counters.jumps(63 downto 32).asBits.resized }         // mhpmcounter11h
+          is(U"12'hB8C") { out := perfCounters.counters.csrOps(63 downto 32).asBits.resized }        // mhpmcounter12h
+          is(U"12'hB8D") { out := perfCounters.counters.mulDivOps(63 downto 32).asBits.resized }     // mhpmcounter13h
+          is(U"12'hB8E") { out := perfCounters.counters.trapCommits(63 downto 32).asBits.resized }   // mhpmcounter14h
+          is(U"12'hC00") { out := perfCounters.counters.cycles.asBits }         // cycle
+          is(U"12'hC02") { out := perfCounters.counters.instret.asBits }        // instret
+          is(U"12'hC80") { out := perfCounters.counters.cycles(63 downto 32).asBits.resized }        // cycleh
+          is(U"12'hC82") { out := perfCounters.counters.instret(63 downto 32).asBits.resized }       // instreth
           for(i <- 0 until 64) {
             is(U(0x3B0 + i, 12 bits)) { out := (if(i < pmpImplementedEntries) pmpAddrRegs(i) else B(0, 64 bits)) }
           }
@@ -252,6 +290,38 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h3AA") { ok := True }
           is(U"12'h3AC") { ok := True }
           is(U"12'h3AE") { ok := True }
+          is(U"12'hB00") { ok := True }
+          is(U"12'hB02") { ok := True }
+          is(U"12'hB03") { ok := True }
+          is(U"12'hB04") { ok := True }
+          is(U"12'hB05") { ok := True }
+          is(U"12'hB06") { ok := True }
+          is(U"12'hB07") { ok := True }
+          is(U"12'hB08") { ok := True }
+          is(U"12'hB09") { ok := True }
+          is(U"12'hB0A") { ok := True }
+          is(U"12'hB0B") { ok := True }
+          is(U"12'hB0C") { ok := True }
+          is(U"12'hB0D") { ok := True }
+          is(U"12'hB0E") { ok := True }
+          is(U"12'hB80") { ok := True }
+          is(U"12'hB82") { ok := True }
+          is(U"12'hB83") { ok := True }
+          is(U"12'hB84") { ok := True }
+          is(U"12'hB85") { ok := True }
+          is(U"12'hB86") { ok := True }
+          is(U"12'hB87") { ok := True }
+          is(U"12'hB88") { ok := True }
+          is(U"12'hB89") { ok := True }
+          is(U"12'hB8A") { ok := True }
+          is(U"12'hB8B") { ok := True }
+          is(U"12'hB8C") { ok := True }
+          is(U"12'hB8D") { ok := True }
+          is(U"12'hB8E") { ok := True }
+          is(U"12'hC00") { ok := True }
+          is(U"12'hC02") { ok := True }
+          is(U"12'hC80") { ok := True }
+          is(U"12'hC82") { ok := True }
           for(i <- 0 until 64) {
             is(U(0x3B0 + i, 12 bits)) { ok := True }
           }
@@ -732,10 +802,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val debugPlugin = new DebugPlugin(pipeline)
     io.dbg := debugPlugin.io.dbg
 
-    // Performance counters
-    val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
-    io.perf := perfCounters.counters
-    
     // Wire event signals to performance counters
     perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
     perfCounters.fetchStall     := !fetch.fifo.io.pop.valid       // Fetch stalled waiting for instruction

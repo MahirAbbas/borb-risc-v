@@ -13,3 +13,6 @@
 [submodule "waveform-mcp"]
 	path = waveform-mcp
 	url = https://github.com/ynivin/waveform-mcp
+[submodule "verif/benchmarks/coremark/coremark"]
+	path = verif/benchmarks/coremark/coremark
+	url = https://github.com/eembc/coremark
