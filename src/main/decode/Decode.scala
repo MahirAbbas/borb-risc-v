@@ -17,6 +17,7 @@ case class uop() extends Bundle {
 object Decoder extends AreaObject {
 
   val INSTRUCTION = Payload(Bits(32 bits))
+  val DECODED_INSTRUCTION = Payload(Bits(32 bits))
   val IS_COMPRESSED = Payload(Bool())
 
   val LEGAL = Payload(YESNO())
@@ -124,13 +125,9 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
       }
     }
 
-    val decodeIllegal = Bool()
-    decodeIllegal := False
-    if(withCompressed) {
-      decodeIllegal := isCompressed && rvc.illegal
-    }
+    val decodeIllegal = if(withCompressed) (isCompressed && rvc.illegal) else False
 
-    down(INSTRUCTION).allowOverride := decodeInst
+    down(DECODED_INSTRUCTION) := decodeInst
     if(withCompressed) {
       down(IS_COMPRESSED) := isCompressed && !rvc.illegal
     } else {
@@ -148,9 +145,9 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
   }
 
   val logic = new stage.Area {
-    down(Decoder.RD_ADDR) := up(Decoder.INSTRUCTION)(11 downto 7)
-    down(Decoder.RS1_ADDR) := up(Decoder.INSTRUCTION)(19 downto 15)
-    down(Decoder.RS2_ADDR) := up(Decoder.INSTRUCTION)(24 downto 20)
+    down(Decoder.RD_ADDR) := down(Decoder.DECODED_INSTRUCTION)(11 downto 7)
+    down(Decoder.RS1_ADDR) := down(Decoder.DECODED_INSTRUCTION)(19 downto 15)
+    down(Decoder.RS2_ADDR) := down(Decoder.DECODED_INSTRUCTION)(24 downto 20)
   }
 
   // branchResolved signal - set by branch.scala when a branch resolves

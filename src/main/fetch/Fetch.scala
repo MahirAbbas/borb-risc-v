@@ -29,6 +29,7 @@ case class Fetch(
     val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
     val flush = Bool()
     val currentEpoch = UInt(16 bits)  // Global speculation epoch from CPU
+    val pcAdvance = Bool()
     val pcStep = UInt(3 bits)
   }
 
@@ -40,8 +41,8 @@ case class Fetch(
   }
   
   val fifo = StreamFifo(FetchPacket(), depth = 2)
-  val stepReg = Reg(UInt(3 bits)) init(U(4, 3 bits))
-  io.pcStep := stepReg
+  io.pcAdvance := False
+  io.pcStep := U(4, 3 bits)
   
   // Track inflight requests to prevent FIFO overflow
   val inflight = RegInit(U(0, 4 bits))
@@ -63,10 +64,14 @@ case class Fetch(
   val needSecondBeat = Reg(Bool()) init(False)
   val secondBeatAddr = Reg(UInt(addressWidth bits)) init(0)
   val firstHalfword = Reg(Bits(16 bits)) init(0)
+  val replayGuardValid = RegInit(False)
+  val lastTakenPc = Reg(UInt(addressWidth bits)) init(0)
+  val lastTakenEpoch = Reg(UInt(16 bits)) init(0)
+  val lastTakenBeatAddr = Reg(UInt(addressWidth bits)) init(0)
 
   when(io.flush) {
     needSecondBeat := False
-    stepReg := U(4, 3 bits)
+    replayGuardValid := False
   }
 
   // Connect memory response to FIFO
@@ -112,9 +117,21 @@ case class Fetch(
     expectedBeat := needSecondBeat ? secondBeatAddr | beatAddr
     val stalePacket = srcValid && (srcEpoch =/= activeEpoch)
     val beatMismatch = srcValid && (srcBeatAddr =/= expectedBeat)
+    // Immediate replay guard: suppress only back-to-back re-consume of the
+    // same fetch packet while rsp stage still holds the same PC.
+    val duplicatePc = srcValid &&
+      replayGuardValid &&
+      (rspStage(PC.PC) === lastTakenPc) &&
+      (srcEpoch === lastTakenEpoch) &&
+      (srcBeatAddr === lastTakenBeatAddr)
+
+    when(replayGuardValid && (rspStage(PC.PC) =/= lastTakenPc)) {
+      replayGuardValid := False
+    }
 
     // Drop stale packets and keep PC/insn in sync by throwing stage entry.
     throwWhen(stalePacket)
+    throwWhen(duplicatePc)
 
     val hw0 = srcData(15 downto 0)
     val hw1 = srcData(31 downto 16)
@@ -173,18 +190,24 @@ case class Fetch(
     }
 
     when(takeInsn) {
+      replayGuardValid := True
+      lastTakenPc := rspStage(PC.PC)
+      lastTakenEpoch := activeEpoch
+      lastTakenBeatAddr := srcBeatAddr
+      io.pcAdvance := True
       if(withCompressed) {
         val isCompressed = assembledInsn(1 downto 0) =/= B"11"
-        stepReg := isCompressed ? U(2, 3 bits) | U(4, 3 bits)
+        io.pcStep := isCompressed ? U(2, 3 bits) | U(4, 3 bits)
       } else {
-        stepReg := U(4, 3 bits)
+        io.pcStep := U(4, 3 bits)
       }
       when(needSecondBeat) {
         needSecondBeat := False
       }
     }
 
-    // Pop when consumed or when dropped due stale/mismatch or when latching first half.
-    fifo.io.pop.ready := takeInsn || stalePacket || beatMismatch || waitingSecond
+    // Pop when consumed or when dropped due stale/mismatch/duplicate or when
+    // latching first half.
+    fifo.io.pop.ready := takeInsn || stalePacket || beatMismatch || waitingSecond || duplicatePc
   }
 }

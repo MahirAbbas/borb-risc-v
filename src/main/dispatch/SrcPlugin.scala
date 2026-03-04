@@ -51,7 +51,7 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
   val immsel = new stage.Area {
     val sext = Bits(64 bits).simPublic()
     sext.assignDontCare()
-    val imm = new IMM(borb.frontend.Decoder.INSTRUCTION)
+    val imm = new IMM(up(borb.frontend.Decoder.DECODED_INSTRUCTION))
     // when(up.isFiring) {
     sext := up(IMMSEL)
       .muxDc(

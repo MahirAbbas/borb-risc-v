@@ -33,6 +33,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
   val jump = Flow(JumpCmd(addressWidth))
   val flush = Flow(FlushCmd(addressWidth))
   val exception = Flow(ExceptionCmd(addressWidth))
+  val sequentialValid = Bool()
   val sequentialStep = UInt(3 bits)
 
   // allows for future support of 'C' extension
@@ -55,7 +56,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
       PC_cur := flush.payload.address
     }.elsewhen(jump.valid) {
       PC_cur := jump.payload.target
-    }.elsewhen(down.isReady) {
+    }.elsewhen(sequentialValid) {
       val step = if(withCompressed) sequentialStep.resize(addressWidth bits) else U(4, addressWidth bits)
       PC_cur := PC_cur + step
     }

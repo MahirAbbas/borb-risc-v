@@ -60,7 +60,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
 
     io.rvfi.valid := isCommitted
     io.rvfi.order := order
-    io.rvfi.insn := up(Decoder.INSTRUCTION)
+    io.rvfi.insn := up(Decoder.DECODED_INSTRUCTION)
     io.rvfi.trap := up(TRAP)
     io.rvfi.halt := False
     io.rvfi.intr := False

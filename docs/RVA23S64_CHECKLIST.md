@@ -6,9 +6,9 @@ This is the execution tracker for bringing borb to RVA23S64 with strong automati
 
 ## 0. Correctness Baseline
 - [x] Fix `bge`/`bgeu` branch-path regressions.
-- [ ] Resolve remaining `misalign-*` privilege branch failures.
-- [ ] Freeze a green RV64I baseline run (full selected suite + artifact link).
-- [ ] Gate merges on RV64I smoke + formal smoke.
+- [x] Resolve remaining `misalign-*` privilege branch failures.
+- [x] Freeze a green RV64I baseline run (full selected suite + artifact link).
+- [x] Gate merges on RV64I smoke + formal smoke.
 
 ## 1. Compliance Matrix (RVA23S64)
 - [ ] Add per-requirement matrix row with spec references.
@@ -23,7 +23,7 @@ This is the execution tracker for bringing borb to RVA23S64 with strong automati
 - [ ] Add deterministic directed test suite for exceptions/VM faults.
 
 ## 3. Extension Bring-up
-- [ ] RV64M completion + compliance evidence.
+- [x] RV64M completion + compliance evidence.
 - [ ] RV64A completion + AMO/LRSC memory-model checks.
 - [ ] RV64F/D completion + compliance evidence.
 - [ ] RV64C completion + compliance evidence.

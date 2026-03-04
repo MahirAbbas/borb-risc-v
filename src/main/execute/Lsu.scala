@@ -4,6 +4,7 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
+import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin._
 import borb.common.MicroCode._
 import borb.common.Common._
@@ -134,7 +135,7 @@ case class Lsu(stage: CtrlLink) extends Area {
 
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
-    val illegalInsn = up(INSTRUCTION)(1 downto 0) =/= B"11"
+    val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val suppress = misaligned || illegalInsn || io.pmpFault
     
     io.dBus.cmd.valid := (isStore || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress

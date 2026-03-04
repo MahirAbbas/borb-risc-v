@@ -52,7 +52,7 @@ case class DebugPlugin(pipeline: StageCtrlPipeline) extends Area {
     io.dbg.commitValid := isCommitted
     io.dbg.commitOrder := order
     io.dbg.commitPc := up(PC.PC)
-    io.dbg.commitInsn := up(Decoder.INSTRUCTION)
+    io.dbg.commitInsn := up(Decoder.DECODED_INSTRUCTION)
 
     val result = up(borb.execute.WriteBack.RESULT)
     io.dbg.commitRd := result.valid ? result.address | U(0, 5 bits)

@@ -98,6 +98,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       dataWidth = 64,
       withCompressed = config.cExtensionEnabled
     )
+    pc.sequentialValid := fetch.io.pcAdvance
     pc.sequentialStep := fetch.io.pcStep
     // RAM is external (via io.iAxi/io.dAxi)
 
@@ -258,10 +259,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         ok
       }
 
-      val csrAddr = up(borb.frontend.Decoder.INSTRUCTION)(31 downto 20).asUInt
+      val csrAddr = up(borb.frontend.Decoder.DECODED_INSTRUCTION)(31 downto 20).asUInt
       val csrOld = csrRead(csrAddr)
       val csrRs1 = up(borb.dispatch.SrcPlugin.RS1)
-      val csrZimm = B(59 bits, default -> False) ## up(borb.frontend.Decoder.INSTRUCTION)(19 downto 15)
+      val csrZimm = B(59 bits, default -> False) ## up(borb.frontend.Decoder.DECODED_INSTRUCTION)(19 downto 15)
       val csrWriteData = Bits(64 bits)
       csrWriteData := csrOld
       val csrWriteEn = Bool()
@@ -417,7 +418,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       }
 
       val trapFromBranch = branch.logic.willTrap
-      val insn = up(borb.frontend.Decoder.INSTRUCTION)
+      val insn = up(borb.frontend.Decoder.DECODED_INSTRUCTION)
       val aguFire = up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
       val sawNonZeroPc = Reg(Bool) init(False)
       when(up.isFiring && up(LANE_SEL) && (up(borb.fetch.PC.PC) =/= U(0, 64 bits))) {
@@ -520,9 +521,20 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         is(uopSD) { storeBytes := U(8, 64 bits) }
       }
 
-      // Instruction fetch permission uses the current instruction length.
-      val fetchBytes = Mux(up(borb.frontend.Decoder.IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
-      val pmpExecAllowed = pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = fetchBytes)
+      val pmpExecAllowed = if(config.cExtensionEnabled) {
+        // With C enabled, instruction fetch permission is checked per 16-bit
+        // parcel. This allows a 32-bit instruction to legally straddle two PMP
+        // regions when each halfword parcel is executable.
+        val fetchPc = up(borb.fetch.PC.PC)
+        // Use raw instruction low bits (parcel header) instead of the decoded
+        // compressed flag in this fault path.
+        val isCompressed = up(borb.frontend.Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
+        val loParcelExecAllowed = pmpAllow(fetchPc, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+        val hiParcelExecAllowed = pmpAllow(fetchPc + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+        loParcelExecAllowed && (isCompressed || hiParcelExecAllowed)
+      } else {
+        pmpAllow(up(borb.fetch.PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
+      }
       val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
       val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
 
@@ -587,6 +599,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val pcArch = Mux(pcRaw < ARCH_BASE, pcRaw + ARCH_BASE, pcRaw)
       val branchTargetArch = Mux(branchTargetRaw < ARCH_BASE, branchTargetRaw + ARCH_BASE, branchTargetRaw)
       val memAddrArch = Mux(memAddrRaw < ARCH_BASE, memAddrRaw + ARCH_BASE, memAddrRaw)
+      val upperParcelFetchFault = trapFromFetchAccess &&
+        (if(config.cExtensionEnabled) True else False) &&
+        (pcRaw =/= U(0, 64 bits)) &&
+        pmpAllow(pcRaw - U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
+        !pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+      val secondParcelFetchFault = trapFromFetchAccess &&
+        (if(config.cExtensionEnabled) True else False) &&
+        (pcRaw =/= U(0, 64 bits)) &&
+        pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
+        !pmpAllow(pcRaw + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
 
       val trapTval = Bits(64 bits)
       trapTval := memAddrArch.asBits
@@ -596,17 +618,25 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       when(trapFromBranch) {
         trapTval := branchTargetArch.asBits
       } elsewhen(trapFromFetchAccess) {
-        trapTval := (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
+        trapTval := Mux(
+          upperParcelFetchFault,
+          (pcArch - U(2, 64 bits)).asBits,
+          (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
+        )
       } elsewhen(trapFromIllegalInsn) {
         // Match Spike/arch-test behavior: for illegal 16-bit encodings capture
         // the low halfword; otherwise capture the full 32-bit instruction.
-        val illegalInsnBits = up(borb.frontend.Decoder.INSTRUCTION)
+        val illegalInsnBits = up(borb.frontend.Decoder.DECODED_INSTRUCTION)
         trapTval := Mux(
           illegalInsnBits(1 downto 0) =/= B"11",
           illegalInsnBits(15 downto 0).asBits.resize(64),
           illegalInsnBits.resized
         )
-      } elsewhen(trapFromEcall || trapFromEbreak) {
+      } elsewhen(trapFromEbreak) {
+        // Arch-test environment expects breakpoint mtval to carry the
+        // faulting instruction address.
+        trapTval := pcArch.asBits
+      } elsewhen(trapFromEcall) {
         trapTval := B(0, 64 bits)
       }
 
@@ -617,7 +647,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         nextMstatus(3) := False         // MIE <= 0
         nextMstatus(12 downto 11) := currentPriv.asBits // MPP <= previous privilege
         csrMstatus := nextMstatus
-        csrMepc := (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
+        csrMepc := Mux(
+          latePcZeroFetch,
+          pcRaw.asBits,
+          Mux(
+            secondParcelFetchFault,
+            (pcArch + U(2, 64 bits)).asBits,
+            Mux(
+              upperParcelFetchFault,
+            (pcArch + U(2, 64 bits)).asBits,
+            pcArch.asBits
+            )
+          )
+        )
         csrMcause := trapCause
         csrMtval := trapTval
       }

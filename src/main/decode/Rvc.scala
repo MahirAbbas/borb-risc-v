@@ -95,20 +95,25 @@ object RVC {
         val luiImm = sext(i(12) ## i(6 downto 2) ## B"0000_0000_0000", 32)
         when(i(11 downto 7) === x2) {
           ret.inst := addi16spImm ## x2 ## B"000" ## x2 ## B"0010011"
-          ret.illegal := i(12 downto 2) === 0
+          // C.ADDI16SP is illegal when nzimm is zero.
+          ret.illegal := (i(12) === False) && (i(6 downto 2) === 0)
+        } elsewhen(i(11 downto 7) === x0) {
+          // Reserved/HINT encoding; execute as NOP.
+          ret.inst := B"32'h00000013"
+          ret.illegal := False
         } otherwise {
           ret.inst := luiImm(31 downto 12) ## i(11 downto 7) ## B"0110111"
-          ret.illegal := (i(11 downto 7) === x0) || (i(12 downto 2) === 0)
+          ret.illegal := (i(12 downto 2) === 0)
         }
       }
       is(B"5'b01100") { // C.SRLI / C.SRAI / C.ANDI / C.SUB/XOR/OR/AND(+W)
         switch(i(11 downto 10)) {
           is(B"2'b00") { // C.SRLI
-            ret.inst := B"0000000" ## shamt(4 downto 0) ## rch ## B"101" ## rch ## B"0010011"
+            ret.inst := B"000000" ## shamt ## rch ## B"101" ## rch ## B"0010011"
             if (xlen == 32) ret.illegal := i(12)
           }
           is(B"2'b01") { // C.SRAI
-            ret.inst := B"0100000" ## shamt(4 downto 0) ## rch ## B"101" ## rch ## B"0010011"
+            ret.inst := B"010000" ## shamt ## rch ## B"101" ## rch ## B"0010011"
             if (xlen == 32) ret.illegal := i(12)
           }
           is(B"2'b10") { // C.ANDI
@@ -118,7 +123,7 @@ object RVC {
             val funct2 = i(6 downto 5)
             when(!i(12)) {
               switch(funct2) {
-                is(B"2'b00") { ret.inst := B"0000000" ## rcl ## rch ## B"000" ## rch ## B"0110011" } // SUB
+                is(B"2'b00") { ret.inst := B"0100000" ## rcl ## rch ## B"000" ## rch ## B"0110011" } // SUB
                 is(B"2'b01") { ret.inst := B"0000000" ## rcl ## rch ## B"100" ## rch ## B"0110011" } // XOR
                 is(B"2'b10") { ret.inst := B"0000000" ## rcl ## rch ## B"110" ## rch ## B"0110011" } // OR
                 is(B"2'b11") { ret.inst := B"0000000" ## rcl ## rch ## B"111" ## rch ## B"0110011" } // AND
@@ -149,7 +154,7 @@ object RVC {
 
       // Quadrant 2
       is(B"5'b10000") { // C.SLLI
-        ret.inst := B"0000000" ## shamt(4 downto 0) ## i(11 downto 7) ## B"001" ## i(11 downto 7) ## B"0010011"
+        ret.inst := B"000000" ## shamt ## i(11 downto 7) ## B"001" ## i(11 downto 7) ## B"0010011"
         ret.illegal := i(11 downto 7) === 0
       }
       is(B"5'b10010") { // C.LWSP
