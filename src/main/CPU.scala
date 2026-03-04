@@ -146,12 +146,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       // Machine CSRs (minimal set required by RISCOF/Tenstorrent scaffolds).
       val csrMstatus = Reg(Bits(64 bits)) init(0)
-      // Baseline misa for RV64I (C/M/D bits are conditionally OR'ed below).
+      // Baseline misa for RV64I (extension bits are conditionally OR'ed below).
       val misaBase = BigInt("8000000000000100", 16)
+      val misaA = if (config.aExtensionEnabled) BigInt("0000000000000001", 16) else BigInt(0)
       val misaC = if (config.cExtensionEnabled) BigInt("0000000000000004", 16) else BigInt(0)
+      val misaF = if (config.fExtensionEnabled) BigInt("0000000000000020", 16) else BigInt(0)
       val misaM = if (config.mExtensionEnabled) BigInt("0000000000001000", 16) else BigInt(0)
       val misaD = if (config.dExtensionEnabled) BigInt("0000000000000008", 16) else BigInt(0)
-      val csrMisa = Reg(Bits(64 bits)) init(B(misaBase | misaC | misaM | misaD, 64 bits))
+      val csrMisa = Reg(Bits(64 bits)) init(B(misaBase | misaA | misaC | misaF | misaM | misaD, 64 bits))
       val csrMedeleg = Reg(Bits(64 bits)) init(0)
       val csrMtvec = Reg(Bits(64 bits)) init(0)
       val csrMscratch = Reg(Bits(64 bits)) init(0)

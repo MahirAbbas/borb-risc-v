@@ -212,6 +212,23 @@ def main() -> int:
     perf_data: Optional[Dict[str, object]] = None
     if perf_json.exists():
         perf_data = json.loads(perf_json.read_text(encoding="utf-8"))
+        # Benchmark-specific derived metrics (kept in runner so generic sim stays unchanged).
+        derived = perf_data.setdefault("derived", {})
+        cycles = perf_data.get("counters", {}).get("cycles", 0)
+        try:
+            cycles_int = int(cycles)
+        except (TypeError, ValueError):
+            cycles_int = 0
+        if cycles_int > 0:
+            coremark_score_est = (args.iterations * args.cpu_hz) / float(cycles_int)
+            coremark_per_mhz_est = coremark_score_est / (args.cpu_hz / 1_000_000.0)
+            derived["coremark_score_estimate"] = coremark_score_est
+            derived["coremark_per_mhz_estimate"] = coremark_per_mhz_est
+            if score is not None:
+                derived["coremark_per_mhz"] = score / (args.cpu_hz / 1_000_000.0)
+            else:
+                derived["coremark_per_mhz"] = coremark_per_mhz_est
+        perf_json.write_text(json.dumps(perf_data, indent=2), encoding="utf-8")
 
     status = "PASS" if sim_run.returncode == 0 and tohost_val == 1 else "FAIL"
     summary = {

@@ -21,10 +21,17 @@ case class CpuConfig(
   
   // Features
   perfCountersEnabled: Boolean = true,
+  aExtensionEnabled: Boolean = false,
   mExtensionEnabled: Boolean = true,
+  fExtensionEnabled: Boolean = false,
   dExtensionEnabled: Boolean = false,
   cExtensionEnabled: Boolean = true
-)
+) {
+  require(
+    !dExtensionEnabled || fExtensionEnabled,
+    "RV64D requires RV64F (D implies F in misa)"
+  )
+}
 
 object CpuConfig {
   /** Default RV64I configuration */

@@ -26,7 +26,7 @@ This is the execution tracker for bringing borb to RVA23S64 with strong automati
 - [x] RV64M completion + compliance evidence.
 - [ ] RV64A completion + AMO/LRSC memory-model checks.
 - [ ] RV64F/D completion + compliance evidence.
-- [ ] RV64C completion + compliance evidence.
+- [x] RV64C completion + compliance evidence.
 - [ ] Additional profile-required Z* extensions completion.
 
 ## 4. Tenstorrent riscv-arch-test Integration
