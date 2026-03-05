@@ -129,9 +129,17 @@ object RV64A {
   val AMOMAXUD = M"11100------------011-----0101111"
 
 }
-object RV32F {}
+object RV32F {
+  val FLW = M"-----------------010-----0000111"
+  val FSW = M"-----------------010-----0100111"
+}
 
-object RV64F {}
+object RV64F {
+  val FCVTLS = M"110000000010-------------1010011"
+  val FCVTLUS = M"110000000011-------------1010011"
+  val FCVTSL = M"110100000010-------------1010011"
+  val FCVTSLU = M"110100000011-------------1010011"
+}
 
 object RV32D {}
 object RV64D {}
@@ -143,6 +151,8 @@ object DecodeTable {
   import RV64M._
   import RV32A._
   import RV64A._
+  import RV32F._
+  import RV64F._
   import REGFILE._
   import Imm_Select._
   import YESNO._
@@ -227,6 +237,8 @@ object DecodeTable {
   SH              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSH, N, N, N, Y),
   SW              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSW, N, N, N, Y),
   SD              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSD, N, N, N, Y),
+  FLW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.IMMED,  N, I_IMM, uopLW, N, N, N, N),
+  FSW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA,  N, S_IMM, uopSW, N, N, N, Y),
 
   LUI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopLUI , N, N, N, N),
 
@@ -301,6 +313,10 @@ object DecodeTable {
   ECALL      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopECALL , N, N, N, N),
   EBREAK     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopEBREAK, N, N, N, N),
   MRET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP   , N, N, N, N),
+  FCVTLS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLS, N, N, N, N),
+  FCVTLUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUS, N, N, N, N),
+  FCVTSL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSL, N, N, N, N),
+  FCVTSLU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSLU, N, N, N, N),
                                                                                                                               
   // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
   // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),

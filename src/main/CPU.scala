@@ -161,6 +161,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val csrMcause = Reg(Bits(64 bits)) init(0)
       val csrMtval = Reg(Bits(64 bits)) init(0)
       val csrMip = Reg(Bits(64 bits)) init(0)
+      // Floating-point CSRs (fflags/frm/fcsr)
+      val csrFflags = Reg(Bits(5 bits)) init(0)
+      val csrFrm = Reg(Bits(3 bits)) init(0)
       val csrSatp = Reg(Bits(64 bits)) init(0)
       // PMP CSR storage (RV64): pmpcfg0,2,4,6,8,10,12,14 + pmpaddr0..63.
       val pmpCfgBytes = Vec.fill(64)(Reg(Bits(8 bits)) init(0))
@@ -171,6 +174,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val pmpImplementedEntries = 16
       // Current effective privilege mode (M=3, U=0).
       val currentPriv = Reg(UInt(2 bits)) init(PRV_M)
+      // Minimal internal FP register storage for RV64F bring-up.
+      val fpRegs = Vec.fill(32)(Reg(Bits(64 bits)) init(B(BigInt("FFFFFFFF00000000", 16), 64 bits)))
 
       def pmpCfgSanitize(cfg: Bits): Bits = {
         val c = Bits(8 bits)
@@ -221,6 +226,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h342") { out := csrMcause }
           is(U"12'h343") { out := csrMtval }
           is(U"12'h344") { out := csrMip }
+          is(U"12'h001") { out := B(0, 59 bits) ## csrFflags }
+          is(U"12'h002") { out := B(0, 61 bits) ## csrFrm }
+          is(U"12'h003") { out := B(0, 56 bits) ## csrFrm ## csrFflags }
           is(U"12'h180") { out := csrSatp }
           is(U"12'h3A0") { out := pmpCfgReadWord(0) }
           is(U"12'h3A2") { out := pmpCfgReadWord(1) }
@@ -283,6 +291,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h342") { ok := True }
           is(U"12'h343") { ok := True }
           is(U"12'h344") { ok := True }
+          is(U"12'h001") { ok := True }
+          is(U"12'h002") { ok := True }
+          is(U"12'h003") { ok := True }
           is(U"12'h180") { ok := True }
           is(U"12'h3A0") { ok := True }
           is(U"12'h3A2") { ok := True }
@@ -385,6 +396,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'h342") { csrMcause := csrWriteData }
           is(U"12'h343") { csrMtval := csrWriteData }
           is(U"12'h344") { csrMip := csrWriteData }
+          is(U"12'h001") { csrFflags := csrWriteData(4 downto 0) }
+          is(U"12'h002") {
+            when(csrWriteData(2 downto 0) =/= B"101" && csrWriteData(2 downto 0) =/= B"110") {
+              csrFrm := csrWriteData(2 downto 0)
+            }
+          }
+          is(U"12'h003") {
+            csrFflags := csrWriteData(4 downto 0)
+            when(csrWriteData(7 downto 5) =/= B"101" && csrWriteData(7 downto 5) =/= B"110") {
+              csrFrm := csrWriteData(7 downto 5)
+            }
+          }
           is(U"12'h180") { csrSatp := csrWriteData }
           is(U"12'h3A0") {
             for(i <- 0 until 8) {
@@ -492,6 +515,227 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val trapFromBranch = branch.logic.willTrap
       val insn = up(borb.frontend.Decoder.DECODED_INSTRUCTION)
       val aguFire = up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
+      val isFlwInsn = (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
+      val isFswInsn = (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
+      val isFcvtSlInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00010")
+      val isFcvtSluInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00011")
+      val flwRd = insn(11 downto 7).asUInt
+      val fswRs2 = insn(24 downto 20).asUInt
+      val fcvtSRd = insn(11 downto 7).asUInt
+
+      // Feed FSW store data from the internal FP register bank.
+      when(aguFire && isFswInsn) {
+        lsu.logic.rawStoreData.allowOverride := fpRegs(fswRs2)(31 downto 0).resize(64)
+      }
+
+      // Capture FLW load payload into the internal FP register bank and suppress
+      // integer register writeback for FLW.
+      val flwWritebackFire = aguFire && isFlwInsn && lsu.logic.responseArriving && !lsu.logic.suppress
+      when(flwWritebackFire) {
+        fpRegs(flwRd) := B(BigInt("FFFFFFFF", 16), 32 bits) ## lsu.logic.shiftedLoadData(31 downto 0)
+        down(borb.execute.WriteBack.RESULT).data.allowOverride := 0
+        down(borb.execute.WriteBack.RESULT).address.allowOverride := 0
+        down(borb.execute.WriteBack.RESULT).valid.allowOverride := False
+      }
+
+      // FCVT conversions used by current RV64F bring-up.
+      val aluFire = up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU)
+      val isFcvtLsOp = up(MicroCode) === uopFCVTLS
+      val isFcvtLuSOp = up(MicroCode) === uopFCVTLUS
+      val fcvtLToIntFire = aluFire && (isFcvtLsOp || isFcvtLuSOp)
+      val fcvtSToFpFire = aluFire && (isFcvtSlInsn || isFcvtSluInsn)
+      val fcvtRmRaw = Mux(insn(14 downto 12) === B"111", csrFrm, insn(14 downto 12))
+      val fcvtRm = Bits(3 bits)
+      fcvtRm := fcvtRmRaw
+      // Treat reserved rm encodings as RTZ for now.
+      when(fcvtRmRaw === B"101" || fcvtRmRaw === B"110" || fcvtRmRaw === B"111") {
+        fcvtRm := B"001"
+      }
+
+      def roundInc(rm: Bits, sign: Bool, remNZ: Bool, gtHalf: Bool, eqHalf: Bool, lsb: Bool): Bool = {
+        val inc = Bool()
+        inc := False
+        switch(rm) {
+          is(B"000") { inc := gtHalf || (eqHalf && lsb) } // RNE
+          is(B"001") { inc := False } // RTZ
+          is(B"010") { inc := sign && remNZ } // RDN
+          is(B"011") { inc := (!sign) && remNZ } // RUP
+          is(B"100") { inc := gtHalf || eqHalf } // RMM
+          default { inc := False }
+        }
+        inc
+      }
+
+      val fcvtLRs1 = insn(19 downto 15).asUInt
+      val fcvtLSrc = fpRegs(fcvtLRs1)(31 downto 0)
+      val fcvtLSign = fcvtLSrc(31)
+      val fcvtLExp = fcvtLSrc(30 downto 23).asUInt
+      val fcvtLFrac = fcvtLSrc(22 downto 0).asUInt
+      val fcvtLIsZero = (fcvtLExp === U(0, 8 bits)) && (fcvtLFrac === U(0, 23 bits))
+      val fcvtLIsInf = (fcvtLExp === U(255, 8 bits)) && (fcvtLFrac === U(0, 23 bits))
+      val fcvtLIsNaN = (fcvtLExp === U(255, 8 bits)) && (fcvtLFrac =/= U(0, 23 bits))
+      val fcvtLNormMant = (U(1, 1 bits) ## fcvtLFrac).asUInt
+      val fcvtLMant = UInt(24 bits)
+      fcvtLMant := fcvtLNormMant
+      when(fcvtLExp === U(0, 8 bits)) {
+        fcvtLMant := (U(0, 1 bits) ## fcvtLFrac).asUInt
+      }
+      val fcvtLTruncMag = UInt(65 bits)
+      fcvtLTruncMag := 0
+      val fcvtLRemNZ = Bool()
+      fcvtLRemNZ := False
+      val fcvtLGtHalf = Bool()
+      fcvtLGtHalf := False
+      val fcvtLEqHalf = Bool()
+      fcvtLEqHalf := False
+      when((fcvtLExp >= U(127, 8 bits)) && (fcvtLExp <= U(191, 8 bits))) {
+        val e = (fcvtLExp - U(127, 8 bits)).resized
+        when(e >= U(23, 8 bits)) {
+          fcvtLTruncMag := fcvtLMant.resize(65) |<< (e - U(23, 8 bits)).resized
+        } otherwise {
+          val rshift = (U(23, 8 bits) - e).resized
+          val mask = (U(1, 65 bits) |<< rshift) - U(1, 65 bits)
+          val rem = fcvtLMant.resize(65) & mask
+          val half = U(1, 65 bits) |<< (rshift - U(1, 8 bits)).resized
+          fcvtLTruncMag := fcvtLMant.resize(65) |>> rshift
+          fcvtLRemNZ := rem =/= 0
+          fcvtLGtHalf := rem > half
+          fcvtLEqHalf := rem === half
+        }
+      } elsewhen(fcvtLExp === U(126, 8 bits)) {
+        // |x| is in [0.5, 1). Truncation is 0, but RNE/RMM may round to 1.
+        val rem = fcvtLMant.resize(65)
+        val half = U(1, 65 bits) |<< 23
+        fcvtLRemNZ := rem =/= 0
+        fcvtLGtHalf := rem > half
+        fcvtLEqHalf := rem === half
+      } elsewhen(!fcvtLIsZero && !fcvtLIsInf && !fcvtLIsNaN) {
+        // Finite magnitude below 1.0 or above directly-computable range.
+        fcvtLRemNZ := True
+      }
+
+      val fcvtLInc = roundInc(fcvtRm, fcvtLSign, fcvtLRemNZ, fcvtLGtHalf, fcvtLEqHalf, fcvtLTruncMag(0))
+      val fcvtLRoundedMag = fcvtLTruncMag + (fcvtLInc.asUInt.resize(65))
+      val fcvtLInexact = fcvtLRemNZ
+
+      val fcvtLResult = Bits(64 bits)
+      fcvtLResult := 0
+      val fcvtLFlags = Bits(5 bits) // NX,UF,OF,DZ,NV
+      fcvtLFlags := 0
+
+      val sMax = U(BigInt("7FFFFFFFFFFFFFFF", 16), 65 bits)
+      val sMinMag = U(BigInt("8000000000000000", 16), 65 bits)
+      val fcvtLTooLarge = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(191, 8 bits))
+
+      when(fcvtLToIntFire) {
+        when(isFcvtLsOp) {
+          val signedOverflow = fcvtLTooLarge || ((!fcvtLSign && (fcvtLRoundedMag > sMax)) || (fcvtLSign && (fcvtLRoundedMag > sMinMag)))
+          when(fcvtLIsNaN || fcvtLIsInf || signedOverflow) {
+            fcvtLFlags(4) := True
+            when(fcvtLIsNaN) {
+              fcvtLResult := B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits)
+            } otherwise {
+              fcvtLResult := Mux(fcvtLSign, B(BigInt("8000000000000000", 16), 64 bits), B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits))
+            }
+          } otherwise {
+            val mag64 = fcvtLRoundedMag(63 downto 0).asBits
+            val sVal = fcvtLSign ? (((~mag64).asUInt + U(1, 64 bits)).asBits) | mag64
+            fcvtLResult := sVal
+            when(fcvtLInexact) {
+              fcvtLFlags(0) := True
+            }
+          }
+        } otherwise {
+          // FCVT.LU.S
+          val unsignedInvalidNeg = fcvtLSign && (fcvtLRoundedMag =/= U(0, 65 bits))
+          val unsignedOverflow = fcvtLTooLarge || fcvtLRoundedMag.msb
+          when(fcvtLIsNaN || fcvtLIsInf || unsignedInvalidNeg || unsignedOverflow) {
+            fcvtLFlags(4) := True
+            when(fcvtLIsNaN) {
+              fcvtLResult := B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits)
+            } otherwise {
+              fcvtLResult := Mux(fcvtLSign, B(0, 64 bits), B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits))
+            }
+          } otherwise {
+            fcvtLResult := fcvtLRoundedMag(63 downto 0).asBits
+            when(fcvtLInexact) {
+              fcvtLFlags(0) := True
+            }
+          }
+        }
+
+        down(borb.execute.WriteBack.RESULT).address.allowOverride := up(borb.frontend.Decoder.RD_ADDR).asUInt
+        down(borb.execute.WriteBack.RESULT).data.allowOverride := (up(borb.frontend.Decoder.RD_ADDR).asUInt === 0) ? B(0, 64 bits) | fcvtLResult
+        down(borb.execute.WriteBack.RESULT).valid.allowOverride := True
+        csrFflags := csrFflags | fcvtLFlags
+      }
+
+      when(fcvtSToFpFire) {
+        val srcInt = up(borb.dispatch.SrcPlugin.RS1).asUInt
+        val srcSign = isFcvtSlInsn && srcInt.msb
+        val srcMag = UInt(64 bits)
+        srcMag := srcInt
+        when(srcSign) {
+          srcMag := ((~srcInt) + U(1, 64 bits)).resized
+        }
+
+        val msbIdx = UInt(6 bits)
+        msbIdx := 0
+        for(i <- 0 until 64) {
+          when(srcMag(i)) {
+            msbIdx := i
+          }
+        }
+
+        val truncSig = UInt(24 bits)
+        truncSig := 0
+        val remNZ = Bool()
+        remNZ := False
+        val gtHalf = Bool()
+        gtHalf := False
+        val eqHalf = Bool()
+        eqHalf := False
+
+        when(srcMag =/= 0) {
+          when(msbIdx > U(23, 6 bits)) {
+            val rshift = (msbIdx - U(23, 6 bits)).resized
+            val mask = (U(1, 64 bits) |<< rshift) - U(1, 64 bits)
+            val rem = srcMag & mask
+            val half = U(1, 64 bits) |<< (rshift - U(1, 6 bits)).resized
+            truncSig := (srcMag |>> rshift).resize(24)
+            remNZ := rem =/= 0
+            gtHalf := rem > half
+            eqHalf := rem === half
+          } otherwise {
+            truncSig := (srcMag |<< (U(23, 6 bits) - msbIdx).resized).resize(24)
+          }
+        }
+
+        val inc = roundInc(fcvtRm, srcSign, remNZ, gtHalf, eqHalf, truncSig(0))
+        val rounded = truncSig.resize(25) + inc.asUInt.resize(25)
+        val carry = rounded(24)
+        val normSig = UInt(24 bits)
+        normSig := rounded(23 downto 0)
+        when(carry) {
+          normSig := (rounded |>> 1).resize(24)
+        }
+
+        val outExp = UInt(8 bits)
+        outExp := 0
+        when(srcMag =/= 0) {
+          outExp := (msbIdx.resize(8) + U(127, 8 bits) + carry.asUInt.resize(8)).resized
+        }
+
+        val outFrac = Bits(23 bits)
+        outFrac := normSig(22 downto 0).asBits
+        val outSign = Bool()
+        outSign := srcSign && (srcMag =/= 0)
+        val outFp32 = outSign.asBits ## outExp.asBits ## outFrac
+        fpRegs(fcvtSRd) := B(BigInt("FFFFFFFF", 16), 32 bits) ## outFp32
+        when(remNZ) {
+          csrFflags := csrFflags | B"00001"
+        }
+      }
       val sawNonZeroPc = Reg(Bool) init(False)
       when(up.isFiring && up(LANE_SEL) && (up(borb.fetch.PC.PC) =/= U(0, 64 bits))) {
         sawNonZeroPc := True

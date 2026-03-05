@@ -1,5 +1,7 @@
 #include <verilated.h>
+#if VM_TRACE_FST
 #include <verilated_fst_c.h>
+#endif
 #include "VSoC.h"
 #include "VSoC___024root.h"
 
@@ -260,18 +262,30 @@ int main(int argc, char** argv) {
   }
 
   Verilated::commandArgs(argc, argv);
-  Verilated::traceEverOn(true);
+  if (opt.trace) {
+#if VM_TRACE_FST
+    Verilated::traceEverOn(true);
+#else
+    std::cerr << "--fst/--vcd requested, but simulator was built without FST support."
+              << " Rebuild without FAST=1 or with TRACE=1." << std::endl;
+    return 2;
+#endif
+  }
 
   const uint64_t mem_bytes = 8ULL * 1024ULL * 1024ULL;
   const uint64_t word_count = mem_bytes / 8;
 
   VSoC* top = new VSoC();
+#if VM_TRACE_FST
   VerilatedFstC* fst = nullptr;
+#endif
   std::ofstream commit_trace;
   if (opt.trace) {
+#if VM_TRACE_FST
     fst = new VerilatedFstC();
     top->trace(fst, 99);
     fst->open(opt.fst_path.c_str());
+#endif
   }
   if (opt.commit_trace) {
     commit_trace.open(opt.commit_trace_path);
@@ -284,10 +298,14 @@ int main(int argc, char** argv) {
   auto tick = [&](uint64_t time) {
     top->io_clk = 0;
     top->eval();
+#if VM_TRACE_FST
     if (fst) fst->dump(time);
+#endif
     top->io_clk = 1;
     top->eval();
+#if VM_TRACE_FST
     if (fst) fst->dump(time + 1);
+#endif
   };
 
   top->io_clkEnable = 1;
@@ -462,10 +480,12 @@ int main(int argc, char** argv) {
   }
   sig.close();
 
+  #if VM_TRACE_FST
   if (fst) {
     fst->close();
     delete fst;
   }
+  #endif
   if (opt.report_tohost && opt.tohost != 0) {
     uint64_t t = 0;
     for (int i = 0; i < 8; i++) {

@@ -23,7 +23,7 @@ case class CpuConfig(
   perfCountersEnabled: Boolean = true,
   aExtensionEnabled: Boolean = true,
   mExtensionEnabled: Boolean = true,
-  fExtensionEnabled: Boolean = false,
+  fExtensionEnabled: Boolean = true,
   dExtensionEnabled: Boolean = false,
   cExtensionEnabled: Boolean = true
 ) {

@@ -125,7 +125,12 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
         uopREMW -> Mux(divByZeroW, src1W, Mux(divOverflowW, B(0, 32 bits), divRemSignedW)).asSInt.resize(64).asBits,
         uopREMUW -> Mux(divByZeroW, src1W, (src1WU % src2WU).asBits).asSInt.resize(64).asBits,
         uopLUI -> (IMMED.asBits),
-        uopAUIPC -> (IMMED.asSInt + pcArch.asSInt).asBits
+        uopAUIPC -> (IMMED.asSInt + pcArch.asSInt).asBits,
+        // FCVT ops are handled in CPU trap/CSR area with FCSR state visibility.
+        uopFCVTLS -> B(0, 64 bits),
+        uopFCVTLUS -> B(0, 64 bits),
+        uopFCVTSL -> B(0, 64 bits),
+        uopFCVTSLU -> B(0, 64 bits)
       )
     }
 
@@ -141,7 +146,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       val isX0 = up(RD_ADDR).asUInt === 0
       down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
       down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
-      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID)
+      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID) && (up(RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT)
     }
   }
 }
