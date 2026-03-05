@@ -1,0 +1,231 @@
+{
+  "families": [
+    {
+      "name": "rv32f.minmax",
+      "priority": 10,
+      "tests": [
+        "fmin_b1-01.S",
+        "fmin_b19-01.S",
+        "fmax_b1-01.S",
+        "fmax_b19-01.S"
+      ],
+      "smoke_tests": [
+        "fclass_b1-01.S",
+        "fsgnj_b1-01.S",
+        "fsgnjn_b1-01.S",
+        "fsgnjx_b1-01.S",
+        "feq_b1-01.S",
+        "feq_b19-01.S",
+        "fle_b1-01.S",
+        "fle_b19-01.S",
+        "flt_b1-01.S",
+        "flt_b19-01.S",
+        "fcvt.wu.s_b1-01.S",
+        "fcvt.wu.s_b22-01.S",
+        "fcvt.wu.s_b23-01.S",
+        "fcvt.wu.s_b27-01.S",
+        "fcvt.wu.s_b28-01.S"
+      ],
+      "medium_mode": "fast-rv32f",
+      "wide_mode": "fast-rv32f",
+      "opclass": "rv32f.minmax",
+      "budget_class": "rv32f.minmax",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "active",
+      "notes": "Lowest-risk next RV32F bucket."
+    },
+    {
+      "name": "rv32f.addsub",
+      "priority": 20,
+      "tests": [
+        "fadd_b1-01.S",
+        "fadd_b19-01.S",
+        "fsub_b1-01.S",
+        "fsub_b19-01.S"
+      ],
+      "smoke_tests": [
+        "fclass_b1-01.S",
+        "fsgnj_b1-01.S",
+        "fsgnjn_b1-01.S",
+        "fsgnjx_b1-01.S",
+        "feq_b1-01.S",
+        "feq_b19-01.S",
+        "fle_b1-01.S",
+        "fle_b19-01.S",
+        "flt_b1-01.S",
+        "flt_b19-01.S",
+        "fcvt.wu.s_b1-01.S",
+        "fcvt.wu.s_b22-01.S",
+        "fcvt.wu.s_b23-01.S",
+        "fcvt.wu.s_b27-01.S",
+        "fcvt.wu.s_b28-01.S"
+      ],
+      "medium_mode": "fast-rv32f",
+      "wide_mode": "fast-rv32f",
+      "opclass": "rv32f.addsub",
+      "budget_class": "rv32f.addsub",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "active",
+      "notes": "Main scalar arithmetic throughput path."
+    },
+    {
+      "name": "rv32f.mul",
+      "priority": 30,
+      "tests": [
+        "fmul_b1-01.S",
+        "fmul_b19-01.S"
+      ],
+      "smoke_tests": [
+        "fclass_b1-01.S",
+        "fsgnj_b1-01.S",
+        "fsgnjn_b1-01.S",
+        "fsgnjx_b1-01.S",
+        "feq_b1-01.S",
+        "feq_b19-01.S",
+        "fle_b1-01.S",
+        "fle_b19-01.S",
+        "flt_b1-01.S",
+        "flt_b19-01.S",
+        "fcvt.wu.s_b1-01.S",
+        "fcvt.wu.s_b22-01.S",
+        "fcvt.wu.s_b23-01.S",
+        "fcvt.wu.s_b27-01.S",
+        "fcvt.wu.s_b28-01.S"
+      ],
+      "medium_mode": "fast-rv32f",
+      "wide_mode": "fast-rv32f",
+      "opclass": "rv32f.mul",
+      "budget_class": "rv32f.mul",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "active",
+      "notes": "Standalone multiply block."
+    },
+    {
+      "name": "rv32f.fma",
+      "priority": 40,
+      "tests": [
+        "fmadd_b1-01.S",
+        "fmsub_b1-01.S",
+        "fnmadd_b1-01.S",
+        "fnmsub_b1-01.S"
+      ],
+      "smoke_tests": [
+        "fclass_b1-01.S",
+        "fsgnj_b1-01.S",
+        "fsgnjn_b1-01.S",
+        "fsgnjx_b1-01.S",
+        "feq_b1-01.S",
+        "feq_b19-01.S",
+        "fle_b1-01.S",
+        "fle_b19-01.S",
+        "flt_b1-01.S",
+        "flt_b19-01.S"
+      ],
+      "medium_mode": "fast-rv32f",
+      "wide_mode": "fast-rv32f",
+      "opclass": "rv32f.fma",
+      "budget_class": "rv32f.fma",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "active",
+      "notes": "Larger fused-op subset."
+    },
+    {
+      "name": "rv32f.divsqrt",
+      "priority": 50,
+      "tests": [
+        "fdiv_b1-01.S",
+        "fdiv_b6-01.S",
+        "fsqrt_b1-01.S",
+        "fsqrt_b6-01.S"
+      ],
+      "smoke_tests": [
+        "fclass_b1-01.S",
+        "fsgnj_b1-01.S",
+        "fsgnjn_b1-01.S",
+        "fsgnjx_b1-01.S",
+        "feq_b1-01.S",
+        "feq_b19-01.S",
+        "fle_b1-01.S",
+        "fle_b19-01.S",
+        "flt_b1-01.S",
+        "flt_b19-01.S"
+      ],
+      "medium_mode": "fast-rv32f",
+      "wide_mode": "fast-rv32f",
+      "opclass": "rv32f.divsqrt",
+      "budget_class": "rv32f.divsqrt",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "active",
+      "notes": "Long-latency iterative FP bucket."
+    },
+    {
+      "name": "zbb.core",
+      "priority": 60,
+      "tests": [],
+      "opclass": "zb.core",
+      "budget_class": "zb.core",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "planned",
+      "notes": "Enable once decode/ALU support exists."
+    },
+    {
+      "name": "zba.core",
+      "priority": 70,
+      "tests": [],
+      "opclass": "zb.core",
+      "budget_class": "zb.core",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "planned",
+      "notes": "Queued after Zbb."
+    },
+    {
+      "name": "zbs.core",
+      "priority": 80,
+      "tests": [],
+      "opclass": "zb.core",
+      "budget_class": "zb.core",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "planned",
+      "notes": "Queued after Zba."
+    },
+    {
+      "name": "c.frontend-perf",
+      "priority": 90,
+      "tests": [
+        "cadd-01.S",
+        "caddi-01.S",
+        "cbeqz-01.S",
+        "cbnez-01.S",
+        "cj-01.S",
+        "cjr-01.S",
+        "clw-01.S",
+        "csw-01.S"
+      ],
+      "opclass": "c.frontend",
+      "budget_class": "c.frontend",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "planned",
+      "notes": "Compressed/frontend perf smoke, not ISA bring-up."
+    },
+    {
+      "name": "s-mode.base",
+      "priority": 100,
+      "tests": [],
+      "opclass": "rv64.base",
+      "budget_class": "rv64.base",
+      "promotion_level": "local",
+      "depends_on": [],
+      "status": "planned",
+      "notes": "Supervisor work starts after scalar FP stabilizes."
+    }
+  ]
+}

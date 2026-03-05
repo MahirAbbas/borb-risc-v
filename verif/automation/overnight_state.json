@@ -1,0 +1,11 @@
+{
+  "consecutive_infra_failures": 0,
+  "current_family": null,
+  "families": {},
+  "global": {
+    "last_build_fingerprint": null,
+    "last_successful_build_ts": null
+  },
+  "history": [],
+  "successes_since_wide": 0
+}

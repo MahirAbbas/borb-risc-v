@@ -22,6 +22,15 @@ FAST_RV64F=false
 FAST_RV32F=false
 FAST_SIM=false
 SIM_JOBS=""
+CYCLE_BUDGET_MODE="hybrid"
+CYCLE_BUDGET_SCALE=""
+CYCLE_BUDGET_SLACK=""
+CYCLE_BUDGET_FILE="/Users/mahir/fun/borb/verif/riscof/cycle_budgets.json"
+SMOKE_RV32F_CORE=false
+SMOKE_RV32F_ARITH=false
+SMOKE_RV32F_LONGLAT=false
+SMOKE_ZB_CORE=false
+SMOKE_C_FRONT=false
 
 usage() {
   echo "Usage: $0 [OPTIONS]"
@@ -38,6 +47,15 @@ usage() {
   echo "  --skip-report     Skip post-run failure report generation"
   echo "  --fast-rv64f      Run only RV64F arch-tests (auto-populates --tests)"
   echo "  --fast-rv32f      Run only RV32F arch-tests (auto-populates --tests)"
+  echo "  --smoke-rv32f-core      Run checked-in RV32F core smoke preset"
+  echo "  --smoke-rv32f-arith     Run checked-in RV32F arithmetic smoke preset"
+  echo "  --smoke-rv32f-longlat   Run checked-in RV32F long-latency smoke preset"
+  echo "  --smoke-zb-core         Run checked-in Zb smoke preset"
+  echo "  --smoke-c-front         Run checked-in compressed/frontend smoke preset"
+  echo "  --cycle-budget-mode <mode>   off|hybrid|strict (default: $CYCLE_BUDGET_MODE)"
+  echo "  --cycle-budget-scale <f>     Override learned-budget scale"
+  echo "  --cycle-budget-slack <n>     Override learned-budget slack"
+  echo "  --cycle-budget-file <path>   Cycle budget database (default: $CYCLE_BUDGET_FILE)"
   echo "  --tests <list>    Run only selected tests (name fragments, comma-separated)"
   echo "                    Example: --tests add-01.S,addi-01.S"
   echo "  --config <path>   Path to config.ini (default: $CONFIG_PATH)"
@@ -97,6 +115,42 @@ while [[ $# -gt 0 ]]; do
       TESTS="$2"
       shift 2
       ;;
+    --smoke-rv32f-core)
+      SMOKE_RV32F_CORE=true
+      shift
+      ;;
+    --smoke-rv32f-arith)
+      SMOKE_RV32F_ARITH=true
+      shift
+      ;;
+    --smoke-rv32f-longlat)
+      SMOKE_RV32F_LONGLAT=true
+      shift
+      ;;
+    --smoke-zb-core)
+      SMOKE_ZB_CORE=true
+      shift
+      ;;
+    --smoke-c-front)
+      SMOKE_C_FRONT=true
+      shift
+      ;;
+    --cycle-budget-mode)
+      CYCLE_BUDGET_MODE="$2"
+      shift 2
+      ;;
+    --cycle-budget-scale)
+      CYCLE_BUDGET_SCALE="$2"
+      shift 2
+      ;;
+    --cycle-budget-slack)
+      CYCLE_BUDGET_SLACK="$2"
+      shift 2
+      ;;
+    --cycle-budget-file)
+      CYCLE_BUDGET_FILE="$2"
+      shift 2
+      ;;
     --config)
       CONFIG_PATH="$2"
       shift 2
@@ -124,8 +178,30 @@ if [[ -n "$SIM_JOBS" && ! "$SIM_JOBS" =~ ^[1-9][0-9]*$ ]]; then
   exit 2
 fi
 
+if [[ ! "$CYCLE_BUDGET_MODE" =~ ^(off|hybrid|strict)$ ]]; then
+  echo "Error: --cycle-budget-mode must be one of: off, hybrid, strict"
+  exit 2
+fi
+
 if [[ "$FAST_RV64F" = true && "$FAST_RV32F" = true ]]; then
   echo "Error: --fast-rv64f and --fast-rv32f cannot be combined"
+  exit 2
+fi
+
+SMOKE_COUNT=0
+for flag in "$SMOKE_RV32F_CORE" "$SMOKE_RV32F_ARITH" "$SMOKE_RV32F_LONGLAT" "$SMOKE_ZB_CORE" "$SMOKE_C_FRONT"; do
+  [[ "$flag" = true ]] && SMOKE_COUNT=$((SMOKE_COUNT + 1))
+done
+if [[ "$SMOKE_COUNT" -gt 1 ]]; then
+  echo "Error: only one --smoke-* preset can be selected"
+  exit 2
+fi
+if [[ "$SMOKE_COUNT" -gt 0 && -n "$TESTS" ]]; then
+  echo "Error: --smoke-* cannot be combined with --tests"
+  exit 2
+fi
+if [[ "$SMOKE_COUNT" -gt 0 && ( "$FAST_RV64F" = true || "$FAST_RV32F" = true ) ]]; then
+  echo "Error: --smoke-* cannot be combined with --fast-rv64f/--fast-rv32f"
   exit 2
 fi
 
@@ -165,12 +241,39 @@ if [[ "$FAST_RV32F" = true ]]; then
   echo "Selected RV32F fast subset ($(echo "$TESTS" | tr ',' '\n' | wc -l | tr -d ' ') tests)"
 fi
 
+if [[ "$SMOKE_COUNT" -gt 0 ]]; then
+  PRESET_NAME=""
+  if [[ "$SMOKE_RV32F_CORE" = true ]]; then PRESET_NAME="rv32f-core"; fi
+  if [[ "$SMOKE_RV32F_ARITH" = true ]]; then PRESET_NAME="rv32f-arith"; fi
+  if [[ "$SMOKE_RV32F_LONGLAT" = true ]]; then PRESET_NAME="rv32f-longlat"; fi
+  if [[ "$SMOKE_ZB_CORE" = true ]]; then PRESET_NAME="zb-core"; fi
+  if [[ "$SMOKE_C_FRONT" = true ]]; then PRESET_NAME="c-front"; fi
+  TESTS="$(python3 - "$PRESET_NAME" "/Users/mahir/fun/borb/verif/automation/smoke_presets.json" <<'PY'
+import json
+import sys
+
+preset = sys.argv[1]
+path = sys.argv[2]
+with open(path, "r", encoding="utf-8") as f:
+    data = json.load(f)
+tests = data.get("presets", {}).get(preset, [])
+if not tests:
+    raise SystemExit(f"Smoke preset not found or empty: {preset}")
+print(",".join(tests))
+PY
+)"
+  echo "Selected smoke preset $PRESET_NAME ($(echo "$TESTS" | tr ',' '\n' | wc -l | tr -d ' ') tests)"
+fi
+
 if [[ -d "$(pwd)/oss-cad-suite/bin" ]]; then
   export PATH="$(pwd)/oss-cad-suite/bin:$PATH"
 fi
 
-# Set python version for riscof
-if command -v pyenv >/dev/null 2>&1; then
+if [ -n "${PYENV_VERSION:-}" ]; then
+  if [ -d "${HOME}/.pyenv/versions/${PYENV_VERSION}/bin" ]; then
+    export PATH="${HOME}/.pyenv/versions/${PYENV_VERSION}/bin:$PATH"
+  fi
+elif command -v pyenv >/dev/null 2>&1; then
   eval "$(pyenv init -)"
   pyenv shell 3.8.18
 fi
@@ -302,6 +405,128 @@ PY
   RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
 fi
 
+RESOLVED_BUDGET_FILE="$WORK_DIR/resolved_budgets.json"
+python3 - "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" "$TESTS" "$CYCLE_BUDGET_MODE" "$CYCLE_BUDGET_SCALE" "$CYCLE_BUDGET_SLACK" "/Users/mahir/fun/borb/verif/automation/overnight_queue.json" <<'PY'
+import json
+import os
+import sys
+from pathlib import Path
+
+budget_file, out_file, tests_csv, mode, scale_override, slack_override, queue_file = sys.argv[1:]
+tests = [t.strip() for t in tests_csv.split(",") if t.strip()]
+scale_override = float(scale_override) if scale_override else None
+slack_override = int(slack_override) if slack_override else None
+
+DEFAULTS = {
+    "rv32f.move": {"scale": 4.0, "slack": 500},
+    "rv32f.compare": {"scale": 4.0, "slack": 500},
+    "rv32f.classify": {"scale": 4.0, "slack": 500},
+    "rv32f.convert": {"scale": 6.0, "slack": 2000},
+    "rv32f.minmax": {"scale": 6.0, "slack": 2000},
+    "rv32f.addsub": {"scale": 6.0, "slack": 2000},
+    "rv32f.mul": {"scale": 6.0, "slack": 2000},
+    "rv32f.fma": {"scale": 8.0, "slack": 2000},
+    "rv32f.divsqrt": {"scale": 20.0, "slack": 10000},
+    "zb.core": {"scale": 4.0, "slack": 1000},
+    "c.frontend": {"scale": 4.0, "slack": 1000},
+    "rv64.base": {"scale": 4.0, "slack": 1000},
+    "default": {"scale": 6.0, "slack": 2000},
+}
+FALLBACK_BUDGETS = {
+    "rv32f.move": 200000,
+    "rv32f.compare": 200000,
+    "rv32f.classify": 200000,
+    "rv32f.convert": 200000,
+    "rv32f.minmax": 200000,
+    "rv32f.addsub": 200000,
+    "rv32f.mul": 200000,
+    "rv32f.fma": 250000,
+    "rv32f.divsqrt": 400000,
+    "zb.core": 200000,
+    "c.frontend": 200000,
+    "rv64.base": 200000,
+    "default": 200000,
+}
+
+def classify(test_name):
+    t = test_name.lower()
+    if t.startswith("fmv."):
+        return "rv32f.move", "rv32f.move"
+    if t.startswith("fclass"):
+        return "rv32f.classify", "rv32f.classify"
+    if t.startswith("fsgnj"):
+        return "rv32f.move", "rv32f.move"
+    if t.startswith(("feq", "fle", "flt")):
+        return "rv32f.compare", "rv32f.compare"
+    if t.startswith("fcvt"):
+        return "rv32f.convert", "rv32f.convert"
+    if t.startswith(("fmin", "fmax")):
+        return "rv32f.minmax", "rv32f.minmax"
+    if t.startswith(("fadd", "fsub")):
+        return "rv32f.addsub", "rv32f.addsub"
+    if t.startswith("fmul"):
+        return "rv32f.mul", "rv32f.mul"
+    if t.startswith(("fmadd", "fmsub", "fnmadd", "fnmsub")):
+        return "rv32f.fma", "rv32f.fma"
+    if t.startswith(("fdiv", "fsqrt")):
+        return "rv32f.divsqrt", "rv32f.divsqrt"
+    if t.startswith("c"):
+        return "c.frontend", "c.frontend"
+    if t.startswith(("andn", "orn", "xnor", "clz", "ctz", "cpop", "max", "maxu", "min", "minu", "rol", "ror", "rori", "orc.b", "rev8", "sext.b", "sext.h", "zext.h", "bclr", "bclri", "bext", "bexti", "binv", "binvi", "bset", "bseti", "sh1add", "sh2add", "sh3add")):
+        return "zb.core", "zb.core"
+    return "rv64.base", "default"
+
+queue_map = {}
+if Path(queue_file).exists():
+    with open(queue_file, "r", encoding="utf-8") as f:
+        q = json.load(f) or {}
+    for family in q.get("families", []):
+        fam_name = family.get("name")
+        budget_class = family.get("budget_class", "default")
+        for test in family.get("tests", []):
+            queue_map[test] = (fam_name, budget_class)
+
+db = {"families": {}, "tests": {}}
+if Path(budget_file).exists():
+    with open(budget_file, "r", encoding="utf-8") as f:
+        db = json.load(f) or db
+
+resolved = {"mode": mode, "tests": {}}
+for test in tests:
+    family, budget_class = queue_map.get(test, classify(test))
+    if budget_class not in DEFAULTS:
+        budget_class = "default"
+    defaults = DEFAULTS[budget_class]
+    scale = scale_override if scale_override is not None else defaults["scale"]
+    slack = slack_override if slack_override is not None else defaults["slack"]
+    test_db = db.get("tests", {}).get(test, {})
+    family_db = db.get("families", {}).get(budget_class, {})
+    budget = test_db.get("budget")
+    if budget is None:
+        budget = family_db.get("budget")
+    if budget is None:
+        budget = FALLBACK_BUDGETS.get(budget_class, FALLBACK_BUDGETS["default"])
+    if mode == "strict" and budget is None:
+        raise SystemExit(f"Strict budget mode requires budget for {test}")
+    resolved["tests"][test] = {
+        "family": family,
+        "budget_class": budget_class,
+        "budget": int(budget),
+        "scale": scale,
+        "slack": slack,
+    }
+
+Path(out_file).parent.mkdir(parents=True, exist_ok=True)
+with open(out_file, "w", encoding="utf-8") as f:
+    json.dump(resolved, f, indent=2, sort_keys=True)
+    f.write("\n")
+PY
+
+export BORB_CYCLE_BUDGET_MODE="$CYCLE_BUDGET_MODE"
+export BORB_CYCLE_BUDGET_FILE="$CYCLE_BUDGET_FILE"
+export BORB_RESOLVED_BUDGET_FILE="$RESOLVED_BUDGET_FILE"
+export BORB_MAX_CYCLES_DEFAULT="200000"
+
 set +e
 "${RUN_CMD[@]}"
 RUN_STATUS=$?
@@ -320,6 +545,88 @@ if [[ "$SKIP_REPORT" = false ]]; then
 else
   echo "Skipping RISCOF debug report generation"
 fi
+
+python3 - "$WORK_DIR" "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+work_dir = Path(sys.argv[1])
+budget_file = Path(sys.argv[2])
+resolved_file = Path(sys.argv[3])
+
+resolved = {"tests": {}}
+if resolved_file.exists():
+    resolved = json.loads(resolved_file.read_text(encoding="utf-8"))
+
+def compare_lines(a: Path, b: Path):
+    if not a.exists() or not b.exists():
+        return False
+    return a.read_text(encoding="utf-8", errors="ignore").splitlines() == b.read_text(encoding="utf-8", errors="ignore").splitlines()
+
+summary = {"tests": [], "counts": {"pass": 0, "timeout": 0, "mismatch": 0, "infra": 0, "build": 0}}
+db = {"families": {}, "tests": {}}
+if budget_file.exists():
+    db = json.loads(budget_file.read_text(encoding="utf-8")) or db
+
+for status_path in sorted(work_dir.glob("**/dut/borb.status.json")):
+    test_dir = status_path.parent.parent
+    test_name = status_path.parent.parent.name
+    status = json.loads(status_path.read_text(encoding="utf-8"))
+    perf_path = status_path.parent / "borb.perf.json"
+    perf = json.loads(perf_path.read_text(encoding="utf-8")) if perf_path.exists() else {}
+    dut_sig = status_path.parent / "DUT-borb.signature"
+    ref_sig = test_dir / "ref" / "Reference-spike.signature"
+    timeout = bool(status.get("timeout")) or bool(perf.get("sim", {}).get("timeout"))
+    if status.get("failure_kind") == "build":
+        final = "build"
+    elif timeout:
+        final = "timeout"
+    elif status.get("sim_exit_code") not in (0, None):
+        final = "infra"
+    elif compare_lines(dut_sig, ref_sig):
+        final = "pass"
+    elif dut_sig.exists() and ref_sig.exists():
+        final = "mismatch"
+    else:
+        final = "infra"
+    cycles = perf.get("sim", {}).get("cycles_executed")
+    budget_info = resolved.get("tests", {}).get(status.get("test"), {})
+    entry = {
+        "test": status.get("test", test_name),
+        "family": budget_info.get("family", status.get("family")),
+        "budget_class": budget_info.get("budget_class", status.get("budget_class")),
+        "status": final,
+        "cycles": cycles,
+        "budget_used": status.get("max_cycles"),
+        "timeout": timeout,
+        "artifact_dir": str(status_path.parent),
+    }
+    summary["tests"].append(entry)
+    summary["counts"][final] = summary["counts"].get(final, 0) + 1
+    if final != "pass" or cycles is None:
+        continue
+    budget_class = entry["budget_class"] or "default"
+    family_db = db.setdefault("families", {}).setdefault(budget_class, {})
+    test_db = db.setdefault("tests", {}).setdefault(entry["test"], {})
+    scale = budget_info.get("scale", 6.0)
+    slack = budget_info.get("slack", 2000)
+    prev_family = int(family_db.get("max_pass_cycles", 0))
+    prev_test = int(test_db.get("max_pass_cycles", 0))
+    family_db["max_pass_cycles"] = max(prev_family, int(cycles))
+    family_db["budget"] = int(family_db["max_pass_cycles"] * scale + slack)
+    family_db["scale"] = scale
+    family_db["slack"] = slack
+    test_db["max_pass_cycles"] = max(prev_test, int(cycles))
+    test_db["budget"] = int(test_db["max_pass_cycles"] * scale + slack)
+    test_db["scale"] = scale
+    test_db["slack"] = slack
+    test_db["budget_class"] = budget_class
+    test_db["family"] = entry["family"]
+
+(work_dir / "borb_run_summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+budget_file.write_text(json.dumps(db, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
 
 echo "=== RISCOF complete ==="
 exit "$RUN_STATUS"

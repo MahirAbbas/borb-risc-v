@@ -46,6 +46,14 @@ verif/riscof/borb/*
 !verif/riscof/borb/sim/
 verif/riscof/borb/sim/*
 !verif/riscof/borb/sim/borb_sim.cpp
+!verif/riscof/cycle_budgets.json
+!verif/automation/
+verif/automation/*
+!verif/automation/overnight_queue.json
+!verif/automation/overnight_state.json
+!verif/automation/smoke_presets.json
+!verif/automation/runs/
+verif/automation/runs/*
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
@@ -72,6 +80,10 @@ bin/
 *.cf
 *.json
 *.vcd
+!verif/riscof/cycle_budgets.json
+!verif/automation/overnight_queue.json
+!verif/automation/overnight_state.json
+!verif/automation/smoke_presets.json
 !tester/src/test/resources/*.vhd
 !bug_waves/
 !bug_waves/*.vcd

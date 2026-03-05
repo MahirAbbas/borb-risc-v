@@ -368,6 +368,7 @@ int main(int argc, char** argv) {
   uint64_t max_stall_streak = 0;
   bool stall_reported = false;
   bool done = false;
+  bool timed_out = false;
   uint64_t commit_events = 0;
   uint64_t commit_traps = 0;
   uint64_t commit_mem_reads = 0;
@@ -460,6 +461,14 @@ int main(int argc, char** argv) {
 
     cycles++;
   }
+  if (!done && cycles >= opt.max_cycles) {
+    timed_out = true;
+    std::cerr << "TIMEOUT: exceeded max cycles (" << opt.max_cycles << ")"
+              << " order=" << top->io_dbg_commitOrder
+              << " pc=0x" << std::hex << (uint64_t)top->io_dbg_commitPc << std::dec
+              << " insn=0x" << std::hex << (uint32_t)top->io_dbg_commitInsn << std::dec
+              << std::endl;
+  }
 
   std::ofstream sig(opt.signature_path);
   if (!sig) {
@@ -528,6 +537,9 @@ int main(int argc, char** argv) {
     pf << "{\n";
     pf << "  \"sim\": {\n";
     pf << "    \"cycles_executed\": " << cycles << ",\n";
+    pf << "    \"max_cycles\": " << opt.max_cycles << ",\n";
+    pf << "    \"timeout\": " << (timed_out ? "true" : "false") << ",\n";
+    pf << "    \"completed\": " << (done ? "true" : "false") << ",\n";
     pf << "    \"commit_events\": " << commit_events << ",\n";
     pf << "    \"commit_traps\": " << commit_traps << ",\n";
     pf << "    \"commit_mem_reads\": " << commit_mem_reads << ",\n";
@@ -563,5 +575,5 @@ int main(int argc, char** argv) {
     commit_trace.close();
   }
   delete top;
-  return 0;
+  return timed_out ? 3 : 0;
 }
