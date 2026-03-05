@@ -130,7 +130,13 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
         uopFCVTLS -> B(0, 64 bits),
         uopFCVTLUS -> B(0, 64 bits),
         uopFCVTSL -> B(0, 64 bits),
-        uopFCVTSLU -> B(0, 64 bits)
+        uopFCVTSLU -> B(0, 64 bits),
+        uopFCVTWS -> B(0, 64 bits),
+        uopFCVTWUS -> B(0, 64 bits),
+        uopFCVTSW -> B(0, 64 bits),
+        uopFCVTSWU -> B(0, 64 bits),
+        uopFMVXW -> B(0, 64 bits),
+        uopFMVWX -> B(0, 64 bits)
       )
     }
 

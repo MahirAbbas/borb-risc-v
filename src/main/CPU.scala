@@ -517,8 +517,23 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       val aguFire = up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
       val isFlwInsn = (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
       val isFswInsn = (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
+      val isFcvtWsInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00000")
+      val isFcvtWuSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00001")
+      val isFcvtLsInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00010")
+      val isFcvtLuSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00011")
+      val isFcvtSwInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00000")
+      val isFcvtSwuInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00001")
       val isFcvtSlInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00010")
       val isFcvtSluInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00011")
+      val isFmvXWInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
+      val isFmvWXInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1111000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
+      val isFclassSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"001")
+      val isFsgnjSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"000")
+      val isFsgnjnSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"001")
+      val isFsgnjxSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"010")
+      val isFleSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"000")
+      val isFltSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"001")
+      val isFeqSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"010")
       val flwRd = insn(11 downto 7).asUInt
       val fswRs2 = insn(24 downto 20).asUInt
       val fcvtSRd = insn(11 downto 7).asUInt
@@ -540,10 +555,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       // FCVT conversions used by current RV64F bring-up.
       val aluFire = up(VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU)
-      val isFcvtLsOp = up(MicroCode) === uopFCVTLS
-      val isFcvtLuSOp = up(MicroCode) === uopFCVTLUS
-      val fcvtLToIntFire = aluFire && (isFcvtLsOp || isFcvtLuSOp)
-      val fcvtSToFpFire = aluFire && (isFcvtSlInsn || isFcvtSluInsn)
+      val isFcvtWsOp = (up(MicroCode) === uopFCVTWS) || isFcvtWsInsn
+      val isFcvtWuSOp = (up(MicroCode) === uopFCVTWUS) || isFcvtWuSInsn
+      val isFcvtLsOp = (up(MicroCode) === uopFCVTLS) || isFcvtLsInsn
+      val isFcvtLuSOp = (up(MicroCode) === uopFCVTLUS) || isFcvtLuSInsn
+      val isFmvXWOp = (up(MicroCode) === uopFMVXW) || isFmvXWInsn
+      val isFmvWXOp = (up(MicroCode) === uopFMVWX) || isFmvWXInsn
+      val fcvtFToIntFire = aluFire && (isFcvtWsOp || isFcvtWuSOp || isFcvtLsOp || isFcvtLuSOp)
+      val fcvtSToFpFire = aluFire && (isFcvtSwInsn || isFcvtSwuInsn || isFcvtSlInsn || isFcvtSluInsn)
+      val fmvXWFire = aluFire && isFmvXWOp
+      val fmvWXFire = aluFire && isFmvWXOp
+      val fclassSFire = aluFire && isFclassSInsn
+      val fsgnjSFire = aluFire && (isFsgnjSInsn || isFsgnjnSInsn || isFsgnjxSInsn)
+      val fcmpSFire = aluFire && (isFleSInsn || isFltSInsn || isFeqSInsn)
       val fcvtRmRaw = Mux(insn(14 downto 12) === B"111", csrFrm, insn(14 downto 12))
       val fcvtRm = Bits(3 bits)
       fcvtRm := fcvtRmRaw
@@ -625,39 +649,64 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
       val sMax = U(BigInt("7FFFFFFFFFFFFFFF", 16), 65 bits)
       val sMinMag = U(BigInt("8000000000000000", 16), 65 bits)
-      val fcvtLTooLarge = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(191, 8 bits))
+      val wSMax = U(BigInt("7FFFFFFF", 16), 65 bits)
+      val wSMinMag = U(BigInt("80000000", 16), 65 bits)
+      val fcvtTarget32 = isFcvtWsOp || isFcvtWuSOp
+      val fcvtSigned = isFcvtWsOp || isFcvtLsOp
+      val fcvtLTooLarge32 = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(158, 8 bits))
+      val fcvtLTooLarge64 = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(191, 8 bits))
+      val fcvtLTooLarge = fcvtTarget32 ? fcvtLTooLarge32 | fcvtLTooLarge64
 
-      when(fcvtLToIntFire) {
-        when(isFcvtLsOp) {
-          val signedOverflow = fcvtLTooLarge || ((!fcvtLSign && (fcvtLRoundedMag > sMax)) || (fcvtLSign && (fcvtLRoundedMag > sMinMag)))
+      when(fcvtFToIntFire) {
+        when(fcvtSigned) {
+          val signedOverflow32 = fcvtLTooLarge32 || ((!fcvtLSign && (fcvtLRoundedMag > wSMax)) || (fcvtLSign && (fcvtLRoundedMag > wSMinMag)))
+          val signedOverflow64 = fcvtLTooLarge64 || ((!fcvtLSign && (fcvtLRoundedMag > sMax)) || (fcvtLSign && (fcvtLRoundedMag > sMinMag)))
+          val signedOverflow = fcvtTarget32 ? signedOverflow32 | signedOverflow64
           when(fcvtLIsNaN || fcvtLIsInf || signedOverflow) {
             fcvtLFlags(4) := True
             when(fcvtLIsNaN) {
-              fcvtLResult := B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits)
+              fcvtLResult := fcvtTarget32 ? B(BigInt("000000007FFFFFFF", 16), 64 bits) | B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits)
             } otherwise {
-              fcvtLResult := Mux(fcvtLSign, B(BigInt("8000000000000000", 16), 64 bits), B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits))
+              when(fcvtTarget32) {
+                fcvtLResult := Mux(fcvtLSign, B(BigInt("FFFFFFFF80000000", 16), 64 bits), B(BigInt("000000007FFFFFFF", 16), 64 bits))
+              } otherwise {
+                fcvtLResult := Mux(fcvtLSign, B(BigInt("8000000000000000", 16), 64 bits), B(BigInt("7FFFFFFFFFFFFFFF", 16), 64 bits))
+              }
             }
           } otherwise {
             val mag64 = fcvtLRoundedMag(63 downto 0).asBits
             val sVal = fcvtLSign ? (((~mag64).asUInt + U(1, 64 bits)).asBits) | mag64
-            fcvtLResult := sVal
+            when(fcvtTarget32) {
+              val mag32 = fcvtLRoundedMag(31 downto 0).asBits
+              val sVal32 = fcvtLSign ? (((~mag32).asUInt + U(1, 32 bits)).asBits) | mag32
+              fcvtLResult := sVal32.asSInt.resize(64).asBits
+            } otherwise {
+              fcvtLResult := sVal
+            }
             when(fcvtLInexact) {
               fcvtLFlags(0) := True
             }
           }
         } otherwise {
-          // FCVT.LU.S
+          // FCVT.WU.S / FCVT.LU.S
           val unsignedInvalidNeg = fcvtLSign && (fcvtLRoundedMag =/= U(0, 65 bits))
-          val unsignedOverflow = fcvtLTooLarge || fcvtLRoundedMag.msb
+          val unsignedOverflow32 = fcvtLTooLarge32 || fcvtLRoundedMag(64 downto 32).orR
+          val unsignedOverflow64 = fcvtLTooLarge64 || fcvtLRoundedMag.msb
+          val unsignedOverflow = fcvtTarget32 ? unsignedOverflow32 | unsignedOverflow64
           when(fcvtLIsNaN || fcvtLIsInf || unsignedInvalidNeg || unsignedOverflow) {
             fcvtLFlags(4) := True
             when(fcvtLIsNaN) {
-              fcvtLResult := B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits)
+              fcvtLResult := fcvtTarget32 ? B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits) | B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits)
             } otherwise {
-              fcvtLResult := Mux(fcvtLSign, B(0, 64 bits), B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits))
+              when(fcvtTarget32) {
+                fcvtLResult := Mux(fcvtLSign, B(0, 64 bits), B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits))
+              } otherwise {
+                fcvtLResult := Mux(fcvtLSign, B(0, 64 bits), B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits))
+              }
             }
           } otherwise {
-            fcvtLResult := fcvtLRoundedMag(63 downto 0).asBits
+            val wuVal32 = fcvtLRoundedMag(31 downto 0).asBits
+            fcvtLResult := fcvtTarget32 ? wuVal32.asSInt.resize(64).asBits | fcvtLRoundedMag(63 downto 0).asBits
             when(fcvtLInexact) {
               fcvtLFlags(0) := True
             }
@@ -671,12 +720,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       }
 
       when(fcvtSToFpFire) {
-        val srcInt = up(borb.dispatch.SrcPlugin.RS1).asUInt
-        val srcSign = isFcvtSlInsn && srcInt.msb
+        val srcInt64 = up(borb.dispatch.SrcPlugin.RS1).asUInt
+        val srcInt32 = up(borb.dispatch.SrcPlugin.RS1)(31 downto 0).asUInt
+        val srcFrom32 = isFcvtSwInsn || isFcvtSwuInsn
+        val srcSigned = isFcvtSwInsn || isFcvtSlInsn
+        val srcSign = srcSigned && (srcFrom32 ? srcInt32.msb | srcInt64.msb)
         val srcMag = UInt(64 bits)
-        srcMag := srcInt
+        srcMag := srcFrom32 ? srcInt32.resize(64) | srcInt64
         when(srcSign) {
-          srcMag := ((~srcInt) + U(1, 64 bits)).resized
+          when(srcFrom32) {
+            srcMag := ((~srcInt32) + U(1, 32 bits)).resize(64)
+          } otherwise {
+            srcMag := ((~srcInt64) + U(1, 64 bits)).resized
+          }
         }
 
         val msbIdx = UInt(6 bits)
@@ -735,6 +791,118 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         when(remNZ) {
           csrFflags := csrFflags | B"00001"
         }
+      }
+
+      when(fmvXWFire) {
+        val fmvRs1 = insn(19 downto 15).asUInt
+        val moved = fpRegs(fmvRs1)(31 downto 0).asSInt.resize(64).asBits
+        down(borb.execute.WriteBack.RESULT).address.allowOverride := up(borb.frontend.Decoder.RD_ADDR).asUInt
+        down(borb.execute.WriteBack.RESULT).data.allowOverride := (up(borb.frontend.Decoder.RD_ADDR).asUInt === 0) ? B(0, 64 bits) | moved
+        down(borb.execute.WriteBack.RESULT).valid.allowOverride := True
+      }
+
+      when(fmvWXFire) {
+        fpRegs(fcvtSRd) := B(BigInt("FFFFFFFF", 16), 32 bits) ## up(borb.dispatch.SrcPlugin.RS1)(31 downto 0)
+      }
+
+      when(fclassSFire) {
+        val rs1 = insn(19 downto 15).asUInt
+        val in = fpRegs(rs1)(31 downto 0)
+        val sign = in(31)
+        val exp = in(30 downto 23)
+        val frac = in(22 downto 0)
+        val isZero = (exp === B(0, 8 bits)) && (frac === B(0, 23 bits))
+        val isSub = (exp === B(0, 8 bits)) && (frac =/= B(0, 23 bits))
+        val isInf = (exp === B(255, 8 bits)) && (frac === B(0, 23 bits))
+        val isNaN = (exp === B(255, 8 bits)) && (frac =/= B(0, 23 bits))
+        val isQNaN = isNaN && frac(22)
+        val isSNaN = isNaN && !frac(22)
+        val cls = Bits(10 bits)
+        cls := 0
+        when(isInf && sign) { cls(0) := True }
+        when(!isNaN && !isInf && !isZero && !isSub && sign) { cls(1) := True }
+        when(isSub && sign) { cls(2) := True }
+        when(isZero && sign) { cls(3) := True }
+        when(isZero && !sign) { cls(4) := True }
+        when(isSub && !sign) { cls(5) := True }
+        when(!isNaN && !isInf && !isZero && !isSub && !sign) { cls(6) := True }
+        when(isInf && !sign) { cls(7) := True }
+        when(isSNaN) { cls(8) := True }
+        when(isQNaN) { cls(9) := True }
+
+        down(borb.execute.WriteBack.RESULT).address.allowOverride := up(borb.frontend.Decoder.RD_ADDR).asUInt
+        down(borb.execute.WriteBack.RESULT).data.allowOverride := (up(borb.frontend.Decoder.RD_ADDR).asUInt === 0) ? B(0, 64 bits) | (B(0, 54 bits) ## cls)
+        down(borb.execute.WriteBack.RESULT).valid.allowOverride := True
+      }
+
+      when(fsgnjSFire) {
+        val rs1 = insn(19 downto 15).asUInt
+        val rs2 = insn(24 downto 20).asUInt
+        val rd = insn(11 downto 7).asUInt
+        val a = fpRegs(rs1)(31 downto 0)
+        val b = fpRegs(rs2)(31 downto 0)
+        val signOut = Bool()
+        signOut := b(31)
+        when(isFsgnjnSInsn) {
+          signOut := !b(31)
+        }
+        when(isFsgnjxSInsn) {
+          signOut := a(31) ^ b(31)
+        }
+        val out = signOut.asBits ## a(30 downto 0)
+        fpRegs(rd) := B(BigInt("FFFFFFFF", 16), 32 bits) ## out
+      }
+
+      when(fcmpSFire) {
+        val rs1 = insn(19 downto 15).asUInt
+        val rs2 = insn(24 downto 20).asUInt
+        val a = fpRegs(rs1)(31 downto 0)
+        val b = fpRegs(rs2)(31 downto 0)
+        val aSign = a(31)
+        val bSign = b(31)
+        val aExp = a(30 downto 23)
+        val bExp = b(30 downto 23)
+        val aFrac = a(22 downto 0)
+        val bFrac = b(22 downto 0)
+        val aIsNaN = (aExp === B(255, 8 bits)) && (aFrac =/= B(0, 23 bits))
+        val bIsNaN = (bExp === B(255, 8 bits)) && (bFrac =/= B(0, 23 bits))
+        val aIsSNaN = aIsNaN && !aFrac(22)
+        val bIsSNaN = bIsNaN && !bFrac(22)
+        val anyNaN = aIsNaN || bIsNaN
+        val anySNaN = aIsSNaN || bIsSNaN
+        val aIsZero = (aExp === B(0, 8 bits)) && (aFrac === B(0, 23 bits))
+        val bIsZero = (bExp === B(0, 8 bits)) && (bFrac === B(0, 23 bits))
+        val bothZero = aIsZero && bIsZero
+        val aMag = a(30 downto 0).asUInt
+        val bMag = b(30 downto 0).asUInt
+        val eq = bothZero || (a === b)
+        val lt = Bool()
+        lt := False
+        when(!bothZero) {
+          when(aSign =/= bSign) {
+            lt := aSign && !bSign
+          } otherwise {
+            lt := aSign ? (aMag > bMag) | (aMag < bMag)
+          }
+        }
+        val le = lt || eq
+
+        val cmpRes = Bits(64 bits)
+        cmpRes := 0
+        when(!anyNaN) {
+          when(isFeqSInsn) { cmpRes := B(0, 63 bits) ## eq.asBits }
+          when(isFltSInsn) { cmpRes := B(0, 63 bits) ## lt.asBits }
+          when(isFleSInsn) { cmpRes := B(0, 63 bits) ## le.asBits }
+        }
+
+        val setNv = (isFeqSInsn && anySNaN) || ((isFltSInsn || isFleSInsn) && anyNaN)
+        when(setNv) {
+          csrFflags := csrFflags | B"10000"
+        }
+
+        down(borb.execute.WriteBack.RESULT).address.allowOverride := up(borb.frontend.Decoder.RD_ADDR).asUInt
+        down(borb.execute.WriteBack.RESULT).data.allowOverride := (up(borb.frontend.Decoder.RD_ADDR).asUInt === 0) ? B(0, 64 bits) | cmpRes
+        down(borb.execute.WriteBack.RESULT).valid.allowOverride := True
       }
       val sawNonZeroPc = Reg(Bool) init(False)
       when(up.isFiring && up(LANE_SEL) && (up(borb.fetch.PC.PC) =/= U(0, 64 bits))) {

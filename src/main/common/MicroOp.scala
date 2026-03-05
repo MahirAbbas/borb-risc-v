@@ -99,4 +99,10 @@ object MicroCode extends SpinalEnum {
   val uopFCVTLUS = newElement()
   val uopFCVTSL = newElement()
   val uopFCVTSLU = newElement()
+  val uopFCVTWS = newElement()
+  val uopFCVTWUS = newElement()
+  val uopFCVTSW = newElement()
+  val uopFCVTSWU = newElement()
+  val uopFMVXW = newElement()
+  val uopFMVWX = newElement()
 }

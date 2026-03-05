@@ -158,18 +158,68 @@ case class Dispatch(
   }
   case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32)
       extends Area {
+    def isFlw(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
+    }
+
+    def isFsw(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
+    }
+
+    def isFcvtFToInt(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000")
+    }
+
+    def isFcvtIntToF(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000")
+    }
+
+    def isFmvXW(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
+      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
+    }
+
+    def isFmvWX(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1111000") &&
+      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
+    }
+
+    def isFclassS(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
+      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"001")
+    }
+
+    def isFsgnjFamily(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") &&
+      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
+    }
+
+    def isFcmpS(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") &&
+      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
+    }
+
     // Derive a combinational busy map from younger in-flight stages.
     // This avoids sticky scoreboard bits after flushes/stalls.
     val regBusy = Bits(regCount bits)
+    val fpRegBusy = Bits(regCount bits)
     regBusy.clearAll()
+    fpRegBusy.clearAll()
     for (stage <- hzRange.tail) {
       val stValid = stage.up.isValid && stage(Decoder.VALID) && stage(borb.common.Common.LANE_SEL)
       val stRd = stage(Decoder.RD_ADDR)
+      val stInsn = stage(Decoder.DECODED_INSTRUCTION)
       val stWritesIntRd = stValid &&
         (stage(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
         (stRd =/= 0)
+      val stWritesFpRd = stValid &&
+        (stRd =/= 0) &&
+        (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn))
       when(stWritesIntRd) {
         regBusy(stRd.asUInt) := True
+      }
+      when(stWritesFpRd) {
+        fpRegBusy(stRd.asUInt) := True
       }
     }
 
@@ -180,19 +230,25 @@ case class Dispatch(
       val rs2Type = up(Decoder.RS2TYPE)
       val rs1 = up(Decoder.RS1_ADDR)
       val rs2 = up(Decoder.RS2_ADDR)
+      val insn = up(Decoder.DECODED_INSTRUCTION)
 
       val rs1Busy = (rs1Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
         (rs1 =/= 0) && regBusy(rs1.asUInt)
       val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
         (rs2 =/= 0) && regBusy(rs2.asUInt)
+      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn)
+      val fpRs1Busy = fpReadsRs1 && (insn(19 downto 15) =/= 0) && fpRegBusy(insn(19 downto 15).asUInt)
+      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn)
+      val fpRs2Busy = fpReadsRs2 && (insn(24 downto 20) =/= 0) && fpRegBusy(insn(24 downto 20).asUInt)
 
-      val hazard = valid && (rs1Busy || rs2Busy)
+      val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy)
       hazard.simPublic()
 
       haltWhen(hazard)
     }
 
     regBusy.simPublic()
+    fpRegBusy.simPublic()
   }
   val hcs = new HazardChecker(hzRange, 32)
 

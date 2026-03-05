@@ -132,6 +132,19 @@ object RV64A {
 object RV32F {
   val FLW = M"-----------------010-----0000111"
   val FSW = M"-----------------010-----0100111"
+  val FCVTWS = M"110000000000-------------1010011"
+  val FCVTWUS = M"110000000001-------------1010011"
+  val FCVTSW = M"110100000000-------------1010011"
+  val FCVTSWU = M"110100000001-------------1010011"
+  val FMVXW = M"111000000000-----000-----1010011"
+  val FMVWX = M"111100000000-----000-----1010011"
+  val FCLASSS = M"111000000000-----001-----1010011"
+  val FSGNJS = M"0010000----------000-----1010011"
+  val FSGNJNS = M"0010000----------001-----1010011"
+  val FSGNJXS = M"0010000----------010-----1010011"
+  val FLES = M"1010000----------000-----1010011"
+  val FLTS = M"1010000----------001-----1010011"
+  val FEQS = M"1010000----------010-----1010011"
 }
 
 object RV64F {
@@ -317,6 +330,19 @@ object DecodeTable {
   FCVTLUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUS, N, N, N, N),
   FCVTSL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSL, N, N, N, N),
   FCVTSLU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSLU, N, N, N, N),
+  FCVTWS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTWS, N, N, N, N),
+  FCVTWUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTWUS, N, N, N, N),
+  FCVTSW     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSW, N, N, N, N),
+  FCVTSWU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSWU, N, N, N, N),
+  FMVXW      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMVXW, N, N, N, N),
+  FMVWX      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFMVWX, N, N, N, N),
+  FCLASSS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FSGNJS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FSGNJNS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FSGNJXS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FLES       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FLTS       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FEQS       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
                                                                                                                               
   // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
   // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
