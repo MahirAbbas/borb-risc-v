@@ -179,6 +179,17 @@ case class Dispatch(
       (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001000")
     }
 
+    def isFdivsqrtS(insn: Bits): Bool = {
+      (insn(6 downto 0) === B"1010011") &&
+      ((insn(31 downto 25) === B"0001100") || (insn(31 downto 25) === B"0101100"))
+    }
+
+    def isFmaS(insn: Bits): Bool = {
+      ((insn(6 downto 0) === B"1000011") || (insn(6 downto 0) === B"1000111") ||
+        (insn(6 downto 0) === B"1001011") || (insn(6 downto 0) === B"1001111")) &&
+      (insn(26 downto 25) === B"00")
+    }
+
     def isFcvtIntToF(insn: Bits): Bool = {
       (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000")
     }
@@ -228,7 +239,7 @@ case class Dispatch(
         (stRd =/= 0)
       val stWritesFpRd = stValid &&
         (stRd =/= 0) &&
-        (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn) || isFminmaxS(stInsn) || isFaddsubS(stInsn) || isFmulS(stInsn))
+        (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn) || isFminmaxS(stInsn) || isFaddsubS(stInsn) || isFmulS(stInsn) || isFdivsqrtS(stInsn) || isFmaS(stInsn))
       when(stWritesIntRd) {
         regBusy(stRd.asUInt) := True
       }
@@ -250,12 +261,14 @@ case class Dispatch(
         (rs1 =/= 0) && regBusy(rs1.asUInt)
       val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
         (rs2 =/= 0) && regBusy(rs2.asUInt)
-      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn)
+      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || isFdivsqrtS(insn) || isFmaS(insn)
       val fpRs1Busy = fpReadsRs1 && (insn(19 downto 15) =/= 0) && fpRegBusy(insn(19 downto 15).asUInt)
-      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn)
+      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || ((insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001100")) || isFmaS(insn)
       val fpRs2Busy = fpReadsRs2 && (insn(24 downto 20) =/= 0) && fpRegBusy(insn(24 downto 20).asUInt)
+      val fpReadsRs3 = isFmaS(insn)
+      val fpRs3Busy = fpReadsRs3 && (insn(31 downto 27) =/= 0) && fpRegBusy(insn(31 downto 27).asUInt)
 
-      val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy)
+      val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy || fpRs3Busy)
       hazard.simPublic()
 
       haltWhen(hazard)

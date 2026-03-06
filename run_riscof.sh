@@ -2,6 +2,7 @@
 set -e
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/workspace_env.sh"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Configuration
 CONFIG_PATH="/Users/mahir/fun/borb/verif/riscof/config.ini"
@@ -10,6 +11,7 @@ ENV_PATH="/Users/mahir/fun/borb/verif/riscof/riscv-arch-test/riscv-test-suite/en
 SIM_DIR="/Users/mahir/fun/borb/verif/riscof/borb/sim"
 BORB_PLUGIN_PY="/Users/mahir/fun/borb/verif/riscof/borb/riscof_borb.py"
 SPIKE_PLUGIN_PY="/Users/mahir/fun/borb/verif/riscof/spike/riscof_spike.py"
+BLOOP_CONFIG="$ROOT_DIR/.bloop/projectname.json"
 
 # Parse arguments
 SKIP_GEN=false
@@ -309,11 +311,20 @@ PY
 patch_plugin_asm_warnings "$BORB_PLUGIN_PY"
 patch_plugin_asm_warnings "$SPIKE_PLUGIN_PY"
 
+run_scala_main() {
+  local main_class="$1"
+  if [[ -f "$BLOOP_CONFIG" ]]; then
+    "$ROOT_DIR/scripts/run_borb_main.sh" "$main_class"
+  else
+    sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain $main_class"
+  fi
+}
+
 echo "=== Borb RISCOF Run ==="
 
 if [[ "$SKIP_GEN" = false ]]; then
   echo "[1/3] Compiling SpinalHDL to Verilog (SoC)..."
-  sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain borb.SoC"
+  run_scala_main "borb.SoC"
 else
   echo "[1/3] Skipping Verilog generation"
 fi
@@ -440,8 +451,8 @@ FALLBACK_BUDGETS = {
     "rv32f.minmax": 200000,
     "rv32f.addsub": 200000,
     "rv32f.mul": 200000,
-    "rv32f.fma": 250000,
-    "rv32f.divsqrt": 400000,
+    "rv32f.fma": 8000000,
+    "rv32f.divsqrt": 12000000,
     "zb.core": 200000,
     "c.frontend": 200000,
     "rv64.base": 200000,

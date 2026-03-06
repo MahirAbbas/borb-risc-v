@@ -4,6 +4,16 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$ROOT_DIR/scripts/workspace_env.sh"
 SIM_DIR="$ROOT_DIR/verif/riscof/borb/sim"
+BLOOP_CONFIG="$ROOT_DIR/.bloop/projectname.json"
+
+run_scala_main() {
+  local main_class="$1"
+  if [[ -f "$BLOOP_CONFIG" ]]; then
+    "$ROOT_DIR/scripts/run_borb_main.sh" "$main_class"
+  else
+    sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain $main_class"
+  fi
+}
 
 SKIP_GEN=false
 SKIP_BUILD=false
@@ -56,7 +66,7 @@ done
 
 if [[ "$SKIP_GEN" = false ]]; then
   echo "[1/3] Generating Verilog (sbt runMain borb.SoC)..."
-  sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain borb.SoC"
+  run_scala_main "borb.SoC"
 else
   echo "[1/3] Skipping Verilog generation"
 fi

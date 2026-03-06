@@ -132,9 +132,15 @@ object RV64A {
 object RV32F {
   val FLW = M"-----------------010-----0000111"
   val FSW = M"-----------------010-----0100111"
+  val FMADDS = M"-----00------------------1000011"
+  val FMSUBS = M"-----00------------------1000111"
+  val FNMSUBS = M"-----00------------------1001011"
+  val FNMADDS = M"-----00------------------1001111"
   val FADDS = M"0000000------------------1010011"
   val FSUBS = M"0000100------------------1010011"
   val FMULS = M"0001000------------------1010011"
+  val FDIVS = M"0001100------------------1010011"
+  val FSQRTS = M"010110000000-------------1010011"
   val FCVTWS = M"110000000000-------------1010011"
   val FCVTWUS = M"110000000001-------------1010011"
   val FCVTSW = M"110100000000-------------1010011"
@@ -257,6 +263,10 @@ object DecodeTable {
   SD              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSD, N, N, N, Y),
   FLW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.IMMED,  N, I_IMM, uopLW, N, N, N, N),
   FSW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA,  N, S_IMM, uopSW, N, N, N, Y),
+  FMADDS          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopNOP, N, N, N, N),
+  FMSUBS          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopNOP, N, N, N, N),
+  FNMSUBS         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopNOP, N, N, N, N),
+  FNMADDS         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopNOP, N, N, N, N),
   FADDS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
   FSUBS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
   FMULS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
@@ -344,6 +354,8 @@ object DecodeTable {
   FCVTSWU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSWU, N, N, N, N),
   FMVXW      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMVXW, N, N, N, N),
   FMVWX      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFMVWX, N, N, N, N),
+  FDIVS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
+  FSQRTS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
   FCLASSS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
   FSGNJS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
   FSGNJNS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP, N, N, N, N),
