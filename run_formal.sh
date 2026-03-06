@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/workspace_env.sh"
+
 # Configuration
 CORE_DIR="formal/cores/borb"
 CHECKS_DIR="$CORE_DIR/checks"
@@ -52,7 +54,7 @@ if [ "$SKIP_COMPILE" = true ]; then
     echo "[1/3] Skipping SpinalHDL compile"
 else
     echo "[1/3] Compiling SpinalHDL to Verilog..."
-    sbt "runMain borb.CPU"
+    sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain borb.CPU"
 fi
 
 # 2. Re-generate formal checks (if needed, or just to be safe)

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/workspace_env.sh"
+
 # Configuration
 CONFIG_PATH="/Users/mahir/fun/borb/verif/riscof/config.ini"
 SUITE_PATH="/Users/mahir/fun/borb/verif/riscof/riscv-arch-test/riscv-test-suite"
@@ -270,9 +272,7 @@ if [[ -d "$(pwd)/oss-cad-suite/bin" ]]; then
 fi
 
 if [ -n "${PYENV_VERSION:-}" ]; then
-  if [ -d "${HOME}/.pyenv/versions/${PYENV_VERSION}/bin" ]; then
-    export PATH="${HOME}/.pyenv/versions/${PYENV_VERSION}/bin:$PATH"
-  fi
+  :
 elif command -v pyenv >/dev/null 2>&1; then
   eval "$(pyenv init -)"
   pyenv shell 3.8.18
@@ -313,7 +313,7 @@ echo "=== Borb RISCOF Run ==="
 
 if [[ "$SKIP_GEN" = false ]]; then
   echo "[1/3] Compiling SpinalHDL to Verilog (SoC)..."
-  sbt "runMain borb.SoC"
+  sbt --batch --no-server --no-share --no-global --sbt-dir "$SBT_GLOBAL_DIR" --sbt-boot "$SBT_BOOT_DIR" --ivy "$IVY_HOME" "runMain borb.SoC"
 else
   echo "[1/3] Skipping Verilog generation"
 fi

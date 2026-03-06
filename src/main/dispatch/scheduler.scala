@@ -250,9 +250,9 @@ case class Dispatch(
         (rs1 =/= 0) && regBusy(rs1.asUInt)
       val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
         (rs2 =/= 0) && regBusy(rs2.asUInt)
-      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn)
+      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn)
       val fpRs1Busy = fpReadsRs1 && (insn(19 downto 15) =/= 0) && fpRegBusy(insn(19 downto 15).asUInt)
-      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn)
+      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn)
       val fpRs2Busy = fpReadsRs2 && (insn(24 downto 20) =/= 0) && fpRegBusy(insn(24 downto 20).asUInt)
 
       val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy)
