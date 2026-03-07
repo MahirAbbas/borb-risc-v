@@ -1,5 +1,11 @@
 {
   "families": {
+    "c.frontend": {
+      "budget": 390632,
+      "max_pass_cycles": 97408,
+      "scale": 4.0,
+      "slack": 1000
+    },
     "default": {
       "budget": 46208,
       "max_pass_cycles": 7368,
@@ -62,6 +68,70 @@
     }
   },
   "tests": {
+    "cadd-01.S": {
+      "budget": 390632,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 97408,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "caddi-01.S": {
+      "budget": 147992,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 36748,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "cbeqz-01.S": {
+      "budget": 64120,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 15780,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "cbnez-01.S": {
+      "budget": 63400,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 15600,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "cj-01.S": {
+      "budget": 10136,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 2284,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "cjr-01.S": {
+      "budget": 44872,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 10968,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "clw-01.S": {
+      "budget": 15544,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 3636,
+      "scale": 4.0,
+      "slack": 1000
+    },
+    "csw-01.S": {
+      "budget": 52984,
+      "budget_class": "c.frontend",
+      "family": "c.frontend-perf",
+      "max_pass_cycles": 12996,
+      "scale": 4.0,
+      "slack": 1000
+    },
     "fadd_b1-01.S": {
       "budget": 446048,
       "budget_class": "rv32f.addsub",
@@ -1339,6 +1409,14 @@
       "budget_class": "default",
       "family": "rv64.base",
       "max_pass_cycles": 4408,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign1-cjr-01.S": {
+      "budget": 10304,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 1384,
       "scale": 6.0,
       "slack": 2000
     }
