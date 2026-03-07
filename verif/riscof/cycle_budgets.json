@@ -158,6 +158,150 @@
       "scale": 4.0,
       "slack": 500
     },
+    "fcvt.l.s_b1-01.S": {
+      "budget": 24920,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3820,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b22-01.S": {
+      "budget": 41720,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 6620,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b23-01.S": {
+      "budget": 30440,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 4740,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b24-01.S": {
+      "budget": 55640,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 8940,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b27-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b28-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.l.s_b29-01.S": {
+      "budget": 45128,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 7188,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b1-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b22-01.S": {
+      "budget": 41768,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 6628,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b23-01.S": {
+      "budget": 30440,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 4740,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b24-01.S": {
+      "budget": 55640,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 8940,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b27-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b28-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.lu.s_b29-01.S": {
+      "budget": 45128,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 7188,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.s.l_b25-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.s.l_b26-01.S": {
+      "budget": 38408,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 6068,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.s.lu_b25-01.S": {
+      "budget": 24968,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 3828,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "fcvt.s.lu_b26-01.S": {
+      "budget": 38408,
+      "budget_class": "rv32f.convert",
+      "family": "rv32f.convert",
+      "max_pass_cycles": 6068,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "fcvt.s.w_b25-01.S": {
       "budget": 24968,
       "budget_class": "rv32f.convert",
