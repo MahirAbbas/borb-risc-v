@@ -38,7 +38,10 @@ case class FpuRegisterFile(
     val writes = Vec(slave(FpuRegFileWritePort(flen)), writePorts)
   }
 
-  val mem = Mem.fill(32)(Bits(flen bits)).init(Seq.fill(32)(B(0, flen bits)))
+  private val initValue =
+    if (flen == 64) B(BigInt("FFFFFFFF00000000", 16), flen bits) else B(0, flen bits)
+
+  val mem = Mem.fill(32)(Bits(flen bits)).init(Seq.fill(32)(initValue))
 
   for (rp <- io.reads) {
     val raw = mem.readAsync(rp.address)
