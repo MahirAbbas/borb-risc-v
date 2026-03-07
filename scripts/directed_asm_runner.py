@@ -82,6 +82,7 @@ def main() -> int:
     ap.add_argument("--mabi", default="lp64", help="ABI string passed to GCC")
     ap.add_argument("--max-cycles", type=int, default=500000, help="Simulation cycle budget")
     ap.add_argument("--trace", action="store_true", help="Emit FST waveform")
+    ap.add_argument("--trace-commit", action="store_true", help="Emit per-commit JSON trace")
     ap.add_argument("--golden-signature", default="", help="Optional signature file to diff against")
     args = ap.parse_args()
 
@@ -103,7 +104,13 @@ def main() -> int:
     ensure_tool(objdump)
 
     if args.rebuild_sim:
-        mk = run_cmd(["make", "-C", str(sim_make_dir)])
+        clean = run_cmd(["make", "-C", str(sim_make_dir), "clean"])
+        if clean.returncode != 0:
+            raise SystemExit("failed to clean simulator")
+        mk_cmd = ["make", "-C", str(sim_make_dir)]
+        if args.trace:
+            mk_cmd.extend(["TRACE=1", "FAST=0"])
+        mk = run_cmd(mk_cmd)
         if mk.returncode != 0:
             raise SystemExit("failed to build simulator")
 
@@ -168,13 +175,13 @@ def main() -> int:
         hex(tohost),
         "--signature",
         str(signature),
-        "--trace-commit",
-        str(commit_trace),
         "--report-tohost",
         str(tohost_txt),
         "--max-cycles",
         str(args.max_cycles),
     ]
+    if args.trace_commit:
+        sim_cmd.extend(["--trace-commit", str(commit_trace)])
     if args.trace:
         sim_cmd.extend(["--fst", str(fst)])
 
@@ -202,7 +209,7 @@ def main() -> int:
         "elf": str(elf),
         "dump": str(dump),
         "signature": str(signature),
-        "commit_trace": str(commit_trace),
+        "commit_trace": str(commit_trace) if args.trace_commit else None,
         "wave": str(fst) if args.trace else None,
         "symbols": {
             "tohost": hex(tohost if tohost is not None else 0),

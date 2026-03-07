@@ -24,6 +24,7 @@ Useful options:
 
 - `--profile`: emit `perf.json` with hardware counters and derived CPI/IPC metrics.
 - `--trace`: emit waveform FST.
+- `--trace-commit`: emit per-commit JSON trace. Leave this off for speed.
 - `--rebuild-sim`: rebuild simulator before run.
 - `--march`, `--mabi`, `--xlen`: toolchain ISA/ABI selection.
 

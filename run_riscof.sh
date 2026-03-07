@@ -24,8 +24,11 @@ REPORT_RERUN=false
 SKIP_REPORT=false
 FAST_RV64F=false
 FAST_RV32F=false
-FAST_SIM=false
+FAST_SIM=true
+TRACE_SIM=false
 SIM_JOBS=""
+SIM_THREADS=""
+VERILATE_JOBS=""
 CYCLE_BUDGET_MODE="hybrid"
 CYCLE_BUDGET_SCALE=""
 CYCLE_BUDGET_SLACK=""
@@ -43,8 +46,12 @@ usage() {
   echo "  --skip-gen        Skip SpinalHDL -> Verilog generation (runMain borb.SoC)"
   echo "  --skip-build      Skip Verilator sim build (make -C verif/riscof/borb/sim)"
   echo "  --no-clean-build  Do not clean before Verilator build"
-  echo "  --fast-sim        Build simulator in fast mode (FAST=1, TRACE=0)"
+  echo "  --fast-sim        Build simulator in fast mode (default)"
+  echo "  --debug-sim       Build simulator without FAST=1 optimizations"
   echo "  --sim-jobs <n>    Parallel jobs for simulator build (make -j<n>)"
+  echo "  --sim-threads <n> Verilator runtime threads to bake into the simulator"
+  echo "  --verilate-jobs <n> Parallel jobs for Verilator code generation"
+  echo "  --trace-sim       Build simulator with FST trace support enabled"
   echo "  --skip-validate   Skip riscof validateyaml step"
   echo "  --clean           Pass --clean to riscof run"
   echo "  --report-rerun    Re-run failing tests while generating debug reports (slow)"
@@ -87,9 +94,25 @@ while [[ $# -gt 0 ]]; do
       FAST_SIM=true
       shift
       ;;
+    --debug-sim)
+      FAST_SIM=false
+      shift
+      ;;
     --sim-jobs)
       SIM_JOBS="$2"
       shift 2
+      ;;
+    --sim-threads)
+      SIM_THREADS="$2"
+      shift 2
+      ;;
+    --verilate-jobs)
+      VERILATE_JOBS="$2"
+      shift 2
+      ;;
+    --trace-sim)
+      TRACE_SIM=true
+      shift
       ;;
     --skip-validate)
       SKIP_VALIDATE=true
@@ -179,6 +202,16 @@ done
 
 if [[ -n "$SIM_JOBS" && ! "$SIM_JOBS" =~ ^[1-9][0-9]*$ ]]; then
   echo "Error: --sim-jobs expects a positive integer"
+  exit 2
+fi
+
+if [[ -n "$SIM_THREADS" && ! "$SIM_THREADS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: --sim-threads expects a positive integer"
+  exit 2
+fi
+
+if [[ -n "$VERILATE_JOBS" && ! "$VERILATE_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: --verilate-jobs expects a positive integer"
   exit 2
 fi
 
@@ -334,7 +367,24 @@ if [[ "$SKIP_BUILD" = false ]]; then
   MAKE_BUILD_ARGS=(-C "$SIM_DIR")
   if [[ "$FAST_SIM" = true ]]; then
     MAKE_BUILD_ARGS+=(FAST=1)
-    echo "      using fast sim mode (FAST=1, TRACE=0)"
+    echo "      using fast sim mode (FAST=1)"
+  else
+    MAKE_BUILD_ARGS+=(FAST=0)
+    echo "      using debug sim mode (FAST=0)"
+  fi
+  if [[ "$TRACE_SIM" = true ]]; then
+    MAKE_BUILD_ARGS+=(TRACE=1)
+    echo "      enabling FST trace support (TRACE=1)"
+  else
+    MAKE_BUILD_ARGS+=(TRACE=0)
+  fi
+  if [[ -n "$SIM_THREADS" ]]; then
+    MAKE_BUILD_ARGS+=(THREADS="$SIM_THREADS")
+    echo "      using threaded verilator runtime (THREADS=$SIM_THREADS)"
+  fi
+  if [[ -n "$VERILATE_JOBS" ]]; then
+    MAKE_BUILD_ARGS+=(VERILATE_JOBS="$VERILATE_JOBS")
+    echo "      using parallel verilator codegen (VERILATE_JOBS=$VERILATE_JOBS)"
   fi
   if [[ -n "$SIM_JOBS" ]]; then
     MAKE_BUILD_ARGS+=(-j"$SIM_JOBS")
