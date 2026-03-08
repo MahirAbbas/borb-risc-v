@@ -7,8 +7,8 @@
       "slack": 1000
     },
     "default": {
-      "budget": 46208,
-      "max_pass_cycles": 7368,
+      "budget": 808208,
+      "max_pass_cycles": 134368,
       "scale": 6.0,
       "slack": 2000
     },
@@ -68,21 +68,157 @@
     }
   },
   "tests": {
+    "add-01.S": {
+      "budget": 503240,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83540,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "addi-01.S": {
+      "budget": 280760,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 46460,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "addiw-01.S": {
+      "budget": 282992,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 46832,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "addw-01.S": {
+      "budget": 503000,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83500,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "and-01.S": {
+      "budget": 501752,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83292,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "andi-01.S": {
+      "budget": 281960,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 46660,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "auipc-01.S": {
+      "budget": 31880,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 4980,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "beq-01.S": {
+      "budget": 683696,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 113616,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "bge-01.S": {
+      "budget": 685280,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 113880,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "bgeu-01.S": {
+      "budget": 808208,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 134368,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "blt-01.S": {
+      "budget": 682424,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 113404,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "bltu-01.S": {
+      "budget": 802376,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 133396,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "bne-01.S": {
+      "budget": 692672,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 115112,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "cadd-01.S": {
-      "budget": 390632,
-      "budget_class": "c.frontend",
-      "family": "c.frontend-perf",
+      "budget": 586448,
+      "budget_class": "default",
+      "family": null,
       "max_pass_cycles": 97408,
-      "scale": 4.0,
-      "slack": 1000
+      "scale": 6.0,
+      "slack": 2000
     },
     "caddi-01.S": {
-      "budget": 147992,
-      "budget_class": "c.frontend",
-      "family": "c.frontend-perf",
+      "budget": 222488,
+      "budget_class": "default",
+      "family": null,
       "max_pass_cycles": 36748,
-      "scale": 4.0,
-      "slack": 1000
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "caddiw-01.S": {
+      "budget": 204824,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 33804,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "caddw-01.S": {
+      "budget": 547304,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 90884,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "cand-01.S": {
+      "budget": 541376,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 89896,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "candi-01.S": {
+      "budget": 204872,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 33812,
+      "scale": 6.0,
+      "slack": 2000
     },
     "cbeqz-01.S": {
       "budget": 64120,
@@ -108,6 +244,14 @@
       "scale": 4.0,
       "slack": 1000
     },
+    "cjalr-01.S": {
+      "budget": 70232,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 11372,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "cjr-01.S": {
       "budget": 44872,
       "budget_class": "c.frontend",
@@ -115,6 +259,14 @@
       "max_pass_cycles": 10968,
       "scale": 4.0,
       "slack": 1000
+    },
+    "clui-01.S": {
+      "budget": 15560,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2260,
+      "scale": 6.0,
+      "slack": 2000
     },
     "clw-01.S": {
       "budget": 15544,
@@ -124,6 +276,54 @@
       "scale": 4.0,
       "slack": 1000
     },
+    "cor-01.S": {
+      "budget": 545936,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 90656,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "cslli-01.S": {
+      "budget": 53912,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 8652,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "csrai-01.S": {
+      "budget": 53936,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 8656,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "csrli-01.S": {
+      "budget": 54200,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 8700,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "csub-01.S": {
+      "budget": 541208,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 89868,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "csubw-01.S": {
+      "budget": 539744,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 89624,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "csw-01.S": {
       "budget": 52984,
       "budget_class": "c.frontend",
@@ -131,6 +331,14 @@
       "max_pass_cycles": 12996,
       "scale": 4.0,
       "slack": 1000
+    },
+    "cxor-01.S": {
+      "budget": 538232,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 89372,
+      "scale": 6.0,
+      "slack": 2000
     },
     "fadd_b1-01.S": {
       "budget": 446048,
@@ -603,6 +811,14 @@
       "max_pass_cycles": 194552,
       "scale": 20.0,
       "slack": 10000
+    },
+    "fence-01.S": {
+      "budget": 10160,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 1360,
+      "scale": 6.0,
+      "slack": 2000
     },
     "feq_b1-01.S": {
       "budget": 288724,
@@ -1412,11 +1628,379 @@
       "scale": 6.0,
       "slack": 2000
     },
+    "jal-01.S": {
+      "budget": 106688,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 17448,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "jalr-01.S": {
+      "budget": 73088,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 11848,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lb-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lbu-align-01.S": {
+      "budget": 43688,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6948,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "ld-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lh-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lhu-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lui-01.S": {
+      "budget": 20936,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3156,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lw-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "lwu-align-01.S": {
+      "budget": 42632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 6772,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-beq-01.S": {
+      "budget": 14216,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2036,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-bge-01.S": {
+      "budget": 14096,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2016,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-bgeu-01.S": {
+      "budget": 14096,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2016,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-blt-01.S": {
+      "budget": 14048,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2008,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-bltu-01.S": {
+      "budget": 14096,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2016,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-bne-01.S": {
+      "budget": 14096,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2016,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign-jal-01.S": {
+      "budget": 16568,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2428,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign1-cjalr-01.S": {
+      "budget": 10184,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 1364,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "misalign1-cjr-01.S": {
       "budget": 10304,
       "budget_class": "default",
       "family": null,
       "max_pass_cycles": 1384,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign1-jalr-01.S": {
+      "budget": 10592,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 1432,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign2-jalr-01.S": {
+      "budget": 15392,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2232,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "or-01.S": {
+      "budget": 503768,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83628,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "ori-01.S": {
+      "budget": 213416,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 35236,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sb-align-01.S": {
+      "budget": 76448,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 12408,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sd-align-01.S": {
+      "budget": 74960,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 12160,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sh-align-01.S": {
+      "budget": 75560,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 12260,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sll-01.S": {
+      "budget": 62648,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10108,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slli-01.S": {
+      "budget": 52568,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8428,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slliw-01.S": {
+      "budget": 52760,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8460,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sllw-01.S": {
+      "budget": 62288,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10048,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slt-01.S": {
+      "budget": 503312,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83552,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slti-01.S": {
+      "budget": 279632,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 46272,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sltiu-01.S": {
+      "budget": 328472,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 54412,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sltu-01.S": {
+      "budget": 585704,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 97284,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sra-01.S": {
+      "budget": 24296,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3716,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srai-01.S": {
+      "budget": 52640,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8440,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sraiw-01.S": {
+      "budget": 52928,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8488,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sraw-01.S": {
+      "budget": 23336,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3556,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srl-01.S": {
+      "budget": 62600,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10100,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srli-01.S": {
+      "budget": 53408,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8568,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srliw-01.S": {
+      "budget": 53240,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8540,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srlw-01.S": {
+      "budget": 63488,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10248,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sub-01.S": {
+      "budget": 498776,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 82796,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "subw-01.S": {
+      "budget": 504392,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83732,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sw-align-01.S": {
+      "budget": 75128,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 12188,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "xor-01.S": {
+      "budget": 503048,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 83508,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "xori-01.S": {
+      "budget": 282752,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 46792,
       "scale": 6.0,
       "slack": 2000
     }

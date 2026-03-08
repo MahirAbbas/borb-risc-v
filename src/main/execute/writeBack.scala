@@ -11,11 +11,13 @@ object WriteBack extends AreaObject {
   val RESULT = Payload(new RegFileWrite())
 }
 
-case class WriteBack(wbNode: CtrlLink, writePort: RegFileWrite) extends Area {
+case class WriteBack(wbNode: CtrlLink, writePort: RegFileWrite, currentEpoch: UInt) extends Area {
   val logic = new wbNode.Area {
+     val epochMatches = up(SPEC_EPOCH) === currentEpoch
+     val redirectingInsn = up(SELF_REDIRECT)
      // Retire every lane-selected instruction (including traps).
      // Traps still suppress register writeback via RESULT.valid path below.
-     up(COMMIT) := up(LANE_SEL)
+     up(COMMIT) := up(LANE_SEL) && (epochMatches || redirectingInsn)
      
      // Drive write port
      writePort.address := up(WriteBack.RESULT).address

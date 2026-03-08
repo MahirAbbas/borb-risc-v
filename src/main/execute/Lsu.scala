@@ -45,7 +45,7 @@ object Lsu extends AreaObject {
   val MEM_RDATA = Payload(Bits(64 bits)).setName("LSU_MEM_RDATA")
 }
 
-case class Lsu(stage: CtrlLink) extends Area {
+case class Lsu(stage: CtrlLink, currentEpoch: UInt) extends Area {
   import Lsu._
   import borb.dispatch.Dispatch._
 
@@ -55,6 +55,7 @@ case class Lsu(stage: CtrlLink) extends Area {
   }
 
   val logic = new stage.Area {
+    val epochMatches = up(SPEC_EPOCH) === currentEpoch
     val amoSwapW = up(MicroCode) === uopAMOSWAPW
     val amoSwapD = up(MicroCode) === uopAMOSWAPD
     val amoAddW = up(MicroCode) === uopAMOADDW
@@ -201,11 +202,11 @@ case class Lsu(stage: CtrlLink) extends Area {
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val suppress = misaligned || illegalInsn || io.pmpFault
     // Firing logic
-    val fireLoad = isLoadBase && up(VALID) && !waitingResponse
-    val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && !suppress && !amoWaitingResponse && !amoStorePending
-    val amoIssueStore = isAmo && up(VALID) && up(LANE_SEL) && !suppress && amoStorePending
+    val fireLoad = isLoadBase && up(VALID) && epochMatches && !waitingResponse
+    val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !suppress && !amoWaitingResponse && !amoStorePending
+    val amoIssueStore = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !suppress && amoStorePending
     
-    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && up(VALID) && up(LANE_SEL) && !suppress) || amoIssueLoad || amoIssueStore
+    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && up(VALID) && up(LANE_SEL) && epochMatches && !suppress) || amoIssueLoad || amoIssueStore
     io.dBus.cmd.payload.address := effectiveAddr
     io.dBus.cmd.payload.data := Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData)
     io.dBus.cmd.payload.mask := writeMask
@@ -214,7 +215,7 @@ case class Lsu(stage: CtrlLink) extends Area {
 
     // Stores must wait for command acceptance. Otherwise writes can be dropped
     // when the bus is temporarily not ready.
-    val storeBlocked = isStoreBase && up(VALID) && up(LANE_SEL) && !suppress && !io.dBus.cmd.ready
+    val storeBlocked = isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches && !suppress && !io.dBus.cmd.ready
     haltWhen(storeBlocked)
 
     // Stall Logic
@@ -224,7 +225,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     val latchedRspData = Reg(Bits(64 bits))
     val responseArriving = isLoadBase && up(VALID) && waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
     
-    when(isLoadBase && up(VALID) && !suppress) {
+    when(isLoadBase && up(VALID) && epochMatches && !suppress) {
         when(!waitingResponse) {
              when(io.dBus.cmd.ready && !suppress && up(LANE_SEL)) {
                  waitingResponse := True
@@ -245,7 +246,7 @@ case class Lsu(stage: CtrlLink) extends Area {
              }
         }
     }
-    when(isLoadBase && up(VALID) && suppress) {
+    when(isLoadBase && up(VALID) && (!epochMatches || suppress)) {
       // Faulting/suppressed loads must not enter the response wait state.
       waitingResponse := False
     }
@@ -253,7 +254,7 @@ case class Lsu(stage: CtrlLink) extends Area {
     // AMO implementation: read old value, compute/store new value, write old
     // value to rd after store command is accepted.
     val amoResponseArriving = isAmo && up(VALID) && amoWaitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === amoWaitId)
-    when(isAmo && up(VALID) && !suppress) {
+    when(isAmo && up(VALID) && epochMatches && !suppress) {
       when(!amoWaitingResponse && !amoStorePending) {
         when(io.dBus.cmd.ready && up(LANE_SEL)) {
           amoWaitingResponse := True
@@ -316,7 +317,7 @@ case class Lsu(stage: CtrlLink) extends Area {
         }
       }
     }
-    when(isAmo && up(VALID) && suppress) {
+    when(isAmo && up(VALID) && (!epochMatches || suppress)) {
       amoWaitingResponse := False
       amoStorePending := False
     }

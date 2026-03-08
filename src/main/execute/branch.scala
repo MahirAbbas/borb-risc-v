@@ -96,11 +96,11 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     when(isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire) {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
-        down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
+        down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt
         val linkStep = Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
-        down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | (pcArch + linkStep).asBits
+        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | (pcArch + linkStep).asBits
         // Squash writeback if trapping
-        down(WriteBack.RESULT).valid := (LEGAL === YESNO.Y) && up(VALID) && !willTrap
+        down(WriteBack.RESULT).valid.allowOverride := (up(LEGAL) === YESNO.Y) && up(VALID) && !willTrap
       }
     }
   }

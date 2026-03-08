@@ -79,6 +79,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 5).foreach { 
       case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
     }
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
+      case (_, ctrl) => ctrl.up(SELF_REDIRECT).setAsReg().init(False)
+    }
     // Keep speculation epoch instruction-local across stalls/flushes.
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(SPEC_EPOCH).setAsReg().init(0)
@@ -88,6 +91,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
     }
+
+    // Global speculation epoch. Keep this wide enough to avoid wraparound
+    // aliasing under branch-heavy tests.
+    val currentEpoch = Reg(UInt(16 bits)) init 0
 
     val pc = new PC(pipeline.ctrl(0), addressWidth = 64, withCompressed = config.cExtensionEnabled)
     //pc.jump.setIdle()
@@ -111,7 +118,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
-    val lsu = new borb.execute.Lsu(pipeline.ctrl(6))
+    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), currentEpoch)
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     lsuBus.cmd << lsu.io.dBus.cmd
@@ -121,10 +128,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // selectively (benchmark flows only).
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
     io.perf := perfCounters.counters
-
-    // Global speculation epoch. Keep this wide enough to avoid wraparound
-    // aliasing under branch-heavy tests.
-    val currentEpoch = Reg(UInt(16 bits)) init 0
 
     // Aggregate TRAP signals in Stage 6
     val execStage = pipeline.ctrl(6)
@@ -1281,6 +1284,24 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     decode.branchResolved := branch.branchResolved
 
+    // Keep younger instructions from overtaking unresolved control-flow ops.
+    // This is conservative, but it closes the wrong-path window while the
+    // front-end/control-flow cleanup is still in progress.
+    val srcCtrl = pipeline.ctrl(5)
+    val exeCtrl = pipeline.ctrl(6)
+    val srcHasControlFlow = srcCtrl.up.isValid &&
+      srcCtrl(Decoder.VALID) &&
+      srcCtrl(borb.common.Common.LANE_SEL) &&
+      (srcCtrl(Decoder.EXECUTION_UNIT) === borb.frontend.ExecutionUnitEnum.BR)
+    val exeHasControlFlow = exeCtrl.up.isValid &&
+      exeCtrl(Decoder.VALID) &&
+      exeCtrl(borb.common.Common.LANE_SEL) &&
+      (exeCtrl(Decoder.EXECUTION_UNIT) === borb.frontend.ExecutionUnitEnum.BR)
+    val controlHazardBusy = srcHasControlFlow || exeHasControlFlow
+    Array(2, 3, 4).map(pipeline.ctrl(_)).foreach { ctrl =>
+      ctrl.haltWhen(controlHazardBusy)
+    }
+
     // ========== Speculation Epoch Architecture ==========
     // Clean, scalable speculation handling for in-order superscalar CPU
     //
@@ -1296,6 +1317,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val trapRedirect = trapLogic.trapFire && execEpochMatches
     val mretRedirect = trapLogic.mretFire && execEpochMatches
     val redirectPipeline = flushPipeline || trapRedirect || mretRedirect
+    pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
     pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect
     pc.jump.payload.target := mretRedirect ? trapLogic.mretTarget | branch.logic.jumpCmd.payload.target
     pc.jump.payload.is_jump := mretRedirect || branch.logic.jumpCmd.payload.is_jump
@@ -1316,23 +1338,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     fetch.io.flush := redirectPipeline
     fetch.io.currentEpoch := currentEpoch
     
-    // Flush execution stages (Decode, Dispatch, Src) unconditionally on redirect.
-    // In this in-order pipeline, stages 3..5 only hold younger instructions when
-    // stage 6 resolves a branch/jump, so all must be squashed.
-    // Note: Stage 6 (Execute) is excluded - the redirecting instruction executes.
-    //       Stage 7 (Writeback) is excluded - older committed state.
-    val executionStages = Array(3, 4, 5).map(pipeline.ctrl(_))
+    // Flush fetched/decode-side younger instructions on redirect.
+    // Stage 2 can still hold a wrong-path fetch packet when stage 6 resolves.
+    // Stages 3..5 are decode/dispatch/src and are always younger at that point.
+    // Stage 6 executes the redirecting instruction and stage 7 is older state.
+    val executionStages = Array(2, 3, 4, 5).map(pipeline.ctrl(_))
     executionStages.foreach { ctrl =>
       ctrl.throwWhen(redirectPipeline)
     }
-
-    // Upstream redirect throws (fetch/decode/dispatch/src) already squash
-    // younger-path work. Avoid execute-stage epoch throw here because it can
-    // incorrectly drop the first instruction at a redirect target.
-    
-    // Fetch redirect cleanup is handled by fetch.io.flush + epoch filtering in
-    // fetch. Avoid explicit throws on stages 1/2 to prevent dropping the first
-    // instruction at a redirect target.
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
@@ -1342,7 +1355,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     // Wire event signals to performance counters
     perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
-    perfCounters.fetchStall     := !fetch.fifo.io.pop.valid       // Fetch stalled waiting for instruction
+    perfCounters.fetchStall     := !fetch.sourceAvailable         // Fetch stalled waiting for instruction
     perfCounters.memStall       := lsu.logic.waitingResponse     // Waiting for load response
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
@@ -1352,11 +1365,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     //val dispCtrl = pipeline.ctrl(4)
 
     import borb.execute.WriteBack
-    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0))
+    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0), currentEpoch)
     val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
-      fetch.io.readCmd.simPublic()
+      fetch.io.source.simPublic()
       pc.PC_cur.simPublic()
 
       val simDebug = new borb.formal.SimDebugPlugin(
@@ -1368,39 +1381,15 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       )
     }
 
-    // Fetch -> AXI4Shared bridge (read-only)
-    val fetchReqAddrQ = StreamFifo(UInt(64 bits), depth = 8)
-    fetchReqAddrQ.io.push.valid := fetch.io.readCmd.cmd.valid && io.iAxi.arw.ready
-    fetchReqAddrQ.io.push.payload := fetch.io.readCmd.cmd.address
-
-    io.iAxi.arw.valid := fetch.io.readCmd.cmd.valid && fetchReqAddrQ.io.push.ready
-    io.iAxi.arw.addr := fetch.io.readCmd.cmd.address
-    io.iAxi.arw.id := fetch.io.readCmd.cmd.id.resized
-    io.iAxi.arw.len := 0
-    io.iAxi.arw.size := log2Up(config.xlen / 8)
-    io.iAxi.arw.burst := Axi4.burst.INCR
-    io.iAxi.arw.write := False
-    fetch.io.readCmd.cmd.ready := io.iAxi.arw.ready && fetchReqAddrQ.io.push.ready
-
-    io.iAxi.r.ready := fetchReqAddrQ.io.pop.valid
-    fetchReqAddrQ.io.pop.ready := io.iAxi.r.fire
-
-    val fetchRspValid = RegInit(False)
-    val fetchRspData = Reg(Bits(64 bits)) init(0)
-    val fetchRspAddr = Reg(UInt(64 bits)) init(0)
-    val fetchRspId = Reg(UInt(16 bits)) init(0)
-
-    fetchRspValid := io.iAxi.r.fire
-    when(io.iAxi.r.fire) {
-      fetchRspData := io.iAxi.r.data
-      fetchRspAddr := fetchReqAddrQ.io.pop.payload
-      fetchRspId := io.iAxi.r.id.resized
-    }
-
-    fetch.io.readCmd.rsp.valid := fetchRspValid
-    fetch.io.readCmd.rsp.data := fetchRspData
-    fetch.io.readCmd.rsp.address := fetchRspAddr
-    fetch.io.readCmd.rsp.id := fetchRspId
+    val fetchBridge = FetchBusBridge(
+      FrontendConfig(
+        addressWidth = config.xlen,
+        dataWidth = config.xlen,
+        withCompressed = config.cExtensionEnabled
+      ),
+      io.iAxi,
+      fetch.io.source
+    )
 
     io.iAxi.w.valid := False
     io.iAxi.w.data := 0

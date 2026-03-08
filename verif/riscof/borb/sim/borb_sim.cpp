@@ -405,6 +405,12 @@ int main(int argc, char** argv) {
           << " trap=" << (int)top->io_dbg_commitTrap
           << " rd=" << (int)top->io_dbg_commitRd
           << " we=" << (int)top->io_dbg_commitWe
+          << " f_pc=0x" << std::hex << (uint64_t)top->io_dbg_f_pc
+          << " d_pc=0x" << (uint64_t)top->io_dbg_d_pc
+          << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
+          << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
+          << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
+          << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_PC
           << std::endl;
       stall_reported = true;
     }
