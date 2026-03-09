@@ -3,10 +3,10 @@ package borb.fetch
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
+import spinal.lib.bus.amba4.axi._
 
 import borb.fetch.PC
 import borb.frontend.Decoder.INSTRUCTION
-import borb.memory._
 import borb.common.Common._
 import spinal.core.sim._
 
@@ -19,36 +19,71 @@ case class Fetch(
   rspStage: CtrlLink,
   addressWidth: Int,
   dataWidth: Int,
+  idWidth: Int = 16,
   withCompressed: Boolean = false
 ) extends Area {
   import Fetch._
   val ARCH_BASE = U(BigInt("80000000", 16), addressWidth bits)
   def archAddr(addr: UInt): UInt = Mux(addr < ARCH_BASE, addr + ARCH_BASE, addr)
 
+  private val axiConfig = Axi4Config(
+    addressWidth = addressWidth,
+    dataWidth = dataWidth,
+    idWidth = idWidth,
+    useId = true,
+    useRegion = false,
+    useLock = false,
+    useQos = false,
+    useProt = false,
+    useCache = false
+  )
+
   val io = new Bundle {
-    val readCmd = new RamFetchBus(addressWidth, dataWidth, idWidth = 16)
+    val iAxi = Axi4Shared(axiConfig)
     val flush = Bool()
     val currentEpoch = UInt(16 bits)  // Global speculation epoch from CPU
     val pcAdvance = Bool()
     val pcStep = UInt(3 bits)
   }
 
-  // Fetch Packet: instruction data + epoch tag
-  case class FetchPacket() extends Bundle {
+  // One outstanding request in v1, but keep burst metadata so extending to
+  // linefills later doesn't require a new internal contract.
+  case class FetchRequest() extends Bundle {
+    val baseAddr = UInt(addressWidth bits)
+    val epoch = UInt(16 bits)
+    val burstLen = UInt(8 bits)
+    val beatIndex = UInt(8 bits)
+  }
+
+  case class FetchBeat() extends Bundle {
     val data = Bits(dataWidth bits)
     val epoch = UInt(16 bits)
     val beatAddr = UInt(addressWidth bits)
+    val beatIndex = UInt(8 bits)
+    val burstLast = Bool()
   }
-  
-  val fifo = StreamFifo(FetchPacket(), depth = 2)
+
+  val fifo = StreamFifo(FetchBeat(), depth = 2)
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
-  
-  // Track inflight requests to prevent FIFO overflow
-  val inflight = RegInit(U(0, 4 bits))
-  val cmdFire = io.readCmd.cmd.fire
-  val rspFire = io.readCmd.rsp.valid
-  inflight := inflight + U(cmdFire) - U(rspFire)
+
+  io.iAxi.arw.valid := False
+  io.iAxi.arw.addr := 0
+  io.iAxi.arw.id := 0
+  io.iAxi.arw.len := 0
+  io.iAxi.arw.size := log2Up(dataWidth / 8)
+  io.iAxi.arw.burst := Axi4.burst.INCR
+  io.iAxi.arw.write := False
+  io.iAxi.w.valid := False
+  io.iAxi.w.data := 0
+  io.iAxi.w.strb := 0
+  io.iAxi.w.last := False
+  io.iAxi.b.ready := True
+
+  val pendingReqValid = RegInit(False)
+  val pendingReq = Reg(FetchRequest()) init(FetchRequest().getZero)
+  val inflight = UInt(4 bits)
+  inflight := pendingReqValid.asUInt.resize(4)
 
   // Epoch/ID handshake:
   // - bump epoch on redirect
@@ -74,16 +109,25 @@ case class Fetch(
     replayGuardValid := False
   }
 
-  // Connect memory response to FIFO
-  // Push ALL responses with their epoch tag (no filtering at push time)
-  val rspEpoch = io.readCmd.rsp.id
-  fifo.io.push.valid := io.readCmd.rsp.valid
-  fifo.io.push.payload.data := io.readCmd.rsp.data
-  fifo.io.push.payload.epoch := rspEpoch
-  fifo.io.push.payload.beatAddr := io.readCmd.rsp.address
-  
-  // Also flush FIFO storage when io.flush is asserted
+  val beatBytes = dataWidth / 8
+  val rspBeatAddr = UInt(addressWidth bits)
+  rspBeatAddr := (pendingReq.baseAddr + (pendingReq.beatIndex.resize(addressWidth bits) << log2Up(beatBytes))).resized
+  fifo.io.push.valid := io.iAxi.r.valid && pendingReqValid
+  fifo.io.push.payload.data := io.iAxi.r.data
+  fifo.io.push.payload.epoch := pendingReq.epoch
+  fifo.io.push.payload.beatAddr := rspBeatAddr
+  fifo.io.push.payload.beatIndex := pendingReq.beatIndex
+  fifo.io.push.payload.burstLast := io.iAxi.r.last
+  io.iAxi.r.ready := fifo.io.push.ready && pendingReqValid
   fifo.io.flush := io.flush
+
+  when(io.iAxi.r.fire) {
+    when(io.iAxi.r.last) {
+      pendingReqValid := False
+    } otherwise {
+      pendingReq.beatIndex := pendingReq.beatIndex + 1
+    }
+  }
 
   val cmdArea = new cmdStage.Area {
     // 64-bit fetch beat base address
@@ -96,12 +140,21 @@ case class Fetch(
     val reqAddr = UInt(addressWidth bits)
     reqAddr := needSecondBeat ? secondBeatAddr | beatAddr
 
-    io.readCmd.cmd.valid := cmdStage.up.isValid && (inflight === 0) && !io.flush
-    io.readCmd.cmd.payload.address := reqAddr
-    io.readCmd.cmd.payload.id := activeEpoch
+    io.iAxi.arw.valid.allowOverride := cmdStage.up.isValid && !pendingReqValid && !io.flush
+    io.iAxi.arw.addr.allowOverride := reqAddr
+    io.iAxi.arw.id.allowOverride := activeEpoch.resized
+    io.iAxi.arw.len.allowOverride := 0
 
     // Stall until request is accepted.
-    haltWhen(!io.readCmd.cmd.fire)
+    haltWhen(!io.iAxi.arw.fire)
+
+    when(io.iAxi.arw.fire) {
+      pendingReqValid := True
+      pendingReq.baseAddr := reqAddr
+      pendingReq.epoch := activeEpoch
+      pendingReq.burstLen := 0
+      pendingReq.beatIndex := 0
+    }
   }
 
   val rspArea = new rspStage.Area {
