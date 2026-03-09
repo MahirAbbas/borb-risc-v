@@ -13,6 +13,7 @@ case class PerfCountersBundle() extends Bundle {
   val stallsHazard  = UInt(64 bits)
   val stallsFetch   = UInt(64 bits)
   val stallsMem     = UInt(64 bits)
+  val stallsBackend = UInt(64 bits)
   val branches      = UInt(64 bits)
   val branchesTaken = UInt(64 bits)
   val flushes       = UInt(64 bits)
@@ -40,6 +41,7 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val stallsHazard  = Reg(UInt(64 bits)) init 0
   val stallsFetch   = Reg(UInt(64 bits)) init 0
   val stallsMem     = Reg(UInt(64 bits)) init 0
+  val stallsBackend = Reg(UInt(64 bits)) init 0
   val branches      = Reg(UInt(64 bits)) init 0
   val branchesTaken = Reg(UInt(64 bits)) init 0
   val flushes       = Reg(UInt(64 bits)) init 0
@@ -88,6 +90,7 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val hazardStall    = Bool()
   val fetchStall     = Bool()
   val memStall       = Bool()
+  val backendStall   = Bool()
   val branchExecuted = Bool()
   val branchTaken    = Bool()
   val pipelineFlush  = Bool()
@@ -96,6 +99,7 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   when(hazardStall)    { stallsHazard  := stallsHazard + 1 }
   when(fetchStall)     { stallsFetch   := stallsFetch + 1 }
   when(memStall)       { stallsMem     := stallsMem + 1 }
+  when(backendStall)   { stallsBackend := stallsBackend + 1 }
   when(branchExecuted) { branches      := branches + 1 }
   when(branchTaken)    { branchesTaken := branchesTaken + 1 }
   when(pipelineFlush)  { flushes       := flushes + 1 }
@@ -107,6 +111,7 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   counters.stallsHazard  := stallsHazard
   counters.stallsFetch   := stallsFetch
   counters.stallsMem     := stallsMem
+  counters.stallsBackend := stallsBackend
   counters.branches      := branches
   counters.branchesTaken := branchesTaken
   counters.flushes       := flushes

@@ -9,6 +9,7 @@ import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
 import borb.frontend.Decoder
 import borb.frontend.ExecutionUnitEnum
+import borb.execute.WriteBack
 // import borb.frontend.AluOp
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
@@ -114,7 +115,8 @@ object Dispatch extends AreaObject {
 case class Dispatch(
     dispatchNode: CtrlLink,
     hzRange: Seq[CtrlLink],
-    pipeline: StageCtrlPipeline
+    pipeline: StageCtrlPipeline,
+    intBypassReady: Seq[Bool] = Seq()
 ) extends Area {
 
   // import borb.decode.Decoder._
@@ -158,6 +160,11 @@ case class Dispatch(
   }
   case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32)
       extends Area {
+    private val bypassReadyPerStage = if (intBypassReady.nonEmpty) {
+      intBypassReady
+    } else {
+      Seq.fill(hzRange.tail.size)(False)
+    }
     def isFlw(insn: Bits): Bool = {
       (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
     }
@@ -230,7 +237,7 @@ case class Dispatch(
     val fpRegBusy = Bits(regCount bits)
     regBusy.clearAll()
     fpRegBusy.clearAll()
-    for (stage <- hzRange.tail) {
+    for ((stage, bypassReady) <- hzRange.tail.zip(bypassReadyPerStage)) {
       val stValid = stage.up.isValid && stage(Decoder.VALID) && stage(borb.common.Common.LANE_SEL)
       val stRd = stage(Decoder.RD_ADDR)
       val stInsn = stage(Decoder.DECODED_INSTRUCTION)
@@ -240,7 +247,7 @@ case class Dispatch(
       val stWritesFpRd = stValid &&
         (stRd =/= 0) &&
         (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn) || isFminmaxS(stInsn) || isFaddsubS(stInsn) || isFmulS(stInsn) || isFdivsqrtS(stInsn) || isFmaS(stInsn))
-      when(stWritesIntRd) {
+      when(stWritesIntRd && !bypassReady) {
         regBusy(stRd.asUInt) := True
       }
       when(stWritesFpRd) {

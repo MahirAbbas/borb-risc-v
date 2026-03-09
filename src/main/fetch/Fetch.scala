@@ -232,8 +232,8 @@ case class Fetch(
       (srcEpoch === lastTakenEpoch) &&
       (srcBeatAddr === lastTakenBeatAddr)
 
-    when(alignState.replayGuardValid && (rspStage(PC.PC) =/= alignState.lastTakenPc)) {
-      alignState.replayGuardValid := False
+    when(replayGuardValid && (rspStage(PC.PC) =/= lastTakenPc)) {
+      replayGuardValid := False
     }
 
     throwWhen(duplicatePc)

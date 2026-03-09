@@ -526,6 +526,7 @@ int main(int argc, char** argv) {
     const uint64_t perf_stalls_hazard = top->io_perf_stallsHazard;
     const uint64_t perf_stalls_fetch = top->io_perf_stallsFetch;
     const uint64_t perf_stalls_mem = top->io_perf_stallsMem;
+    const uint64_t perf_stalls_backend = top->io_perf_stallsBackend;
     const uint64_t perf_branches = top->io_perf_branches;
     const uint64_t perf_branches_taken = top->io_perf_branchesTaken;
     const uint64_t perf_flushes = top->io_perf_flushes;
@@ -558,6 +559,7 @@ int main(int argc, char** argv) {
     pf << "    \"stalls_hazard\": " << perf_stalls_hazard << ",\n";
     pf << "    \"stalls_fetch\": " << perf_stalls_fetch << ",\n";
     pf << "    \"stalls_mem\": " << perf_stalls_mem << ",\n";
+    pf << "    \"stalls_backend\": " << perf_stalls_backend << ",\n";
     pf << "    \"branches\": " << perf_branches << ",\n";
     pf << "    \"branches_taken\": " << perf_branches_taken << ",\n";
     pf << "    \"flushes\": " << perf_flushes << ",\n";

@@ -39,7 +39,7 @@ object SrcPlugin extends AreaObject {
   val IMMED = Payload(Bits(64 bits))
 
 }
-case class SrcPlugin(stage: CtrlLink) extends Area {
+case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.empty) extends Area {
   val wasReset = Reg(Bool()) init False
   // when(ClockDomain.isResetActive) {
   //   wasReset := True
@@ -102,10 +102,26 @@ case class SrcPlugin(stage: CtrlLink) extends Area {
     RS2.assignDontCare()
     IMMED.assignDontCare()
 
+    def resolveInt(read: RegFileRead): Bits = {
+      val resolved = Bits(64 bits)
+      resolved := read.data
+      for (src <- bypassSources) {
+        when(
+          read.valid &&
+          (read.address =/= 0) &&
+          src.valid &&
+          (src.address === read.address)
+        ) {
+          resolved := src.data
+        }
+      }
+      resolved
+    }
+
     val rs1Data =
-      (up(RS1TYPE) === RSTYPE.RS_INT) ? rs1Reader.data | B(0, 64 bits)
+      (up(RS1TYPE) === RSTYPE.RS_INT) ? resolveInt(rs1Reader) | B(0, 64 bits)
     val rs2Data =
-      (up(RS2TYPE) === RSTYPE.RS_INT) ? rs2Reader.data | B(0, 64 bits)
+      (up(RS2TYPE) === RSTYPE.RS_INT) ? resolveInt(rs2Reader) | B(0, 64 bits)
 
     down(RS1) := rs1Data
     down(RS2) := rs2Data

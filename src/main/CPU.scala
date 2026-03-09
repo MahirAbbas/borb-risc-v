@@ -113,9 +113,30 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     val decode = new Decoder(pipeline.ctrl(3), withCompressed = config.cExtensionEnabled, xlen = config.xlen)
 
+    val exeIntBypass = IntBypassSource()
+    exeIntBypass.valid := pipeline.ctrl(6).up.isValid &&
+      pipeline.ctrl(6)(VALID) &&
+      pipeline.ctrl(6)(LANE_SEL) &&
+      pipeline.ctrl(6).down(borb.execute.WriteBack.RESULT).valid
+    exeIntBypass.address := pipeline.ctrl(6).down(borb.execute.WriteBack.RESULT).address
+    exeIntBypass.data := pipeline.ctrl(6).down(borb.execute.WriteBack.RESULT).data
+
+    val wbIntBypass = IntBypassSource()
+    wbIntBypass.valid := pipeline.ctrl(7).up.isValid &&
+      pipeline.ctrl(7)(VALID) &&
+      pipeline.ctrl(7)(LANE_SEL) &&
+      pipeline.ctrl(7).up(borb.execute.WriteBack.RESULT).valid
+    wbIntBypass.address := pipeline.ctrl(7).up(borb.execute.WriteBack.RESULT).address
+    wbIntBypass.data := pipeline.ctrl(7).up(borb.execute.WriteBack.RESULT).data
+
     val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
-    val dispatcher = new Dispatch(pipeline.ctrl(4), hazardRange, pipeline)
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(5))
+    val dispatcher = new Dispatch(
+      pipeline.ctrl(4),
+      hazardRange,
+      pipeline,
+      intBypassReady = Seq(False, exeIntBypass.valid, wbIntBypass.valid)
+    )
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(wbIntBypass, exeIntBypass))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
     val lsu = new borb.execute.Lsu(pipeline.ctrl(6), currentEpoch)
@@ -257,29 +278,31 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
           is(U"12'hB03") { out := perfCounters.counters.stallsHazard.asBits }   // mhpmcounter3
           is(U"12'hB04") { out := perfCounters.counters.stallsFetch.asBits }    // mhpmcounter4
           is(U"12'hB05") { out := perfCounters.counters.stallsMem.asBits }      // mhpmcounter5
-          is(U"12'hB06") { out := perfCounters.counters.branches.asBits }       // mhpmcounter6
-          is(U"12'hB07") { out := perfCounters.counters.branchesTaken.asBits }  // mhpmcounter7
-          is(U"12'hB08") { out := perfCounters.counters.flushes.asBits }        // mhpmcounter8
-          is(U"12'hB09") { out := perfCounters.counters.loads.asBits }          // mhpmcounter9
-          is(U"12'hB0A") { out := perfCounters.counters.stores.asBits }         // mhpmcounter10
-          is(U"12'hB0B") { out := perfCounters.counters.jumps.asBits }          // mhpmcounter11
-          is(U"12'hB0C") { out := perfCounters.counters.csrOps.asBits }         // mhpmcounter12
-          is(U"12'hB0D") { out := perfCounters.counters.mulDivOps.asBits }      // mhpmcounter13
-          is(U"12'hB0E") { out := perfCounters.counters.trapCommits.asBits }    // mhpmcounter14
+          is(U"12'hB06") { out := perfCounters.counters.stallsBackend.asBits }  // mhpmcounter6
+          is(U"12'hB07") { out := perfCounters.counters.branches.asBits }       // mhpmcounter7
+          is(U"12'hB08") { out := perfCounters.counters.branchesTaken.asBits }  // mhpmcounter8
+          is(U"12'hB09") { out := perfCounters.counters.flushes.asBits }        // mhpmcounter9
+          is(U"12'hB0A") { out := perfCounters.counters.loads.asBits }          // mhpmcounter10
+          is(U"12'hB0B") { out := perfCounters.counters.stores.asBits }         // mhpmcounter11
+          is(U"12'hB0C") { out := perfCounters.counters.jumps.asBits }          // mhpmcounter12
+          is(U"12'hB0D") { out := perfCounters.counters.csrOps.asBits }         // mhpmcounter13
+          is(U"12'hB0E") { out := perfCounters.counters.mulDivOps.asBits }      // mhpmcounter14
+          is(U"12'hB0F") { out := perfCounters.counters.trapCommits.asBits }    // mhpmcounter15
           is(U"12'hB80") { out := perfCounters.counters.cycles(63 downto 32).asBits.resized }        // mcycleh
           is(U"12'hB82") { out := perfCounters.counters.instret(63 downto 32).asBits.resized }       // minstreth
           is(U"12'hB83") { out := perfCounters.counters.stallsHazard(63 downto 32).asBits.resized }  // mhpmcounter3h
           is(U"12'hB84") { out := perfCounters.counters.stallsFetch(63 downto 32).asBits.resized }   // mhpmcounter4h
           is(U"12'hB85") { out := perfCounters.counters.stallsMem(63 downto 32).asBits.resized }     // mhpmcounter5h
-          is(U"12'hB86") { out := perfCounters.counters.branches(63 downto 32).asBits.resized }      // mhpmcounter6h
-          is(U"12'hB87") { out := perfCounters.counters.branchesTaken(63 downto 32).asBits.resized } // mhpmcounter7h
-          is(U"12'hB88") { out := perfCounters.counters.flushes(63 downto 32).asBits.resized }       // mhpmcounter8h
-          is(U"12'hB89") { out := perfCounters.counters.loads(63 downto 32).asBits.resized }         // mhpmcounter9h
-          is(U"12'hB8A") { out := perfCounters.counters.stores(63 downto 32).asBits.resized }        // mhpmcounter10h
-          is(U"12'hB8B") { out := perfCounters.counters.jumps(63 downto 32).asBits.resized }         // mhpmcounter11h
-          is(U"12'hB8C") { out := perfCounters.counters.csrOps(63 downto 32).asBits.resized }        // mhpmcounter12h
-          is(U"12'hB8D") { out := perfCounters.counters.mulDivOps(63 downto 32).asBits.resized }     // mhpmcounter13h
-          is(U"12'hB8E") { out := perfCounters.counters.trapCommits(63 downto 32).asBits.resized }   // mhpmcounter14h
+          is(U"12'hB86") { out := perfCounters.counters.stallsBackend(63 downto 32).asBits.resized } // mhpmcounter6h
+          is(U"12'hB87") { out := perfCounters.counters.branches(63 downto 32).asBits.resized }      // mhpmcounter7h
+          is(U"12'hB88") { out := perfCounters.counters.branchesTaken(63 downto 32).asBits.resized } // mhpmcounter8h
+          is(U"12'hB89") { out := perfCounters.counters.flushes(63 downto 32).asBits.resized }       // mhpmcounter9h
+          is(U"12'hB8A") { out := perfCounters.counters.loads(63 downto 32).asBits.resized }         // mhpmcounter10h
+          is(U"12'hB8B") { out := perfCounters.counters.stores(63 downto 32).asBits.resized }        // mhpmcounter11h
+          is(U"12'hB8C") { out := perfCounters.counters.jumps(63 downto 32).asBits.resized }         // mhpmcounter12h
+          is(U"12'hB8D") { out := perfCounters.counters.csrOps(63 downto 32).asBits.resized }        // mhpmcounter13h
+          is(U"12'hB8E") { out := perfCounters.counters.mulDivOps(63 downto 32).asBits.resized }     // mhpmcounter14h
+          is(U"12'hB8F") { out := perfCounters.counters.trapCommits(63 downto 32).asBits.resized }   // mhpmcounter15h
           is(U"12'hC00") { out := perfCounters.counters.cycles.asBits }         // cycle
           is(U"12'hC02") { out := perfCounters.counters.instret.asBits }        // instret
           is(U"12'hC80") { out := perfCounters.counters.cycles(63 downto 32).asBits.resized }        // cycleh
@@ -1357,9 +1380,20 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     io.dbg := debugPlugin.io.dbg
 
     // Wire event signals to performance counters
-    perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
-    perfCounters.fetchStall     := !fetch.beatValid              // Fetch stalled waiting for instruction
-    perfCounters.memStall       := lsu.logic.waitingResponse     // Waiting for load response
+    val hazardStall = dispatcher.hcs.writes.hazard
+    val fetchStall = !fetch.beatValid
+    val memStall = lsu.logic.waitingResponse
+    val committedThisCycle = pipeline.ctrl(7).up(COMMIT)
+    val backendActive = Array(3, 4, 5, 6, 7).map { idx =>
+      val ctrl = pipeline.ctrl(idx)
+      ctrl.up.isValid && ctrl(VALID)
+    }.reduce(_ || _)
+    val backendStall = backendActive && !committedThisCycle && !hazardStall && !fetchStall && !memStall
+
+    perfCounters.hazardStall    := hazardStall                   // Hazard stall from HazardChecker
+    perfCounters.fetchStall     := fetchStall                    // Fetch stalled waiting for instruction
+    perfCounters.memStall       := memStall                      // Waiting for load response
+    perfCounters.backendStall   := backendStall                  // Active backend cycle not explained by other stall classes
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
     perfCounters.pipelineFlush  := flushPipeline
