@@ -1,0 +1,601 @@
+package borb.backend
+
+import spinal.core._
+import spinal.lib._
+import spinal.lib.misc.pipeline._
+import borb.core.CpuConfig
+import borb.core.PerfCountersBundle
+import borb.execute.{Branch, Lsu}
+import borb.execute.WriteBack
+import borb.fetch.PC
+import borb.frontend.Decoder
+import borb.frontend.Decoder._
+import borb.common.Common._
+import borb.common.MicroCode._
+
+case class TrapCsrBackend(
+    execStage: CtrlLink,
+    config: CpuConfig,
+    currentEpoch: UInt,
+    pc: PC,
+    branch: Branch,
+    lsu: Lsu,
+    perfCounters: PerfCountersBundle
+) extends Area {
+  val fpFlagsSetValid = Bool()
+  val fpFlagsSetBits = Bits(5 bits)
+  val frm = Bits(3 bits)
+  val csrIntResult = IntResultIntent()
+  val redirect = TrapRedirectOutcome()
+
+  csrIntResult.valid := False
+  csrIntResult.rd := 0
+  csrIntResult.data := 0
+  csrIntResult.writesRd := False
+  csrIntResult.commitEligible := False
+  csrIntResult.epoch := 0
+
+  val logic = new execStage.Area {
+    val epochMatches = up(SPEC_EPOCH) === currentEpoch
+
+    val CAUSE_MISALIGNED_FETCH = U(0, 64 bits)
+    val CAUSE_FETCH_ACCESS = U(1, 64 bits)
+    val CAUSE_ILLEGAL_INSTRUCTION = U(2, 64 bits)
+    val CAUSE_MISALIGNED_LOAD = U(4, 64 bits)
+    val CAUSE_LOAD_ACCESS = U(5, 64 bits)
+    val CAUSE_MISALIGNED_STORE = U(6, 64 bits)
+    val CAUSE_STORE_ACCESS = U(7, 64 bits)
+    val CAUSE_USER_ECALL = U(8, 64 bits)
+    val CAUSE_SUPERVISOR_ECALL = U(9, 64 bits)
+    val CAUSE_MACHINE_ECALL = U(11, 64 bits)
+    val ARCH_BASE = U(BigInt("80000000", 16), 64 bits)
+    val PRV_U = U(0, 2 bits)
+    val PRV_S = U(1, 2 bits)
+    val PRV_M = U(3, 2 bits)
+
+    val csrMstatus = Reg(Bits(64 bits)) init 0
+    val misaBase = BigInt("8000000000000100", 16)
+    val misaA = if (config.aExtensionEnabled) BigInt("0000000000000001", 16) else BigInt(0)
+    val misaC = if (config.cExtensionEnabled) BigInt("0000000000000004", 16) else BigInt(0)
+    val misaF = if (config.fExtensionEnabled) BigInt("0000000000000020", 16) else BigInt(0)
+    val misaM = if (config.mExtensionEnabled) BigInt("0000000000001000", 16) else BigInt(0)
+    val misaD = if (config.dExtensionEnabled) BigInt("0000000000000008", 16) else BigInt(0)
+    val csrMisa = Reg(Bits(64 bits)) init B(misaBase | misaA | misaC | misaF | misaM | misaD, 64 bits)
+    val csrMedeleg = Reg(Bits(64 bits)) init 0
+    val csrMtvec = Reg(Bits(64 bits)) init 0
+    val csrMscratch = Reg(Bits(64 bits)) init 0
+    val csrMepc = Reg(Bits(64 bits)) init 0
+    val csrMcause = Reg(Bits(64 bits)) init 0
+    val csrMtval = Reg(Bits(64 bits)) init 0
+    val csrMip = Reg(Bits(64 bits)) init 0
+    val csrFflags = Reg(Bits(5 bits)) init 0
+    val csrFrm = Reg(Bits(3 bits)) init 0
+    val csrSatp = Reg(Bits(64 bits)) init 0
+    val pmpCfgBytes = Vec.fill(64)(Reg(Bits(8 bits)) init 0)
+    val pmpAddrRegs = Vec.fill(64)(Reg(Bits(64 bits)) init B(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits))
+    val pmpImplementedEntries = 16
+    val currentPriv = Reg(UInt(2 bits)) init PRV_M
+    val sawNonZeroPc = Reg(Bool) init False
+
+    frm := csrFrm
+    when(fpFlagsSetValid) {
+      csrFflags := csrFflags | fpFlagsSetBits
+    }
+
+    def pmpCfgSanitize(cfg: Bits): Bits = {
+      val c = Bits(8 bits)
+      c := cfg
+      c(6 downto 5) := B"00"
+      c(1) := cfg(1) & cfg(0)
+      c
+    }
+
+    def pmpCfgReadWord(group: Int): Bits = {
+      val out = Bits(64 bits)
+      out := 0
+      for (i <- 0 until 8) {
+        val idx = group * 8 + i
+        if (idx < pmpImplementedEntries) {
+          out((i * 8 + 7) downto (i * 8)) := pmpCfgBytes(idx)
+        } else {
+          out((i * 8 + 7) downto (i * 8)) := 0
+        }
+      }
+      out
+    }
+
+    def mepcMasked(raw: Bits): Bits = {
+      val out = Bits(64 bits)
+      out := raw
+      out(0) := False
+      when(!csrMisa(2)) {
+        out(1) := False
+      }
+      out
+    }
+
+    def csrRead(addr: UInt): Bits = {
+      val out = Bits(64 bits)
+      out := 0
+      switch(addr) {
+        is(U"12'h300") { out := csrMstatus }
+        is(U"12'h301") { out := csrMisa }
+        is(U"12'h302") { out := csrMedeleg }
+        is(U"12'h305") { out := csrMtvec }
+        is(U"12'h340") { out := csrMscratch }
+        is(U"12'h341") { out := mepcMasked(csrMepc) }
+        is(U"12'h342") { out := csrMcause }
+        is(U"12'h343") { out := csrMtval }
+        is(U"12'h344") { out := csrMip }
+        is(U"12'h001") { out := B(0, 59 bits) ## csrFflags }
+        is(U"12'h002") { out := B(0, 61 bits) ## csrFrm }
+        is(U"12'h003") { out := B(0, 56 bits) ## csrFrm ## csrFflags }
+        is(U"12'h180") { out := csrSatp }
+        is(U"12'h3A0") { out := pmpCfgReadWord(0) }
+        is(U"12'h3A2") { out := pmpCfgReadWord(1) }
+        is(U"12'h3A4") { out := pmpCfgReadWord(2) }
+        is(U"12'h3A6") { out := pmpCfgReadWord(3) }
+        is(U"12'h3A8") { out := pmpCfgReadWord(4) }
+        is(U"12'h3AA") { out := pmpCfgReadWord(5) }
+        is(U"12'h3AC") { out := pmpCfgReadWord(6) }
+        is(U"12'h3AE") { out := pmpCfgReadWord(7) }
+        is(U"12'hB00") { out := perfCounters.cycles.asBits }
+        is(U"12'hB02") { out := perfCounters.instret.asBits }
+        is(U"12'hB03") { out := perfCounters.stallsHazard.asBits }
+        is(U"12'hB04") { out := perfCounters.stallsFetch.asBits }
+        is(U"12'hB05") { out := perfCounters.stallsMem.asBits }
+        is(U"12'hB06") { out := perfCounters.stallsBackend.asBits }
+        is(U"12'hB07") { out := perfCounters.branches.asBits }
+        is(U"12'hB08") { out := perfCounters.branchesTaken.asBits }
+        is(U"12'hB09") { out := perfCounters.flushes.asBits }
+        is(U"12'hB0A") { out := perfCounters.loads.asBits }
+        is(U"12'hB0B") { out := perfCounters.stores.asBits }
+        is(U"12'hB0C") { out := perfCounters.jumps.asBits }
+        is(U"12'hB0D") { out := perfCounters.csrOps.asBits }
+        is(U"12'hB0E") { out := perfCounters.mulDivOps.asBits }
+        is(U"12'hB0F") { out := perfCounters.trapCommits.asBits }
+        is(U"12'hB10") { out := perfCounters.stallsWriteback.asBits }
+        is(U"12'hB11") { out := perfCounters.stallsCommit.asBits }
+        is(U"12'hB12") { out := perfCounters.stallsMulDivBusy.asBits }
+        is(U"12'hB13") { out := perfCounters.stallsLsuReplayOrWait.asBits }
+        is(U"12'hB80") { out := perfCounters.cycles(63 downto 32).asBits.resized }
+        is(U"12'hB82") { out := perfCounters.instret(63 downto 32).asBits.resized }
+        is(U"12'hB83") { out := perfCounters.stallsHazard(63 downto 32).asBits.resized }
+        is(U"12'hB84") { out := perfCounters.stallsFetch(63 downto 32).asBits.resized }
+        is(U"12'hB85") { out := perfCounters.stallsMem(63 downto 32).asBits.resized }
+        is(U"12'hB86") { out := perfCounters.stallsBackend(63 downto 32).asBits.resized }
+        is(U"12'hB87") { out := perfCounters.branches(63 downto 32).asBits.resized }
+        is(U"12'hB88") { out := perfCounters.branchesTaken(63 downto 32).asBits.resized }
+        is(U"12'hB89") { out := perfCounters.flushes(63 downto 32).asBits.resized }
+        is(U"12'hB8A") { out := perfCounters.loads(63 downto 32).asBits.resized }
+        is(U"12'hB8B") { out := perfCounters.stores(63 downto 32).asBits.resized }
+        is(U"12'hB8C") { out := perfCounters.jumps(63 downto 32).asBits.resized }
+        is(U"12'hB8D") { out := perfCounters.csrOps(63 downto 32).asBits.resized }
+        is(U"12'hB8E") { out := perfCounters.mulDivOps(63 downto 32).asBits.resized }
+        is(U"12'hB8F") { out := perfCounters.trapCommits(63 downto 32).asBits.resized }
+        is(U"12'hB90") { out := perfCounters.stallsWriteback(63 downto 32).asBits.resized }
+        is(U"12'hB91") { out := perfCounters.stallsCommit(63 downto 32).asBits.resized }
+        is(U"12'hB92") { out := perfCounters.stallsMulDivBusy(63 downto 32).asBits.resized }
+        is(U"12'hB93") { out := perfCounters.stallsLsuReplayOrWait(63 downto 32).asBits.resized }
+        is(U"12'hC00") { out := perfCounters.cycles.asBits }
+        is(U"12'hC02") { out := perfCounters.instret.asBits }
+        is(U"12'hC80") { out := perfCounters.cycles(63 downto 32).asBits.resized }
+        is(U"12'hC82") { out := perfCounters.instret(63 downto 32).asBits.resized }
+        for (i <- 0 until 64) {
+          is(U(0x3B0 + i, 12 bits)) { out := (if (i < pmpImplementedEntries) pmpAddrRegs(i) else B(0, 64 bits)) }
+        }
+      }
+      out
+    }
+
+    def csrSupported(addr: UInt): Bool = {
+      val ok = Bool()
+      ok := False
+      switch(addr) {
+        is(U"12'h300", U"12'h301", U"12'h302", U"12'h305", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
+        is(U"12'h001", U"12'h002", U"12'h003", U"12'h180") { ok := True }
+        is(U"12'h3A0", U"12'h3A2", U"12'h3A4", U"12'h3A6", U"12'h3A8", U"12'h3AA", U"12'h3AC", U"12'h3AE") { ok := True }
+        is(U"12'hB00", U"12'hB02", U"12'hB03", U"12'hB04", U"12'hB05", U"12'hB06", U"12'hB07", U"12'hB08", U"12'hB09", U"12'hB0A", U"12'hB0B", U"12'hB0C", U"12'hB0D", U"12'hB0E", U"12'hB0F", U"12'hB10", U"12'hB11", U"12'hB12", U"12'hB13") { ok := True }
+        is(U"12'hB80", U"12'hB82", U"12'hB83", U"12'hB84", U"12'hB85", U"12'hB86", U"12'hB87", U"12'hB88", U"12'hB89", U"12'hB8A", U"12'hB8B", U"12'hB8C", U"12'hB8D", U"12'hB8E", U"12'hB8F", U"12'hB90", U"12'hB91", U"12'hB92", U"12'hB93") { ok := True }
+        is(U"12'hC00", U"12'hC02", U"12'hC80", U"12'hC82") { ok := True }
+        for (i <- 0 until 64) {
+          is(U(0x3B0 + i, 12 bits)) { ok := True }
+        }
+      }
+      ok
+    }
+
+    val csrAddr = up(Decoder.DECODED_INSTRUCTION)(31 downto 20).asUInt
+    val csrOld = csrRead(csrAddr)
+    val csrRs1 = up(borb.dispatch.SrcPlugin.RS1)
+    val csrZimm = B(59 bits, default -> False) ## up(Decoder.DECODED_INSTRUCTION)(19 downto 15)
+    val csrWriteData = Bits(64 bits)
+    csrWriteData := csrOld
+    val csrWriteEn = Bool()
+    csrWriteEn := False
+
+    val isCsrOp = up(Decoder.MicroCode) === uopCSRRW || up(Decoder.MicroCode) === uopCSRRS || up(Decoder.MicroCode) === uopCSRRC ||
+      up(Decoder.MicroCode) === uopCSRRWI || up(Decoder.MicroCode) === uopCSRRSI || up(Decoder.MicroCode) === uopCSRRCI
+    val csrPrivReq = csrAddr(9 downto 8)
+    val csrReadOnly = csrAddr(11 downto 10) === U"2'b11"
+
+    switch(up(Decoder.MicroCode)) {
+      is(uopCSRRW) { csrWriteData := csrRs1; csrWriteEn := True }
+      is(uopCSRRS) { csrWriteData := csrOld | csrRs1; csrWriteEn := csrRs1 =/= 0 }
+      is(uopCSRRC) { csrWriteData := csrOld & ~csrRs1; csrWriteEn := csrRs1 =/= 0 }
+      is(uopCSRRWI) { csrWriteData := csrZimm; csrWriteEn := True }
+      is(uopCSRRSI) { csrWriteData := csrOld | csrZimm; csrWriteEn := csrZimm =/= 0 }
+      is(uopCSRRCI) { csrWriteData := csrOld & ~csrZimm; csrWriteEn := csrZimm =/= 0 }
+    }
+
+    val csrIllegal = up(Decoder.VALID) && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
+    val csrFire = up.isFiring && epochMatches && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isCsrOp
+
+    when(csrFire && !csrIllegal && csrWriteEn) {
+      switch(csrAddr) {
+        is(U"12'h300") { csrMstatus := csrWriteData }
+        is(U"12'h301") { csrMisa := csrWriteData }
+        is(U"12'h302") { csrMedeleg := csrWriteData }
+        is(U"12'h305") { csrMtvec := csrWriteData }
+        is(U"12'h340") { csrMscratch := csrWriteData }
+        is(U"12'h341") { csrMepc := csrWriteData }
+        is(U"12'h342") { csrMcause := csrWriteData }
+        is(U"12'h343") { csrMtval := csrWriteData }
+        is(U"12'h344") { csrMip := csrWriteData }
+        is(U"12'h001") { csrFflags := csrWriteData(4 downto 0) }
+        is(U"12'h002") {
+          when(csrWriteData(2 downto 0) =/= B"101" && csrWriteData(2 downto 0) =/= B"110") {
+            csrFrm := csrWriteData(2 downto 0)
+          }
+        }
+        is(U"12'h003") {
+          csrFflags := csrWriteData(4 downto 0)
+          when(csrWriteData(7 downto 5) =/= B"101" && csrWriteData(7 downto 5) =/= B"110") {
+            csrFrm := csrWriteData(7 downto 5)
+          }
+        }
+        is(U"12'h180") { csrSatp := csrWriteData }
+        is(U"12'h3A0") {
+          for (i <- 0 until 8) {
+            when(!pmpCfgBytes(i)(7)) {
+              pmpCfgBytes(i) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3A2") {
+          for (i <- 0 until 8) {
+            val idx = 8 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3A4") {
+          for (i <- 0 until 8) {
+            val idx = 16 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3A6") {
+          for (i <- 0 until 8) {
+            val idx = 24 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3A8") {
+          for (i <- 0 until 8) {
+            val idx = 32 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3AA") {
+          for (i <- 0 until 8) {
+            val idx = 40 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3AC") {
+          for (i <- 0 until 8) {
+            val idx = 48 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        is(U"12'h3AE") {
+          for (i <- 0 until 8) {
+            val idx = 56 + i
+            when(!pmpCfgBytes(idx)(7)) {
+              pmpCfgBytes(idx) := pmpCfgSanitize(csrWriteData((i * 8 + 7) downto (i * 8)))
+            }
+          }
+        }
+        for (i <- 0 until 64) {
+          is(U(0x3B0 + i, 12 bits)) {
+            val selfLocked = pmpCfgBytes(i)(7)
+            val nextTorLocked = if (i < 63) (pmpCfgBytes(i + 1)(7) && (pmpCfgBytes(i + 1)(4 downto 3) === B"01")) else False
+            if (i < pmpImplementedEntries) {
+              when(!(selfLocked || nextTorLocked)) {
+                pmpAddrRegs(i) := csrWriteData
+              }
+            }
+          }
+        }
+      }
+    }
+
+    when(csrFire && !csrIllegal) {
+      csrIntResult.valid := True
+      csrIntResult.rd := up(Decoder.RD_ADDR).asUInt
+      csrIntResult.data := csrOld
+      csrIntResult.writesRd := True
+      csrIntResult.commitEligible := epochMatches
+      csrIntResult.epoch := up(SPEC_EPOCH)
+
+      down(WriteBack.RESULT).address.allowOverride := up(Decoder.RD_ADDR).asUInt
+      down(WriteBack.RESULT).data.allowOverride := Mux(up(Decoder.RD_ADDR).asUInt === 0, B(0, 64 bits), csrOld)
+      down(WriteBack.RESULT).valid.allowOverride := True
+    }
+
+    val trapFromBranch = branch.logic.willTrap
+    val insn = up(Decoder.DECODED_INSTRUCTION)
+    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
+
+    when(up.isFiring && up(LANE_SEL) && (up(PC.PC) =/= U(0, 64 bits))) {
+      sawNonZeroPc := True
+    }
+
+    val mstatusMprv = csrMstatus(17)
+    val mstatusMpp = csrMstatus(12 downto 11).asUInt
+    val dataPriv = Mux((currentPriv === PRV_M) && mstatusMprv, mstatusMpp, currentPriv)
+    val instPriv = currentPriv
+
+    def pmpAllow(addrRaw: UInt, priv: UInt, needX: Bool, needR: Bool, needW: Bool, accessBytes: UInt): Bool = {
+      val denyNullData = (addrRaw === U(0, 64 bits)) && (needR || needW)
+      val addrLo = Mux(addrRaw < ARCH_BASE, addrRaw + ARCH_BASE, addrRaw)
+      val bytes = accessBytes.max(U(1, 64 bits))
+      val addrHi = addrLo + (bytes - U(1, 64 bits))
+      val hitVec = Vec(Bool(), pmpImplementedEntries)
+      val permVec = Vec(Bool(), pmpImplementedEntries)
+
+      for (i <- 0 until pmpImplementedEntries) {
+        val cfg = pmpCfgBytes(i)
+        val l = cfg(7)
+        val a = cfg(4 downto 3)
+        val r = cfg(0)
+        val w = cfg(1)
+        val x = cfg(2)
+        val entry = pmpAddrRegs(i).asUInt
+        val prev = if (i == 0) U(0, 64 bits) else pmpAddrRegs(i - 1).asUInt
+
+        val torLo = prev |<< 2
+        val torHiExcl = entry |<< 2
+        val na4Lo = entry |<< 2
+        val na4Hi = (entry |<< 2) + U(3, 64 bits)
+        val lowestZero = ((~entry) & (entry + U(1, 64 bits)))
+        val napotMask = lowestZero - U(1, 64 bits)
+        val napotBase = (entry & ~napotMask) |<< 2
+        val napotSpan = (napotMask |<< 3) | U(7, 64 bits)
+        val napotTop = napotBase + napotSpan
+
+        val hitAny = Bool()
+        val fullMatch = Bool()
+        hitAny := False
+        fullMatch := False
+        switch(a) {
+          is(B"00") { hitAny := False }
+          is(B"01") {
+            val torNonEmpty = torHiExcl =/= U(0, 64 bits)
+            val torHi = torHiExcl - U(1, 64 bits)
+            hitAny := torNonEmpty && (addrLo <= torHi) && (addrHi >= torLo)
+            fullMatch := torNonEmpty && (addrLo >= torLo) && (addrHi <= torHi)
+          }
+          is(B"10") {
+            hitAny := (addrLo <= na4Hi) && (addrHi >= na4Lo)
+            fullMatch := (addrLo >= na4Lo) && (addrHi <= na4Hi)
+          }
+          default {
+            hitAny := (addrLo <= napotTop) && (addrHi >= napotBase)
+            fullMatch := (addrLo >= napotBase) && (addrHi <= napotTop)
+          }
+        }
+
+        val reqPerm = (!needX || x) && (!needR || r) && (!needW || w)
+        val accessOk = fullMatch && reqPerm
+        val mPerm = l ? accessOk | True
+        val suPerm = accessOk
+        val perm = (priv === PRV_M) ? mPerm | suPerm
+
+        hitVec(i) := hitAny
+        permVec(i) := perm
+      }
+
+      var allowExpr: Bool = (priv === PRV_M)
+      for (i <- (pmpImplementedEntries - 1) downto 0) {
+        allowExpr = Mux(hitVec(i), permVec(i), allowExpr)
+      }
+      Mux(denyNullData, False, allowExpr)
+    }
+
+    val loadBytes = UInt(64 bits)
+    loadBytes := U(1, 64 bits)
+    switch(up(Decoder.MicroCode)) {
+      is(uopLH, uopLHU) { loadBytes := U(2, 64 bits) }
+      is(uopLW, uopLWU) { loadBytes := U(4, 64 bits) }
+      is(uopLD) { loadBytes := U(8, 64 bits) }
+    }
+
+    val storeBytes = UInt(64 bits)
+    storeBytes := U(1, 64 bits)
+    switch(up(Decoder.MicroCode)) {
+      is(uopSH) { storeBytes := U(2, 64 bits) }
+      is(uopSW) { storeBytes := U(4, 64 bits) }
+      is(uopSD) { storeBytes := U(8, 64 bits) }
+    }
+
+    val atomicWordAccess = up(Decoder.MicroCode).mux(
+      uopAMOSWAPW -> True, uopAMOADDW -> True, uopAMOXORW -> True, uopAMOANDW -> True, uopAMOORW -> True,
+      uopAMOMINW -> True, uopAMOMAXW -> True, uopAMOMINUW -> True, uopAMOMAXUW -> True, default -> False
+    )
+    val atomicDoubleAccess = up(Decoder.MicroCode).mux(
+      uopAMOSWAPD -> True, uopAMOADDD -> True, uopAMOXORD -> True, uopAMOANDD -> True, uopAMOORD -> True,
+      uopAMOMIND -> True, uopAMOMAXD -> True, uopAMOMINUD -> True, uopAMOMAXUD -> True, default -> False
+    )
+    when(atomicWordAccess) {
+      loadBytes := U(4, 64 bits)
+      storeBytes := U(4, 64 bits)
+    }
+    when(atomicDoubleAccess) {
+      loadBytes := U(8, 64 bits)
+      storeBytes := U(8, 64 bits)
+    }
+
+    val pmpExecAllowed = if (config.cExtensionEnabled) {
+      val fetchPc = up(PC.PC)
+      val isCompressed = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
+      val loParcelExecAllowed = pmpAllow(fetchPc, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+      val hiParcelExecAllowed = pmpAllow(fetchPc + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+      loParcelExecAllowed && (isCompressed || hiParcelExecAllowed)
+    } else {
+      pmpAllow(up(PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
+    }
+
+    val isAmoOp = up(Decoder.MicroCode).mux(
+      uopAMOSWAPW -> True, uopAMOADDW -> True, uopAMOXORW -> True, uopAMOANDW -> True, uopAMOORW -> True,
+      uopAMOMINW -> True, uopAMOMAXW -> True, uopAMOMINUW -> True, uopAMOMAXUW -> True,
+      uopAMOSWAPD -> True, uopAMOADDD -> True, uopAMOXORD -> True, uopAMOANDD -> True, uopAMOORD -> True,
+      uopAMOMIND -> True, uopAMOMAXD -> True, uopAMOMINUD -> True, uopAMOMAXUD -> True, default -> False
+    )
+    val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
+    val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
+
+    val latePcZeroFetch = up.isFiring && up(LANE_SEL) && sawNonZeroPc && (up(PC.PC) === U(0, 64 bits))
+    val pmpExecFault = up.isFiring && up(LANE_SEL) && (!pmpExecAllowed || latePcZeroFetch)
+    val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
+    val pmpStoreFault = aguFire && ((lsu.logic.isStore && !isAmoOp && !pmpStoreAllowed) || (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed)))
+    val pmpDataFault = pmpLoadFault || pmpStoreFault
+    lsu.io.pmpFault := pmpDataFault
+
+    val trapFromLoadMisalign = lsu.logic.misaligned && lsu.logic.isLoad && !isAmoOp && aguFire
+    val trapFromStoreMisalign = lsu.logic.misaligned && lsu.logic.isStore && aguFire
+    val trapFromLoadAccess = pmpLoadFault
+    val trapFromStoreAccess = pmpStoreFault
+    val trapFromFetchAccess = pmpExecFault
+    val mretInsn = insn === B"32'h30200073"
+    val mretIllegal = mretInsn && (currentPriv =/= PRV_M)
+    val trapFromEcall = up.isFiring && insn === B"32'h00000073"
+    val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
+    val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
+    val atomicOpcode = insn(6 downto 0) === B"0101111"
+    val trapFromAtomicDisabled = if (config.aExtensionEnabled) False else atomicOpcode
+    val trapFromIllegal32 = (!up(Decoder.VALID) && !isHandledSystem) || trapFromAtomicDisabled
+    val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
+    val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
+    val mretTarget = mepcMasked(csrMepc).asUInt
+    val trapFire = up.isFiring && epochMatches &&
+      (trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
+
+    val trapCause = Bits(64 bits)
+    trapCause := CAUSE_MISALIGNED_STORE.asBits
+    when(trapFromBranch) {
+      trapCause := CAUSE_MISALIGNED_FETCH.asBits
+    } elsewhen(trapFromFetchAccess) {
+      trapCause := CAUSE_FETCH_ACCESS.asBits
+    } elsewhen(trapFromLoadMisalign) {
+      trapCause := CAUSE_MISALIGNED_LOAD.asBits
+    } elsewhen(trapFromLoadAccess) {
+      trapCause := CAUSE_LOAD_ACCESS.asBits
+    } elsewhen(trapFromStoreAccess) {
+      trapCause := CAUSE_STORE_ACCESS.asBits
+    } elsewhen(trapFromIllegalInsn) {
+      trapCause := CAUSE_ILLEGAL_INSTRUCTION.asBits
+    } elsewhen(trapFromEbreak) {
+      trapCause := U(3, 64 bits).asBits
+    } elsewhen(trapFromEcall) {
+      when(currentPriv === PRV_M) {
+        trapCause := CAUSE_MACHINE_ECALL.asBits
+      } elsewhen(currentPriv === PRV_S) {
+        trapCause := CAUSE_SUPERVISOR_ECALL.asBits
+      } otherwise {
+        trapCause := CAUSE_USER_ECALL.asBits
+      }
+    }
+
+    val pcRaw = up(PC.PC)
+    val branchTargetRaw = branch.logic.target
+    val memAddrRaw = lsu.logic.effectiveAddr
+    val pcArch = Mux(pcRaw < ARCH_BASE, pcRaw + ARCH_BASE, pcRaw)
+    val branchTargetArch = Mux(branchTargetRaw < ARCH_BASE, branchTargetRaw + ARCH_BASE, branchTargetRaw)
+    val memAddrArch = Mux(memAddrRaw < ARCH_BASE, memAddrRaw + ARCH_BASE, memAddrRaw)
+    val secondParcelFetchFault = trapFromFetchAccess &&
+      (if (config.cExtensionEnabled) True else False) &&
+      (up(Decoder.DECODED_INSTRUCTION)(1 downto 0) === B"11") &&
+      pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
+      !pmpAllow(pcRaw + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
+
+    val trapTval = Bits(64 bits)
+    trapTval := memAddrArch.asBits
+    when((trapFromLoadAccess || trapFromStoreAccess) && (memAddrRaw === U(0, 64 bits))) {
+      trapTval := memAddrRaw.asBits
+    }
+    when(trapFromBranch) {
+      trapTval := branchTargetArch.asBits
+    } elsewhen(trapFromFetchAccess) {
+      trapTval := Mux(secondParcelFetchFault, (pcArch + U(2, 64 bits)).asBits, (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits))
+    } elsewhen(trapFromIllegalInsn) {
+      val illegalInsnBits = up(Decoder.DECODED_INSTRUCTION)
+      trapTval := Mux(illegalInsnBits(1 downto 0) =/= B"11", illegalInsnBits(15 downto 0).asBits.resize(64), illegalInsnBits.resized)
+    } elsewhen(trapFromEbreak) {
+      trapTval := pcArch.asBits
+    } elsewhen(trapFromEcall) {
+      trapTval := B(0, 64 bits)
+    }
+
+    when(trapFire) {
+      val nextMstatus = Bits(64 bits)
+      nextMstatus := csrMstatus
+      nextMstatus(7) := csrMstatus(3)
+      nextMstatus(3) := False
+      nextMstatus(12 downto 11) := currentPriv.asBits
+      csrMstatus := nextMstatus
+      csrMepc := (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
+      csrMcause := trapCause
+      csrMtval := trapTval
+      currentPriv := PRV_M
+    }
+
+    when(mretFire) {
+      val mretPriv = csrMstatus(12 downto 11).asUInt
+      currentPriv := mretPriv
+      val nextMstatus = Bits(64 bits)
+      nextMstatus := csrMstatus
+      nextMstatus(3) := csrMstatus(7)
+      nextMstatus(7) := True
+      when(mretPriv =/= PRV_M) {
+        nextMstatus(17) := False
+      }
+      nextMstatus(12 downto 11) := B"00"
+      csrMstatus := nextMstatus
+    }
+
+    val mtvecBase = csrMtvec.asUInt & U(BigInt("FFFFFFFFFFFFFFFC", 16), 64 bits)
+    pc.exception.valid.allowOverride := trapFire
+    pc.exception.payload.vector.allowOverride := mtvecBase
+
+    redirect.trapFire := trapFire
+    redirect.mretFire := mretFire
+    redirect.mretTarget := mretTarget
+    redirect.trapCause := trapCause
+    redirect.trapTval := trapTval
+
+    down(TRAP) := trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
+  }
+}

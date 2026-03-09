@@ -527,6 +527,10 @@ int main(int argc, char** argv) {
     const uint64_t perf_stalls_fetch = top->io_perf_stallsFetch;
     const uint64_t perf_stalls_mem = top->io_perf_stallsMem;
     const uint64_t perf_stalls_backend = top->io_perf_stallsBackend;
+    const uint64_t perf_stalls_writeback = top->io_perf_stallsWriteback;
+    const uint64_t perf_stalls_commit = top->io_perf_stallsCommit;
+    const uint64_t perf_stalls_muldiv_busy = top->io_perf_stallsMulDivBusy;
+    const uint64_t perf_stalls_lsu_replay_or_wait = top->io_perf_stallsLsuReplayOrWait;
     const uint64_t perf_branches = top->io_perf_branches;
     const uint64_t perf_branches_taken = top->io_perf_branchesTaken;
     const uint64_t perf_flushes = top->io_perf_flushes;
@@ -560,6 +564,10 @@ int main(int argc, char** argv) {
     pf << "    \"stalls_fetch\": " << perf_stalls_fetch << ",\n";
     pf << "    \"stalls_mem\": " << perf_stalls_mem << ",\n";
     pf << "    \"stalls_backend\": " << perf_stalls_backend << ",\n";
+    pf << "    \"stalls_writeback\": " << perf_stalls_writeback << ",\n";
+    pf << "    \"stalls_commit\": " << perf_stalls_commit << ",\n";
+    pf << "    \"stalls_muldiv_busy\": " << perf_stalls_muldiv_busy << ",\n";
+    pf << "    \"stalls_lsu_replay_or_wait\": " << perf_stalls_lsu_replay_or_wait << ",\n";
     pf << "    \"branches\": " << perf_branches << ",\n";
     pf << "    \"branches_taken\": " << perf_branches_taken << ",\n";
     pf << "    \"flushes\": " << perf_flushes << ",\n";

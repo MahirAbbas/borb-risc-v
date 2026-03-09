@@ -14,6 +14,10 @@ case class PerfCountersBundle() extends Bundle {
   val stallsFetch   = UInt(64 bits)
   val stallsMem     = UInt(64 bits)
   val stallsBackend = UInt(64 bits)
+  val stallsWriteback = UInt(64 bits)
+  val stallsCommit = UInt(64 bits)
+  val stallsMulDivBusy = UInt(64 bits)
+  val stallsLsuReplayOrWait = UInt(64 bits)
   val branches      = UInt(64 bits)
   val branchesTaken = UInt(64 bits)
   val flushes       = UInt(64 bits)
@@ -42,6 +46,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val stallsFetch   = Reg(UInt(64 bits)) init 0
   val stallsMem     = Reg(UInt(64 bits)) init 0
   val stallsBackend = Reg(UInt(64 bits)) init 0
+  val stallsWriteback = Reg(UInt(64 bits)) init 0
+  val stallsCommit = Reg(UInt(64 bits)) init 0
+  val stallsMulDivBusy = Reg(UInt(64 bits)) init 0
+  val stallsLsuReplayOrWait = Reg(UInt(64 bits)) init 0
   val branches      = Reg(UInt(64 bits)) init 0
   val branchesTaken = Reg(UInt(64 bits)) init 0
   val flushes       = Reg(UInt(64 bits)) init 0
@@ -91,6 +99,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val fetchStall     = Bool()
   val memStall       = Bool()
   val backendStall   = Bool()
+  val writebackStall = Bool()
+  val commitStall = Bool()
+  val mulDivBusyStall = Bool()
+  val lsuReplayOrWaitStall = Bool()
   val branchExecuted = Bool()
   val branchTaken    = Bool()
   val pipelineFlush  = Bool()
@@ -100,6 +112,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   when(fetchStall)     { stallsFetch   := stallsFetch + 1 }
   when(memStall)       { stallsMem     := stallsMem + 1 }
   when(backendStall)   { stallsBackend := stallsBackend + 1 }
+  when(writebackStall) { stallsWriteback := stallsWriteback + 1 }
+  when(commitStall) { stallsCommit := stallsCommit + 1 }
+  when(mulDivBusyStall) { stallsMulDivBusy := stallsMulDivBusy + 1 }
+  when(lsuReplayOrWaitStall) { stallsLsuReplayOrWait := stallsLsuReplayOrWait + 1 }
   when(branchExecuted) { branches      := branches + 1 }
   when(branchTaken)    { branchesTaken := branchesTaken + 1 }
   when(pipelineFlush)  { flushes       := flushes + 1 }
@@ -112,6 +128,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   counters.stallsFetch   := stallsFetch
   counters.stallsMem     := stallsMem
   counters.stallsBackend := stallsBackend
+  counters.stallsWriteback := stallsWriteback
+  counters.stallsCommit := stallsCommit
+  counters.stallsMulDivBusy := stallsMulDivBusy
+  counters.stallsLsuReplayOrWait := stallsLsuReplayOrWait
   counters.branches      := branches
   counters.branchesTaken := branchesTaken
   counters.flushes       := flushes

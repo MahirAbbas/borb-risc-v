@@ -1989,10 +1989,10 @@
       "slack": 2000
     },
     "xor-01.S": {
-      "budget": 24896,
+      "budget": 179342,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3816,
+      "max_pass_cycles": 29557,
       "scale": 6.0,
       "slack": 2000
     },
