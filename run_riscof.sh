@@ -24,8 +24,8 @@ REPORT_RERUN=false
 SKIP_REPORT=false
 FAST_RV64F=false
 FAST_RV32F=false
-FAST_SIM=true
-TRACE_SIM=false
+FAST_RV64I=false
+FAST_SIM=false
 SIM_JOBS=""
 SIM_THREADS=""
 VERILATE_JOBS=""
@@ -58,6 +58,7 @@ usage() {
   echo "  --skip-report     Skip post-run failure report generation"
   echo "  --fast-rv64f      Run only RV64F arch-tests (auto-populates --tests)"
   echo "  --fast-rv32f      Run only RV32F arch-tests (auto-populates --tests)"
+  echo "  --fast-rv64i      Run only RV64I arch-tests (auto-populates --tests)"
   echo "  --smoke-rv32f-core      Run checked-in RV32F core smoke preset"
   echo "  --smoke-rv32f-arith     Run checked-in RV32F arithmetic smoke preset"
   echo "  --smoke-rv32f-longlat   Run checked-in RV32F long-latency smoke preset"
@@ -136,6 +137,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --fast-rv32f)
       FAST_RV32F=true
+      shift
+      ;;
+    --fast-rv64i)
+      FAST_RV64I=true
       shift
       ;;
     --tests)
@@ -220,8 +225,12 @@ if [[ ! "$CYCLE_BUDGET_MODE" =~ ^(off|hybrid|strict)$ ]]; then
   exit 2
 fi
 
-if [[ "$FAST_RV64F" = true && "$FAST_RV32F" = true ]]; then
-  echo "Error: --fast-rv64f and --fast-rv32f cannot be combined"
+FAST_COUNT=0
+for flag in "$FAST_RV64F" "$FAST_RV32F" "$FAST_RV64I"; do
+  [[ "$flag" = true ]] && FAST_COUNT=$((FAST_COUNT + 1))
+done
+if [[ "$FAST_COUNT" -gt 1 ]]; then
+  echo "Error: only one of --fast-rv64f, --fast-rv32f, or --fast-rv64i may be selected"
   exit 2
 fi
 
@@ -237,8 +246,8 @@ if [[ "$SMOKE_COUNT" -gt 0 && -n "$TESTS" ]]; then
   echo "Error: --smoke-* cannot be combined with --tests"
   exit 2
 fi
-if [[ "$SMOKE_COUNT" -gt 0 && ( "$FAST_RV64F" = true || "$FAST_RV32F" = true ) ]]; then
-  echo "Error: --smoke-* cannot be combined with --fast-rv64f/--fast-rv32f"
+if [[ "$SMOKE_COUNT" -gt 0 && ( "$FAST_RV64F" = true || "$FAST_RV32F" = true || "$FAST_RV64I" = true ) ]]; then
+  echo "Error: --smoke-* cannot be combined with --fast-rv64f/--fast-rv32f/--fast-rv64i"
   exit 2
 fi
 
@@ -276,6 +285,24 @@ if [[ "$FAST_RV32F" = true ]]; then
     exit 2
   fi
   echo "Selected RV32F fast subset ($(echo "$TESTS" | tr ',' '\n' | wc -l | tr -d ' ') tests)"
+fi
+
+if [[ "$FAST_RV64I" = true ]]; then
+  if [[ -n "$TESTS" ]]; then
+    echo "Error: --fast-rv64i cannot be combined with --tests"
+    exit 2
+  fi
+  RV64I_DIR="$SUITE_PATH/rv64i_m/I/src"
+  if [[ ! -d "$RV64I_DIR" ]]; then
+    echo "Error: RV64I test directory not found: $RV64I_DIR"
+    exit 2
+  fi
+  TESTS="$(ls "$RV64I_DIR"/*.S 2>/dev/null | xargs -n1 basename | paste -sd, -)"
+  if [[ -z "$TESTS" ]]; then
+    echo "Error: no RV64I tests found under: $RV64I_DIR"
+    exit 2
+  fi
+  echo "Selected RV64I fast subset ($(echo "$TESTS" | tr ',' '\n' | wc -l | tr -d ' ') tests)"
 fi
 
 if [[ "$SMOKE_COUNT" -gt 0 ]]; then

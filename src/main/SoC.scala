@@ -4,7 +4,6 @@ import spinal.core._
 import spinal.lib._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
-import borb.memory._
 import borb.core.PerfCountersBundle
 
 case class SoC() extends Component {

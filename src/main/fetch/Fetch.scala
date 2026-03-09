@@ -2,9 +2,11 @@ package borb.fetch
 
 import spinal.core._
 import spinal.lib._
+import spinal.lib.bus.amba4.axi._
 import spinal.lib.misc.pipeline._
 
 import borb.common.Common._
+import borb.fetch.PC
 import borb.frontend.Decoder.INSTRUCTION
 
 object Fetch extends AreaObject {
@@ -16,201 +18,294 @@ case class Fetch(
   rspStage: CtrlLink,
   addressWidth: Int,
   dataWidth: Int,
+  idWidth: Int = 16,
   withCompressed: Boolean = false
 ) extends Area {
-  private val frontendConfig = FrontendConfig(
+  import Fetch._
+
+  val ARCH_BASE = U(BigInt("80000000", 16), addressWidth bits)
+  def archAddr(addr: UInt): UInt = Mux(addr < ARCH_BASE, addr + ARCH_BASE, addr)
+
+  private val axiConfig = Axi4Config(
     addressWidth = addressWidth,
     dataWidth = dataWidth,
-    withCompressed = withCompressed
+    idWidth = idWidth,
+    useId = true,
+    useRegion = false,
+    useLock = false,
+    useQos = false,
+    useProt = false,
+    useCache = false
   )
 
-  private val archBase = U(BigInt("80000000", 16), addressWidth bits)
-  private def archAddr(addr: UInt): UInt = Mux(addr < archBase, addr + archBase, addr)
-
   val io = new Bundle {
-    val source = new FetchSourceBus(addressWidth, dataWidth, frontendConfig.epochWidth)
+    val iAxi = Axi4Shared(axiConfig)
     val flush = Bool()
-    val currentEpoch = UInt(frontendConfig.epochWidth bits)
+    val currentEpoch = UInt(16 bits)
     val pcAdvance = Bool()
     val pcStep = UInt(3 bits)
   }
 
-  val fifo = StreamFifo(
-    FetchPacket(frontendConfig.addressWidth, frontendConfig.dataWidth, frontendConfig.epochWidth),
-    depth = frontendConfig.beatBufferDepth
-  )
+  case class FetchRequest() extends Bundle {
+    val baseAddr = UInt(addressWidth bits)
+    val epoch = UInt(16 bits)
+    val toNextSlot = Bool()
+  }
+
+  case class FetchBeat() extends Bundle {
+    val valid = Bool()
+    val data = Bits(dataWidth bits)
+    val epoch = UInt(16 bits)
+    val beatAddr = UInt(addressWidth bits)
+  }
+
+  val beat0 = Reg(FetchBeat()) init(FetchBeat().getZero)
+  val beat1 = Reg(FetchBeat()) init(FetchBeat().getZero)
+  val pendingReqValid = RegInit(False)
+  val pendingReq = Reg(FetchRequest()) init(FetchRequest().getZero)
+
+  val inflight = UInt(4 bits)
+  inflight := pendingReqValid.asUInt.resize(4)
+  val beatValid = beat0.valid || beat1.valid
 
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
 
-  val inflight = RegInit(U(0, 4 bits))
-  val cmdFire = io.source.req.fire
-  val rspFire = io.source.rsp.valid
-  inflight := inflight + U(cmdFire) - U(rspFire)
-  val epoch = RegInit(U(0, frontendConfig.epochWidth bits))
+  io.iAxi.arw.valid := False
+  io.iAxi.arw.addr := 0
+  io.iAxi.arw.id := 0
+  io.iAxi.arw.len := 0
+  io.iAxi.arw.size := log2Up(dataWidth / 8)
+  io.iAxi.arw.burst := Axi4.burst.INCR
+  io.iAxi.arw.write := False
+  io.iAxi.w.valid := False
+  io.iAxi.w.data := 0
+  io.iAxi.w.strb := 0
+  io.iAxi.w.last := False
+  io.iAxi.b.ready := True
+  io.iAxi.r.ready.allowOverride := False
+
+  val epoch = UInt(16 bits)
+  epoch := io.currentEpoch + io.flush.asUInt.resize(16)
+  val activeEpoch = epoch
+
+  val replayGuardValid = RegInit(False)
+  val lastTakenPc = Reg(UInt(addressWidth bits)) init(0)
+  val lastTakenEpoch = Reg(UInt(16 bits)) init(0)
+  val lastTakenBeatAddr = Reg(UInt(addressWidth bits)) init(0)
+
   when(io.flush) {
-    epoch := epoch + 1
-  }
-  val activeEpoch = epoch + U(io.flush)
-
-  val receiveStage = new Area {
-    fifo.io.push.valid := io.source.rsp.valid
-    fifo.io.push.payload.data := io.source.rsp.data
-    fifo.io.push.payload.epoch := io.source.rsp.epoch
-    fifo.io.push.payload.beatAddr := io.source.rsp.address
-    fifo.io.flush := io.flush
+    beat0.valid := False
+    beat1.valid := False
+    pendingReqValid := False
+    replayGuardValid := False
   }
 
-  val alignState = new Area {
-    val needSecondBeat = Reg(Bool()) init(False)
-    val secondBeatAddr = Reg(UInt(addressWidth bits)) init(0)
-    val firstHalfword = Reg(Bits(16 bits)) init(0)
-    val replayGuardValid = RegInit(False)
-    val lastTakenPc = Reg(UInt(addressWidth bits)) init(0)
-    val lastTakenEpoch = Reg(UInt(frontendConfig.epochWidth bits)) init(0)
-    val lastTakenBeatAddr = Reg(UInt(addressWidth bits)) init(0)
+  def beatHit(slot: FetchBeat, addr: UInt): Bool = {
+    slot.valid && (slot.epoch === activeEpoch) && (slot.beatAddr === addr)
+  }
 
-    when(io.flush) {
-      needSecondBeat := False
-      replayGuardValid := False
+  def selectBeatData(hit0: Bool, hit1: Bool): Bits = {
+    val data = Bits(dataWidth bits)
+    data := beat1.data
+    when(hit0) {
+      data := beat0.data
+    }
+    data
+  }
+
+  def selectBeatEpoch(hit0: Bool): UInt = {
+    val epoch = UInt(16 bits)
+    epoch := beat1.epoch
+    when(hit0) {
+      epoch := beat0.epoch
+    }
+    epoch
+  }
+
+  def selectBeatAddr(hit0: Bool): UInt = {
+    val addr = UInt(addressWidth bits)
+    addr := beat1.beatAddr
+    when(hit0) {
+      addr := beat0.beatAddr
+    }
+    addr
+  }
+
+  def selectHalfword(data: Bits, index: UInt): Bits = {
+    index.mux(
+      U(0) -> data(15 downto 0),
+      U(1) -> data(31 downto 16),
+      U(2) -> data(47 downto 32),
+      default -> data(63 downto 48)
+    )
+  }
+
+  val cmdArea = new cmdStage.Area {
+    val pcBeatAddr = UInt(addressWidth bits)
+    pcBeatAddr := archAddr(cmdStage(PC.PC))
+    pcBeatAddr(2 downto 0) := 0
+
+    val curBeat0Hit = beatHit(beat0, pcBeatAddr)
+    val curBeat1Hit = beatHit(beat1, pcBeatAddr)
+    val curHit = curBeat0Hit || curBeat1Hit
+    val curData = selectBeatData(curBeat0Hit, curBeat1Hit)
+
+    val nextBeatAddr = pcBeatAddr + U(8, addressWidth bits)
+    val nextHit = beatHit(beat0, nextBeatAddr) || beatHit(beat1, nextBeatAddr)
+
+    val hwIndex = cmdStage(PC.PC)(2 downto 1)
+    val first16 = selectHalfword(curData, hwIndex)
+    val needStraddleBeat = if(withCompressed) {
+      curHit && (hwIndex === U(3)) && (first16(1 downto 0) === B"11")
+    } else {
+      False
+    }
+
+    val canPrefetch = if(withCompressed) {
+      False
+    } else {
+      curHit && !pendingReqValid && !nextHit
+    }
+
+    val issueAddr = UInt(addressWidth bits)
+    issueAddr := pcBeatAddr
+    val issueToNextSlot = Bool()
+    issueToNextSlot := False
+
+    val needCurrentRequest = cmdStage.up.isValid && !curHit && !pendingReqValid && !io.flush
+    val needNextRequest = curHit && needStraddleBeat && !nextHit && !pendingReqValid && !io.flush
+    val usePrefetch = canPrefetch && cmdStage.up.isValid && !cmdStage(PC.PC)(2)
+
+    when(needNextRequest || usePrefetch) {
+      issueAddr := nextBeatAddr
+      issueToNextSlot := True
+    }
+
+    val needRequest = needCurrentRequest || needNextRequest || usePrefetch
+
+    io.iAxi.arw.valid.allowOverride := needRequest
+    io.iAxi.arw.addr.allowOverride := issueAddr
+    io.iAxi.arw.id.allowOverride := activeEpoch.resized
+    io.iAxi.arw.len.allowOverride := 0
+
+    haltWhen((needCurrentRequest || needNextRequest) && !io.iAxi.arw.fire)
+
+    when(io.iAxi.arw.fire) {
+      pendingReqValid := True
+      pendingReq.baseAddr := issueAddr
+      pendingReq.epoch := activeEpoch
+      pendingReq.toNextSlot := issueToNextSlot
     }
   }
 
-  val requestStage = new cmdStage.Area {
-    val beatAddr = UInt(addressWidth bits)
-    beatAddr := archAddr(cmdStage(PC.PC))
-    beatAddr(2 downto 0) := 0
+  val rspArea = new rspStage.Area {
+    val pcBeatAddr = UInt(addressWidth bits)
+    pcBeatAddr := archAddr(rspStage(PC.PC))
+    pcBeatAddr(2 downto 0) := 0
 
-    val reqAddr = UInt(addressWidth bits)
-    reqAddr := alignState.needSecondBeat ? alignState.secondBeatAddr | beatAddr
+    val curBeat0Hit = beatHit(beat0, pcBeatAddr)
+    val curBeat1Hit = beatHit(beat1, pcBeatAddr)
+    val curValid = curBeat0Hit || curBeat1Hit
+    val curData = selectBeatData(curBeat0Hit, curBeat1Hit)
+    val srcEpoch = selectBeatEpoch(curBeat0Hit)
+    val srcBeatAddr = selectBeatAddr(curBeat0Hit)
 
-    val currentBeatBuffered = fifo.io.pop.valid &&
-      (fifo.io.pop.payload.epoch === activeEpoch) &&
-      (fifo.io.pop.payload.beatAddr === reqAddr)
+    val nextBeatAddr = pcBeatAddr + U(8, addressWidth bits)
+    val nextBeat0Hit = beatHit(beat0, nextBeatAddr)
+    val nextBeat1Hit = beatHit(beat1, nextBeatAddr)
+    val nextValid = nextBeat0Hit || nextBeat1Hit
+    val nextData = selectBeatData(nextBeat0Hit, nextBeat1Hit)
 
-    io.source.req.valid := cmdStage.up.isValid && (inflight === 0) && !io.flush && !currentBeatBuffered
-    io.source.req.payload.address := reqAddr
-    io.source.req.payload.epoch := activeEpoch
+    val staleBeat0 = beat0.valid && (beat0.epoch =/= activeEpoch)
+    val staleBeat1 = beat1.valid && (beat1.epoch =/= activeEpoch)
+    when(staleBeat0) {
+      beat0.valid := False
+    }
+    when(staleBeat1) {
+      beat1.valid := False
+    }
 
-    haltWhen(io.source.req.valid && !io.source.req.fire)
-  }
-
-  val alignStage = new rspStage.Area {
-    val beatAddr = UInt(addressWidth bits)
-    beatAddr := archAddr(rspStage(PC.PC))
-    beatAddr(2 downto 0) := 0
-
-    val srcValid = fifo.io.pop.valid
-    val srcData = fifo.io.pop.payload.data
-    val srcEpoch = fifo.io.pop.payload.epoch
-    val srcBeatAddr = fifo.io.pop.payload.beatAddr
-
-    val expectedBeat = UInt(addressWidth bits)
-    expectedBeat := alignState.needSecondBeat ? alignState.secondBeatAddr | beatAddr
-
-    val stalePacket = srcValid && (srcEpoch =/= activeEpoch)
-    val beatMismatch = srcValid && (srcBeatAddr =/= expectedBeat)
-    val duplicatePc = srcValid &&
-      alignState.replayGuardValid &&
-      (rspStage(PC.PC) === alignState.lastTakenPc) &&
-      (srcEpoch === alignState.lastTakenEpoch) &&
-      (srcBeatAddr === alignState.lastTakenBeatAddr)
+    val duplicatePc = curValid &&
+      replayGuardValid &&
+      (rspStage(PC.PC) === lastTakenPc) &&
+      (srcEpoch === lastTakenEpoch) &&
+      (srcBeatAddr === lastTakenBeatAddr)
 
     when(alignState.replayGuardValid && (rspStage(PC.PC) =/= alignState.lastTakenPc)) {
       alignState.replayGuardValid := False
     }
 
-    throwWhen(stalePacket)
     throwWhen(duplicatePc)
 
-    val hw0 = srcData(15 downto 0)
-    val hw1 = srcData(31 downto 16)
-    val hw2 = srcData(47 downto 32)
-    val hw3 = srcData(63 downto 48)
-
     val hwIndex = rspStage(PC.PC)(2 downto 1)
-    val first16 = hwIndex.mux(
-      U(0) -> hw0,
-      U(1) -> hw1,
-      U(2) -> hw2,
-      default -> hw3
-    )
-    val needs32 = first16(1 downto 0) === B"11"
+    val first16 = selectHalfword(curData, hwIndex)
+    val needs32 = if(withCompressed) first16(1 downto 0) === B"11" else True
     val straddle = needs32 && (hwIndex === U(3))
 
     val assembledInsn = Bits(32 bits)
     assembledInsn := B"32'h00000013"
-    when(alignState.needSecondBeat) {
-      assembledInsn := srcData(15 downto 0) ## alignState.firstHalfword
-    } otherwise {
-      if(withCompressed) {
-        when(!needs32) {
-          assembledInsn := B"16'h0000" ## first16
-        } otherwise {
-          switch(hwIndex) {
-            is(U(0)) { assembledInsn := hw1 ## hw0 }
-            is(U(1)) { assembledInsn := hw2 ## hw1 }
-            is(U(2)) { assembledInsn := hw3 ## hw2 }
-            default { assembledInsn := B"32'h00000013" }
-          }
+    if(withCompressed) {
+      when(!needs32) {
+        assembledInsn := B"16'h0000" ## first16
+      } otherwise {
+        switch(hwIndex) {
+          is(U(0)) { assembledInsn := curData(31 downto 16) ## curData(15 downto 0) }
+          is(U(1)) { assembledInsn := curData(47 downto 32) ## curData(31 downto 16) }
+          is(U(2)) { assembledInsn := curData(63 downto 48) ## curData(47 downto 32) }
+          default { assembledInsn := nextData(15 downto 0) ## curData(63 downto 48) }
         }
-      } else {
-        assembledInsn := Mux(rspStage(PC.PC)(2), srcData(63 downto 32), srcData(31 downto 0))
       }
+    } else {
+      assembledInsn := Mux(rspStage(PC.PC)(2), curData(63 downto 32), curData(31 downto 0))
     }
 
     rspStage.down(INSTRUCTION) := assembledInsn
     rspStage.down(SPEC_EPOCH) := srcEpoch
 
-    val waitingSecond = Bool()
+    val waitingSecond = if(withCompressed) straddle && !nextValid else False
+    haltWhen(!curValid || waitingSecond)
+
+    val takeInsn = rspStage.down.isFiring && curValid && !waitingSecond
+    val takenStep = UInt(addressWidth bits)
     if(withCompressed) {
-      waitingSecond := straddle && !alignState.needSecondBeat
+      val isCompressed = assembledInsn(1 downto 0) =/= B"11"
+      takenStep := isCompressed ? U(2, addressWidth bits) | U(4, addressWidth bits)
     } else {
-      waitingSecond := False
+      takenStep := U(4, addressWidth bits)
     }
 
-    haltWhen((!srcValid || beatMismatch || waitingSecond) && !stalePacket)
-
-    val takeInsn = rspStage.down.isFiring && srcValid && !stalePacket && !beatMismatch && !waitingSecond
-    val stepBytes = UInt(3 bits)
-    if(withCompressed) {
-      stepBytes := (assembledInsn(1 downto 0) =/= B"11") ? U(2, 3 bits) | U(4, 3 bits)
-    } else {
-      stepBytes := U(4, 3 bits)
-    }
-    val nextPc = rspStage(PC.PC) + stepBytes.resize(addressWidth)
-    val nextBeatAddr = UInt(addressWidth bits)
-    nextBeatAddr := archAddr(nextPc)
-    nextBeatAddr(2 downto 0) := 0
-
-    when(waitingSecond && srcValid && !stalePacket && !beatMismatch) {
-      alignState.needSecondBeat := True
-      alignState.secondBeatAddr := beatAddr + U(frontendConfig.beatBytes, addressWidth bits)
-      alignState.firstHalfword := first16
+    when(curValid && curBeat1Hit && !curBeat0Hit) {
+      beat0.valid := beat1.valid
+      beat0.data := beat1.data
+      beat0.epoch := beat1.epoch
+      beat0.beatAddr := beat1.beatAddr
     }
 
     when(takeInsn) {
-      alignState.replayGuardValid := True
-      alignState.lastTakenPc := rspStage(PC.PC)
-      alignState.lastTakenEpoch := srcEpoch
-      alignState.lastTakenBeatAddr := srcBeatAddr
+      replayGuardValid := True
+      lastTakenPc := rspStage(PC.PC)
+      lastTakenEpoch := srcEpoch
+      lastTakenBeatAddr := srcBeatAddr
       io.pcAdvance := True
-      io.pcStep := stepBytes
-      when(alignState.needSecondBeat) {
-        alignState.needSecondBeat := False
-      }
+      io.pcStep := takenStep.resize(3)
     }
-
-    val consumeBeat = Bool()
-    if(withCompressed) {
-      consumeBeat := waitingSecond || (takeInsn && (nextBeatAddr =/= srcBeatAddr))
-    } else {
-      consumeBeat := takeInsn && rspStage(PC.PC)(2)
-    }
-
-    fifo.io.pop.ready := consumeBeat || stalePacket || beatMismatch || duplicatePc
   }
 
-  val sourceAvailable = fifo.io.pop.valid
-  val beatBufferAvailability = fifo.io.availability
+  when(io.iAxi.r.fire) {
+    when(pendingReq.toNextSlot) {
+      beat1.valid := True
+      beat1.data := io.iAxi.r.data
+      beat1.epoch := pendingReq.epoch
+      beat1.beatAddr := pendingReq.baseAddr
+    } otherwise {
+      beat0.valid := True
+      beat0.data := io.iAxi.r.data
+      beat0.epoch := pendingReq.epoch
+      beat0.beatAddr := pendingReq.baseAddr
+    }
+    pendingReqValid := False
+  }
+
+  io.iAxi.r.ready.allowOverride := pendingReqValid
 }

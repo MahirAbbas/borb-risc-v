@@ -1,14 +1,14 @@
 {
   "families": {
     "c.frontend": {
-      "budget": 390632,
-      "max_pass_cycles": 97408,
+      "budget": 201228,
+      "max_pass_cycles": 50057,
       "scale": 4.0,
       "slack": 1000
     },
     "default": {
-      "budget": 808208,
-      "max_pass_cycles": 134368,
+      "budget": 593048,
+      "max_pass_cycles": 98508,
       "scale": 6.0,
       "slack": 2000
     },
@@ -69,106 +69,106 @@
   },
   "tests": {
     "add-01.S": {
-      "budget": 503240,
+      "budget": 25376,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83540,
+      "max_pass_cycles": 3896,
       "scale": 6.0,
       "slack": 2000
     },
     "addi-01.S": {
-      "budget": 280760,
+      "budget": 103862,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 46460,
+      "max_pass_cycles": 16977,
       "scale": 6.0,
       "slack": 2000
     },
     "addiw-01.S": {
-      "budget": 282992,
+      "budget": 104666,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 46832,
+      "max_pass_cycles": 17111,
       "scale": 6.0,
       "slack": 2000
     },
     "addw-01.S": {
-      "budget": 503000,
+      "budget": 25376,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83500,
+      "max_pass_cycles": 3896,
       "scale": 6.0,
       "slack": 2000
     },
     "and-01.S": {
-      "budget": 501752,
+      "budget": 24416,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83292,
+      "max_pass_cycles": 3736,
       "scale": 6.0,
       "slack": 2000
     },
     "andi-01.S": {
-      "budget": 281960,
+      "budget": 104312,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 46660,
+      "max_pass_cycles": 17052,
       "scale": 6.0,
       "slack": 2000
     },
     "auipc-01.S": {
-      "budget": 31880,
+      "budget": 31952,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 4980,
+      "max_pass_cycles": 4992,
       "scale": 6.0,
       "slack": 2000
     },
     "beq-01.S": {
-      "budget": 683696,
+      "budget": 375998,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 113616,
+      "max_pass_cycles": 62333,
       "scale": 6.0,
       "slack": 2000
     },
     "bge-01.S": {
-      "budget": 685280,
+      "budget": 382340,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 113880,
+      "max_pass_cycles": 63390,
       "scale": 6.0,
       "slack": 2000
     },
     "bgeu-01.S": {
-      "budget": 808208,
+      "budget": 452336,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 134368,
+      "max_pass_cycles": 75056,
       "scale": 6.0,
       "slack": 2000
     },
     "blt-01.S": {
-      "budget": 682424,
+      "budget": 380492,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 113404,
+      "max_pass_cycles": 63082,
       "scale": 6.0,
       "slack": 2000
     },
     "bltu-01.S": {
-      "budget": 802376,
+      "budget": 448568,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 133396,
+      "max_pass_cycles": 74428,
       "scale": 6.0,
       "slack": 2000
     },
     "bne-01.S": {
-      "budget": 692672,
+      "budget": 391832,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 115112,
+      "max_pass_cycles": 64972,
       "scale": 6.0,
       "slack": 2000
     },
@@ -189,154 +189,154 @@
       "slack": 2000
     },
     "caddiw-01.S": {
-      "budget": 204824,
+      "budget": 220016,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 33804,
+      "max_pass_cycles": 36336,
       "scale": 6.0,
       "slack": 2000
     },
     "caddw-01.S": {
-      "budget": 547304,
+      "budget": 593048,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 90884,
+      "max_pass_cycles": 98508,
       "scale": 6.0,
       "slack": 2000
     },
     "cand-01.S": {
-      "budget": 541376,
+      "budget": 586328,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 89896,
+      "max_pass_cycles": 97388,
       "scale": 6.0,
       "slack": 2000
     },
     "candi-01.S": {
-      "budget": 204872,
+      "budget": 220424,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 33812,
+      "max_pass_cycles": 36404,
       "scale": 6.0,
       "slack": 2000
     },
     "cbeqz-01.S": {
-      "budget": 64120,
+      "budget": 35728,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 15780,
+      "max_pass_cycles": 8682,
       "scale": 4.0,
       "slack": 1000
     },
     "cbnez-01.S": {
-      "budget": 63400,
+      "budget": 34896,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 15600,
+      "max_pass_cycles": 8474,
       "scale": 4.0,
       "slack": 1000
     },
     "cj-01.S": {
-      "budget": 10136,
+      "budget": 5784,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 2284,
+      "max_pass_cycles": 1196,
       "scale": 4.0,
       "slack": 1000
     },
     "cjalr-01.S": {
-      "budget": 70232,
+      "budget": 73088,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 11372,
+      "max_pass_cycles": 11848,
       "scale": 6.0,
       "slack": 2000
     },
     "cjr-01.S": {
-      "budget": 44872,
+      "budget": 23200,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 10968,
+      "max_pass_cycles": 5550,
       "scale": 4.0,
       "slack": 1000
     },
     "clui-01.S": {
-      "budget": 15560,
+      "budget": 15632,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2260,
+      "max_pass_cycles": 2272,
       "scale": 6.0,
       "slack": 2000
     },
     "clw-01.S": {
-      "budget": 15544,
+      "budget": 8592,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 3636,
+      "max_pass_cycles": 1898,
       "scale": 4.0,
       "slack": 1000
     },
     "cor-01.S": {
-      "budget": 545936,
+      "budget": 591344,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 90656,
+      "max_pass_cycles": 98224,
       "scale": 6.0,
       "slack": 2000
     },
     "cslli-01.S": {
-      "budget": 53912,
+      "budget": 57368,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 8652,
+      "max_pass_cycles": 9228,
       "scale": 6.0,
       "slack": 2000
     },
     "csrai-01.S": {
-      "budget": 53936,
+      "budget": 57416,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 8656,
+      "max_pass_cycles": 9236,
       "scale": 6.0,
       "slack": 2000
     },
     "csrli-01.S": {
-      "budget": 54200,
+      "budget": 57704,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 8700,
+      "max_pass_cycles": 9284,
       "scale": 6.0,
       "slack": 2000
     },
     "csub-01.S": {
-      "budget": 541208,
+      "budget": 585608,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 89868,
+      "max_pass_cycles": 97268,
       "scale": 6.0,
       "slack": 2000
     },
     "csubw-01.S": {
-      "budget": 539744,
+      "budget": 584240,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 89624,
+      "max_pass_cycles": 97040,
       "scale": 6.0,
       "slack": 2000
     },
     "csw-01.S": {
-      "budget": 52984,
+      "budget": 28328,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 12996,
+      "max_pass_cycles": 6832,
       "scale": 4.0,
       "slack": 1000
     },
     "cxor-01.S": {
-      "budget": 538232,
+      "budget": 582992,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 89372,
+      "max_pass_cycles": 96832,
       "scale": 6.0,
       "slack": 2000
     },
@@ -813,10 +813,10 @@
       "slack": 10000
     },
     "fence-01.S": {
-      "budget": 10160,
+      "budget": 10232,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1360,
+      "max_pass_cycles": 1372,
       "scale": 6.0,
       "slack": 2000
     },
@@ -871,7 +871,7 @@
     "flw-align-01.S": {
       "budget": 46208,
       "budget_class": "default",
-      "family": "rv64.base",
+      "family": null,
       "max_pass_cycles": 7368,
       "scale": 6.0,
       "slack": 2000
@@ -1623,156 +1623,148 @@
     "fsw-align-01.S": {
       "budget": 28448,
       "budget_class": "default",
-      "family": "rv64.base",
+      "family": null,
       "max_pass_cycles": 4408,
       "scale": 6.0,
       "slack": 2000
     },
     "jal-01.S": {
-      "budget": 106688,
+      "budget": 113000,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17448,
+      "max_pass_cycles": 18500,
       "scale": 6.0,
       "slack": 2000
     },
     "jalr-01.S": {
-      "budget": 73088,
+      "budget": 77120,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 11848,
+      "max_pass_cycles": 12520,
       "scale": 6.0,
       "slack": 2000
     },
     "lb-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "lbu-align-01.S": {
-      "budget": 43688,
+      "budget": 45344,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6948,
+      "max_pass_cycles": 7224,
       "scale": 6.0,
       "slack": 2000
     },
     "ld-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "lh-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "lhu-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "lui-01.S": {
-      "budget": 20936,
+      "budget": 21056,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3156,
+      "max_pass_cycles": 3176,
       "scale": 6.0,
       "slack": 2000
     },
     "lw-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "lwu-align-01.S": {
-      "budget": 42632,
+      "budget": 44240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6772,
+      "max_pass_cycles": 7040,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-beq-01.S": {
-      "budget": 14216,
+      "budget": 14528,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2036,
+      "max_pass_cycles": 2088,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-bge-01.S": {
-      "budget": 14096,
+      "budget": 14432,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2016,
+      "max_pass_cycles": 2072,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-bgeu-01.S": {
-      "budget": 14096,
+      "budget": 14432,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2016,
+      "max_pass_cycles": 2072,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-blt-01.S": {
-      "budget": 14048,
+      "budget": 14384,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2008,
+      "max_pass_cycles": 2064,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-bltu-01.S": {
-      "budget": 14096,
+      "budget": 14384,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2016,
+      "max_pass_cycles": 2064,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-bne-01.S": {
-      "budget": 14096,
+      "budget": 14408,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2016,
+      "max_pass_cycles": 2068,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-jal-01.S": {
-      "budget": 16568,
+      "budget": 17072,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2428,
+      "max_pass_cycles": 2512,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign1-cjalr-01.S": {
-      "budget": 10184,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1364,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "misalign1-cjr-01.S": {
       "budget": 10304,
       "budget_class": "default",
       "family": null,
@@ -1780,135 +1772,79 @@
       "scale": 6.0,
       "slack": 2000
     },
-    "misalign1-jalr-01.S": {
-      "budget": 10592,
+    "misalign1-cjr-01.S": {
+      "budget": 6188,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1432,
+      "max_pass_cycles": 698,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "misalign1-jalr-01.S": {
+      "budget": 10736,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 1456,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign2-jalr-01.S": {
-      "budget": 15392,
+      "budget": 15752,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2232,
+      "max_pass_cycles": 2292,
       "scale": 6.0,
       "slack": 2000
     },
     "or-01.S": {
-      "budget": 503768,
+      "budget": 25856,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83628,
+      "max_pass_cycles": 3976,
       "scale": 6.0,
       "slack": 2000
     },
     "ori-01.S": {
-      "budget": 213416,
+      "budget": 213536,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 35236,
+      "max_pass_cycles": 35256,
       "scale": 6.0,
       "slack": 2000
     },
     "sb-align-01.S": {
-      "budget": 76448,
+      "budget": 76520,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 12408,
+      "max_pass_cycles": 12420,
       "scale": 6.0,
       "slack": 2000
     },
     "sd-align-01.S": {
-      "budget": 74960,
+      "budget": 75032,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 12160,
+      "max_pass_cycles": 12172,
       "scale": 6.0,
       "slack": 2000
     },
     "sh-align-01.S": {
-      "budget": 75560,
+      "budget": 75632,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 12260,
+      "max_pass_cycles": 12272,
       "scale": 6.0,
       "slack": 2000
     },
     "sll-01.S": {
-      "budget": 62648,
+      "budget": 62720,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10108,
+      "max_pass_cycles": 10120,
       "scale": 6.0,
       "slack": 2000
     },
     "slli-01.S": {
-      "budget": 52568,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 8428,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "slliw-01.S": {
-      "budget": 52760,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 8460,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "sllw-01.S": {
-      "budget": 62288,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 10048,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "slt-01.S": {
-      "budget": 503312,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 83552,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "slti-01.S": {
-      "budget": 279632,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 46272,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "sltiu-01.S": {
-      "budget": 328472,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 54412,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "sltu-01.S": {
-      "budget": 585704,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 97284,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "sra-01.S": {
-      "budget": 24296,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 3716,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "srai-01.S": {
       "budget": 52640,
       "budget_class": "default",
       "family": "rv64.base",
@@ -1916,91 +1852,155 @@
       "scale": 6.0,
       "slack": 2000
     },
-    "sraiw-01.S": {
-      "budget": 52928,
+    "slliw-01.S": {
+      "budget": 52832,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 8488,
+      "max_pass_cycles": 8472,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sllw-01.S": {
+      "budget": 62360,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10060,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slt-01.S": {
+      "budget": 24896,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3816,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "slti-01.S": {
+      "budget": 103448,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 16908,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sltiu-01.S": {
+      "budget": 121112,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 19852,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sltu-01.S": {
+      "budget": 25376,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3896,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sra-01.S": {
+      "budget": 24416,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3736,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "srai-01.S": {
+      "budget": 52712,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8452,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sraiw-01.S": {
+      "budget": 53000,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 8500,
       "scale": 6.0,
       "slack": 2000
     },
     "sraw-01.S": {
-      "budget": 23336,
+      "budget": 23456,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3556,
+      "max_pass_cycles": 3576,
       "scale": 6.0,
       "slack": 2000
     },
     "srl-01.S": {
-      "budget": 62600,
+      "budget": 62672,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10100,
+      "max_pass_cycles": 10112,
       "scale": 6.0,
       "slack": 2000
     },
     "srli-01.S": {
-      "budget": 53408,
+      "budget": 53480,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 8568,
+      "max_pass_cycles": 8580,
       "scale": 6.0,
       "slack": 2000
     },
     "srliw-01.S": {
-      "budget": 53240,
+      "budget": 53312,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 8540,
+      "max_pass_cycles": 8552,
       "scale": 6.0,
       "slack": 2000
     },
     "srlw-01.S": {
-      "budget": 63488,
+      "budget": 63560,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10248,
+      "max_pass_cycles": 10260,
       "scale": 6.0,
       "slack": 2000
     },
     "sub-01.S": {
-      "budget": 498776,
+      "budget": 24896,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 82796,
+      "max_pass_cycles": 3816,
       "scale": 6.0,
       "slack": 2000
     },
     "subw-01.S": {
-      "budget": 504392,
+      "budget": 24416,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83732,
+      "max_pass_cycles": 3736,
       "scale": 6.0,
       "slack": 2000
     },
     "sw-align-01.S": {
-      "budget": 75128,
+      "budget": 75200,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 12188,
+      "max_pass_cycles": 12200,
       "scale": 6.0,
       "slack": 2000
     },
     "xor-01.S": {
-      "budget": 503048,
+      "budget": 24896,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 83508,
+      "max_pass_cycles": 3816,
       "scale": 6.0,
       "slack": 2000
     },
     "xori-01.S": {
-      "budget": 282752,
+      "budget": 104582,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 46792,
+      "max_pass_cycles": 17097,
       "scale": 6.0,
       "slack": 2000
     }

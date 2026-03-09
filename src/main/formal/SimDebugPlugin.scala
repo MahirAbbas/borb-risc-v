@@ -66,8 +66,8 @@ class SimDebugPlugin(
     // Fetch debug
     fetch.inflight.simPublic()
     fetch.epoch.simPublic()
-    fetch.beatBufferAvailability.simPublic()
-    fetch.io.source.req.valid.simPublic()
-    fetch.io.source.rsp.valid.simPublic()
+    fetch.beatValid.simPublic()
+    fetch.io.iAxi.arw.valid.simPublic()
+    fetch.io.iAxi.r.valid.simPublic()
   }
 }

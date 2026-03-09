@@ -4,7 +4,6 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
-import borb.memory._
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
@@ -105,6 +104,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(2),
       addressWidth = 64,
       dataWidth = 64,
+      idWidth = config.fetchIdWidth,
       withCompressed = config.cExtensionEnabled
     )
     pc.sequentialValid := fetch.io.pcAdvance
@@ -1338,14 +1338,17 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     fetch.io.flush := redirectPipeline
     fetch.io.currentEpoch := currentEpoch
     
-    // Flush fetched/decode-side younger instructions on redirect.
-    // Stage 2 can still hold a wrong-path fetch packet when stage 6 resolves.
-    // Stages 3..5 are decode/dispatch/src and are always younger at that point.
-    // Stage 6 executes the redirecting instruction and stage 7 is older state.
-    val executionStages = Array(2, 3, 4, 5).map(pipeline.ctrl(_))
-    executionStages.foreach { ctrl =>
+    // Flush fetch/decode/src younger stages on redirect so a new target beat
+    // cannot be consumed against a stale stage-local PC offset.
+    // Note: Stage 6 (Execute) is excluded - the redirecting instruction executes.
+    //       Stage 7 (Writeback) is excluded - older committed state.
+    val youngerStages = Array(1, 2, 3, 4, 5).map(pipeline.ctrl(_))
+    youngerStages.foreach { ctrl =>
       ctrl.throwWhen(redirectPipeline)
     }
+
+    // Avoid execute-stage epoch throw here because it can incorrectly drop the
+    // redirecting instruction itself.
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
@@ -1355,7 +1358,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     // Wire event signals to performance counters
     perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
-    perfCounters.fetchStall     := !fetch.sourceAvailable         // Fetch stalled waiting for instruction
+    perfCounters.fetchStall     := !fetch.beatValid              // Fetch stalled waiting for instruction
     perfCounters.memStall       := lsu.logic.waitingResponse     // Waiting for load response
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
@@ -1369,7 +1372,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()
-      fetch.io.source.simPublic()
+      fetch.io.iAxi.arw.simPublic()
+      fetch.io.iAxi.r.simPublic()
       pc.PC_cur.simPublic()
 
       val simDebug = new borb.formal.SimDebugPlugin(
@@ -1381,21 +1385,32 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       )
     }
 
-    val fetchBridge = FetchBusBridge(
-      FrontendConfig(
-        addressWidth = config.xlen,
-        dataWidth = config.xlen,
-        withCompressed = config.cExtensionEnabled
-      ),
-      io.iAxi,
-      fetch.io.source
-    )
+    io.iAxi.arw.valid := fetch.io.iAxi.arw.valid
+    io.iAxi.arw.addr := fetch.io.iAxi.arw.addr
+    io.iAxi.arw.id := fetch.io.iAxi.arw.id
+    io.iAxi.arw.len := fetch.io.iAxi.arw.len
+    io.iAxi.arw.size := fetch.io.iAxi.arw.size
+    io.iAxi.arw.burst := fetch.io.iAxi.arw.burst
+    io.iAxi.arw.write := fetch.io.iAxi.arw.write
+    fetch.io.iAxi.arw.ready := io.iAxi.arw.ready
 
-    io.iAxi.w.valid := False
-    io.iAxi.w.data := 0
-    io.iAxi.w.strb := 0
-    io.iAxi.w.last := False
-    io.iAxi.b.ready := True
+    io.iAxi.w.valid := fetch.io.iAxi.w.valid
+    io.iAxi.w.data := fetch.io.iAxi.w.data
+    io.iAxi.w.strb := fetch.io.iAxi.w.strb
+    io.iAxi.w.last := fetch.io.iAxi.w.last
+    fetch.io.iAxi.w.ready := io.iAxi.w.ready
+
+    fetch.io.iAxi.b.valid := io.iAxi.b.valid
+    fetch.io.iAxi.b.id := io.iAxi.b.id
+    fetch.io.iAxi.b.resp := io.iAxi.b.resp
+    io.iAxi.b.ready := fetch.io.iAxi.b.ready
+
+    fetch.io.iAxi.r.valid := io.iAxi.r.valid
+    fetch.io.iAxi.r.data := io.iAxi.r.data
+    fetch.io.iAxi.r.id := io.iAxi.r.id
+    fetch.io.iAxi.r.resp := io.iAxi.r.resp
+    fetch.io.iAxi.r.last := io.iAxi.r.last
+    io.iAxi.r.ready := fetch.io.iAxi.r.ready
 
     // LSU DataBus -> AXI4Shared bridge
     val dCmd = lsuBus.cmd
