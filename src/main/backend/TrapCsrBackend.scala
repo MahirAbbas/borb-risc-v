@@ -182,6 +182,14 @@ case class TrapCsrBackend(
         is(U"12'hB29") { out := perfCounters.frontendTakeInsn.asBits }
         is(U"12'hB2A") { out := perfCounters.frontendCurBeatHit.asBits }
         is(U"12'hB2B") { out := perfCounters.frontendNextBeatHit.asBits }
+        is(U"12'hB2C") { out := perfCounters.backendOccupancy0.asBits }
+        is(U"12'hB2D") { out := perfCounters.backendOccupancy1.asBits }
+        is(U"12'hB2E") { out := perfCounters.backendOccupancy2.asBits }
+        is(U"12'hB2F") { out := perfCounters.backendOccupancy3.asBits }
+        is(U"12'hB30") { out := perfCounters.backendOccupancy4.asBits }
+        is(U"12'hB31") { out := perfCounters.backendOverlapDispatchSrc.asBits }
+        is(U"12'hB32") { out := perfCounters.backendOverlapSrcExec.asBits }
+        is(U"12'hB33") { out := perfCounters.backendOverlapExecWrite.asBits }
         is(U"12'hB80") { out := perfCounters.cycles(63 downto 32).asBits.resized }
         is(U"12'hB82") { out := perfCounters.instret(63 downto 32).asBits.resized }
         is(U"12'hB83") { out := perfCounters.stallsHazard(63 downto 32).asBits.resized }
@@ -225,6 +233,14 @@ case class TrapCsrBackend(
         is(U"12'hBA9") { out := perfCounters.frontendTakeInsn(63 downto 32).asBits.resized }
         is(U"12'hBAA") { out := perfCounters.frontendCurBeatHit(63 downto 32).asBits.resized }
         is(U"12'hBAB") { out := perfCounters.frontendNextBeatHit(63 downto 32).asBits.resized }
+        is(U"12'hBAC") { out := perfCounters.backendOccupancy0(63 downto 32).asBits.resized }
+        is(U"12'hBAD") { out := perfCounters.backendOccupancy1(63 downto 32).asBits.resized }
+        is(U"12'hBAE") { out := perfCounters.backendOccupancy2(63 downto 32).asBits.resized }
+        is(U"12'hBAF") { out := perfCounters.backendOccupancy3(63 downto 32).asBits.resized }
+        is(U"12'hBB0") { out := perfCounters.backendOccupancy4(63 downto 32).asBits.resized }
+        is(U"12'hBB1") { out := perfCounters.backendOverlapDispatchSrc(63 downto 32).asBits.resized }
+        is(U"12'hBB2") { out := perfCounters.backendOverlapSrcExec(63 downto 32).asBits.resized }
+        is(U"12'hBB3") { out := perfCounters.backendOverlapExecWrite(63 downto 32).asBits.resized }
         is(U"12'hC00") { out := perfCounters.cycles.asBits }
         is(U"12'hC02") { out := perfCounters.instret.asBits }
         is(U"12'hC80") { out := perfCounters.cycles(63 downto 32).asBits.resized }
@@ -243,8 +259,8 @@ case class TrapCsrBackend(
         is(U"12'h300", U"12'h301", U"12'h302", U"12'h305", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
         is(U"12'h001", U"12'h002", U"12'h003", U"12'h180") { ok := True }
         is(U"12'h3A0", U"12'h3A2", U"12'h3A4", U"12'h3A6", U"12'h3A8", U"12'h3AA", U"12'h3AC", U"12'h3AE") { ok := True }
-        is(U"12'hB00", U"12'hB02", U"12'hB03", U"12'hB04", U"12'hB05", U"12'hB06", U"12'hB07", U"12'hB08", U"12'hB09", U"12'hB0A", U"12'hB0B", U"12'hB0C", U"12'hB0D", U"12'hB0E", U"12'hB0F", U"12'hB10", U"12'hB11", U"12'hB12", U"12'hB13", U"12'hB14", U"12'hB15", U"12'hB16", U"12'hB17", U"12'hB18", U"12'hB19", U"12'hB1A", U"12'hB1B", U"12'hB1C", U"12'hB1D", U"12'hB1E", U"12'hB1F", U"12'hB20", U"12'hB21", U"12'hB22", U"12'hB23", U"12'hB24", U"12'hB25", U"12'hB26", U"12'hB27", U"12'hB28", U"12'hB29", U"12'hB2A", U"12'hB2B") { ok := True }
-        is(U"12'hB80", U"12'hB82", U"12'hB83", U"12'hB84", U"12'hB85", U"12'hB86", U"12'hB87", U"12'hB88", U"12'hB89", U"12'hB8A", U"12'hB8B", U"12'hB8C", U"12'hB8D", U"12'hB8E", U"12'hB8F", U"12'hB90", U"12'hB91", U"12'hB92", U"12'hB93", U"12'hB94", U"12'hB95", U"12'hB96", U"12'hB97", U"12'hB98", U"12'hB99", U"12'hB9A", U"12'hB9B", U"12'hB9C", U"12'hB9D", U"12'hB9E", U"12'hB9F", U"12'hBA0", U"12'hBA1", U"12'hBA2", U"12'hBA3", U"12'hBA4", U"12'hBA5", U"12'hBA6", U"12'hBA7", U"12'hBA8", U"12'hBA9", U"12'hBAA", U"12'hBAB") { ok := True }
+        is(U"12'hB00", U"12'hB02", U"12'hB03", U"12'hB04", U"12'hB05", U"12'hB06", U"12'hB07", U"12'hB08", U"12'hB09", U"12'hB0A", U"12'hB0B", U"12'hB0C", U"12'hB0D", U"12'hB0E", U"12'hB0F", U"12'hB10", U"12'hB11", U"12'hB12", U"12'hB13", U"12'hB14", U"12'hB15", U"12'hB16", U"12'hB17", U"12'hB18", U"12'hB19", U"12'hB1A", U"12'hB1B", U"12'hB1C", U"12'hB1D", U"12'hB1E", U"12'hB1F", U"12'hB20", U"12'hB21", U"12'hB22", U"12'hB23", U"12'hB24", U"12'hB25", U"12'hB26", U"12'hB27", U"12'hB28", U"12'hB29", U"12'hB2A", U"12'hB2B", U"12'hB2C", U"12'hB2D", U"12'hB2E", U"12'hB2F", U"12'hB30", U"12'hB31", U"12'hB32", U"12'hB33") { ok := True }
+        is(U"12'hB80", U"12'hB82", U"12'hB83", U"12'hB84", U"12'hB85", U"12'hB86", U"12'hB87", U"12'hB88", U"12'hB89", U"12'hB8A", U"12'hB8B", U"12'hB8C", U"12'hB8D", U"12'hB8E", U"12'hB8F", U"12'hB90", U"12'hB91", U"12'hB92", U"12'hB93", U"12'hB94", U"12'hB95", U"12'hB96", U"12'hB97", U"12'hB98", U"12'hB99", U"12'hB9A", U"12'hB9B", U"12'hB9C", U"12'hB9D", U"12'hB9E", U"12'hB9F", U"12'hBA0", U"12'hBA1", U"12'hBA2", U"12'hBA3", U"12'hBA4", U"12'hBA5", U"12'hBA6", U"12'hBA7", U"12'hBA8", U"12'hBA9", U"12'hBAA", U"12'hBAB", U"12'hBAC", U"12'hBAD", U"12'hBAE", U"12'hBAF", U"12'hBB0", U"12'hBB1", U"12'hBB2", U"12'hBB3") { ok := True }
         is(U"12'hC00", U"12'hC02", U"12'hC80", U"12'hC82") { ok := True }
         for (i <- 0 until 64) {
           is(U(0x3B0 + i, 12 bits)) { ok := True }

@@ -230,6 +230,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val srcFire = srcCtrlPerf.up.isFiring && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
     val execFire = pipeline.ctrl(6).up.isFiring && pipeline.ctrl(6)(VALID) && pipeline.ctrl(6)(LANE_SEL)
     val writeFire = writeCtrl.up.isFiring && writeCtrl(VALID) && writeCtrl(LANE_SEL)
+    val backendOccCount = UInt(3 bits)
+    backendOccCount := dispatchValid.asUInt.resize(3) +
+      srcValid.asUInt.resize(3) +
+      execValid.asUInt.resize(3) +
+      writeValid.asUInt.resize(3)
     val writebackStall = writeValid && !committedThisCycle
     val mulDivBusy = execValid && pipeline.ctrl(6)(MicroCode).mux(
       uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True,
@@ -280,6 +285,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     perfCounters.frontendTakeInsnEvent := fetch.perfTakeInsn
     perfCounters.frontendCurBeatHitEvent := fetch.perfCurBeatHit
     perfCounters.frontendNextBeatHitEvent := fetch.perfNextBeatHit
+    perfCounters.backendOcc0 := backendOccCount === U(0, 3 bits)
+    perfCounters.backendOcc1 := backendOccCount === U(1, 3 bits)
+    perfCounters.backendOcc2 := backendOccCount === U(2, 3 bits)
+    perfCounters.backendOcc3 := backendOccCount === U(3, 3 bits)
+    perfCounters.backendOcc4 := backendOccCount === U(4, 3 bits)
+    perfCounters.backendOverlapDispatchSrcEvent := dispatchValid && srcValid
+    perfCounters.backendOverlapSrcExecEvent := srcValid && execValid
+    perfCounters.backendOverlapExecWriteEvent := execValid && writeValid
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
     perfCounters.pipelineFlush  := flushPipeline
