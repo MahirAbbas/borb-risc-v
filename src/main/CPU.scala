@@ -104,7 +104,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       addressWidth = 64,
       dataWidth = 64,
       idWidth = config.fetchIdWidth,
-      withCompressed = config.cExtensionEnabled
+      withCompressed = config.cExtensionEnabled,
+      fetchBufferDepth = 16
     )
     pc.sequentialValid := fetch.io.pcAdvance
     pc.sequentialStep := fetch.io.pcStep
@@ -285,6 +286,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     perfCounters.frontendTakeInsnEvent := fetch.perfTakeInsn
     perfCounters.frontendCurBeatHitEvent := fetch.perfCurBeatHit
     perfCounters.frontendNextBeatHitEvent := fetch.perfNextBeatHit
+    perfCounters.frontendCmdValidCycleEvent := fetch.perfCmdValid
+    perfCounters.frontendPrefetchWindowEvent := fetch.perfPrefetchWindow
+    perfCounters.frontendPrefetchBlockedNoCmdEvent := fetch.perfPrefetchBlockedNoCmd
+    perfCounters.frontendPrefetchBlockedPendingEvent := fetch.perfPrefetchBlockedPending
+    perfCounters.frontendPrefetchBlockedNextHitEvent := fetch.perfPrefetchBlockedNextHit
     perfCounters.backendOcc0 := backendOccCount === U(0, 3 bits)
     perfCounters.backendOcc1 := backendOccCount === U(1, 3 bits)
     perfCounters.backendOcc2 := backendOccCount === U(2, 3 bits)

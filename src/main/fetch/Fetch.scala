@@ -19,7 +19,8 @@ case class Fetch(
   addressWidth: Int,
   dataWidth: Int,
   idWidth: Int = 16,
-  withCompressed: Boolean = false
+  withCompressed: Boolean = false,
+  fetchBufferDepth: Int = 8
 ) extends Area {
   import Fetch._
 
@@ -49,7 +50,7 @@ case class Fetch(
   case class FetchRequest() extends Bundle {
     val baseAddr = UInt(addressWidth bits)
     val epoch = UInt(16 bits)
-    val toNextSlot = Bool()
+    val slotIndex = UInt(log2Up(fetchBufferDepth) bits)
   }
 
   case class FetchBeat() extends Bundle {
@@ -59,14 +60,13 @@ case class Fetch(
     val beatAddr = UInt(addressWidth bits)
   }
 
-  val beat0 = Reg(FetchBeat()) init(FetchBeat().getZero)
-  val beat1 = Reg(FetchBeat()) init(FetchBeat().getZero)
+  val beats = Vec.fill(fetchBufferDepth)(Reg(FetchBeat()) init(FetchBeat().getZero))
   val pendingReqValid = RegInit(False)
   val pendingReq = Reg(FetchRequest()) init(FetchRequest().getZero)
 
   val inflight = UInt(4 bits)
   inflight := pendingReqValid.asUInt.resize(4)
-  val beatValid = beat0.valid || beat1.valid
+  val beatValid = beats.map(_.valid).orR
   val perfPendingReq = Bool()
   val perfBeat0Valid = Bool()
   val perfBeat1Valid = Bool()
@@ -80,10 +80,15 @@ case class Fetch(
   val perfTakeInsn = Bool()
   val perfCurBeatHit = Bool()
   val perfNextBeatHit = Bool()
+  val perfCmdValid = Bool()
+  val perfPrefetchWindow = Bool()
+  val perfPrefetchBlockedNoCmd = Bool()
+  val perfPrefetchBlockedPending = Bool()
+  val perfPrefetchBlockedNextHit = Bool()
 
   perfPendingReq := pendingReqValid
-  perfBeat0Valid := beat0.valid
-  perfBeat1Valid := beat1.valid
+  perfBeat0Valid := beats(0).valid
+  perfBeat1Valid := beats.lift(1).map(_.valid).getOrElse(False)
   perfReqIssued := False
   perfRspAccepted := False
   perfNeedCurrentReq := False
@@ -94,6 +99,11 @@ case class Fetch(
   perfTakeInsn := False
   perfCurBeatHit := False
   perfNextBeatHit := False
+  perfCmdValid := False
+  perfPrefetchWindow := False
+  perfPrefetchBlockedNoCmd := False
+  perfPrefetchBlockedPending := False
+  perfPrefetchBlockedNextHit := False
 
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
@@ -120,10 +130,10 @@ case class Fetch(
   val lastTakenPc = Reg(UInt(addressWidth bits)) init(0)
   val lastTakenEpoch = Reg(UInt(16 bits)) init(0)
   val lastTakenBeatAddr = Reg(UInt(addressWidth bits)) init(0)
-
   when(io.flush) {
-    beat0.valid := False
-    beat1.valid := False
+    for(slot <- beats) {
+      slot.valid := False
+    }
     pendingReqValid := False
     replayGuardValid := False
   }
@@ -132,29 +142,43 @@ case class Fetch(
     slot.valid && (slot.epoch === activeEpoch) && (slot.beatAddr === addr)
   }
 
-  def selectBeatData(hit0: Bool, hit1: Bool): Bits = {
+  def hitVec(addr: UInt): Bits = {
+    val hits = Bits(fetchBufferDepth bits)
+    for(i <- 0 until fetchBufferDepth) {
+      hits(i) := beatHit(beats(i), addr)
+    }
+    hits
+  }
+
+  def selectBeatData(hits: Bits): Bits = {
     val data = Bits(dataWidth bits)
-    data := beat1.data
-    when(hit0) {
-      data := beat0.data
+    data := beats(0).data
+    for(i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        data := beats(i).data
+      }
     }
     data
   }
 
-  def selectBeatEpoch(hit0: Bool): UInt = {
+  def selectBeatEpoch(hits: Bits): UInt = {
     val epoch = UInt(16 bits)
-    epoch := beat1.epoch
-    when(hit0) {
-      epoch := beat0.epoch
+    epoch := beats(0).epoch
+    for(i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        epoch := beats(i).epoch
+      }
     }
     epoch
   }
 
-  def selectBeatAddr(hit0: Bool): UInt = {
+  def selectBeatAddr(hits: Bits): UInt = {
     val addr = UInt(addressWidth bits)
-    addr := beat1.beatAddr
-    when(hit0) {
-      addr := beat0.beatAddr
+    addr := beats(0).beatAddr
+    for(i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        addr := beats(i).beatAddr
+      }
     }
     addr
   }
@@ -173,13 +197,13 @@ case class Fetch(
     pcBeatAddr := archAddr(cmdStage(PC.PC))
     pcBeatAddr(2 downto 0) := 0
 
-    val curBeat0Hit = beatHit(beat0, pcBeatAddr)
-    val curBeat1Hit = beatHit(beat1, pcBeatAddr)
-    val curHit = curBeat0Hit || curBeat1Hit
-    val curData = selectBeatData(curBeat0Hit, curBeat1Hit)
+    val curHits = hitVec(pcBeatAddr)
+    val curHit = curHits.orR
+    val curData = selectBeatData(curHits)
 
     val nextBeatAddr = pcBeatAddr + U(8, addressWidth bits)
-    val nextHit = beatHit(beat0, nextBeatAddr) || beatHit(beat1, nextBeatAddr)
+    val nextHits = hitVec(nextBeatAddr)
+    val nextHit = nextHits.orR
 
     val hwIndex = cmdStage(PC.PC)(2 downto 1)
     val first16 = selectHalfword(curData, hwIndex)
@@ -189,24 +213,45 @@ case class Fetch(
       False
     }
 
-    val canPrefetch = if(withCompressed) {
-      False
-    } else {
-      curHit && !pendingReqValid && !nextHit
-    }
-
     val issueAddr = UInt(addressWidth bits)
     issueAddr := pcBeatAddr
-    val issueToNextSlot = Bool()
-    issueToNextSlot := False
+    val freeVec = Bits(fetchBufferDepth bits)
+    for(i <- 0 until fetchBufferDepth) {
+      freeVec(i) := !beats(i).valid || (beats(i).epoch =/= activeEpoch)
+    }
+    val hasFreeSlot = freeVec.orR
+    val firstFreeOh = OHMasking.first(freeVec)
+    val firstFreeIndex = OHToUInt(firstFreeOh)
 
-    val needCurrentRequest = cmdStage.up.isValid && !curHit && !pendingReqValid && !io.flush
-    val needNextRequest = curHit && needStraddleBeat && !nextHit && !pendingReqValid && !io.flush
-    val usePrefetch = canPrefetch && cmdStage.up.isValid && !cmdStage(PC.PC)(2)
+    val furthestAddr = UInt(addressWidth bits)
+    var furthestExpr = pcBeatAddr
+    for(i <- 0 until fetchBufferDepth) {
+      val slotAddr = beats(i).beatAddr
+      val slotIsFurthest = beats(i).valid && (beats(i).epoch === activeEpoch) && (slotAddr > furthestExpr)
+      furthestExpr = Mux(slotIsFurthest, slotAddr, furthestExpr)
+    }
+    furthestAddr := furthestExpr
+    val prefetchAddr = furthestAddr + U(8, addressWidth bits)
+    val prefetchHits = hitVec(prefetchAddr)
+    val prefetchHit = prefetchHits.orR
+    val issueSlotIndex = UInt(log2Up(fetchBufferDepth) bits)
+    issueSlotIndex := firstFreeIndex
+
+    val needCurrentRequest = cmdStage.up.isValid && !curHit && !pendingReqValid && !io.flush && hasFreeSlot
+    val needNextRequest = curHit && needStraddleBeat && !nextHit && !pendingReqValid && !io.flush && hasFreeSlot
+    val prefetchWindow = if(withCompressed) {
+      False
+    } else {
+      curHit && hasFreeSlot && !prefetchHit && !io.flush
+    }
+    val usePrefetch = if(withCompressed) {
+      False
+    } else {
+      prefetchWindow && !pendingReqValid
+    }
 
     when(needNextRequest || usePrefetch) {
-      issueAddr := nextBeatAddr
-      issueToNextSlot := True
+      issueAddr := usePrefetch ? prefetchAddr | nextBeatAddr
     }
 
     val needRequest = needCurrentRequest || needNextRequest || usePrefetch
@@ -216,6 +261,11 @@ case class Fetch(
     perfPrefetchReq.allowOverride := usePrefetch
     perfCurBeatHit.allowOverride := curHit
     perfNextBeatHit.allowOverride := nextHit
+    perfCmdValid.allowOverride := cmdStage.up.isValid
+    perfPrefetchWindow.allowOverride := prefetchWindow
+    perfPrefetchBlockedNoCmd.allowOverride := prefetchWindow && !cmdStage.up.isValid
+    perfPrefetchBlockedPending.allowOverride := prefetchWindow && pendingReqValid
+    perfPrefetchBlockedNextHit.allowOverride := (if(withCompressed) False else curHit && prefetchHit && !io.flush)
 
     io.iAxi.arw.valid.allowOverride := needRequest
     io.iAxi.arw.addr.allowOverride := issueAddr
@@ -229,7 +279,7 @@ case class Fetch(
       pendingReqValid := True
       pendingReq.baseAddr := issueAddr
       pendingReq.epoch := activeEpoch
-      pendingReq.toNextSlot := issueToNextSlot
+      pendingReq.slotIndex := issueSlotIndex
     }
   }
 
@@ -238,27 +288,22 @@ case class Fetch(
     pcBeatAddr := archAddr(rspStage(PC.PC))
     pcBeatAddr(2 downto 0) := 0
 
-    val curBeat0Hit = beatHit(beat0, pcBeatAddr)
-    val curBeat1Hit = beatHit(beat1, pcBeatAddr)
-    val curValid = curBeat0Hit || curBeat1Hit
-    val curData = selectBeatData(curBeat0Hit, curBeat1Hit)
-    val srcEpoch = selectBeatEpoch(curBeat0Hit)
-    val srcBeatAddr = selectBeatAddr(curBeat0Hit)
+    for(slot <- beats) {
+      when(slot.valid && (slot.epoch =/= activeEpoch)) {
+        slot.valid := False
+      }
+    }
+
+    val curHits = hitVec(pcBeatAddr)
+    val curValid = curHits.orR
+    val curData = selectBeatData(curHits)
+    val srcEpoch = selectBeatEpoch(curHits)
+    val srcBeatAddr = selectBeatAddr(curHits)
 
     val nextBeatAddr = pcBeatAddr + U(8, addressWidth bits)
-    val nextBeat0Hit = beatHit(beat0, nextBeatAddr)
-    val nextBeat1Hit = beatHit(beat1, nextBeatAddr)
-    val nextValid = nextBeat0Hit || nextBeat1Hit
-    val nextData = selectBeatData(nextBeat0Hit, nextBeat1Hit)
-
-    val staleBeat0 = beat0.valid && (beat0.epoch =/= activeEpoch)
-    val staleBeat1 = beat1.valid && (beat1.epoch =/= activeEpoch)
-    when(staleBeat0) {
-      beat0.valid := False
-    }
-    when(staleBeat1) {
-      beat1.valid := False
-    }
+    val nextHits = hitVec(nextBeatAddr)
+    val nextValid = nextHits.orR
+    val nextData = selectBeatData(nextHits)
 
     val duplicatePc = curValid &&
       replayGuardValid &&
@@ -311,13 +356,6 @@ case class Fetch(
       takenStep := U(4, addressWidth bits)
     }
 
-    when(curValid && curBeat1Hit && !curBeat0Hit) {
-      beat0.valid := beat1.valid
-      beat0.data := beat1.data
-      beat0.epoch := beat1.epoch
-      beat0.beatAddr := beat1.beatAddr
-    }
-
     when(takeInsn) {
       perfTakeInsn := True
       replayGuardValid := True
@@ -326,22 +364,24 @@ case class Fetch(
       lastTakenBeatAddr := srcBeatAddr
       io.pcAdvance := True
       io.pcStep := takenStep.resize(3)
+
+      val nextPc = rspStage(PC.PC) + takenStep
+      val nextPcBeatAddr = archAddr(nextPc)
+      nextPcBeatAddr(2 downto 0) := 0
+      for(slot <- beats) {
+        when(slot.valid && (slot.epoch === srcEpoch) && (slot.beatAddr < nextPcBeatAddr)) {
+          slot.valid := False
+        }
+      }
     }
   }
 
   when(io.iAxi.r.fire) {
     perfRspAccepted := True
-    when(pendingReq.toNextSlot) {
-      beat1.valid := True
-      beat1.data := io.iAxi.r.data
-      beat1.epoch := pendingReq.epoch
-      beat1.beatAddr := pendingReq.baseAddr
-    } otherwise {
-      beat0.valid := True
-      beat0.data := io.iAxi.r.data
-      beat0.epoch := pendingReq.epoch
-      beat0.beatAddr := pendingReq.baseAddr
-    }
+    beats(pendingReq.slotIndex).valid := True
+    beats(pendingReq.slotIndex).data := io.iAxi.r.data
+    beats(pendingReq.slotIndex).epoch := pendingReq.epoch
+    beats(pendingReq.slotIndex).beatAddr := pendingReq.baseAddr
     pendingReqValid := False
   }
 

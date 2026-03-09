@@ -555,6 +555,11 @@ int main(int argc, char** argv) {
     const uint64_t perf_frontend_take_insn = top->io_perf_frontendTakeInsn;
     const uint64_t perf_frontend_cur_beat_hit = top->io_perf_frontendCurBeatHit;
     const uint64_t perf_frontend_next_beat_hit = top->io_perf_frontendNextBeatHit;
+    const uint64_t perf_frontend_cmd_valid_cycles = top->io_perf_frontendCmdValidCycles;
+    const uint64_t perf_frontend_prefetch_window = top->io_perf_frontendPrefetchWindow;
+    const uint64_t perf_frontend_prefetch_blocked_no_cmd = top->io_perf_frontendPrefetchBlockedNoCmd;
+    const uint64_t perf_frontend_prefetch_blocked_pending = top->io_perf_frontendPrefetchBlockedPending;
+    const uint64_t perf_frontend_prefetch_blocked_next_hit = top->io_perf_frontendPrefetchBlockedNextHit;
     const uint64_t perf_backend_occupancy0 = top->io_perf_backendOccupancy0;
     const uint64_t perf_backend_occupancy1 = top->io_perf_backendOccupancy1;
     const uint64_t perf_backend_occupancy2 = top->io_perf_backendOccupancy2;
@@ -624,6 +629,11 @@ int main(int argc, char** argv) {
     pf << "    \"frontend_take_insn\": " << perf_frontend_take_insn << ",\n";
     pf << "    \"frontend_cur_beat_hit\": " << perf_frontend_cur_beat_hit << ",\n";
     pf << "    \"frontend_next_beat_hit\": " << perf_frontend_next_beat_hit << ",\n";
+    pf << "    \"frontend_cmd_valid_cycles\": " << perf_frontend_cmd_valid_cycles << ",\n";
+    pf << "    \"frontend_prefetch_window\": " << perf_frontend_prefetch_window << ",\n";
+    pf << "    \"frontend_prefetch_blocked_no_cmd\": " << perf_frontend_prefetch_blocked_no_cmd << ",\n";
+    pf << "    \"frontend_prefetch_blocked_pending\": " << perf_frontend_prefetch_blocked_pending << ",\n";
+    pf << "    \"frontend_prefetch_blocked_next_hit\": " << perf_frontend_prefetch_blocked_next_hit << ",\n";
     pf << "    \"backend_occupancy0\": " << perf_backend_occupancy0 << ",\n";
     pf << "    \"backend_occupancy1\": " << perf_backend_occupancy1 << ",\n";
     pf << "    \"backend_occupancy2\": " << perf_backend_occupancy2 << ",\n";
