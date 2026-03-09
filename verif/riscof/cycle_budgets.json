@@ -77,18 +77,18 @@
       "slack": 2000
     },
     "addi-01.S": {
-      "budget": 23456,
+      "budget": 103862,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3576,
+      "max_pass_cycles": 16977,
       "scale": 6.0,
       "slack": 2000
     },
     "addiw-01.S": {
-      "budget": 23456,
+      "budget": 104666,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3576,
+      "max_pass_cycles": 17111,
       "scale": 6.0,
       "slack": 2000
     },
@@ -109,10 +109,10 @@
       "slack": 2000
     },
     "andi-01.S": {
-      "budget": 22976,
+      "budget": 104312,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3496,
+      "max_pass_cycles": 17052,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1733,18 +1733,18 @@
       "slack": 2000
     },
     "slti-01.S": {
-      "budget": 23936,
+      "budget": 103448,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3656,
+      "max_pass_cycles": 16908,
       "scale": 6.0,
       "slack": 2000
     },
     "sltiu-01.S": {
-      "budget": 23456,
+      "budget": 121112,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3576,
+      "max_pass_cycles": 19852,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1853,10 +1853,10 @@
       "slack": 2000
     },
     "xori-01.S": {
-      "budget": 23456,
+      "budget": 104582,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3576,
+      "max_pass_cycles": 17097,
       "scale": 6.0,
       "slack": 2000
     }

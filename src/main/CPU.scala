@@ -2520,7 +2520,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     // Wire event signals to performance counters
     perfCounters.hazardStall    := dispatcher.hcs.writes.hazard  // Hazard stall from HazardChecker
-    perfCounters.fetchStall     := !fetch.fifo.io.pop.valid       // Fetch stalled waiting for instruction
+    perfCounters.fetchStall     := !fetch.beatValid              // Fetch stalled waiting for instruction
     perfCounters.memStall       := lsu.logic.waitingResponse     // Waiting for load response
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
