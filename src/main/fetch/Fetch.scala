@@ -67,6 +67,33 @@ case class Fetch(
   val inflight = UInt(4 bits)
   inflight := pendingReqValid.asUInt.resize(4)
   val beatValid = beat0.valid || beat1.valid
+  val perfPendingReq = Bool()
+  val perfBeat0Valid = Bool()
+  val perfBeat1Valid = Bool()
+  val perfReqIssued = Bool()
+  val perfRspAccepted = Bool()
+  val perfNeedCurrentReq = Bool()
+  val perfNeedNextReq = Bool()
+  val perfPrefetchReq = Bool()
+  val perfWaitCurBeat = Bool()
+  val perfWaitNextBeat = Bool()
+  val perfTakeInsn = Bool()
+  val perfCurBeatHit = Bool()
+  val perfNextBeatHit = Bool()
+
+  perfPendingReq := pendingReqValid
+  perfBeat0Valid := beat0.valid
+  perfBeat1Valid := beat1.valid
+  perfReqIssued := False
+  perfRspAccepted := False
+  perfNeedCurrentReq := False
+  perfNeedNextReq := False
+  perfPrefetchReq := False
+  perfWaitCurBeat := False
+  perfWaitNextBeat := False
+  perfTakeInsn := False
+  perfCurBeatHit := False
+  perfNextBeatHit := False
 
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
@@ -184,6 +211,12 @@ case class Fetch(
 
     val needRequest = needCurrentRequest || needNextRequest || usePrefetch
 
+    perfNeedCurrentReq.allowOverride := needCurrentRequest
+    perfNeedNextReq.allowOverride := needNextRequest
+    perfPrefetchReq.allowOverride := usePrefetch
+    perfCurBeatHit.allowOverride := curHit
+    perfNextBeatHit.allowOverride := nextHit
+
     io.iAxi.arw.valid.allowOverride := needRequest
     io.iAxi.arw.addr.allowOverride := issueAddr
     io.iAxi.arw.id.allowOverride := activeEpoch.resized
@@ -192,6 +225,7 @@ case class Fetch(
     haltWhen((needCurrentRequest || needNextRequest) && !io.iAxi.arw.fire)
 
     when(io.iAxi.arw.fire) {
+      perfReqIssued := True
       pendingReqValid := True
       pendingReq.baseAddr := issueAddr
       pendingReq.epoch := activeEpoch
@@ -264,6 +298,8 @@ case class Fetch(
     rspStage.down(SPEC_EPOCH) := srcEpoch
 
     val waitingSecond = if(withCompressed) straddle && !nextValid else False
+    perfWaitCurBeat.allowOverride := !curValid
+    perfWaitNextBeat.allowOverride := waitingSecond
     haltWhen(!curValid || waitingSecond)
 
     val takeInsn = rspStage.down.isFiring && curValid && !waitingSecond
@@ -283,6 +319,7 @@ case class Fetch(
     }
 
     when(takeInsn) {
+      perfTakeInsn := True
       replayGuardValid := True
       lastTakenPc := rspStage(PC.PC)
       lastTakenEpoch := srcEpoch
@@ -293,6 +330,7 @@ case class Fetch(
   }
 
   when(io.iAxi.r.fire) {
+    perfRspAccepted := True
     when(pendingReq.toNextSlot) {
       beat1.valid := True
       beat1.data := io.iAxi.r.data

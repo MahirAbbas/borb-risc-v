@@ -138,9 +138,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     trapLogic.fpFlagsSetValid := fpBackend.fpFlags.valid
     trapLogic.fpFlagsSetBits := fpBackend.fpFlags.bits
-    integerBackend.trapIntResult := trapLogic.csrIntResult
-    integerBackend.fpIntResult := fpBackend.intResult
-    integerBackend.suppressIntWriteback := fpBackend.suppressIntWriteback
 
     decode.branchResolved := branch.branchResolved
 
@@ -221,10 +218,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val fetchStall = !fetch.beatValid
     val memStall = lsu.logic.waitingResponse
     val lsuReplayOrWait = lsu.logic.waitingResponse || lsu.logic.amoWaitingResponse || lsu.logic.amoStorePending
+    val dispatchCtrl = pipeline.ctrl(4)
+    val srcCtrlPerf = pipeline.ctrl(5)
     val committedThisCycle = pipeline.ctrl(7).up(COMMIT)
     val writeCtrl = pipeline.ctrl(7)
+    val dispatchValid = dispatchCtrl.up.isValid && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
+    val srcValid = srcCtrlPerf.up.isValid && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
     val execValid = pipeline.ctrl(6).up.isValid && pipeline.ctrl(6)(VALID) && pipeline.ctrl(6)(LANE_SEL)
     val writeValid = writeCtrl.up.isValid && writeCtrl(VALID) && writeCtrl(LANE_SEL)
+    val dispatchFire = dispatchCtrl.up.isFiring && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
+    val srcFire = srcCtrlPerf.up.isFiring && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
+    val execFire = pipeline.ctrl(6).up.isFiring && pipeline.ctrl(6)(VALID) && pipeline.ctrl(6)(LANE_SEL)
+    val writeFire = writeCtrl.up.isFiring && writeCtrl(VALID) && writeCtrl(LANE_SEL)
     val writebackStall = writeValid && !committedThisCycle
     val mulDivBusy = execValid && pipeline.ctrl(6)(MicroCode).mux(
       uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True,
@@ -234,6 +239,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     )
     val mulDivBusyStall = mulDivBusy && !committedThisCycle
     val commitStall = execValid && !writeValid && !hazardStall && !fetchStall && !lsuReplayOrWait
+    val dispatchToSrcStall = dispatchValid && !srcValid && !hazardStall && !fetchStall
+    val srcToExecStall = srcValid && !execValid && !hazardStall && !fetchStall && !controlHazardBusy
+    val execToWriteStall = execValid && !writeValid && !lsuReplayOrWait
     val backendActive = Array(3, 4, 5, 6, 7).map { idx =>
       val ctrl = pipeline.ctrl(idx)
       ctrl.up.isValid && ctrl(VALID)
@@ -248,6 +256,30 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     perfCounters.commitStall := commitStall
     perfCounters.mulDivBusyStall := mulDivBusyStall
     perfCounters.lsuReplayOrWaitStall := lsuReplayOrWait
+    perfCounters.dispatchToSrcStall := dispatchToSrcStall
+    perfCounters.srcToExecStall := srcToExecStall
+    perfCounters.execToWriteStall := execToWriteStall
+    perfCounters.dispatchValid := dispatchValid
+    perfCounters.srcValid := srcValid
+    perfCounters.execValid := execValid
+    perfCounters.writeValid := writeValid
+    perfCounters.dispatchFire := dispatchFire
+    perfCounters.srcFire := srcFire
+    perfCounters.execFire := execFire
+    perfCounters.writeFire := writeFire
+    perfCounters.frontendPendingReq := fetch.perfPendingReq
+    perfCounters.frontendBeat0Valid := fetch.perfBeat0Valid
+    perfCounters.frontendBeat1Valid := fetch.perfBeat1Valid
+    perfCounters.frontendReqIssuedEvent := fetch.perfReqIssued
+    perfCounters.frontendRspAcceptedEvent := fetch.perfRspAccepted
+    perfCounters.frontendNeedCurrentReqEvent := fetch.perfNeedCurrentReq
+    perfCounters.frontendNeedNextReqEvent := fetch.perfNeedNextReq
+    perfCounters.frontendPrefetchReqEvent := fetch.perfPrefetchReq
+    perfCounters.frontendWaitCurBeatEvent := fetch.perfWaitCurBeat
+    perfCounters.frontendWaitNextBeatEvent := fetch.perfWaitNextBeat
+    perfCounters.frontendTakeInsnEvent := fetch.perfTakeInsn
+    perfCounters.frontendCurBeatHitEvent := fetch.perfCurBeatHit
+    perfCounters.frontendNextBeatHitEvent := fetch.perfNextBeatHit
     perfCounters.branchExecuted := branch.logic.isBranch && branch.logic.up(LANE_SEL)
     perfCounters.branchTaken    := branch.logic.doJump
     perfCounters.pipelineFlush  := flushPipeline
