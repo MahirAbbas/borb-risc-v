@@ -80,9 +80,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(SELF_REDIRECT).setAsReg().init(False)
     }
+    val resetPcValue = BigInt("80000000", 16)
+
     // Keep speculation epoch instruction-local across stalls/flushes.
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(SPEC_EPOCH).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(e => e._1 >= 1 && e._1 < 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(resetPcValue)
     }
     // Keep PC instruction-local across stalls/flushes so execute-stage control
     // flow uses the PC that belongs to that instruction.
@@ -158,6 +163,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.VALID).setAsReg().init(False)
     }
+    // Keep dispatch lane routing instruction-local once an instruction leaves
+    // dispatch. Otherwise a stalled backend instruction can observe a newer
+    // execution-unit selection and execute through the wrong side-effect path.
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOALU).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOBRANCH).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOAGU).setAsReg().init(False)
+    }
     // Keep resolved operands instruction-local once they leave the source
     // stage. Otherwise a held execute-stage instruction can observe a newer
     // regfile/bypass value and re-execute with different operands.
@@ -175,7 +192,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // aliasing under branch-heavy tests.
     val currentEpoch = Reg(UInt(16 bits)) init 0
 
-    val pc = new PC(pipeline.ctrl(0), addressWidth = 64, withCompressed = config.cExtensionEnabled)
+    val pc = new PC(
+      pipeline.ctrl(0),
+      addressWidth = 64,
+      withCompressed = config.cExtensionEnabled,
+      resetPc = resetPcValue
+    )
     //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
@@ -207,7 +229,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
-    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), currentEpoch)
+    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch)
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     lsuBus.cmd << lsu.io.dBus.cmd
@@ -216,7 +238,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
     io.perf := perfCounters.counters
 
-    val trapLogic = TrapCsrBackend(execStage, config, currentEpoch, pc, branch, lsu, perfCounters.counters)
+    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(7), config, currentEpoch, pc, branch, lsu, perfCounters.counters)
     val fpBackend = FpBackend(execStage, lsu, currentEpoch, trapLogic.frm)
 
     trapLogic.fpFlagsSetValid := fpBackend.fpFlags.valid
@@ -277,15 +299,22 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     
     // Flush Logic - fires when a non-stale branch/jump redirects.
     val execEpochMatches = pipeline.ctrl(6)(SPEC_EPOCH) === currentEpoch
+    val fenceiRedirect = pipeline.ctrl(6).up.isFiring &&
+      execEpochMatches &&
+      pipeline.ctrl(6)(Decoder.VALID) &&
+      pipeline.ctrl(6)(borb.common.Common.LANE_SEL) &&
+      (pipeline.ctrl(6)(Decoder.MicroCode) === uopFENCE_I)
     val flushPipeline = branch.logic.jumpCmd.valid && execEpochMatches
     val trapRedirect = trapLogic.redirect.trapFire && execEpochMatches
     val mretRedirect = trapLogic.redirect.mretFire && execEpochMatches
-    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect
+    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
     pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
-    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect
-    pc.jump.payload.target := mretRedirect ? trapLogic.redirect.mretTarget | branch.logic.jumpCmd.payload.target
-    pc.jump.payload.is_jump := mretRedirect || branch.logic.jumpCmd.payload.is_jump
-    pc.jump.payload.is_branch := (!mretRedirect) && branch.logic.jumpCmd.payload.is_branch
+    val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
+    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || fenceiRedirect
+    pc.jump.payload.target := mretRedirect ? trapLogic.redirect.mretTarget |
+      (fenceiRedirect ? fenceiTarget | branch.logic.jumpCmd.payload.target)
+    pc.jump.payload.is_jump := mretRedirect || fenceiRedirect || branch.logic.jumpCmd.payload.is_jump
+    pc.jump.payload.is_branch := (!mretRedirect) && (!fenceiRedirect) && branch.logic.jumpCmd.payload.is_branch
     
     // Increment epoch on taken branch
     when(flushPipeline) {
@@ -295,6 +324,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       currentEpoch := currentEpoch + 1
     }
     when(mretRedirect) {
+      currentEpoch := currentEpoch + 1
+    }
+    when(fenceiRedirect) {
       currentEpoch := currentEpoch + 1
     }
     val redirectCommitBubble = RegNext(redirectPipeline) init(False)
@@ -315,8 +347,40 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
 
-    val debugPlugin = new DebugPlugin(pipeline, trapLogic.redirect)
+    val redirectProbe = borb.RedirectDebugProbe()
+    redirectProbe.execEpochMatches := execEpochMatches
+    redirectProbe.branchRedirect := flushPipeline
+    redirectProbe.trapRedirect := trapRedirect
+    redirectProbe.mretRedirect := mretRedirect
+    redirectProbe.redirectPipeline := redirectPipeline
+    redirectProbe.pcJumpValid := pc.jump.valid
+    redirectProbe.pcJumpTarget := pc.jump.payload.target
+    redirectProbe.pcExceptionValid := pc.exception.valid
+    redirectProbe.pcExceptionTarget := pc.exception.payload.vector
+    redirectProbe.liveTrapCause := trapLogic.redirect.trapCause
+    redirectProbe.liveTrapTval := trapLogic.redirect.trapTval
+
+    val debugPlugin = new DebugPlugin(pipeline, trapLogic.redirect, redirectProbe)
     io.dbg := debugPlugin.io.dbg
+
+    // Once a sequence has committed, any lingering older-stage copy of that
+    // same instruction is stale and must be killed before it can refire side
+    // effects or traps. This keeps backend ownership of a sequence exclusive.
+    val lastCommittedSeqValid = RegInit(False)
+    val lastCommittedSeq = Reg(UInt(32 bits)) init(0)
+    when(pipeline.ctrl(7).up(COMMIT)) {
+      lastCommittedSeqValid := True
+      lastCommittedSeq := pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ)
+    }
+    Array(4, 5, 6).foreach { idx =>
+      val ctrl = pipeline.ctrl(idx)
+      val staleCommittedSeq =
+        lastCommittedSeqValid &&
+        ctrl.up.isValid &&
+        ctrl(VALID) &&
+        (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === lastCommittedSeq)
+      ctrl.throwWhen(staleCommittedSeq)
+    }
 
     // Wire event signals to performance counters
     val hazardStall = dispatcher.hcs.writes.hazard
@@ -467,12 +531,15 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val dActiveCmd = Reg(DataBusCmd(64, 64, 16))
     val dArwFired = RegInit(False)
     val dWFired = RegInit(False)
-
+    val archBase = U(BigInt("80000000", 16), 64 bits)
+    val lowDataAliasBase = U(4 MiB, 64 bits)
+    val dPhysAddr = UInt(64 bits)
+    dPhysAddr := Mux(dActiveCmd.address < archBase, dActiveCmd.address + lowDataAliasBase, dActiveCmd.address)
     dCmd.ready := False
 
     io.dAxi.arw.valid := False
     io.dAxi.arw.id := dActiveCmd.id.resized
-    io.dAxi.arw.addr := dActiveCmd.address
+    io.dAxi.arw.addr := dPhysAddr
     io.dAxi.arw.len := 0
     io.dAxi.arw.size := log2Up(config.xlen / 8)
     io.dAxi.arw.burst := Axi4.burst.INCR

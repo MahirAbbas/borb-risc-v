@@ -27,7 +27,7 @@ object PC extends AreaObject {
   val FLUSH = Payload(Bool())
 }
 
-case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = false) extends Area {
+case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = false, resetPc: BigInt = 0) extends Area {
   stage.up.valid := True
 
   val jump = Flow(JumpCmd(addressWidth))
@@ -39,7 +39,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
   // allows for future support of 'C' extension
   // val fetch_offset = withCompressed generate in(UInt(3 bits))
 
-  val PC_cur = Reg(UInt(addressWidth bits)).init(U(0, addressWidth bits))
+  val PC_cur = Reg(UInt(addressWidth bits)).init(U(resetPc, addressWidth bits))
 
   // Control flow change interfaces
 

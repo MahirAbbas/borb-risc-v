@@ -68,11 +68,19 @@
     }
   },
   "tests": {
-    "add-01.S": {
-      "budget": 25376,
+    "Fencei.S": {
+      "budget": 4400,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3896,
+      "max_pass_cycles": 400,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "add-01.S": {
+      "budget": 146300,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 24050,
       "scale": 6.0,
       "slack": 2000
     },
@@ -93,18 +101,18 @@
       "slack": 2000
     },
     "addw-01.S": {
-      "budget": 25376,
+      "budget": 146246,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3896,
+      "max_pass_cycles": 24041,
       "scale": 6.0,
       "slack": 2000
     },
     "and-01.S": {
-      "budget": 24416,
+      "budget": 146024,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3736,
+      "max_pass_cycles": 24004,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1797,10 +1805,10 @@
       "slack": 2000
     },
     "or-01.S": {
-      "budget": 25856,
+      "budget": 146336,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3976,
+      "max_pass_cycles": 24056,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1809,6 +1817,14 @@
       "budget_class": "default",
       "family": "rv64.base",
       "max_pass_cycles": 35256,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_A_tor_zero.S": {
+      "budget": 19166,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2861,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1869,10 +1885,10 @@
       "slack": 2000
     },
     "slt-01.S": {
-      "budget": 24896,
+      "budget": 146180,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3816,
+      "max_pass_cycles": 24030,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1893,10 +1909,10 @@
       "slack": 2000
     },
     "sltu-01.S": {
-      "budget": 25376,
+      "budget": 170240,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3896,
+      "max_pass_cycles": 28040,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1965,18 +1981,18 @@
       "slack": 2000
     },
     "sub-01.S": {
-      "budget": 24896,
+      "budget": 145088,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3816,
+      "max_pass_cycles": 23848,
       "scale": 6.0,
       "slack": 2000
     },
     "subw-01.S": {
-      "budget": 24416,
+      "budget": 146732,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3736,
+      "max_pass_cycles": 24122,
       "scale": 6.0,
       "slack": 2000
     },

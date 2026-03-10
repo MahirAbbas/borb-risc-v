@@ -377,6 +377,25 @@ int main(int argc, char** argv) {
   while (!done && cycles < opt.max_cycles) {
     tick(20 + cycles * 2);
 
+    const bool enable_pc_exception_debug = false;
+    if (enable_pc_exception_debug && top->io_dbg_redirectPcExceptionValid) {
+      std::cerr
+          << "PCEXC cyc=" << cycles
+          << " target=0x" << std::hex << (uint64_t)top->io_dbg_redirectPcExceptionTarget
+          << " cause=0x" << (uint64_t)top->io_dbg_liveTrapCause
+          << " tval=0x" << (uint64_t)top->io_dbg_liveTrapTval
+          << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
+          << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
+          << " x_rs1_addr=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
+          << " x_rs2_addr=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
+          << " x_send_agu=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU
+          << " x_rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
+          << " x_rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
+          << " x_imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
+          << " order=" << std::dec << top->io_dbg_commitOrder
+          << std::endl;
+    }
+
     if (top->io_dbg_commitValid) {
       commit_events++;
       if (top->io_dbg_commitTrap) {
@@ -404,6 +423,17 @@ int main(int argc, char** argv) {
           << " pc=0x" << std::hex << (uint64_t)top->io_dbg_commitPc << std::dec
           << " insn=0x" << std::hex << (uint32_t)top->io_dbg_commitInsn << std::dec
           << " trap=" << (int)top->io_dbg_commitTrap
+          << " redir=" << (int)top->io_dbg_redirectAny
+          << " redir_branch=" << (int)top->io_dbg_redirectBranch
+          << " redir_trap=" << (int)top->io_dbg_redirectTrap
+          << " redir_mret=" << (int)top->io_dbg_redirectMret
+          << " redir_exec_epoch=" << (int)top->io_dbg_redirectExecEpochMatches
+          << " pc_jump_valid=" << (int)top->io_dbg_redirectPcJumpValid
+          << " pc_jump_target=0x" << std::hex << (uint64_t)top->io_dbg_redirectPcJumpTarget << std::dec
+          << " pc_exc_valid=" << (int)top->io_dbg_redirectPcExceptionValid
+          << " pc_exc_target=0x" << std::hex << (uint64_t)top->io_dbg_redirectPcExceptionTarget << std::dec
+          << " live_trap_cause=0x" << std::hex << (uint64_t)top->io_dbg_liveTrapCause << std::dec
+          << " live_trap_tval=0x" << std::hex << (uint64_t)top->io_dbg_liveTrapTval << std::dec
           << " rd=" << (int)top->io_dbg_commitRd
           << " we=" << (int)top->io_dbg_commitWe
           << " f_pc=0x" << std::hex << (uint64_t)top->io_dbg_f_pc
@@ -459,15 +489,20 @@ int main(int argc, char** argv) {
     const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid != 0;
     const uint64_t fetch_hold_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC;
     const bool in_fetch_window =
-        ((fetch_rsp_pc >= 0x340ULL && fetch_rsp_pc <= 0x390ULL) ||
-         (fetch_hold && fetch_hold_pc >= 0x340ULL && fetch_hold_pc <= 0x390ULL));
-    if (enable_fetch_window_debug && in_fetch_window && fetch_window_logs < 160) {
+        ((fetch_rsp_pc >= 0x1f0ULL && fetch_rsp_pc <= 0x208ULL) ||
+         (fetch_hold && fetch_hold_pc >= 0x1f0ULL && fetch_hold_pc <= 0x208ULL));
+    if (enable_fetch_window_debug && in_fetch_window && fetch_window_logs < 240) {
       std::cerr
           << "FETCHDBG cyc=" << cycles
           << " order=" << top->io_dbg_commitOrder
           << " rspPc=0x" << std::hex << fetch_rsp_pc
           << " hold=" << std::dec << (int)fetch_hold
           << " holdPc=0x" << std::hex << fetch_hold_pc
+          << " pcSeqValid=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pc_sequentialValid
+          << " pktValid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
+          << " pktPop=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetPop
+          << " pktSeq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_seq
+          << " pktInsn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_insn
           << " first16=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_first16
           << " curData=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_curData
           << " s2pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
@@ -491,6 +526,12 @@ int main(int argc, char** argv) {
           << " s6seq=" << (uint32_t)top->io_dbg_s6_seq
           << " s6lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
           << " s6insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " s6rs1a=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
+          << " s6rs2a=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
+          << " s6agu=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU
+          << " s6rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
+          << " s6rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
+          << " s6imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
           << " s7pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_PC_PC
           << " s7v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_valid
           << " s7f=" << (int)top->io_dbg_s7_fire
@@ -531,6 +572,17 @@ int main(int argc, char** argv) {
                    << ",\"insn\":\"0x" << std::hex << insn << std::dec << "\""
                    << ",\"commit_pulse\":" << (top->io_dbg_commitPulse ? "true" : "false")
                    << ",\"dup_retire\":" << (top->io_dbg_duplicateRetire ? "true" : "false")
+                   << ",\"redirect\":{\"any\":" << (top->io_dbg_redirectAny ? "true" : "false")
+                   << ",\"branch\":" << (top->io_dbg_redirectBranch ? "true" : "false")
+                   << ",\"trap\":" << (top->io_dbg_redirectTrap ? "true" : "false")
+                   << ",\"mret\":" << (top->io_dbg_redirectMret ? "true" : "false")
+                   << ",\"exec_epoch\":" << (top->io_dbg_redirectExecEpochMatches ? "true" : "false")
+                   << ",\"pc_jump_valid\":" << (top->io_dbg_redirectPcJumpValid ? "true" : "false")
+                   << ",\"pc_jump_target\":\"0x" << std::hex << (uint64_t)top->io_dbg_redirectPcJumpTarget << std::dec << "\""
+                   << ",\"pc_exception_valid\":" << (top->io_dbg_redirectPcExceptionValid ? "true" : "false")
+                   << ",\"pc_exception_target\":\"0x" << std::hex << (uint64_t)top->io_dbg_redirectPcExceptionTarget << std::dec << "\""
+                   << ",\"live_trap_cause\":\"0x" << std::hex << (uint64_t)top->io_dbg_liveTrapCause << std::dec << "\""
+                   << ",\"live_trap_tval\":\"0x" << std::hex << (uint64_t)top->io_dbg_liveTrapTval << std::dec << "\"}"
                    << ",\"s4\":{\"valid\":" << (top->io_dbg_s4_valid ? "true" : "false")
                    << ",\"fire\":" << (top->io_dbg_s4_fire ? "true" : "false")
                    << ",\"seq\":" << top->io_dbg_s4_seq << "}"

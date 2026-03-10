@@ -30,8 +30,6 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     val src1U = up(RS1).asUInt
     val src2U = up(RS2).asUInt
     val pcValue = up(PC.PC)
-    val archBase = U(BigInt("80000000", 16), 64 bits)
-    val pcArch = Mux(pcValue < archBase, pcValue + archBase, pcValue)
     val imm = up(IMMED).asUInt
 
     val condition = Bool()
@@ -98,7 +96,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt
         val linkStep = Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
-        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | (pcArch + linkStep).asBits
+        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | (pcValue + linkStep).asBits
         // Squash writeback if trapping
         down(WriteBack.RESULT).valid.allowOverride := (up(LEGAL) === YESNO.Y) && up(VALID) && !willTrap
       }

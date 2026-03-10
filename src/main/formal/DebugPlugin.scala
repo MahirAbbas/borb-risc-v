@@ -11,6 +11,20 @@ import borb.dispatch.SrcPlugin
 import borb.execute.IntAlu
 import borb.execute.Lsu
 
+case class RedirectDebugProbe() extends Bundle {
+  val execEpochMatches = Bool()
+  val branchRedirect = Bool()
+  val trapRedirect = Bool()
+  val mretRedirect = Bool()
+  val redirectPipeline = Bool()
+  val pcJumpValid = Bool()
+  val pcJumpTarget = UInt(64 bits)
+  val pcExceptionValid = Bool()
+  val pcExceptionTarget = UInt(64 bits)
+  val liveTrapCause = Bits(64 bits)
+  val liveTrapTval = Bits(64 bits)
+}
+
 case class DebugArea() extends Bundle {
   val commitValid = Bool()
   val commitOrder = UInt(64 bits)
@@ -29,6 +43,17 @@ case class DebugArea() extends Bundle {
   val commitTrap = Bool()
   val commitTrapCause = Bits(64 bits)
   val commitTrapTval = Bits(64 bits)
+  val redirectBranch = Bool()
+  val redirectTrap = Bool()
+  val redirectMret = Bool()
+  val redirectAny = Bool()
+  val redirectExecEpochMatches = Bool()
+  val redirectPcJumpValid = Bool()
+  val redirectPcJumpTarget = UInt(64 bits)
+  val redirectPcExceptionValid = Bool()
+  val redirectPcExceptionTarget = UInt(64 bits)
+  val liveTrapCause = Bits(64 bits)
+  val liveTrapTval = Bits(64 bits)
   val squashed = Bool()
 
   // Optional: stage PCs / valids
@@ -60,7 +85,11 @@ case class DebugArea() extends Bundle {
   val memWdata = Bits(64 bits)
 }
 
-case class DebugPlugin(pipeline: StageCtrlPipeline, trapRedirect: TrapRedirectOutcome) extends Area {
+case class DebugPlugin(
+    pipeline: StageCtrlPipeline,
+    trapRedirect: TrapRedirectOutcome,
+    redirectProbe: RedirectDebugProbe
+) extends Area {
   val s4Stage = pipeline.ctrl(4)
   val s5Stage = pipeline.ctrl(5)
   val s6Stage = pipeline.ctrl(6)
@@ -97,6 +126,17 @@ case class DebugPlugin(pipeline: StageCtrlPipeline, trapRedirect: TrapRedirectOu
     io.dbg.commitTrap := up(TRAP)
     io.dbg.commitTrapCause := trapRedirect.trapCause
     io.dbg.commitTrapTval := trapRedirect.trapTval
+    io.dbg.redirectBranch := redirectProbe.branchRedirect
+    io.dbg.redirectTrap := redirectProbe.trapRedirect
+    io.dbg.redirectMret := redirectProbe.mretRedirect
+    io.dbg.redirectAny := redirectProbe.redirectPipeline
+    io.dbg.redirectExecEpochMatches := redirectProbe.execEpochMatches
+    io.dbg.redirectPcJumpValid := redirectProbe.pcJumpValid
+    io.dbg.redirectPcJumpTarget := redirectProbe.pcJumpTarget
+    io.dbg.redirectPcExceptionValid := redirectProbe.pcExceptionValid
+    io.dbg.redirectPcExceptionTarget := redirectProbe.pcExceptionTarget
+    io.dbg.liveTrapCause := redirectProbe.liveTrapCause
+    io.dbg.liveTrapTval := redirectProbe.liveTrapTval
 
     io.dbg.squashed := !up(LANE_SEL) || up(TRAP)
 

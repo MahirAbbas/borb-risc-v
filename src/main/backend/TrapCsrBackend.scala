@@ -7,14 +7,20 @@ import borb.core.CpuConfig
 import borb.core.PerfCountersBundle
 import borb.execute.{Branch, Lsu}
 import borb.execute.WriteBack
+import borb.fetch.Fetch
 import borb.fetch.PC
+import borb.frontend.DecodeTable
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
+import borb.frontend.RVC
 import borb.common.Common._
 import borb.common.MicroCode._
+import spinal.lib.logic.Masked
+import spinal.lib.logic.Symplify
 
 case class TrapCsrBackend(
     execStage: CtrlLink,
+    wbStage: CtrlLink,
     config: CpuConfig,
     currentEpoch: UInt,
     pc: PC,
@@ -37,6 +43,10 @@ case class TrapCsrBackend(
 
   val logic = new execStage.Area {
     val epochMatches = up(SPEC_EPOCH) === currentEpoch
+    val decodeMasks = collection.mutable.LinkedHashSet[Masked]()
+    for ((instr, _) <- DecodeTable.X_table) {
+      decodeMasks += Masked(instr)
+    }
 
     val CAUSE_MISALIGNED_FETCH = U(0, 64 bits)
     val CAUSE_FETCH_ACCESS = U(1, 64 bits)
@@ -48,10 +58,10 @@ case class TrapCsrBackend(
     val CAUSE_USER_ECALL = U(8, 64 bits)
     val CAUSE_SUPERVISOR_ECALL = U(9, 64 bits)
     val CAUSE_MACHINE_ECALL = U(11, 64 bits)
-    val ARCH_BASE = U(BigInt("80000000", 16), 64 bits)
     val PRV_U = U(0, 2 bits)
     val PRV_S = U(1, 2 bits)
     val PRV_M = U(3, 2 bits)
+    val ARCH_BASE = U(BigInt("80000000", 16), 64 bits)
 
     val csrMstatus = Reg(Bits(64 bits)) init 0
     val misaBase = BigInt("8000000000000100", 16)
@@ -269,10 +279,30 @@ case class TrapCsrBackend(
       ok
     }
 
-    val csrAddr = up(Decoder.DECODED_INSTRUCTION)(31 downto 20).asUInt
+    val rawInsn = up(Decoder.INSTRUCTION)
+    val rawIsCompressed = if (config.cExtensionEnabled) rawInsn(1 downto 0) =/= B"11" else False
+    val rawRvc = if (config.cExtensionEnabled) RVC(rawInsn(15 downto 0), xlen = config.xlen) else null
+    val trapInsn = Bits(32 bits)
+    trapInsn := rawInsn
+    if (config.cExtensionEnabled) {
+      when(rawIsCompressed) {
+        trapInsn := rawRvc.inst
+      }
+    }
+    // Raw 0x00000000 is a real architectural illegal instruction in tests like
+    // the PMP TOR zero-address execution case, but the pipeline can also expose
+    // startup garbage before the first real fetch packet advances. Use decode
+    // validity or a nonzero fetch sequence to distinguish a real arrived
+    // instruction from bootstrap junk.
+    val trapInsnArrived = up.isValid && (up(Decoder.VALID) || (up(Fetch.FETCH_SEQ) =/= 0))
+    val trapInsnDecodeIllegal = if (config.cExtensionEnabled) rawIsCompressed && rawRvc.illegal else False
+    val trapInsnSupported = Symplify(trapInsn, decodeMasks)
+    val trapInsnValid = trapInsnSupported && !trapInsnDecodeIllegal
+
+    val csrAddr = trapInsn(31 downto 20).asUInt
     val csrOld = csrRead(csrAddr)
     val csrRs1 = up(borb.dispatch.SrcPlugin.RS1)
-    val csrZimm = B(59 bits, default -> False) ## up(Decoder.DECODED_INSTRUCTION)(19 downto 15)
+    val csrZimm = B(59 bits, default -> False) ## trapInsn(19 downto 15)
     val csrWriteData = Bits(64 bits)
     csrWriteData := csrOld
     val csrWriteEn = Bool()
@@ -292,7 +322,7 @@ case class TrapCsrBackend(
       is(uopCSRRCI) { csrWriteData := csrOld & ~csrZimm; csrWriteEn := csrZimm =/= 0 }
     }
 
-    val csrIllegal = up(Decoder.VALID) && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
+    val csrIllegal = trapInsnValid && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
     val csrFire = up.isFiring && epochMatches && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isCsrOp
 
     when(csrFire && !csrIllegal && csrWriteEn) {
@@ -410,8 +440,12 @@ case class TrapCsrBackend(
     }
 
     val trapFromBranch = branch.logic.willTrap
-    val insn = up(Decoder.DECODED_INSTRUCTION)
-    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU)
+    val insn = trapInsn
+    val duplicateInWb = wbStage.up.isValid &&
+      wbStage(Decoder.VALID) &&
+      wbStage(LANE_SEL) &&
+      (wbStage(Fetch.FETCH_SEQ) === up(Fetch.FETCH_SEQ))
+    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU) && !duplicateInWb
 
     when(up.isFiring && up(LANE_SEL) && (up(PC.PC) =/= U(0, 64 bits))) {
       sawNonZeroPc := True
@@ -423,8 +457,7 @@ case class TrapCsrBackend(
     val instPriv = currentPriv
 
     def pmpAllow(addrRaw: UInt, priv: UInt, needX: Bool, needR: Bool, needW: Bool, accessBytes: UInt): Bool = {
-      val denyNullData = (addrRaw === U(0, 64 bits)) && (needR || needW)
-      val addrLo = Mux(addrRaw < ARCH_BASE, addrRaw + ARCH_BASE, addrRaw)
+      val addrLo = addrRaw
       val bytes = accessBytes.max(U(1, 64 bits))
       val addrHi = addrLo + (bytes - U(1, 64 bits))
       val hitVec = Vec(Bool(), pmpImplementedEntries)
@@ -486,7 +519,7 @@ case class TrapCsrBackend(
       for (i <- (pmpImplementedEntries - 1) downto 0) {
         allowExpr = Mux(hitVec(i), permVec(i), allowExpr)
       }
-      Mux(denyNullData, False, allowExpr)
+      allowExpr
     }
 
     val loadBytes = UInt(64 bits)
@@ -524,7 +557,7 @@ case class TrapCsrBackend(
 
     val pmpExecAllowed = if (config.cExtensionEnabled) {
       val fetchPc = up(PC.PC)
-      val isCompressed = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
+      val isCompressed = rawIsCompressed && !trapInsnDecodeIllegal
       val loParcelExecAllowed = pmpAllow(fetchPc, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
       val hiParcelExecAllowed = pmpAllow(fetchPc + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
       loParcelExecAllowed && (isCompressed || hiParcelExecAllowed)
@@ -545,9 +578,14 @@ case class TrapCsrBackend(
     // before the oldest architectural PC=0 instruction retires, so treating a
     // later PC=0 observe as a stale-fetch fault is no longer sound here.
     val latePcZeroFetch = False
-    val pmpExecFault = up.isFiring && up(LANE_SEL) && !pmpExecAllowed
-    val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
-    val pmpStoreFault = aguFire && ((lsu.logic.isStore && !isAmoOp && !pmpStoreAllowed) || (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed)))
+    val lowExecAccessFault = up(PC.PC) < ARCH_BASE
+    val lowDataAccessFault = lsu.logic.effectiveAddr < ARCH_BASE
+    val pmpExecFault = up.isFiring && up(LANE_SEL) && (!pmpExecAllowed || lowExecAccessFault)
+    val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && (!pmpLoadAllowed || lowDataAccessFault)
+    val pmpStoreFault = aguFire && (
+      (lsu.logic.isStore && !isAmoOp && (!pmpStoreAllowed || lowDataAccessFault)) ||
+      (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed || lowDataAccessFault))
+    )
     val pmpDataFault = pmpLoadFault || pmpStoreFault
     lsu.io.pmpFault := pmpDataFault
 
@@ -563,7 +601,7 @@ case class TrapCsrBackend(
     val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
     val atomicOpcode = insn(6 downto 0) === B"0101111"
     val trapFromAtomicDisabled = if (config.aExtensionEnabled) False else atomicOpcode
-    val trapFromIllegal32 = (!up(Decoder.VALID) && !isHandledSystem) || trapFromAtomicDisabled
+    val trapFromIllegal32 = (trapInsnArrived && !trapInsnValid && !isHandledSystem) || trapFromAtomicDisabled
     val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
     val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
     val mretTarget = mepcMasked(csrMepc).asUInt
@@ -599,12 +637,12 @@ case class TrapCsrBackend(
     val pcRaw = up(PC.PC)
     val branchTargetRaw = branch.logic.target
     val memAddrRaw = lsu.logic.effectiveAddr
-    val pcArch = Mux(pcRaw < ARCH_BASE, pcRaw + ARCH_BASE, pcRaw)
-    val branchTargetArch = Mux(branchTargetRaw < ARCH_BASE, branchTargetRaw + ARCH_BASE, branchTargetRaw)
-    val memAddrArch = Mux(memAddrRaw < ARCH_BASE, memAddrRaw + ARCH_BASE, memAddrRaw)
+    val pcArch = pcRaw
+    val branchTargetArch = branchTargetRaw
+    val memAddrArch = memAddrRaw
     val secondParcelFetchFault = trapFromFetchAccess &&
       (if (config.cExtensionEnabled) True else False) &&
-      (up(Decoder.DECODED_INSTRUCTION)(1 downto 0) === B"11") &&
+      !rawIsCompressed &&
       pmpAllow(pcRaw, instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits)) &&
       !pmpAllow(pcRaw + U(2, 64 bits), instPriv, needX = True, needR = False, needW = False, accessBytes = U(2, 64 bits))
 
@@ -618,7 +656,7 @@ case class TrapCsrBackend(
     } elsewhen(trapFromFetchAccess) {
       trapTval := Mux(secondParcelFetchFault, (pcArch + U(2, 64 bits)).asBits, (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits))
     } elsewhen(trapFromIllegalInsn) {
-      val illegalInsnBits = up(Decoder.DECODED_INSTRUCTION)
+      val illegalInsnBits = trapInsn
       trapTval := Mux(illegalInsnBits(1 downto 0) =/= B"11", illegalInsnBits(15 downto 0).asBits.resize(64), illegalInsnBits.resized)
     } elsewhen(trapFromEbreak) {
       trapTval := pcArch.asBits

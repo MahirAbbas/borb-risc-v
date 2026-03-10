@@ -75,9 +75,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       val mulSS = ((SRC1.msb ## SRC1).asSInt.resize(130) * (SRC2.msb ## SRC2).asSInt.resize(130)).asBits
       val mulHSU = ((SRC1.msb ## SRC1).asSInt.resize(130) * (False ## SRC2).asSInt.resize(130)).asBits
       val mulUU = ((False ## SRC1).asUInt.resize(130) * (False ## SRC2).asUInt.resize(130)).asBits
-      val archBase = U(BigInt("80000000", 16), 64 bits)
       val pcRaw = up(borb.fetch.PC.PC)
-      val pcArch = Mux(pcRaw < archBase, pcRaw + archBase, pcRaw)
 
       result := up(MicroCode).muxDc(
         uopXORI -> (SRC1 ^ IMMED),
@@ -125,7 +123,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
         uopREMW -> Mux(divByZeroW, src1W, Mux(divOverflowW, B(0, 32 bits), divRemSignedW)).asSInt.resize(64).asBits,
         uopREMUW -> Mux(divByZeroW, src1W, (src1WU % src2WU).asBits).asSInt.resize(64).asBits,
         uopLUI -> (IMMED.asBits),
-        uopAUIPC -> (IMMED.asSInt + pcArch.asSInt).asBits,
+        uopAUIPC -> (IMMED.asSInt + pcRaw.asSInt).asBits,
         // FCVT ops are handled in CPU trap/CSR area with FCSR state visibility.
         uopFCVTLS -> B(0, 64 bits),
         uopFCVTLUS -> B(0, 64 bits),

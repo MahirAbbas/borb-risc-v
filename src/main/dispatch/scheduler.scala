@@ -143,15 +143,15 @@ case class Dispatch(
     // LANE_SEL acts as the valid bit for the lane.
     val firing = up.isFiring
 
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
+    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
       down(SENDTOALU) := True
       down(LANE_SEL) := firing
     }
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
+    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
       down(SENDTOBRANCH) := True
       down(LANE_SEL) := firing
     }
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU) {
+    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU) {
       down(SENDTOAGU) := True
       down(LANE_SEL) := firing
     }

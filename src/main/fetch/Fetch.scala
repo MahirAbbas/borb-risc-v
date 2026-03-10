@@ -28,7 +28,6 @@ case class Fetch(
   import Fetch._
 
   val ARCH_BASE = U(BigInt("80000000", 16), addressWidth bits)
-  def archAddr(addr: UInt): UInt = Mux(addr < ARCH_BASE, addr + ARCH_BASE, addr)
 
   private val axiConfig = Axi4Config(
     addressWidth = addressWidth,
@@ -258,8 +257,11 @@ case class Fetch(
   }
 
   val cmdArea = new cmdStage.Area {
+    val bootSeedActive = (nextPacketSeq === 0) && !packetValid && !pendingReqValid && (queueCount === 0)
+    val cmdPcRaw = UInt(addressWidth bits)
+    cmdPcRaw := bootSeedActive ? ARCH_BASE | cmdStage(PC.PC)
     val pcBeatAddr = UInt(addressWidth bits)
-    pcBeatAddr := archAddr(cmdStage(PC.PC))
+    pcBeatAddr := cmdPcRaw
     pcBeatAddr(2 downto 0) := 0
 
     val curHits = hitVec(pcBeatAddr)
@@ -270,7 +272,7 @@ case class Fetch(
     val nextHits = hitVec(nextBeatAddr)
     val nextHit = nextHits.orR
 
-    val hwIndex = cmdStage(PC.PC)(2 downto 1)
+    val hwIndex = cmdPcRaw(2 downto 1)
     val first16 = selectHalfword(curData, hwIndex)
     val curRvc = RVC(first16, xlen = xlen)
     val curIsCompressed = if(withCompressed) {
@@ -331,10 +333,10 @@ case class Fetch(
     val packetHasSpace = !packetValid || packetAccepted
     val duplicatePc = assembleCurValid &&
       replayGuardValid &&
-      (cmdStage(PC.PC) === lastTakenPc) &&
+      (cmdPcRaw === lastTakenPc) &&
       (assembleSrcEpoch === lastTakenEpoch) &&
       (assembleSrcBeatAddr === lastTakenBeatAddr)
-    when(replayGuardValid && (cmdStage(PC.PC) =/= lastTakenPc)) {
+    when(replayGuardValid && (cmdPcRaw =/= lastTakenPc)) {
       replayGuardValid := False
     }
 
@@ -407,7 +409,6 @@ case class Fetch(
     val issueResident = anyResident(issueAddr)
     val issuePending = pendingReqValid && (pendingReq.baseAddr === issueAddr)
     val needRequest = (needCurrentRequest || needNextRequest || usePrefetch) && !issueResident && !issuePending
-
     perfNeedCurrentReq.allowOverride := needCurrentRequest
     perfNeedNextReq.allowOverride := needNextRequest
     perfPrefetchReq.allowOverride := usePrefetch
@@ -448,7 +449,7 @@ case class Fetch(
 
     when(canEnqueuePacket) {
       packetEnqueue.allowOverride := True
-      packetEnqueuePc.allowOverride := cmdStage(PC.PC)
+      packetEnqueuePc.allowOverride := cmdPcRaw
       packetEnqueueInsn.allowOverride := assembledInsn
       packetEnqueueEpoch.allowOverride := assembleSrcEpoch
       packetEnqueueBeatAddr.allowOverride := assembleSrcBeatAddr
@@ -457,15 +458,15 @@ case class Fetch(
 
       perfTakeInsn := True
       replayGuardValid := True
-      lastTakenPc := cmdStage(PC.PC)
+      lastTakenPc := cmdPcRaw
       lastTakenEpoch := assembleSrcEpoch
       lastTakenBeatAddr := assembleSrcBeatAddr
       io.pcAdvance := True
       io.pcStep := takenStep.resize(3)
       nextPacketSeq := nextPacketSeq + 1
 
-      val nextPc = cmdStage(PC.PC) + takenStep
-      val nextPcBeatAddr = archAddr(nextPc)
+      val nextPc = cmdPcRaw + takenStep
+      val nextPcBeatAddr = nextPc
       nextPcBeatAddr(2 downto 0) := 0
       when(compressedNextReqValid && (compressedNextReqAddr < nextPcBeatAddr)) {
         compressedNextReqValid := False
@@ -486,12 +487,11 @@ case class Fetch(
     }
     val headPacket = packet
 
-    rspStage.down(PC.PC).allowOverride := headPacket.pc
-    rspStage.down(INSTRUCTION).allowOverride := headPacket.insn
-    rspStage.down(SPEC_EPOCH).allowOverride := headPacket.epoch
-    rspStage.down(Fetch.FETCH_SEQ).allowOverride := headPacket.seq
-
     rspStage.up.valid := packetValid
+    rspStage.up(PC.PC).allowOverride := headPacket.pc
+    rspStage.up(INSTRUCTION).allowOverride := headPacket.insn
+    rspStage.up(SPEC_EPOCH).allowOverride := headPacket.epoch
+    rspStage.up(Fetch.FETCH_SEQ).allowOverride := headPacket.seq
     packetAccepted.allowOverride := packetValid && rspStage.up.isFiring
     packetPop.allowOverride := packetAccepted
   }

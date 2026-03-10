@@ -50,20 +50,16 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
 
   val immsel = new stage.Area {
     val sext = Bits(64 bits).simPublic()
-    sext.assignDontCare()
+    sext := B(0, 64 bits)
     val imm = new IMM(up(borb.frontend.Decoder.DECODED_INSTRUCTION))
-    // when(up.isFiring) {
-    sext := up(IMMSEL)
-      .muxDc(
-        Imm_Select.N_IMM -> S(0, 64 bits),
-        Imm_Select.I_IMM -> imm.i_sext,
-        Imm_Select.S_IMM -> imm.s_sext,
-        Imm_Select.B_IMM -> imm.b_sext,
-        Imm_Select.U_IMM -> imm.u_sext,
-        Imm_Select.J_IMM -> imm.j_sext
-      )
-      .asBits
-    // }
+    switch(up(IMMSEL)) {
+      is(Imm_Select.I_IMM) { sext := imm.i_sext.asBits }
+      is(Imm_Select.S_IMM) { sext := imm.s_sext.asBits }
+      is(Imm_Select.B_IMM) { sext := imm.b_sext.asBits }
+      is(Imm_Select.U_IMM) { sext := imm.u_sext.asBits }
+      is(Imm_Select.J_IMM) { sext := imm.j_sext.asBits }
+      default { sext := B(0, 64 bits) }
+    }
   }
 
   import borb.frontend.REGFILE._
