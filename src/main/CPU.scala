@@ -74,7 +74,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       case (id, ctrl) => ctrl.up(LANE_SEL).setAsReg().init(False)
 
     }
-    pipeline.ctrls.filter(_._1 >= 5).foreach { 
+    pipeline.ctrls.filter(e => e._1 >= 5 && e._1 < 7).foreach { 
       case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
     }
     pipeline.ctrls.filter(_._1 >= 7).foreach {
@@ -88,6 +88,87 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // flow uses the PC that belongs to that instruction.
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
+    }
+    // Keep fetched instruction instruction-local starting at the fetch
+    // response stage so mixed-width fetch cannot present a newer halfword
+    // boundary under an older PC at the stage-2/3 handoff.
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.INSTRUCTION).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SEQ).setAsReg().init(0)
+    }
+    // Keep decode outputs instruction-local once they leave decode. Otherwise
+    // a stalled downstream instruction can observe a newer decode result while
+    // still carrying the older PC/epoch payloads.
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.DECODED_INSTRUCTION).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_COMPRESSED).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.LEGAL).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_FP).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.EXECUTION_UNIT).setAsReg().init(borb.frontend.ExecutionUnitEnum.NA)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RDTYPE).setAsReg().init(borb.frontend.REGFILE.RDTYPE.RD_NA)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS1TYPE).setAsReg().init(borb.frontend.REGFILE.RSTYPE.RS_NA)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS2TYPE).setAsReg().init(borb.frontend.REGFILE.RSTYPE.RS_NA)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.FSR3EN).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IMMSEL).setAsReg().init(borb.frontend.Imm_Select.N_IMM)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.MicroCode).setAsReg().init(borb.common.MicroCode.uopNOP)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_BR).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_W).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USE_LDQ).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USE_STQ).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RD_ADDR).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS1_ADDR).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS2_ADDR).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.VALID).setAsReg().init(False)
+    }
+    // Keep resolved operands instruction-local once they leave the source
+    // stage. Otherwise a held execute-stage instruction can observe a newer
+    // regfile/bypass value and re-execute with different operands.
+    pipeline.ctrls.filter(_._1 >= 6).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS1).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 6).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS2).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 6).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.IMMED).setAsReg().init(0)
     }
 
     // Global speculation epoch. Keep this wide enough to avoid wraparound
@@ -105,7 +186,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       dataWidth = 64,
       idWidth = config.fetchIdWidth,
       withCompressed = config.cExtensionEnabled,
-      fetchBufferDepth = 16
+      fetchBufferDepth = 16,
+      xlen = config.xlen
     )
     pc.sequentialValid := fetch.io.pcAdvance
     pc.sequentialStep := fetch.io.pcStep
@@ -120,9 +202,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(4),
       hazardRange,
       pipeline,
-      intBypassReady = Seq(False, integerBackend.exeIntBypass.valid, integerBackend.wbIntBypass.valid)
+      intBypassReady = Seq(False, integerBackend.exeBypassReady, integerBackend.wbIntBypass.valid)
     )
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.wbIntBypass, integerBackend.exeIntBypass))
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
     val lsu = new borb.execute.Lsu(pipeline.ctrl(6), currentEpoch)
@@ -147,6 +229,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // front-end/control-flow cleanup is still in progress.
     val srcCtrl = pipeline.ctrl(5)
     val exeCtrl = pipeline.ctrl(6)
+    val wbCtrl = pipeline.ctrl(7)
     val srcHasControlFlow = srcCtrl.up.isValid &&
       srcCtrl(Decoder.VALID) &&
       srcCtrl(borb.common.Common.LANE_SEL) &&
@@ -159,6 +242,29 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     Array(2, 3, 4).map(pipeline.ctrl(_)).foreach { ctrl =>
       ctrl.haltWhen(controlHazardBusy)
     }
+    srcCtrl.haltWhen(exeHasControlFlow)
+
+    val exeIntProducer = exeCtrl.up.isValid &&
+      exeCtrl(Decoder.VALID) &&
+      exeCtrl(borb.common.Common.LANE_SEL) &&
+      (exeCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+      (exeCtrl(Decoder.RD_ADDR) =/= 0)
+    val srcNeedsExeRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      (srcCtrl(Decoder.RS1_ADDR) === exeCtrl(Decoder.RD_ADDR))
+    val srcNeedsExeRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      (srcCtrl(Decoder.RS2_ADDR) === exeCtrl(Decoder.RD_ADDR))
+    srcCtrl.haltWhen(exeIntProducer && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
+
+    val wbIntProducer = wbCtrl.up.isValid &&
+      wbCtrl(Decoder.VALID) &&
+      wbCtrl(borb.common.Common.LANE_SEL) &&
+      (wbCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+      (wbCtrl(Decoder.RD_ADDR) =/= 0)
+    val srcNeedsWbRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      (srcCtrl(Decoder.RS1_ADDR) === wbCtrl(Decoder.RD_ADDR))
+    val srcNeedsWbRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      (srcCtrl(Decoder.RS2_ADDR) === wbCtrl(Decoder.RD_ADDR))
+    srcCtrl.haltWhen(wbIntProducer && (srcNeedsWbRdRs1 || srcNeedsWbRdRs2))
 
     // ========== Speculation Epoch Architecture ==========
     // Clean, scalable speculation handling for in-order superscalar CPU
@@ -191,6 +297,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     when(mretRedirect) {
       currentEpoch := currentEpoch + 1
     }
+    val redirectCommitBubble = RegNext(redirectPipeline) init(False)
     
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.flush := redirectPipeline
@@ -205,13 +312,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       ctrl.throwWhen(redirectPipeline)
     }
 
-    // Avoid execute-stage epoch throw here because it can incorrectly drop the
-    // redirecting instruction itself.
-
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi
 
-    val debugPlugin = new DebugPlugin(pipeline)
+    val debugPlugin = new DebugPlugin(pipeline, trapLogic.redirect)
     io.dbg := debugPlugin.io.dbg
 
     // Wire event signals to performance counters
@@ -307,7 +411,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     //val dispCtrl = pipeline.ctrl(4)
 
     import borb.execute.WriteBack
-    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0), currentEpoch)
+    val writeback = new WriteBack(pipeline.ctrl(7), srcPlugin.regfileread.regfile.io.writes(0), currentEpoch, redirectCommitBubble)
     val wbArea = new write.Area {
       // Expose signals for simulation
       srcPlugin.regfileread.regfile.io.simPublic()

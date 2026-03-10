@@ -51,7 +51,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
   val order = Reg(UInt(64 bits)) init (0)
 
   val wb = new wbStage.Area {
-    val isCommitted = up(COMMIT) && down.isFiring
+    val isCommitted = up(COMMIT)
 
     // Increment order on VALID commit
     when(isCommitted) {

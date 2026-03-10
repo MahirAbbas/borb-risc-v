@@ -541,8 +541,11 @@ case class TrapCsrBackend(
     val pmpLoadAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes)
     val pmpStoreAllowed = pmpAllow(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = False, needW = True, accessBytes = storeBytes)
 
-    val latePcZeroFetch = up.isFiring && up(LANE_SEL) && sawNonZeroPc && (up(PC.PC) === U(0, 64 bits))
-    val pmpExecFault = up.isFiring && up(LANE_SEL) && (!pmpExecAllowed || latePcZeroFetch)
+    // Packetized fetch can legitimately have non-zero younger PCs in flight
+    // before the oldest architectural PC=0 instruction retires, so treating a
+    // later PC=0 observe as a stale-fetch fault is no longer sound here.
+    val latePcZeroFetch = False
+    val pmpExecFault = up.isFiring && up(LANE_SEL) && !pmpExecAllowed
     val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
     val pmpStoreFault = aguFire && ((lsu.logic.isStore && !isAmoOp && !pmpStoreAllowed) || (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed)))
     val pmpDataFault = pmpLoadFault || pmpStoreFault

@@ -9,11 +9,10 @@ import borb.execute.WriteBack
 import borb.frontend.Decoder._
 
 case class IntegerBackend(stage6: CtrlLink, stage7: CtrlLink) extends Area {
+  val exeBypassReady = False
+
   val exeIntBypass = IntBypassSource()
-  exeIntBypass.valid := stage6.up.isValid &&
-    stage6(VALID) &&
-    stage6(LANE_SEL) &&
-    stage6.down(WriteBack.RESULT).valid
+  exeIntBypass.valid := False
   exeIntBypass.address := stage6.down(WriteBack.RESULT).address
   exeIntBypass.data := stage6.down(WriteBack.RESULT).data
 

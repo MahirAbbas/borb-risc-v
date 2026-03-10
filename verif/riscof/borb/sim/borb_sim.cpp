@@ -367,6 +367,7 @@ int main(int argc, char** argv) {
   uint64_t stalled_cycles = 0;
   uint64_t max_stall_streak = 0;
   bool stall_reported = false;
+  uint64_t fetch_window_logs = 0;
   bool done = false;
   bool timed_out = false;
   uint64_t commit_events = 0;
@@ -409,37 +410,155 @@ int main(int argc, char** argv) {
           << " d_pc=0x" << (uint64_t)top->io_dbg_d_pc
           << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
           << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
+          << " commit_pulse=" << (int)top->io_dbg_commitPulse
+          << " dup_retire=" << (int)top->io_dbg_duplicateRetire
+          << " s4_seq=" << (uint32_t)top->io_dbg_s4_seq
+          << " s4_fire=" << (int)top->io_dbg_s4_fire
+          << " s5_seq=" << (uint32_t)top->io_dbg_s5_seq
+          << " s5_fire=" << (int)top->io_dbg_s5_fire
+          << " s6_seq=" << (uint32_t)top->io_dbg_s6_seq
+          << " s6_fire=" << (int)top->io_dbg_s6_fire
+          << " s7_seq=" << (uint32_t)top->io_dbg_s7_seq
+          << " s7_fire=" << (int)top->io_dbg_s7_fire
           << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
           << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_PC
+          << " s2_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
+          << " s2_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
+          << " s2_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_down_isReady
+          << " s3_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
+          << " s3_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_isReady
+          << " s3_dec_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_VALID
+          << " s3_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
+          << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_VALID
+          << " x_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
+          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " wb_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID
+          << " wb_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
+          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << " fetch_qhead=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queueHead
+          << " fetch_qcount=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queueCount
+          << " fetch_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReqValid
+          << " fetch_pending_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReq_baseAddr
+          << " fetch_stream_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_streamNextValid
+          << " fetch_stream_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_streamNextAddr
+          << " fetch_pkt_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
+          << " fetch_cnext=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_compressedNextReqValid
+          << " fetch_cnext_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_compressedNextReqAddr
+          << " beat0_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_valid
+          << " beat0_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_beatAddr
+          << " beat0_data=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_data
+          << " beat1_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_valid
+          << " beat1_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_beatAddr
+          << " beat1_data=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_data
           << std::endl;
       stall_reported = true;
     }
 
+    const bool enable_fetch_window_debug = false;
+    const uint64_t fetch_rsp_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC;
+    const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid != 0;
+    const uint64_t fetch_hold_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC;
+    const bool in_fetch_window =
+        ((fetch_rsp_pc >= 0x340ULL && fetch_rsp_pc <= 0x390ULL) ||
+         (fetch_hold && fetch_hold_pc >= 0x340ULL && fetch_hold_pc <= 0x390ULL));
+    if (enable_fetch_window_debug && in_fetch_window && fetch_window_logs < 160) {
+      std::cerr
+          << "FETCHDBG cyc=" << cycles
+          << " order=" << top->io_dbg_commitOrder
+          << " rspPc=0x" << std::hex << fetch_rsp_pc
+          << " hold=" << std::dec << (int)fetch_hold
+          << " holdPc=0x" << std::hex << fetch_hold_pc
+          << " first16=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_first16
+          << " curData=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_curData
+          << " s2pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
+          << " s2v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
+          << " s3v=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
+          << " s3insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
+          << " s4pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_PC_PC
+          << " s4v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_valid
+          << " s4f=" << (int)top->io_dbg_s4_fire
+          << " s4seq=" << (uint32_t)top->io_dbg_s4_seq
+          << " s4insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_Decoder_DECODED_INSTRUCTION
+          << " s5pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_PC_PC
+          << " s5v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_valid
+          << " s5f=" << (int)top->io_dbg_s5_fire
+          << " s5seq=" << (uint32_t)top->io_dbg_s5_seq
+          << " s5lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
+          << " s5insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Decoder_DECODED_INSTRUCTION
+          << " s6pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_PC_PC
+          << " s6v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_valid
+          << " s6f=" << (int)top->io_dbg_s6_fire
+          << " s6seq=" << (uint32_t)top->io_dbg_s6_seq
+          << " s6lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
+          << " s6insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " s7pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_PC_PC
+          << " s7v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_valid
+          << " s7f=" << (int)top->io_dbg_s7_fire
+          << " s7seq=" << (uint32_t)top->io_dbg_s7_seq
+          << " s7lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
+          << " commitPulse=" << (int)top->io_dbg_commitPulse
+          << " dupRetire=" << (int)top->io_dbg_duplicateRetire
+          << " s7insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << std::endl;
+      fetch_window_logs++;
+    }
+
     if (opt.commit_trace && top->io_dbg_commitValid) {
       const uint64_t pc = top->io_dbg_commitPc;
+      const uint32_t seq = top->io_dbg_commitSeq;
       const uint32_t insn = top->io_dbg_commitInsn;
       const uint64_t order = top->io_dbg_commitOrder;
       const uint64_t rd_val = top->io_dbg_commitWdata;
       const uint8_t rd = static_cast<uint8_t>(top->io_dbg_commitRd);
       const bool rd_we = top->io_dbg_commitWe;
       const bool trap = top->io_dbg_commitTrap;
+      const uint64_t trap_cause = top->io_dbg_commitTrapCause;
+      const uint64_t trap_tval = top->io_dbg_commitTrapTval;
 
       const uint64_t mem_addr = top->io_dbg_memAddr;
       const uint8_t mem_rmask = static_cast<uint8_t>(top->io_dbg_memRmask);
       const uint8_t mem_wmask = static_cast<uint8_t>(top->io_dbg_memWmask);
       const uint64_t mem_rdata = top->io_dbg_memRdata;
       const uint64_t mem_wdata = top->io_dbg_memWdata;
+      const uint8_t rs1_addr = static_cast<uint8_t>(top->io_dbg_commitRs1);
+      const uint8_t rs2_addr = static_cast<uint8_t>(top->io_dbg_commitRs2);
+      const uint64_t rs1_rdata = top->io_dbg_commitRs1Data;
+      const uint64_t rs2_rdata = top->io_dbg_commitRs2Data;
 
       commit_trace << "{\"i\":" << order
+                   << ",\"seq\":" << seq
                    << ",\"pc\":\"0x" << std::hex << pc << std::dec << "\""
-                   << ",\"insn\":\"0x" << std::hex << insn << std::dec << "\"";
+                   << ",\"insn\":\"0x" << std::hex << insn << std::dec << "\""
+                   << ",\"commit_pulse\":" << (top->io_dbg_commitPulse ? "true" : "false")
+                   << ",\"dup_retire\":" << (top->io_dbg_duplicateRetire ? "true" : "false")
+                   << ",\"s4\":{\"valid\":" << (top->io_dbg_s4_valid ? "true" : "false")
+                   << ",\"fire\":" << (top->io_dbg_s4_fire ? "true" : "false")
+                   << ",\"seq\":" << top->io_dbg_s4_seq << "}"
+                   << ",\"s5\":{\"valid\":" << (top->io_dbg_s5_valid ? "true" : "false")
+                   << ",\"fire\":" << (top->io_dbg_s5_fire ? "true" : "false")
+                   << ",\"lane\":" << (top->io_dbg_s5_lane ? "true" : "false")
+                   << ",\"seq\":" << top->io_dbg_s5_seq << "}"
+                   << ",\"s6\":{\"valid\":" << (top->io_dbg_s6_valid ? "true" : "false")
+                   << ",\"fire\":" << (top->io_dbg_s6_fire ? "true" : "false")
+                   << ",\"lane\":" << (top->io_dbg_s6_lane ? "true" : "false")
+                   << ",\"seq\":" << top->io_dbg_s6_seq << "}"
+                   << ",\"s7\":{\"valid\":" << (top->io_dbg_s7_valid ? "true" : "false")
+                   << ",\"fire\":" << (top->io_dbg_s7_fire ? "true" : "false")
+                   << ",\"lane\":" << (top->io_dbg_s7_lane ? "true" : "false")
+                   << ",\"seq\":" << top->io_dbg_s7_seq << "}"
+                   << ",\"rs1\":{\"addr\":" << static_cast<unsigned>(rs1_addr)
+                   << ",\"data\":\"0x" << std::hex << rs1_rdata << std::dec << "\"}"
+                   << ",\"rs2\":{\"addr\":" << static_cast<unsigned>(rs2_addr)
+                   << ",\"data\":\"0x" << std::hex << rs2_rdata << std::dec << "\"}";
 
       if (rd_we) {
         commit_trace << ",\"rd\":" << static_cast<unsigned>(rd)
                      << ",\"rd_val\":\"0x" << std::hex << rd_val << std::dec << "\"";
       }
       if (trap) {
-        commit_trace << ",\"trap\":true";
+        commit_trace << ",\"trap\":true"
+                     << ",\"trap_cause\":\"0x" << std::hex << trap_cause << std::dec << "\""
+                     << ",\"trap_tval\":\"0x" << std::hex << trap_tval << std::dec << "\"";
       }
 
       if (mem_wmask || mem_rmask) {
