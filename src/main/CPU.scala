@@ -260,11 +260,35 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       exeCtrl(Decoder.VALID) &&
       exeCtrl(borb.common.Common.LANE_SEL) &&
       (exeCtrl(Decoder.EXECUTION_UNIT) === borb.frontend.ExecutionUnitEnum.BR)
-    val controlHazardBusy = srcHasControlFlow || exeHasControlFlow
+
+    def isSerializingSystem(ctrl: CtrlLink): Bool = {
+      val valid = ctrl.up.isValid && ctrl(Decoder.VALID) && ctrl(borb.common.Common.LANE_SEL)
+      val micro = ctrl(Decoder.MicroCode)
+      val insn = ctrl(Decoder.INSTRUCTION)
+      valid && (
+        (micro === uopFENCE_I) ||
+        (micro === uopECALL) ||
+        (micro === uopEBREAK) ||
+        (micro === uopSRET) ||
+        (micro === uopSFENCEVMA) ||
+        (micro === uopCSRRW) ||
+        (micro === uopCSRRS) ||
+        (micro === uopCSRRC) ||
+        (micro === uopCSRRWI) ||
+        (micro === uopCSRRSI) ||
+        (micro === uopCSRRCI) ||
+        (insn === B"32'h30200073") ||
+        (insn === B"32'h10200073")
+      )
+    }
+
+    val srcHasSystem = isSerializingSystem(srcCtrl)
+    val exeHasSystem = isSerializingSystem(exeCtrl)
+    val controlHazardBusy = srcHasControlFlow || exeHasControlFlow || srcHasSystem || exeHasSystem
     Array(2, 3, 4).map(pipeline.ctrl(_)).foreach { ctrl =>
       ctrl.haltWhen(controlHazardBusy)
     }
-    srcCtrl.haltWhen(exeHasControlFlow)
+    srcCtrl.haltWhen(exeHasControlFlow || exeHasSystem)
 
     val exeIntProducer = exeCtrl.up.isValid &&
       exeCtrl(Decoder.VALID) &&
@@ -307,14 +331,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val flushPipeline = branch.logic.jumpCmd.valid && execEpochMatches
     val trapRedirect = trapLogic.redirect.trapFire && execEpochMatches
     val mretRedirect = trapLogic.redirect.mretFire && execEpochMatches
-    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
+    val sretRedirect = trapLogic.redirect.sretFire && execEpochMatches
+    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || sretRedirect || fenceiRedirect
     pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
     val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
-    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || fenceiRedirect
-    pc.jump.payload.target := mretRedirect ? trapLogic.redirect.mretTarget |
-      (fenceiRedirect ? fenceiTarget | branch.logic.jumpCmd.payload.target)
-    pc.jump.payload.is_jump := mretRedirect || fenceiRedirect || branch.logic.jumpCmd.payload.is_jump
-    pc.jump.payload.is_branch := (!mretRedirect) && (!fenceiRedirect) && branch.logic.jumpCmd.payload.is_branch
+    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || sretRedirect || fenceiRedirect
+    pc.jump.payload.target := (
+      mretRedirect ? trapLogic.redirect.mretTarget |
+      (sretRedirect ? trapLogic.redirect.sretTarget |
+      (fenceiRedirect ? fenceiTarget | branch.logic.jumpCmd.payload.target))
+    )
+    pc.jump.payload.is_jump := mretRedirect || sretRedirect || fenceiRedirect || branch.logic.jumpCmd.payload.is_jump
+    pc.jump.payload.is_branch := (!mretRedirect) && (!sretRedirect) && (!fenceiRedirect) && branch.logic.jumpCmd.payload.is_branch
     
     // Increment epoch on taken branch
     when(flushPipeline) {
@@ -324,6 +352,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       currentEpoch := currentEpoch + 1
     }
     when(mretRedirect) {
+      currentEpoch := currentEpoch + 1
+    }
+    when(sretRedirect) {
       currentEpoch := currentEpoch + 1
     }
     when(fenceiRedirect) {

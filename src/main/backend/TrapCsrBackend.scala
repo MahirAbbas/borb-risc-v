@@ -13,6 +13,7 @@ import borb.frontend.DecodeTable
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.frontend.RVC
+import borb.memory.{Sv39, VmContext}
 import borb.common.Common._
 import borb.common.MicroCode._
 import spinal.lib.logic.Masked
@@ -33,6 +34,7 @@ case class TrapCsrBackend(
   val frm = Bits(3 bits)
   val csrIntResult = IntResultIntent()
   val redirect = TrapRedirectOutcome()
+  val vmContext = VmContext()
 
   csrIntResult.valid := False
   csrIntResult.rd := 0
@@ -40,7 +42,6 @@ case class TrapCsrBackend(
   csrIntResult.writesRd := False
   csrIntResult.commitEligible := False
   csrIntResult.epoch := 0
-
   val logic = new execStage.Area {
     val epochMatches = up(SPEC_EPOCH) === currentEpoch
     val decodeMasks = collection.mutable.LinkedHashSet[Masked]()
@@ -63,7 +64,8 @@ case class TrapCsrBackend(
     val PRV_M = U(3, 2 bits)
     val ARCH_BASE = U(BigInt("80000000", 16), 64 bits)
 
-    val csrMstatus = Reg(Bits(64 bits)) init 0
+    val mstatusInit = if (config.xlen == 64) BigInt("0000000A00000000", 16) else BigInt(0)
+    val csrMstatus = Reg(Bits(64 bits)) init B(mstatusInit, 64 bits)
     val misaBase = BigInt("8000000000000100", 16)
     val misaA = if (config.aExtensionEnabled) BigInt("0000000000000001", 16) else BigInt(0)
     val misaC = if (config.cExtensionEnabled) BigInt("0000000000000004", 16) else BigInt(0)
@@ -72,12 +74,20 @@ case class TrapCsrBackend(
     val misaD = if (config.dExtensionEnabled) BigInt("0000000000000008", 16) else BigInt(0)
     val csrMisa = Reg(Bits(64 bits)) init B(misaBase | misaA | misaC | misaF | misaM | misaD, 64 bits)
     val csrMedeleg = Reg(Bits(64 bits)) init 0
+    val csrMideleg = Reg(Bits(64 bits)) init 0
+    val csrMie = Reg(Bits(64 bits)) init 0
     val csrMtvec = Reg(Bits(64 bits)) init 0
     val csrMscratch = Reg(Bits(64 bits)) init 0
     val csrMepc = Reg(Bits(64 bits)) init 0
     val csrMcause = Reg(Bits(64 bits)) init 0
     val csrMtval = Reg(Bits(64 bits)) init 0
     val csrMip = Reg(Bits(64 bits)) init 0
+    val csrStvec = Reg(Bits(64 bits)) init 0
+    val csrSscratch = Reg(Bits(64 bits)) init 0
+    val csrSepc = Reg(Bits(64 bits)) init 0
+    val csrScause = Reg(Bits(64 bits)) init 0
+    val csrStval = Reg(Bits(64 bits)) init 0
+    val csrScounteren = Reg(Bits(64 bits)) init 0
     val csrFflags = Reg(Bits(5 bits)) init 0
     val csrFrm = Reg(Bits(3 bits)) init 0
     val csrSatp = Reg(Bits(64 bits)) init 0
@@ -90,6 +100,51 @@ case class TrapCsrBackend(
     frm := csrFrm
     when(fpFlagsSetValid) {
       csrFflags := csrFflags | fpFlagsSetBits
+    }
+
+    val sstatusMask = B(BigInt("0000000300066122", 16), 64 bits)
+    val supervisorInterruptMask = B(BigInt("0000000000000222", 16), 64 bits)
+    val satpModeBare = if (config.xlen == 64) U(0, 4 bits) else U(0, 1 bits)
+    val satpModeSv39 = if (config.xlen == 64) U(8, 4 bits) else U(0, 1 bits)
+
+    def applyMaskedWrite(oldValue: Bits, newValue: Bits, mask: Bits): Bits = {
+      (oldValue & ~mask) | (newValue & mask)
+    }
+
+    def sstatusReadValue(): Bits = {
+      val out = Bits(64 bits)
+      out := csrMstatus & sstatusMask
+      out
+    }
+
+    def sanitizeMstatusWrite(newValue: Bits): Bits = {
+      val out = Bits(64 bits)
+      out := newValue
+      if (config.xlen == 64) {
+        // RV64 width state is fixed in this core. Keep UXL/SXL at 64-bit even
+        // when software writes mstatus/sstatus directly.
+        out(35 downto 34) := B"10"
+        out(33 downto 32) := B"10"
+      }
+      out
+    }
+
+    def satpWriteLegal(newValue: Bits): Bool = {
+      if (config.xlen == 64) {
+        val mode = newValue(63 downto 60).asUInt
+        (mode === satpModeBare) || (mode === satpModeSv39)
+      } else {
+        True
+      }
+    }
+
+    def satpSanitize(oldValue: Bits, newValue: Bits): Bits = {
+      val out = Bits(64 bits)
+      out := oldValue
+      when(satpWriteLegal(newValue)) {
+        out := newValue
+      }
+      out
     }
 
     def pmpCfgSanitize(cfg: Bits): Bits = {
@@ -128,9 +183,20 @@ case class TrapCsrBackend(
       val out = Bits(64 bits)
       out := 0
       switch(addr) {
+        is(U"12'h100") { out := sstatusReadValue() }
+        is(U"12'h104") { out := csrMie & supervisorInterruptMask }
+        is(U"12'h105") { out := csrStvec }
+        is(U"12'h106") { out := csrScounteren }
+        is(U"12'h140") { out := csrSscratch }
+        is(U"12'h141") { out := mepcMasked(csrSepc) }
+        is(U"12'h142") { out := csrScause }
+        is(U"12'h143") { out := csrStval }
+        is(U"12'h144") { out := csrMip & supervisorInterruptMask }
         is(U"12'h300") { out := csrMstatus }
         is(U"12'h301") { out := csrMisa }
         is(U"12'h302") { out := csrMedeleg }
+        is(U"12'h303") { out := csrMideleg }
+        is(U"12'h304") { out := csrMie }
         is(U"12'h305") { out := csrMtvec }
         is(U"12'h340") { out := csrMscratch }
         is(U"12'h341") { out := mepcMasked(csrMepc) }
@@ -266,7 +332,8 @@ case class TrapCsrBackend(
       val ok = Bool()
       ok := False
       switch(addr) {
-        is(U"12'h300", U"12'h301", U"12'h302", U"12'h305", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
+        is(U"12'h100", U"12'h104", U"12'h105", U"12'h106", U"12'h140", U"12'h141", U"12'h142", U"12'h143", U"12'h144") { ok := True }
+        is(U"12'h300", U"12'h301", U"12'h302", U"12'h303", U"12'h304", U"12'h305", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
         is(U"12'h001", U"12'h002", U"12'h003", U"12'h180") { ok := True }
         is(U"12'h3A0", U"12'h3A2", U"12'h3A4", U"12'h3A6", U"12'h3A8", U"12'h3AA", U"12'h3AC", U"12'h3AE") { ok := True }
         is(U"12'hB00", U"12'hB02", U"12'hB03", U"12'hB04", U"12'hB05", U"12'hB06", U"12'hB07", U"12'hB08", U"12'hB09", U"12'hB0A", U"12'hB0B", U"12'hB0C", U"12'hB0D", U"12'hB0E", U"12'hB0F", U"12'hB10", U"12'hB11", U"12'hB12", U"12'hB13", U"12'hB14", U"12'hB15", U"12'hB16", U"12'hB17", U"12'hB18", U"12'hB19", U"12'hB1A", U"12'hB1B", U"12'hB1C", U"12'hB1D", U"12'hB1E", U"12'hB1F", U"12'hB20", U"12'hB21", U"12'hB22", U"12'hB23", U"12'hB24", U"12'hB25", U"12'hB26", U"12'hB27", U"12'hB28", U"12'hB29", U"12'hB2A", U"12'hB2B", U"12'hB2C", U"12'hB2D", U"12'hB2E", U"12'hB2F", U"12'hB30", U"12'hB31", U"12'hB32", U"12'hB33") { ok := True }
@@ -322,14 +389,27 @@ case class TrapCsrBackend(
       is(uopCSRRCI) { csrWriteData := csrOld & ~csrZimm; csrWriteEn := csrZimm =/= 0 }
     }
 
-    val csrIllegal = trapInsnValid && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly))
+    val csrSatpAccessIllegal = isCsrOp && (csrAddr === U"12'h180") && (currentPriv === PRV_S) && csrMstatus(20)
+    val csrAccessIllegal = isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly) || csrSatpAccessIllegal)
+    val csrIllegal = trapInsnArrived && csrAccessIllegal
     val csrFire = up.isFiring && epochMatches && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isCsrOp
 
     when(csrFire && !csrIllegal && csrWriteEn) {
       switch(csrAddr) {
-        is(U"12'h300") { csrMstatus := csrWriteData }
+        is(U"12'h100") { csrMstatus := sanitizeMstatusWrite(applyMaskedWrite(csrMstatus, csrWriteData, sstatusMask)) }
+        is(U"12'h104") { csrMie := applyMaskedWrite(csrMie, csrWriteData, supervisorInterruptMask) }
+        is(U"12'h105") { csrStvec := csrWriteData }
+        is(U"12'h106") { csrScounteren := csrWriteData }
+        is(U"12'h140") { csrSscratch := csrWriteData }
+        is(U"12'h141") { csrSepc := csrWriteData }
+        is(U"12'h142") { csrScause := csrWriteData }
+        is(U"12'h143") { csrStval := csrWriteData }
+        is(U"12'h144") { csrMip := applyMaskedWrite(csrMip, csrWriteData, supervisorInterruptMask) }
+        is(U"12'h300") { csrMstatus := sanitizeMstatusWrite(csrWriteData) }
         is(U"12'h301") { csrMisa := csrWriteData }
         is(U"12'h302") { csrMedeleg := csrWriteData }
+        is(U"12'h303") { csrMideleg := csrWriteData }
+        is(U"12'h304") { csrMie := csrWriteData }
         is(U"12'h305") { csrMtvec := csrWriteData }
         is(U"12'h340") { csrMscratch := csrWriteData }
         is(U"12'h341") { csrMepc := csrWriteData }
@@ -348,7 +428,7 @@ case class TrapCsrBackend(
             csrFrm := csrWriteData(7 downto 5)
           }
         }
-        is(U"12'h180") { csrSatp := csrWriteData }
+        is(U"12'h180") { csrSatp := satpSanitize(csrSatp, csrWriteData) }
         is(U"12'h3A0") {
           for (i <- 0 until 8) {
             when(!pmpCfgBytes(i)(7)) {
@@ -595,16 +675,22 @@ case class TrapCsrBackend(
     val trapFromStoreAccess = pmpStoreFault
     val trapFromFetchAccess = pmpExecFault
     val mretInsn = insn === B"32'h30200073"
+    val sretInsn = insn === B"32'h10200073"
+    val sfenceVmaInsn = up(Decoder.MicroCode) === uopSFENCEVMA
     val mretIllegal = mretInsn && (currentPriv =/= PRV_M)
+    val sretIllegal = sretInsn && ((currentPriv =/= PRV_S) || csrMstatus(22))
+    val sfenceVmaIllegal = sfenceVmaInsn && ((currentPriv === PRV_U) || ((currentPriv === PRV_S) && csrMstatus(20)))
     val trapFromEcall = up.isFiring && insn === B"32'h00000073"
     val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
-    val isHandledSystem = mretInsn || trapFromEcall || trapFromEbreak
+    val isHandledSystem = mretInsn || sretInsn || sfenceVmaInsn || trapFromEcall || trapFromEbreak
     val atomicOpcode = insn(6 downto 0) === B"0101111"
     val trapFromAtomicDisabled = if (config.aExtensionEnabled) False else atomicOpcode
     val trapFromIllegal32 = (trapInsnArrived && !trapInsnValid && !isHandledSystem) || trapFromAtomicDisabled
-    val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal)
+    val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || (trapInsnArrived && csrAccessIllegal) || mretIllegal || sretIllegal || sfenceVmaIllegal)
     val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
+    val sretFire = up.isFiring && epochMatches && sretInsn && (currentPriv === PRV_S) && !csrMstatus(22)
     val mretTarget = mepcMasked(csrMepc).asUInt
+    val sretTarget = mepcMasked(csrSepc).asUInt
     val trapFire = up.isFiring && epochMatches &&
       (trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
 
@@ -664,17 +750,31 @@ case class TrapCsrBackend(
       trapTval := B(0, 64 bits)
     }
 
+    val trapCauseIdx = trapCause(5 downto 0).asUInt
+    val delegateTrap = trapFire && (currentPriv =/= PRV_M) && csrMedeleg(trapCauseIdx)
+
     when(trapFire) {
-      val nextMstatus = Bits(64 bits)
-      nextMstatus := csrMstatus
-      nextMstatus(7) := csrMstatus(3)
-      nextMstatus(3) := False
-      nextMstatus(12 downto 11) := currentPriv.asBits
-      csrMstatus := nextMstatus
-      csrMepc := (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
-      csrMcause := trapCause
-      csrMtval := trapTval
-      currentPriv := PRV_M
+      val trapPc = (latePcZeroFetch ? pcRaw.asBits | pcArch.asBits)
+      val nextStatus = Bits(64 bits)
+      nextStatus := csrMstatus
+      when(delegateTrap) {
+        nextStatus(5) := csrMstatus(1)
+        nextStatus(1) := False
+        nextStatus(8) := currentPriv(0)
+        csrSepc := trapPc
+        csrScause := trapCause
+        csrStval := trapTval
+        currentPriv := PRV_S
+      } otherwise {
+        nextStatus(7) := csrMstatus(3)
+        nextStatus(3) := False
+        nextStatus(12 downto 11) := currentPriv.asBits
+        csrMepc := trapPc
+        csrMcause := trapCause
+        csrMtval := trapTval
+        currentPriv := PRV_M
+      }
+      csrMstatus := nextStatus
     }
 
     when(mretFire) {
@@ -691,15 +791,40 @@ case class TrapCsrBackend(
       csrMstatus := nextMstatus
     }
 
+    when(sretFire) {
+      currentPriv := csrMstatus(8) ? PRV_S | PRV_U
+      val nextMstatus = Bits(64 bits)
+      nextMstatus := csrMstatus
+      nextMstatus(1) := csrMstatus(5)
+      nextMstatus(5) := True
+      nextMstatus(8) := False
+      csrMstatus := nextMstatus
+    }
+
     val mtvecBase = csrMtvec.asUInt & U(BigInt("FFFFFFFFFFFFFFFC", 16), 64 bits)
+    val stvecBase = csrStvec.asUInt & U(BigInt("FFFFFFFFFFFFFFFC", 16), 64 bits)
     pc.exception.valid.allowOverride := trapFire
-    pc.exception.payload.vector.allowOverride := mtvecBase
+    pc.exception.payload.vector.allowOverride := delegateTrap ? stvecBase | mtvecBase
 
     redirect.trapFire := trapFire
     redirect.mretFire := mretFire
     redirect.mretTarget := mretTarget
+    redirect.sretFire := sretFire
+    redirect.sretTarget := sretTarget
     redirect.trapCause := trapCause
     redirect.trapTval := trapTval
+
+    vmContext.currentPriv := currentPriv
+    vmContext.dataPriv := dataPriv
+    vmContext.mprv := mstatusMprv
+    vmContext.mxr := csrMstatus(19)
+    vmContext.sum := csrMstatus(18)
+    vmContext.tvm := csrMstatus(20)
+    vmContext.sbe := csrMstatus(36)
+    vmContext.satp := csrSatp
+    vmContext.satpMode := Sv39.modeOf(csrSatp)
+    vmContext.satpAsid := Sv39.asidOf(csrSatp)
+    vmContext.satpPpn := Sv39.ppnOf(csrSatp)
 
     down(TRAP) := trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
   }

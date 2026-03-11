@@ -46,6 +46,8 @@ object MicroCode extends SpinalEnum {
   val uopFENCE_I = newElement()
   val uopECALL = newElement()
   val uopEBREAK = newElement()
+  val uopSRET = newElement()
+  val uopSFENCEVMA = newElement()
   val uopCSRRW = newElement()
   val uopCSRRS = newElement()
   val uopCSRRC = newElement()

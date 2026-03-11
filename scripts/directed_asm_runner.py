@@ -9,6 +9,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
+REGFILE_MEM_INIT = "SoC.v_toplevel_area_cpu_coreArea_srcPlugin_regfileread_regfile_mem.bin"
+FP_REGFILE_MEM_INIT = "SoC.v_toplevel_area_cpu_coreArea_fpBackend_logic_fpRegFile_mem.bin"
+
 
 def run_cmd(cmd: Sequence[str], cwd: Optional[Path] = None, capture: bool = False) -> subprocess.CompletedProcess:
     return subprocess.run(
@@ -162,6 +165,9 @@ def main() -> int:
     missing = [n for n, v in [("tohost", tohost), ("begin_signature", sig_begin), ("end_signature", sig_end)] if v is None]
     if missing:
         raise SystemExit(f"missing required ELF symbols: {', '.join(missing)}")
+
+    for init_name in (REGFILE_MEM_INIT, FP_REGFILE_MEM_INIT):
+        (out_dir / init_name).write_bytes(b"")
 
     sim_cmd = [
         str(sim),

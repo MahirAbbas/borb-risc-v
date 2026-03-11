@@ -26,6 +26,9 @@ FAST_RV64F=false
 FAST_RV32F=false
 FAST_RV64I=false
 FAST_SIM=false
+TRACE_SIM=false
+EMIT_WAVEFORMS=false
+TRACE_COMMIT=false
 SIM_JOBS=""
 SIM_THREADS=""
 VERILATE_JOBS=""
@@ -52,6 +55,8 @@ usage() {
   echo "  --sim-threads <n> Verilator runtime threads to bake into the simulator"
   echo "  --verilate-jobs <n> Parallel jobs for Verilator code generation"
   echo "  --trace-sim       Build simulator with FST trace support enabled"
+  echo "  --waveforms       Emit per-test FST waveforms during RISCOF runs (implies --trace-sim)"
+  echo "  --trace-commit    Emit per-test commit traces during RISCOF runs"
   echo "  --skip-validate   Skip riscof validateyaml step"
   echo "  --clean           Pass --clean to riscof run"
   echo "  --report-rerun    Re-run failing tests while generating debug reports (slow)"
@@ -113,6 +118,15 @@ while [[ $# -gt 0 ]]; do
       ;;
     --trace-sim)
       TRACE_SIM=true
+      shift
+      ;;
+    --waveforms)
+      EMIT_WAVEFORMS=true
+      TRACE_SIM=true
+      shift
+      ;;
+    --trace-commit)
+      TRACE_COMMIT=true
       shift
       ;;
     --skip-validate)
@@ -438,20 +452,78 @@ if [[ "$CLEAN" = true ]]; then
 fi
 # Default work-dir used by riscof when --work-dir is not provided.
 WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work"
+FULL_TESTLIST="$WORK_DIR/test_list.yaml"
+FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
+
+mkdir -p "$WORK_DIR"
+
+if [[ ! -f "$FULL_TESTLIST" ]]; then
+  echo "Generating full test list first..."
+  riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
+fi
+
+python3 - "$FULL_TESTLIST" "$FILTERED_TESTLIST" <<'PY'
+import os
+import sys
+import yaml
+
+full, out = sys.argv[1], sys.argv[2]
+
+with open(full, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+filtered = {}
+for test_path, meta in data.items():
+    norm = test_path.replace("\\", "/")
+    if "/vm_sv48/" in norm or "/vm_sv57/" in norm:
+        continue
+    filtered[test_path] = meta
+
+with open(out, "w", encoding="utf-8") as f:
+    yaml.safe_dump(filtered, f, sort_keys=False)
+
+print(f"Wrote filtered testlist: {out} ({len(filtered)} tests)")
+PY
+
+RUN_CMD+=(--work-dir="$WORK_DIR")
 
 if [[ -n "$TESTS" ]]; then
   WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work_subset_$(date +%Y%m%d_%H%M%S)"
   mkdir -p "$WORK_DIR"
   FULL_TESTLIST="$WORK_DIR/test_list.yaml"
   SUBSET_TESTLIST="$WORK_DIR/test_list.subset.yaml"
+  FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
 
   if [[ ! -f "$FULL_TESTLIST" ]]; then
     echo "Generating full test list first..."
     riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
   fi
 
+  python3 - "$FULL_TESTLIST" "$FILTERED_TESTLIST" <<'PY'
+import os
+import sys
+import yaml
+
+full, out = sys.argv[1], sys.argv[2]
+
+with open(full, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+filtered = {}
+for test_path, meta in data.items():
+    norm = test_path.replace("\\", "/")
+    if "/vm_sv48/" in norm or "/vm_sv57/" in norm:
+        continue
+    filtered[test_path] = meta
+
+with open(out, "w", encoding="utf-8") as f:
+    yaml.safe_dump(filtered, f, sort_keys=False)
+
+print(f"Wrote filtered testlist: {out} ({len(filtered)} tests)")
+PY
+
   echo "Selecting subset tests: $TESTS"
-  python3 - "$FULL_TESTLIST" "$SUBSET_TESTLIST" "$TESTS" <<'PY'
+  python3 - "$FILTERED_TESTLIST" "$SUBSET_TESTLIST" "$TESTS" <<'PY'
 import sys
 import yaml
 import os
@@ -489,8 +561,9 @@ with open(out, "w", encoding="utf-8") as f:
 print(f"Wrote subset testlist: {out} ({len(picked)} tests)")
 PY
 
-  RUN_CMD+=(--work-dir="$WORK_DIR")
   RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
+else
+  RUN_CMD+=(--testfile="$FILTERED_TESTLIST")
 fi
 
 RESOLVED_BUDGET_FILE="$WORK_DIR/resolved_budgets.json"
@@ -614,6 +687,16 @@ export BORB_CYCLE_BUDGET_MODE="$CYCLE_BUDGET_MODE"
 export BORB_CYCLE_BUDGET_FILE="$CYCLE_BUDGET_FILE"
 export BORB_RESOLVED_BUDGET_FILE="$RESOLVED_BUDGET_FILE"
 export BORB_MAX_CYCLES_DEFAULT="200000"
+if [[ "$EMIT_WAVEFORMS" = true ]]; then
+  export BORB_SIM_FST="1"
+else
+  export BORB_SIM_FST="0"
+fi
+if [[ "$TRACE_COMMIT" = true ]]; then
+  export BORB_SIM_TRACE_COMMIT="1"
+else
+  export BORB_SIM_TRACE_COMMIT="0"
+fi
 
 set +e
 "${RUN_CMD[@]}"

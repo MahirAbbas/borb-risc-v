@@ -26,6 +26,8 @@ case class TrapRedirectOutcome() extends Bundle {
   val trapFire = Bool()
   val mretFire = Bool()
   val mretTarget = UInt(64 bits)
+  val sretFire = Bool()
+  val sretTarget = UInt(64 bits)
   val trapCause = Bits(64 bits)
   val trapTval = Bits(64 bits)
 }

@@ -108,6 +108,150 @@
       "scale": 6.0,
       "slack": 2000
     },
+    "amoadd.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoadd.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoand.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoand.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomax.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomax.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomaxu.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomaxu.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomin.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amomin.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amominu.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amominu.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoor.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoor.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoswap.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoswap.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoxor.d-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "amoxor.w-01.S": {
+      "budget": 23084,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3514,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "and-01.S": {
       "budget": 146024,
       "budget_class": "default",
@@ -345,6 +489,22 @@
       "budget_class": "default",
       "family": null,
       "max_pass_cycles": 96832,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "ebreak.S": {
+      "budget": 8804,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 1134,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "ecall.S": {
+      "budget": 8684,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 1114,
       "scale": 6.0,
       "slack": 2000
     },
@@ -2001,6 +2161,86 @@
       "budget_class": "default",
       "family": "rv64.base",
       "max_pass_cycles": 12200,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mprv_S_mode.S": {
+      "budget": 22052,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3342,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mprv_U_mode.S": {
+      "budget": 21944,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3324,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mprv_U_set_sum_set_S_mode.S": {
+      "budget": 22286,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 3381,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mprv_bare_mode.S": {
+      "budget": 11234,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 1539,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mstatus_tvm_test.S": {
+      "budget": 19940,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2990,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_res_global_pte_S_mode.S": {
+      "budget": 45938,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 7323,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_res_global_pte_U_mode.S": {
+      "budget": 46262,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 7377,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_reserved_rsw_pte_S_mode.S": {
+      "budget": 66494,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10749,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_reserved_rsw_pte_U_mode.S": {
+      "budget": 67034,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 10839,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_satp_access_tests.S": {
+      "budget": 31076,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 4846,
       "scale": 6.0,
       "slack": 2000
     },
