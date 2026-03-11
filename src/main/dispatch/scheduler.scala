@@ -9,6 +9,7 @@ import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
 import borb.frontend.Decoder
 import borb.frontend.ExecutionUnitEnum
+import borb.dispatch.ExecutionRoute._
 import borb.execute.WriteBack
 // import borb.frontend.AluOp
 import spinal.core.sim._
@@ -110,15 +111,153 @@ object Dispatch extends AreaObject {
   val SENDTOALU = Payload(Bool())
   val SENDTOBRANCH = Payload(Bool())
   val SENDTOAGU = Payload(Bool())
+  val WRITES_INT_RD = Payload(Bool())
+  val WRITES_FP_RD = Payload(Bool())
+  val READS_INT_RS1 = Payload(Bool())
+  val READS_INT_RS2 = Payload(Bool())
+  val READS_FP_RS1 = Payload(Bool())
+  val READS_FP_RS2 = Payload(Bool())
+  val READS_FP_RS3 = Payload(Bool())
+
+  case class RouteRequest(
+      priority: Int,
+      matches: Bool,
+      ready: Bool,
+      structuralGroup: SpinalEnumElement[StructuralGroup.type] = StructuralGroup.NONE,
+      sendAlu: Boolean = false,
+      sendBranch: Boolean = false,
+      sendAgu: Boolean = false,
+      newRoute: Boolean = false,
+      euId: SpinalEnumElement[EuId.type] = EuId.NONE,
+      fuKind: SpinalEnumElement[FuKind.type] = FuKind.NONE
+  )
+
+  object RegisterClass extends SpinalEnum {
+    val NONE, INT, FP, VEC = newElement()
+  }
+
+  object ProducerLatency extends SpinalEnum {
+    val NONE, EXECUTE, WRITEBACK, VARIABLE = newElement()
+  }
+
+  object StructuralGroup extends SpinalEnum {
+    val NONE, INT, BRANCH, MEMORY, FP, VECTOR, CUSTOM = newElement()
+  }
+
+  case class ProducerDescriptor() extends Bundle {
+    val valid = Bool()
+    val regClass = RegisterClass()
+    val rd = UInt(5 bits)
+    val bypassReady = Bool()
+    val latency = ProducerLatency()
+    val structuralGroup = StructuralGroup()
+    val reservesStructure = Bool()
+  }
+
+  case class ReadDescriptor() extends Bundle {
+    val enable = Bool()
+    val regClass = RegisterClass()
+    val address = UInt(5 bits)
+  }
+
+  case class ProducerSlotSpec(
+      name: String,
+      regClass: SpinalEnumElement[RegisterClass.type],
+      writes: CtrlLink => Bool,
+      rd: CtrlLink => UInt,
+      bypassReady: (Int, CtrlLink) => Bool,
+      latency: (Int, CtrlLink) => SpinalEnumElement[ProducerLatency.type],
+      structuralGroup: CtrlLink => StructuralGroup.C
+  ) {
+    def materialize(stageId: Int, ctrl: CtrlLink): ProducerDescriptor = {
+      val desc = ProducerDescriptor()
+      desc.valid := writes(ctrl)
+      desc.regClass := regClass
+      desc.rd := rd(ctrl)
+      desc.bypassReady := bypassReady(stageId, ctrl)
+      desc.latency := latency(stageId, ctrl)
+      desc.structuralGroup := structuralGroup(ctrl)
+      desc.reservesStructure := desc.valid && (desc.latency === ProducerLatency.VARIABLE) && (desc.structuralGroup =/= StructuralGroup.NONE)
+      desc
+    }
+  }
+
+  case class HazardStage(
+      id: Int,
+      ctrl: CtrlLink,
+      producerSlots: Seq[ProducerSlotSpec] = Dispatch.defaultProducerSlots
+  )
+
+  def stageHasLane(ctrl: CtrlLink): Bool = {
+    ctrl.up.isValid && ctrl(Decoder.VALID) && ctrl(borb.common.Common.LANE_SEL)
+  }
+
+  def stageWritesIntRd(ctrl: CtrlLink): Bool = {
+    stageHasLane(ctrl) && ctrl(WRITES_INT_RD) && (ctrl(Decoder.RD_ADDR) =/= 0)
+  }
+
+  def stageWritesFpRd(ctrl: CtrlLink): Bool = {
+    stageHasLane(ctrl) && ctrl(WRITES_FP_RD) && (ctrl(Decoder.RD_ADDR) =/= 0)
+  }
+
+  def stageIntBypassReady(stageId: Int, ctrl: CtrlLink): Bool = {
+    val writesInt = stageWritesIntRd(ctrl)
+    stageId match {
+      case 6 => writesInt && ctrl.down(WriteBack.RESULT).valid
+      case 7 => writesInt && ctrl.up(WriteBack.RESULT).valid
+      case _ => False
+    }
+  }
+
+  def stageStructuralGroup(ctrl: CtrlLink): StructuralGroup.C = {
+    val group = StructuralGroup()
+    group := StructuralGroup.NONE
+    when(ctrl(NEW_ROUTE_VALID)) {
+      switch(ctrl(NEW_EU_ID)) {
+        is(EuId.IntEu) { group := StructuralGroup.INT }
+        is(EuId.BranchEu) { group := StructuralGroup.BRANCH }
+        is(EuId.AguEu) { group := StructuralGroup.MEMORY }
+      }
+    } otherwise {
+      switch(ctrl(Decoder.EXECUTION_UNIT)) {
+        is(ExecutionUnitEnum.ALU) { group := StructuralGroup.INT }
+        is(ExecutionUnitEnum.BR) { group := StructuralGroup.BRANCH }
+        is(ExecutionUnitEnum.AGU) {
+          group := Mux(ctrl(Decoder.IS_FP) === borb.frontend.YESNO.Y, StructuralGroup.FP, StructuralGroup.MEMORY)
+        }
+      }
+    }
+    group
+  }
+
+  val intProducerSlot = ProducerSlotSpec(
+    name = "int-rd",
+    regClass = RegisterClass.INT,
+    writes = stageWritesIntRd,
+    rd = _.apply(Decoder.RD_ADDR).asUInt,
+    bypassReady = stageIntBypassReady,
+    latency = (stageId, _) => if (stageId == 7) ProducerLatency.WRITEBACK else ProducerLatency.EXECUTE,
+    structuralGroup = stageStructuralGroup
+  )
+
+  val fpProducerSlot = ProducerSlotSpec(
+    name = "fp-rd",
+    regClass = RegisterClass.FP,
+    writes = stageWritesFpRd,
+    rd = _.apply(Decoder.RD_ADDR).asUInt,
+    bypassReady = (_, _) => False,
+    latency = (_, _) => ProducerLatency.VARIABLE,
+    structuralGroup = _ => StructuralGroup.FP
+  )
+
+  val defaultProducerSlots: Seq[ProducerSlotSpec] = Seq(intProducerSlot, fpProducerSlot)
 }
 
 case class Dispatch(
     dispatchNode: CtrlLink,
-    hzRange: Seq[CtrlLink],
-    pipeline: StageCtrlPipeline,
-    intBypassReady: Seq[Bool] = Seq()
+    hzRange: Seq[Dispatch.HazardStage],
+    pipeline: StageCtrlPipeline
 ) extends Area {
-
   // import borb.decode.Decoder._
   import Dispatch._
   // val op = uop.toStream
@@ -129,6 +268,7 @@ case class Dispatch(
 
   val logic = new dispatchNode.Area {
     import borb.common.Common._
+    import borb.dispatch.ExecutionHazardMeta._
     down(LANE_SEL) := False
 
     // when(up.isValid) {
@@ -137,145 +277,207 @@ case class Dispatch(
     down(SENDTOALU) := False
     down(SENDTOBRANCH) := False
     down(SENDTOAGU) := False
+    down(NEW_ROUTE_VALID) := False
+    down(NEW_EU_ID) := EuId.NONE
+    down(NEW_FU_KIND) := FuKind.NONE
+    val readsIntRs1Meta = up(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT
+    val readsIntRs2Meta = up(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT
+    val readsFpRs1Meta = readsFpRs1FromInsn(up(Decoder.DECODED_INSTRUCTION))
+    val readsFpRs2Meta = readsFpRs2FromInsn(up(Decoder.DECODED_INSTRUCTION))
+    val readsFpRs3Meta = readsFpRs3FromInsn(up(Decoder.DECODED_INSTRUCTION))
+    val writesFpRdMeta = writesFpRdFromInsn(up(Decoder.DECODED_INSTRUCTION))
 
     // Logic to select an execution lane implies LANE_SEL is true
     // Crucially, it must only be True if we are actually firing (not stalled by hazard)
     // LANE_SEL acts as the valid bit for the lane.
     val firing = up.isFiring
+    val intEu = new borb.dispatch.IntExecutionUnit(up(Decoder.MicroCode), ready = True)
+    val branchEu = new borb.dispatch.BranchExecutionUnit(up(Decoder.MicroCode), ready = True)
+    val memoryEu = new borb.dispatch.MemoryExecutionUnit(
+      up(Decoder.MicroCode),
+      up(Decoder.IS_FP) === borb.frontend.YESNO.Y,
+      ready = True
+    )
+    val migratedIntRoute = up(Decoder.VALID) && intEu.routeValid
+    val migratedBranchRoute = up(Decoder.VALID) && branchEu.routeValid
+    val migratedMemoryRoute = up(Decoder.VALID) && memoryEu.routeValid
 
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
-      down(SENDTOALU) := True
-      down(LANE_SEL) := firing
+    val routeRequests = Seq(
+      RouteRequest(
+        priority = 10,
+        matches = migratedIntRoute,
+        ready = intEu.selected,
+        structuralGroup = StructuralGroup.INT,
+        sendAlu = true,
+        newRoute = true,
+        euId = IntExecutionUnit.spec.id,
+        fuKind = IntExecutionUnit.intComputeFu.kind
+      ),
+      RouteRequest(
+        priority = 20,
+        matches = migratedBranchRoute,
+        ready = branchEu.selected,
+        structuralGroup = StructuralGroup.BRANCH,
+        sendBranch = true,
+        newRoute = true,
+        euId = BranchExecutionUnit.spec.id,
+        fuKind = BranchExecutionUnit.controlFlowFu.kind
+      ),
+      RouteRequest(
+        priority = 30,
+        matches = migratedMemoryRoute,
+        ready = memoryEu.selected,
+        structuralGroup = StructuralGroup.MEMORY,
+        sendAgu = true,
+        newRoute = true,
+        euId = MemoryExecutionUnit.spec.id,
+        fuKind = MemoryExecutionUnit.memoryAccessFu.kind
+      ),
+      RouteRequest(
+        priority = 110,
+        matches = up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU,
+        ready = True,
+        structuralGroup = StructuralGroup.INT,
+        sendAlu = true
+      ),
+      RouteRequest(
+        priority = 120,
+        matches = up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR,
+        ready = True,
+        structuralGroup = StructuralGroup.BRANCH,
+        sendBranch = true
+      ),
+      RouteRequest(
+        priority = 130,
+        matches = up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU,
+        ready = True,
+        structuralGroup = StructuralGroup.MEMORY,
+        sendAgu = true
+      )
+    ).sortBy(_.priority)
+
+    val inflightStructuralReservations = hzRange.tail.flatMap { stage =>
+      stage.producerSlots.map(_.materialize(stage.id, stage.ctrl))
     }
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
-      down(SENDTOBRANCH) := True
-      down(LANE_SEL) := firing
+
+    def structuralGroupAvailable(group: SpinalEnumElement[StructuralGroup.type]): Bool = {
+      if (group == StructuralGroup.NONE || inflightStructuralReservations.isEmpty) {
+        True
+      } else {
+        !inflightStructuralReservations
+          .map { producer =>
+            producer.valid &&
+            producer.reservesStructure &&
+            (producer.structuralGroup === group)
+          }
+          .reduce(_ || _)
+      }
     }
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU) {
-      down(SENDTOAGU) := True
-      down(LANE_SEL) := firing
+
+    var routeTaken: Bool = False
+    for (req <- routeRequests) {
+      when(!routeTaken && req.matches) {
+        val structuralReady = structuralGroupAvailable(req.structuralGroup)
+        if (req.sendAlu) {
+          down(SENDTOALU) := True
+        }
+        if (req.sendBranch) {
+          down(SENDTOBRANCH) := True
+        }
+        if (req.sendAgu) {
+          down(SENDTOAGU) := True
+        }
+        if (req.newRoute) {
+          down(NEW_ROUTE_VALID) := True
+          down(NEW_EU_ID) := req.euId
+          down(NEW_FU_KIND) := req.fuKind
+        }
+        down(LANE_SEL) := firing && req.ready && structuralReady
+      }
+      routeTaken = routeTaken || req.matches
     }
+
+    val writesIntRdMeta = writesIntRdFromMigratedRoute(
+      up(Decoder.MicroCode),
+      down(NEW_ROUTE_VALID),
+      down(NEW_EU_ID),
+      down(NEW_FU_KIND)
+    ) || (!down(NEW_ROUTE_VALID) && (up(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT))
+    down(WRITES_INT_RD) := writesIntRdMeta
+    down(WRITES_FP_RD) := writesFpRdMeta
+    down(READS_INT_RS1) := readsIntRs1Meta
+    down(READS_INT_RS2) := readsIntRs2Meta
+    down(READS_FP_RS1) := readsFpRs1Meta
+    down(READS_FP_RS2) := readsFpRs2Meta
+    down(READS_FP_RS3) := readsFpRs3Meta
 
     // Explicitly handle invalid/bubble case if needed, but default False covers it.
   }
-  case class HazardChecker(hzRange: Seq[CtrlLink], regCount: Int = 32)
+  case class HazardChecker(hzRange: Seq[HazardStage], regCount: Int = 32)
       extends Area {
-    private val bypassReadyPerStage = if (intBypassReady.nonEmpty) {
-      intBypassReady
-    } else {
-      Seq.fill(hzRange.tail.size)(False)
-    }
-    def isFlw(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
+    import borb.dispatch.ExecutionHazardMeta._
+    val producerDescriptors = hzRange.tail.flatMap { stage =>
+      stage.producerSlots.map(_.materialize(stage.id, stage.ctrl))
     }
 
-    def isFsw(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
-    }
-
-    def isFcvtFToInt(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000")
-    }
-
-    def isFaddsubS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") &&
-      ((insn(31 downto 25) === B"0000000") || (insn(31 downto 25) === B"0000100"))
-    }
-
-    def isFmulS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001000")
-    }
-
-    def isFdivsqrtS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") &&
-      ((insn(31 downto 25) === B"0001100") || (insn(31 downto 25) === B"0101100"))
-    }
-
-    def isFmaS(insn: Bits): Bool = {
-      ((insn(6 downto 0) === B"1000011") || (insn(6 downto 0) === B"1000111") ||
-        (insn(6 downto 0) === B"1001011") || (insn(6 downto 0) === B"1001111")) &&
-      (insn(26 downto 25) === B"00")
-    }
-
-    def isFcvtIntToF(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000")
-    }
-
-    def isFmvXW(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    }
-
-    def isFmvWX(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1111000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    }
-
-    def isFclassS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"001")
-    }
-
-    def isFsgnjFamily(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
-    }
-
-    def isFminmaxS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010100") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001"))
-    }
-
-    def isFcmpS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
-    }
-
-    // Derive a combinational busy map from younger in-flight stages.
-    // This avoids sticky scoreboard bits after flushes/stalls.
+    // Keep per-class busy maps as debug views, but derive them from the
+    // generic producer descriptor list instead of hardcoding the stage model.
     val regBusy = Bits(regCount bits)
     val fpRegBusy = Bits(regCount bits)
     regBusy.clearAll()
     fpRegBusy.clearAll()
-    for ((stage, bypassReady) <- hzRange.tail.zip(bypassReadyPerStage)) {
-      val stValid = stage.up.isValid && stage(Decoder.VALID) && stage(borb.common.Common.LANE_SEL)
-      val stRd = stage(Decoder.RD_ADDR)
-      val stInsn = stage(Decoder.DECODED_INSTRUCTION)
-      val stWritesIntRd = stValid &&
-        (stage(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
-        (stRd =/= 0)
-      val stWritesFpRd = stValid &&
-        (stRd =/= 0) &&
-        (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn) || isFminmaxS(stInsn) || isFaddsubS(stInsn) || isFmulS(stInsn) || isFdivsqrtS(stInsn) || isFmaS(stInsn))
-      when(stWritesIntRd && !bypassReady) {
-        regBusy(stRd.asUInt) := True
+    for (producer <- producerDescriptors) {
+      when(producer.valid && (producer.regClass === RegisterClass.INT) && !producer.bypassReady) {
+        regBusy(producer.rd) := True
       }
-      when(stWritesFpRd) {
-        fpRegBusy(stRd.asUInt) := True
+      when(producer.valid && (producer.regClass === RegisterClass.FP)) {
+        fpRegBusy(producer.rd) := True
+      }
+    }
+
+    def readDescriptor(enable: Bool, regClass: SpinalEnumElement[RegisterClass.type], address: UInt): ReadDescriptor = {
+      val desc = ReadDescriptor()
+      desc.enable := enable
+      desc.regClass := regClass
+      desc.address := address
+      desc
+    }
+
+    def hasProducerHazard(read: ReadDescriptor): Bool = {
+      if (producerDescriptors.isEmpty) {
+        False
+      } else {
+        producerDescriptors
+          .map { producer =>
+            read.enable &&
+            (read.address =/= 0) &&
+            producer.valid &&
+            (producer.regClass === read.regClass) &&
+            (producer.rd === read.address) &&
+            !producer.bypassReady
+          }
+          .reduce(_ || _)
       }
     }
 
     val writes = new dispatchNode.Area {
       val valid = up.isValid && up(Decoder.VALID)
-      val rd = up(Decoder.RD_ADDR)
-      val rs1Type = up(Decoder.RS1TYPE)
-      val rs2Type = up(Decoder.RS2TYPE)
       val rs1 = up(Decoder.RS1_ADDR)
       val rs2 = up(Decoder.RS2_ADDR)
       val insn = up(Decoder.DECODED_INSTRUCTION)
-
-      val rs1Busy = (rs1Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
-        (rs1 =/= 0) && regBusy(rs1.asUInt)
-      val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
-        (rs2 =/= 0) && regBusy(rs2.asUInt)
-      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || isFdivsqrtS(insn) || isFmaS(insn)
-      val fpRs1Busy = fpReadsRs1 && (insn(19 downto 15) =/= 0) && fpRegBusy(insn(19 downto 15).asUInt)
-      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || ((insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001100")) || isFmaS(insn)
-      val fpRs2Busy = fpReadsRs2 && (insn(24 downto 20) =/= 0) && fpRegBusy(insn(24 downto 20).asUInt)
-      val fpReadsRs3 = isFmaS(insn)
-      val fpRs3Busy = fpReadsRs3 && (insn(31 downto 27) =/= 0) && fpRegBusy(insn(31 downto 27).asUInt)
-
-      val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy || fpRs3Busy)
+      val readsIntRs1 = up(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT
+      val readsIntRs2 = up(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT
+      val fpReadsRs1 = readsFpRs1FromInsn(insn)
+      val fpReadsRs2 = readsFpRs2FromInsn(insn)
+      val fpReadsRs3 = readsFpRs3FromInsn(insn)
+      val consumerReads = Seq(
+        readDescriptor(readsIntRs1, RegisterClass.INT, rs1.asUInt),
+        readDescriptor(readsIntRs2, RegisterClass.INT, rs2.asUInt),
+        readDescriptor(fpReadsRs1, RegisterClass.FP, insn(19 downto 15).asUInt),
+        readDescriptor(fpReadsRs2, RegisterClass.FP, insn(24 downto 20).asUInt),
+        readDescriptor(fpReadsRs3, RegisterClass.FP, insn(31 downto 27).asUInt)
+      )
+      val hazard = valid && consumerReads.map(hasProducerHazard).reduce(_ || _)
       hazard.simPublic()
 
       haltWhen(hazard)

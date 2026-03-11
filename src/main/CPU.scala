@@ -175,6 +175,36 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 5).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOAGU).setAsReg().init(False)
     }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.ExecutionRoute.NEW_ROUTE_VALID).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.ExecutionRoute.NEW_EU_ID).setAsReg().init(borb.dispatch.ExecutionRoute.EuId.NONE)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.ExecutionRoute.NEW_FU_KIND).setAsReg().init(borb.dispatch.ExecutionRoute.FuKind.NONE)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.WRITES_INT_RD).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.WRITES_FP_RD).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.READS_INT_RS1).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.READS_INT_RS2).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.READS_FP_RS1).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.READS_FP_RS2).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.READS_FP_RS3).setAsReg().init(False)
+    }
     // Keep resolved operands instruction-local once they leave the source
     // stage. Otherwise a held execute-stage instruction can observe a newer
     // regfile/bypass value and re-execute with different operands.
@@ -219,12 +249,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     val execStage = pipeline.ctrl(6)
     val integerBackend = IntegerBackend(pipeline.ctrl(6), pipeline.ctrl(7))
-    val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
+    val hazardRange = Array(4, 5, 6, 7).map(e => borb.dispatch.Dispatch.HazardStage(e, pipeline.ctrl(e))).toSeq
     val dispatcher = new Dispatch(
       pipeline.ctrl(4),
       hazardRange,
-      pipeline,
-      intBypassReady = Seq(False, integerBackend.exeBypassReady, integerBackend.wbIntBypass.valid)
+      pipeline
     )
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
     val intalu = new IntAlu(pipeline.ctrl(6))
@@ -290,27 +319,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     srcCtrl.haltWhen(exeHasControlFlow || exeHasSystem)
 
-    val exeIntProducer = exeCtrl.up.isValid &&
-      exeCtrl(Decoder.VALID) &&
-      exeCtrl(borb.common.Common.LANE_SEL) &&
-      (exeCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
-      (exeCtrl(Decoder.RD_ADDR) =/= 0)
+    val exeIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(exeCtrl)
     val srcNeedsExeRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS1_ADDR) === exeCtrl(Decoder.RD_ADDR))
     val srcNeedsExeRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS2_ADDR) === exeCtrl(Decoder.RD_ADDR))
-    srcCtrl.haltWhen(exeIntProducer && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
+    srcCtrl.haltWhen(exeIntProducer && !borb.dispatch.Dispatch.stageIntBypassReady(6, exeCtrl) && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
 
-    val wbIntProducer = wbCtrl.up.isValid &&
-      wbCtrl(Decoder.VALID) &&
-      wbCtrl(borb.common.Common.LANE_SEL) &&
-      (wbCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
-      (wbCtrl(Decoder.RD_ADDR) =/= 0)
+    val wbIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(wbCtrl)
     val srcNeedsWbRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS1_ADDR) === wbCtrl(Decoder.RD_ADDR))
     val srcNeedsWbRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS2_ADDR) === wbCtrl(Decoder.RD_ADDR))
-    srcCtrl.haltWhen(wbIntProducer && (srcNeedsWbRdRs1 || srcNeedsWbRdRs2))
+    srcCtrl.haltWhen(wbIntProducer && !borb.dispatch.Dispatch.stageIntBypassReady(7, wbCtrl) && (srcNeedsWbRdRs1 || srcNeedsWbRdRs2))
 
     // ========== Speculation Epoch Architecture ==========
     // Clean, scalable speculation handling for in-order superscalar CPU

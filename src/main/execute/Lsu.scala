@@ -5,7 +5,9 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
 import borb.frontend.Decoder
+import borb.frontend.YESNO
 import borb.dispatch.SrcPlugin._
+import borb.dispatch.ExecutionRoute._
 import borb.common.MicroCode._
 import borb.common.Common._
 import borb.dispatch.RegFileWrite
@@ -57,6 +59,12 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
 
   val logic = new stage.Area {
     val epochMatches = up(SPEC_EPOCH) === currentEpoch
+    val newAguRoute =
+      up(NEW_ROUTE_VALID) &&
+      (up(NEW_EU_ID) === EuId.AguEu) &&
+      (up(NEW_FU_KIND) === FuKind.MemoryAccess)
+    val legacyFpAguRoute = up(SENDTOAGU) && (up(Decoder.IS_FP) === YESNO.Y)
+    val isAguRoute = newAguRoute || legacyFpAguRoute
     val amoSwapW = up(MicroCode) === uopAMOSWAPW
     val amoSwapD = up(MicroCode) === uopAMOSWAPD
     val amoAddW = up(MicroCode) === uopAMOADDW
@@ -100,7 +108,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       default -> False
     )
     val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
-    val aguPayloadValid = up(VALID) && up(LANE_SEL) && up(SENDTOAGU)
+    val aguPayloadValid = up(VALID) && up(LANE_SEL) && isAguRoute
     val currentSeq = up(Fetch.FETCH_SEQ)
     val duplicateInWb = wbStage.up.isValid &&
       wbStage(VALID) &&
@@ -383,7 +391,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
 
     // Propagate payloads for RVFI (Store & Load)
     // riscv-formal expects RAW/SHIFTED data and mask matching the address
-    val isSendToAgu = up(SENDTOAGU)
+    val isSendToAgu = isAguRoute
     // Suppress RVFI side-effects if misaligned
     down(MEM_ADDR) := Mux(isSendToAgu && (isStore || isLoad), activeAddr, U(0, 64 bits))
     

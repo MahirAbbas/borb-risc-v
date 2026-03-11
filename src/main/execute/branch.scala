@@ -12,6 +12,7 @@ import borb.common.Common._
 import borb.common.MicroCode._
 import borb.dispatch.SrcPlugin._
 import borb.dispatch.Dispatch._
+import borb.dispatch.ExecutionRoute._
 import borb.frontend.YESNO
 import borb.dispatch.RegFileWrite
 
@@ -73,17 +74,22 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
     // Redirect must be one-shot per actual execute-stage firing transaction.
-    val isBrUnit = up(EXECUTION_UNIT) === ExecutionUnitEnum.BR
+    val legacyBrRoute = (up(EXECUTION_UNIT) === ExecutionUnitEnum.BR) && up(SENDTOBRANCH)
+    val newBrRoute =
+      up(NEW_ROUTE_VALID) &&
+      (up(NEW_EU_ID) === EuId.BranchEu) &&
+      (up(NEW_FU_KIND) === FuKind.ControlFlow)
+    val isBrUnit = legacyBrRoute || newBrRoute
     val execFire = up.isFiring
     val doJump = (isJump || (isBranch && condition)) &&
-      isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire
+      isBrUnit && up(LANE_SEL) && up(VALID) && execFire
     val misaligned = if(withCompressed) (target(0) =/= False) else (target(1 downto 0) =/= 0)
     val willTrap = doJump && misaligned
 
     // down(TRAP) := willTrap // Moved to CPU.scala logic integration
     down(BRANCH_TAKEN) := doJump && !willTrap
     down(BRANCH_TARGET) := target
-    branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && execFire
+    branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(VALID) && execFire
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
     jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
@@ -91,7 +97,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     jumpCmd.payload.is_jump := isJump
     jumpCmd.payload.is_branch := isBranch
     
-    when(isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire) {
+    when(isBrUnit && up(LANE_SEL) && up(VALID) && execFire) {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt

@@ -24,6 +24,9 @@ class SimDebugPlugin(
     val valid          = up(borb.frontend.Decoder.VALID) 
     val immed          = up(borb.dispatch.SrcPlugin.IMMED)
     val sendtoalu      = up(borb.dispatch.Dispatch.SENDTOALU)
+    val newRouteValid  = up(borb.dispatch.ExecutionRoute.NEW_ROUTE_VALID)
+    val newEuId        = up(borb.dispatch.ExecutionRoute.NEW_EU_ID)
+    val newFuKind      = up(borb.dispatch.ExecutionRoute.NEW_FU_KIND)
     val result         = up(borb.execute.WriteBack.RESULT).data
     val valid_result   = up(borb.execute.WriteBack.RESULT).valid
     val rdaddr         = up(borb.execute.WriteBack.RESULT).address
@@ -35,6 +38,9 @@ class SimDebugPlugin(
     valid.simPublic()
     immed.simPublic()
     sendtoalu.simPublic()
+    newRouteValid.simPublic()
+    newEuId.simPublic()
+    newFuKind.simPublic()
     result.simPublic()
     valid_result.simPublic()
     rdaddr.simPublic()

@@ -5,11 +5,9 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
 import borb.frontend.YESNO
-import borb.frontend.Imm_Select
-import borb.frontend.ExecutionUnitEnum.ALU
-// import borb.dispatch.SrcPlugin.IMMED
 
 import borb.dispatch._
+import borb.dispatch.ExecutionRoute._
 import borb.common.MicroCode._
 import borb.common.Common._
 import spinal.lib.misc.plugin.FiberPlugin
@@ -24,12 +22,15 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
   val SRC2 = borb.dispatch.SrcPlugin.RS2
 
   val aluNodeStage = new aluNode.Area {
-    import borb.dispatch.Dispatch._
     import borb.dispatch.SrcPlugin._
-    // import borb.frontend.AluOp
     val result = Bits(64 bits)
     result.assignDontCare()
-    when(up(borb.dispatch.Dispatch.SENDTOALU) === True) {
+    val isIntComputeRoute =
+      up(NEW_ROUTE_VALID) &&
+      (up(NEW_EU_ID) === EuId.IntEu) &&
+      (up(NEW_FU_KIND) === FuKind.IntCompute)
+
+    when(isIntComputeRoute) {
       val src1S = SRC1.asSInt
       val src2S = SRC2.asSInt
       val src1U = SRC1.asUInt
@@ -142,11 +143,9 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
     down(WriteBack.RESULT).data.allowOverride := 0
     down(WriteBack.RESULT).valid.allowOverride := False
 
-    // Only drive result if this instruction is dispatched to ALU
-    when(up(VALID) === True && up(SENDTOALU)) {
-      // down(RESULT) := result.asBits
-      // Enforce x0 invariant: writes to x0 must have 0 data (architecturally).
-      // This ensures RVFI sees the correct "ignore" behavior.
+    // INT compute ops now key off the new route payloads; other legacy ALU
+    // consumers continue using SENDTOALU elsewhere until they are migrated.
+    when(up(VALID) === True && isIntComputeRoute) {
       val isX0 = up(RD_ADDR).asUInt === 0
       down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
       down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
