@@ -33,7 +33,7 @@ class SimDebugPlugin(
     val lane_sel       = up(LANE_SEL)
     val commit         = up(COMMIT)
     val specEpoch      = up(SPEC_EPOCH)  // Replaced MAY_FLUSH with SPEC_EPOCH
-    val pc             = up(PC.PC)
+    val pc             = up(PC.INSN_PC)
     
     valid.simPublic()
     immed.simPublic()
@@ -54,10 +54,10 @@ class SimDebugPlugin(
        ctrl.isValid.simPublic()
        ctrl.down.isFiring.simPublic()
     }
-    pipeline.ctrl(3).up(PC.PC).simPublic() // Decode
-    pipeline.ctrl(4).up(PC.PC).simPublic() // Dispatch
-    pipeline.ctrl(5).up(PC.PC).simPublic() // Src
-    pipeline.ctrl(6).up(PC.PC).simPublic() // Ex
+    pipeline.ctrl(3).up(PC.INSN_PC).simPublic() // Decode
+    pipeline.ctrl(4).up(PC.INSN_PC).simPublic() // Dispatch
+    pipeline.ctrl(5).up(PC.INSN_PC).simPublic() // Src
+    pipeline.ctrl(6).up(PC.INSN_PC).simPublic() // Ex
     
     dispatcher.hcs.regBusy.simPublic()
     branch.logic.jumpCmd.valid.simPublic()

@@ -112,7 +112,7 @@ case class DebugPlugin(
     io.dbg.duplicateRetire := up(borb.execute.WriteBack.DUPLICATE_RETIRE)
     io.dbg.commitOrder := order
     io.dbg.commitSeq := up(borb.fetch.Fetch.FETCH_SEQ)
-    io.dbg.commitPc := up(PC.PC)
+    io.dbg.commitPc := up(PC.INSN_PC)
     io.dbg.commitInsn := up(Decoder.DECODED_INSTRUCTION)
     io.dbg.commitRs1 := up(Decoder.RS1_ADDR).asUInt
     io.dbg.commitRs2 := up(Decoder.RS2_ADDR).asUInt
@@ -140,7 +140,7 @@ case class DebugPlugin(
 
     io.dbg.squashed := !up(LANE_SEL) || up(TRAP)
 
-    io.dbg.wb_pc := up(PC.PC)
+    io.dbg.wb_pc := up(PC.INSN_PC)
 
     io.dbg.memAddr := up(Lsu.MEM_ADDR)
     io.dbg.memRmask := up(Lsu.MEM_RMASK)
@@ -150,9 +150,9 @@ case class DebugPlugin(
   }
 
   // Wire up PC signals from other stages for debug visibility
-  io.dbg.f_pc := pipeline.ctrl(2)(PC.PC) // Fetch Rsp
-  io.dbg.d_pc := pipeline.ctrl(3)(PC.PC) // Decode
-  io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
+  io.dbg.f_pc := pipeline.ctrl(2)(PC.INSN_PC) // Fetch Rsp
+  io.dbg.d_pc := pipeline.ctrl(3)(PC.INSN_PC) // Decode
+  io.dbg.x_pc := pipeline.ctrl(6)(PC.INSN_PC) // Execute
   io.dbg.s4_valid := s4Stage.up.isValid
   io.dbg.s4_fire := s4Stage.up.isFiring
   io.dbg.s4_seq := s4Stage.up(borb.fetch.Fetch.FETCH_SEQ)

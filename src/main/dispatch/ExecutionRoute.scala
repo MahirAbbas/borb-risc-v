@@ -22,6 +22,18 @@ object ExecutionRoute extends AreaObject {
 object ExecutionHazardMeta {
   import ExecutionRoute._
 
+  def isSystemCsrInsn(insn: Bits): Bool = {
+    (insn(6 downto 0) === B"1110011") && (insn(14 downto 12) =/= B"000")
+  }
+
+  def isFpCsrInsn(insn: Bits): Bool = {
+    isSystemCsrInsn(insn) && (
+      (insn(31 downto 20) === B"000000000001") ||
+      (insn(31 downto 20) === B"000000000010") ||
+      (insn(31 downto 20) === B"000000000011")
+    )
+  }
+
   def isMigratedIntRoute(routeValid: Bool, euId: ExecutionRoute.EuId.C, fuKind: ExecutionRoute.FuKind.C): Bool =
     routeValid && (euId === EuId.IntEu) && (fuKind === FuKind.IntCompute)
 
@@ -130,6 +142,12 @@ object ExecutionHazardMeta {
     ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
   }
 
+  def isFpComputeInsn(insn: Bits): Bool = {
+    isFcvtFToInt(insn) || isFcvtIntToF(insn) || isFmvXW(insn) || isFmvWX(insn) ||
+    isFclassS(insn) || isFsgnjFamily(insn) || isFminmaxS(insn) || isFcmpS(insn) ||
+    isFaddsubS(insn) || isFmulS(insn) || isFdivsqrtS(insn) || isFmaS(insn)
+  }
+
   def writesFpRdFromInsn(insn: Bits): Bool = {
     isFlw(insn) || isFcvtIntToF(insn) || isFmvWX(insn) || isFsgnjFamily(insn) ||
     isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || isFdivsqrtS(insn) || isFmaS(insn)
@@ -149,6 +167,17 @@ object ExecutionHazardMeta {
   }
 
   def readsFpRs3FromInsn(insn: Bits): Bool = isFmaS(insn)
+
+  // Model FCSR/FRM/FFLAGS as a shared serialized resource. This is
+  // intentionally conservative for now: any explicit FP CSR access or FP
+  // compute op is treated as interacting with that shared state.
+  def readsFpCsrFromInsn(insn: Bits): Bool = {
+    isFpCsrInsn(insn) || isFpComputeInsn(insn)
+  }
+
+  def writesFpCsrFromInsn(insn: Bits): Bool = {
+    isFpCsrInsn(insn) || isFpComputeInsn(insn)
+  }
 }
 
 case class FuSpec(

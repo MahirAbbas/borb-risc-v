@@ -24,6 +24,7 @@ case class ExceptionCmd(addressWidth: Int) extends Bundle {
 object PC extends AreaObject {
   val addressWidth = 64
   val PC = Payload(UInt(addressWidth bits))
+  val INSN_PC = Payload(UInt(addressWidth bits))
   val FLUSH = Payload(Bool())
 }
 

@@ -56,9 +56,18 @@ case class IntRegFile(dataWidth: Int, readPorts: Int = 2, writePorts: Int = 1) e
   
   val mem = Mem.fill(32)(Bits(dataWidth bits)).init(Seq.fill(32)(B(0, dataWidth bits)))
 
-  // Read logic: x0 always returns 0
+  // Read logic: x0 always returns 0. Explicitly forward same-cycle writes so
+  // dependent consumers do not rely on backend-specific Mem read-during-write
+  // behavior.
   for (port <- io.reads) {
-    port.data := (port.address === 0) ? B(0, dataWidth bits) | mem.readAsync(port.address)
+    val readData = Bits(dataWidth bits)
+    readData := mem.readAsync(port.address)
+    for (w <- io.writes.reverse) {
+      when(w.valid && (w.address =/= 0) && (w.address === port.address)) {
+        readData := w.data
+      }
+    }
+    port.data := (port.address === 0) ? B(0, dataWidth bits) | readData
   }
 
   // Write logic: x0 writes are ignored

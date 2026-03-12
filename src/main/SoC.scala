@@ -38,6 +38,19 @@ case class SoC() extends Component {
   )
 
   val area = new ClockingArea(socClockDomain) {
+    val archBase = U(BigInt("80000000", 16), 64 bits)
+    val ramBankBytes = 8 MiB
+    val ramTotalBytes = 16 MiB
+
+    def mapRamAddr(addr: UInt): UInt = {
+      val mapped = UInt(log2Up(ramTotalBytes) bits)
+      mapped := addr.resized
+      when((addr >= archBase) && (addr < (archBase + ramBankBytes))) {
+        mapped := ((addr - archBase) + ramBankBytes).resized
+      }
+      mapped
+    }
+
     val cpu = CPU()
     cpu.io.clk := io.clk
     cpu.io.clkEnable := io.clkEnable
@@ -61,7 +74,7 @@ case class SoC() extends Component {
     // RAM
     val ram = Axi4SharedOnChipRam(
       dataWidth = 64,
-      byteCount = 8 MiB,
+      byteCount = ramTotalBytes,
       idWidth = 17
     )
     import spinal.core.sim._
@@ -69,7 +82,7 @@ case class SoC() extends Component {
     
     // Connect Arbiter to RAM with address resize to the RAM address bus width.
     ram.io.axi.arw.valid   := arbiter.io.output.arw.valid
-    ram.io.axi.arw.addr    := arbiter.io.output.arw.addr.resized
+    ram.io.axi.arw.addr    := mapRamAddr(arbiter.io.output.arw.addr)
     ram.io.axi.arw.id      := arbiter.io.output.arw.id
     ram.io.axi.arw.len     := arbiter.io.output.arw.len
     ram.io.axi.arw.size    := arbiter.io.output.arw.size

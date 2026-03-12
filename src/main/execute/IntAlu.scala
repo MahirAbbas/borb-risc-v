@@ -35,6 +35,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       val src2S = SRC2.asSInt
       val src1U = SRC1.asUInt
       val src2U = SRC2.asUInt
+      val immU = IMMED.asUInt
       val divByZero = SRC2 === 0
 
       val minInt64 = S(BigInt("-9223372036854775808"), 64 bits)
@@ -76,28 +77,28 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       val mulSS = ((SRC1.msb ## SRC1).asSInt.resize(130) * (SRC2.msb ## SRC2).asSInt.resize(130)).asBits
       val mulHSU = ((SRC1.msb ## SRC1).asSInt.resize(130) * (False ## SRC2).asSInt.resize(130)).asBits
       val mulUU = ((False ## SRC1).asUInt.resize(130) * (False ## SRC2).asUInt.resize(130)).asBits
-      val pcRaw = up(borb.fetch.PC.PC)
+      val pcRaw = up(borb.fetch.PC.INSN_PC)
 
       result := up(MicroCode).muxDc(
         uopXORI -> (SRC1 ^ IMMED),
         uopORI -> (SRC1 | IMMED),
         uopANDI -> (SRC1 & IMMED),
-        uopADDI -> (SRC1.asSInt + IMMED.asSInt).asBits,
+        uopADDI -> (src1U + immU).resize(64).asBits,
         uopSLTI -> (SRC1.asSInt < IMMED.asSInt).asBits.resized,
-        uopSLTIU -> (SRC1.asUInt < IMMED.asUInt).asBits.resized,
+        uopSLTIU -> (src1U < immU).asBits.resized,
         uopSLLI -> (SRC1.asUInt |<< (IMMED(5 downto 0)).asUInt).asBits,
         uopSRLI -> (SRC1.asUInt |>> (IMMED(5 downto 0)).asUInt).asBits,
         uopSRAI -> (SRC1.asSInt >> (IMMED(5 downto 0)).asUInt).asBits,
         uopXOR -> (SRC1 ^ SRC2),
         uopOR -> (SRC1 | SRC2),
         uopAND -> (SRC1 & SRC2),
-        uopADD -> (SRC1.asSInt + SRC2.asSInt).asBits,
+        uopADD -> (src1U + src2U).resize(64).asBits,
         uopSLL -> (SRC1.asUInt |<< (SRC2(5 downto 0)).asUInt).asBits,
         uopSRL -> (SRC1.asUInt |>> (SRC2(5 downto 0)).asUInt).asBits,
         uopSRA -> (SRC1.asSInt >> (SRC2(5 downto 0)).asUInt).asBits,
-        uopSUB -> (SRC1.asSInt - SRC2.asSInt).asBits,
+        uopSUB -> (src1U - src2U).resize(64).asBits,
         uopSLT -> (SRC1.asSInt < SRC2.asSInt).asBits.resized,
-        uopSLTU -> (SRC1.asUInt < SRC2.asUInt).asBits.resized,
+        uopSLTU -> (src1U < src2U).asBits.resized,
         // RV64I W-Instructions (32-bit operations, sign-extended result)
         uopADDW -> (SRC1(31 downto 0).asSInt + SRC2(31 downto 0).asSInt).resize(64).asBits,
         uopSUBW -> (SRC1(31 downto 0).asSInt - SRC2(31 downto 0).asSInt).resize(64).asBits,
@@ -124,7 +125,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
         uopREMW -> Mux(divByZeroW, src1W, Mux(divOverflowW, B(0, 32 bits), divRemSignedW)).asSInt.resize(64).asBits,
         uopREMUW -> Mux(divByZeroW, src1W, (src1WU % src2WU).asBits).asSInt.resize(64).asBits,
         uopLUI -> (IMMED.asBits),
-        uopAUIPC -> (IMMED.asSInt + pcRaw.asSInt).asBits,
+        uopAUIPC -> (pcRaw + immU).resize(64).asBits,
         // FCVT ops are handled in CPU trap/CSR area with FCSR state visibility.
         uopFCVTLS -> B(0, 64 bits),
         uopFCVTLUS -> B(0, 64 bits),

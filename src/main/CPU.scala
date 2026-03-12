@@ -17,6 +17,7 @@ import borb.formal._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
 import borb.core.CpuConfig
+import borb.memory.{Pmp, Sv39}
 import spinal.lib.misc.plugin.PluginHost
 import borb.common.MicroCode._
 
@@ -94,6 +95,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
     }
+    // Carry the fetched instruction's PC separately from the front-end fetch
+    // cursor. Back-end execution must use the instruction-local value.
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.PC.INSN_PC).setAsReg().init(0)
+    }
     // Keep fetched instruction instruction-local starting at the fetch
     // response stage so mixed-width fetch cannot present a newer halfword
     // boundary under an older PC at the stage-2/3 handoff.
@@ -102,6 +108,24 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SEQ).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PAGE_FAULT).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_ACCESS_FAULT).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SECOND_PAGE_FAULT).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SECOND_ACCESS_FAULT).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PHYS_PC).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SECOND_PHYS_PC).setAsReg().init(0)
     }
     // Keep decode outputs instruction-local once they leave decode. Otherwise
     // a stalled downstream instruction can observe a newer decode result while
@@ -217,6 +241,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 6).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.IMMED).setAsReg().init(0)
     }
+    // Keep writeback intents instruction-local once they leave execute.
+    // Otherwise a stalled/overlapping writer can expose a newer result to the
+    // writeback port, bypass fabric, or debug/commit paths.
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
+      case (_, ctrl) => ctrl.up(borb.execute.WriteBack.RESULT).address.setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
+      case (_, ctrl) => ctrl.up(borb.execute.WriteBack.RESULT).data.setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
+      case (_, ctrl) => ctrl.up(borb.execute.WriteBack.RESULT).valid.setAsReg().init(False)
+    }
 
     // Global speculation epoch. Keep this wide enough to avoid wraparound
     // aliasing under branch-heavy tests.
@@ -248,7 +284,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val decode = new Decoder(pipeline.ctrl(3), withCompressed = config.cExtensionEnabled, xlen = config.xlen)
 
     val execStage = pipeline.ctrl(6)
-    val integerBackend = IntegerBackend(pipeline.ctrl(6), pipeline.ctrl(7))
+    val integerBackend = IntegerBackend(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch)
     val hazardRange = Array(4, 5, 6, 7).map(e => borb.dispatch.Dispatch.HazardStage(e, pipeline.ctrl(e))).toSeq
     val dispatcher = new Dispatch(
       pipeline.ctrl(4),
@@ -257,12 +293,15 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     )
     val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
     val intalu = new IntAlu(pipeline.ctrl(6))
-    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
+    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, currentEpoch, withCompressed = config.cExtensionEnabled)
     val lsu = new borb.execute.Lsu(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch)
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     lsuBus.cmd << lsu.io.dBus.cmd
     lsu.io.dBus.rsp << lsuBus.rsp
+    lsu.io.pageFault := False
+    lsu.io.accessFault := False
+    lsu.io.cmdBusy := False
 
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
     io.perf := perfCounters.counters
@@ -319,14 +358,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     srcCtrl.haltWhen(exeHasControlFlow || exeHasSystem)
 
-    val exeIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(exeCtrl)
+    val exeIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(exeCtrl) && (exeCtrl(SPEC_EPOCH) === currentEpoch)
     val srcNeedsExeRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS1_ADDR) === exeCtrl(Decoder.RD_ADDR))
     val srcNeedsExeRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS2_ADDR) === exeCtrl(Decoder.RD_ADDR))
     srcCtrl.haltWhen(exeIntProducer && !borb.dispatch.Dispatch.stageIntBypassReady(6, exeCtrl) && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
 
-    val wbIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(wbCtrl)
+    val wbIntProducer = borb.dispatch.Dispatch.stageWritesIntRd(wbCtrl) && (wbCtrl(SPEC_EPOCH) === currentEpoch)
     val srcNeedsWbRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
       (srcCtrl(Decoder.RS1_ADDR) === wbCtrl(Decoder.RD_ADDR))
     val srcNeedsWbRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
@@ -355,7 +394,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val sretRedirect = trapLogic.redirect.sretFire && execEpochMatches
     val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || sretRedirect || fenceiRedirect
     pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
-    val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
+    val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.INSN_PC) + U(4, 64 bits)
     pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || sretRedirect || fenceiRedirect
     pc.jump.payload.target := (
       mretRedirect ? trapLogic.redirect.mretTarget |
@@ -385,6 +424,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.flush := redirectPipeline
+    fetch.io.invalidate := False
     fetch.io.currentEpoch := currentEpoch
     
     // Flush fetch/decode/src younger stages on redirect so a new target beat
@@ -393,6 +433,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     //       Stage 7 (Writeback) is excluded - older committed state.
     val youngerStages = Array(1, 2, 3, 4, 5).map(pipeline.ctrl(_))
     youngerStages.foreach { ctrl =>
+      ctrl.haltWhen(redirectPipeline)
       ctrl.throwWhen(redirectPipeline)
     }
 
@@ -544,50 +585,339 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       )
     }
 
-    io.iAxi.arw.valid := fetch.io.iAxi.arw.valid
-    io.iAxi.arw.addr := fetch.io.iAxi.arw.addr
-    io.iAxi.arw.id := fetch.io.iAxi.arw.id
-    io.iAxi.arw.len := fetch.io.iAxi.arw.len
+    val archBase = U(BigInt("80000000", 16), 64 bits)
+    val PRV_U = U(0, 2 bits)
+    val PRV_S = U(1, 2 bits)
+    val PRV_M = U(3, 2 bits)
+
+    val fetchPriv = UInt(2 bits)
+    fetchPriv := trapLogic.vmContext.currentPriv
+    when(trapRedirect) {
+      fetchPriv := trapLogic.redirect.trapTargetPriv
+    } elsewhen(mretRedirect) {
+      fetchPriv := trapLogic.redirect.mretTargetPriv
+    } elsewhen(sretRedirect) {
+      fetchPriv := trapLogic.redirect.sretTargetPriv
+    }
+
+    def remapExternalAddr(addr: UInt): UInt = {
+      val mapped = UInt(64 bits)
+      // The SoC RAM already truncates high physical addresses into the on-chip
+      // address space. Preserve low physical addresses verbatim so PMP and
+      // page-table tests that intentionally touch address 0 observe the correct
+      // backing bytes instead of an arbitrary low-address alias window.
+      mapped := addr
+      mapped
+    }
+
+    def sv39Canonical(va: UInt): Bool = va(63 downto 39).asBits === B(25 bits, default -> va(38))
+
+    def sv39VpnIndex(va: UInt, level: UInt): UInt = {
+      val index = UInt(9 bits)
+      index := va(20 downto 12)
+      switch(level) {
+        is(U(2, 2 bits)) { index := va(38 downto 30) }
+        is(U(1, 2 bits)) { index := va(29 downto 21) }
+      }
+      index
+    }
+
+    def sv39LeafPhysAddr(va: UInt, pte: Bits, level: UInt): UInt = {
+      val out = UInt(64 bits)
+      out := 0
+      out(11 downto 0) := va(11 downto 0)
+      switch(level) {
+        is(U(2, 2 bits)) {
+          out(20 downto 12) := va(20 downto 12)
+          out(29 downto 21) := va(29 downto 21)
+          out(55 downto 30) := pte(53 downto 28).asUInt
+        }
+        is(U(1, 2 bits)) {
+          out(20 downto 12) := va(20 downto 12)
+          out(29 downto 21) := pte(27 downto 19).asUInt
+          out(55 downto 30) := pte(53 downto 28).asUInt
+        }
+        default {
+          out(20 downto 12) := pte(18 downto 10).asUInt
+          out(29 downto 21) := pte(27 downto 19).asUInt
+          out(55 downto 30) := pte(53 downto 28).asUInt
+        }
+      }
+      out
+    }
+
+    object IFetchAxiState extends SpinalEnum {
+      val iIdle, iWalkReq, iWalkWait, iIssueFetchReq, iWaitFetchRsp, iIssueFaultRsp = newElement()
+    }
+    import IFetchAxiState._
+
+    val iAxiState = RegInit(iIdle)
+    val iWalkVa = Reg(UInt(64 bits)) init(0)
+    val iWalkPhysAddr = Reg(UInt(64 bits)) init(0)
+    val iFetchReqId = Reg(UInt(config.fetchIdWidth bits)) init(0)
+    val iWalkLevel = Reg(UInt(2 bits)) init(0)
+    val iWalkTablePpn = Reg(UInt(44 bits)) init(0)
+    val iWalkPageFault = RegInit(False)
+    val iWalkAccessFault = RegInit(False)
+    val iWalkPteAddr = UInt(64 bits)
+    iWalkPteAddr := ((iWalkTablePpn.resize(64) |<< 12) + (sv39VpnIndex(iWalkVa, iWalkLevel).resize(64) |<< 3)).resized
+
+    val iPte = io.iAxi.r.data
+    val iPteV = iPte(0)
+    val iPteR = iPte(1)
+    val iPteW = iPte(2)
+    val iPteX = iPte(3)
+    val iPteU = iPte(4)
+    val iPteA = iPte(6)
+    val iPointerReserved = !iPteR && !iPteX && (iPteU || iPteA || iPte(7))
+    val iReservedUpper = iPte(63 downto 54) =/= 0
+    val iIsLeaf = iPteR || iPteX
+    val iSuperpageMisaligned =
+      ((iWalkLevel === U(2, 2 bits)) && (iPte(27 downto 10) =/= 0)) ||
+      ((iWalkLevel === U(1, 2 bits)) && (iPte(18 downto 10) =/= 0))
+    val iUserOk = Mux(fetchPriv === PRV_U, iPteU, !iPteU)
+    val iLeafExecOk = iPteX && iPteA && iUserOk && !iSuperpageMisaligned
+    val iWalkPmpAllowed = Pmp.allow(
+      trapLogic.logic.pmpCfgBytes,
+      trapLogic.logic.pmpAddrRegs,
+      16,
+      iWalkPteAddr,
+      PRV_S,
+      needX = False,
+      needR = True,
+      needW = False,
+      accessBytes = U(8, 64 bits),
+      PRV_M
+    )
+
+    io.iAxi.arw.valid := False
+    io.iAxi.arw.addr := 0
+    io.iAxi.arw.id := 0
+    io.iAxi.arw.len := 0
     io.iAxi.arw.size := fetch.io.iAxi.arw.size
     io.iAxi.arw.burst := fetch.io.iAxi.arw.burst
-    io.iAxi.arw.write := fetch.io.iAxi.arw.write
-    fetch.io.iAxi.arw.ready := io.iAxi.arw.ready
+    io.iAxi.arw.write := False
+    io.iAxi.w.valid := False
+    io.iAxi.w.data := 0
+    io.iAxi.w.strb := 0
+    io.iAxi.w.last := False
+    io.iAxi.b.ready := False
+    io.iAxi.r.ready := False
 
-    io.iAxi.w.valid := fetch.io.iAxi.w.valid
-    io.iAxi.w.data := fetch.io.iAxi.w.data
-    io.iAxi.w.strb := fetch.io.iAxi.w.strb
-    io.iAxi.w.last := fetch.io.iAxi.w.last
-    fetch.io.iAxi.w.ready := io.iAxi.w.ready
+    fetch.io.iAxi.arw.ready := False
+    fetch.io.iAxi.w.ready := False
+    fetch.io.iAxi.b.valid := False
+    fetch.io.iAxi.b.id := 0
+    fetch.io.iAxi.b.resp := 0
+    fetch.io.iAxi.r.valid := False
+    fetch.io.iAxi.r.data := 0
+    fetch.io.iAxi.r.id := 0
+    fetch.io.iAxi.r.resp := 0
+    fetch.io.iAxi.r.last := True
+    fetch.io.rspPageFault := False
+    fetch.io.rspAccessFault := False
+    fetch.io.rspPhysAddr := 0
 
-    fetch.io.iAxi.b.valid := io.iAxi.b.valid
-    fetch.io.iAxi.b.id := io.iAxi.b.id
-    fetch.io.iAxi.b.resp := io.iAxi.b.resp
-    io.iAxi.b.ready := fetch.io.iAxi.b.ready
+    switch(iAxiState) {
+      is(iIdle) {
+        when(fetch.io.iAxi.arw.valid) {
+          iWalkVa := fetch.io.iAxi.arw.addr
+          iFetchReqId := fetch.io.iAxi.arw.id
+          iWalkPageFault := False
+          iWalkAccessFault := False
+          when((fetchPriv =/= PRV_M) && (trapLogic.vmContext.satpMode === Sv39.modeSv39)) {
+            when(!sv39Canonical(fetch.io.iAxi.arw.addr)) {
+              iWalkPageFault := True
+              iAxiState := iIssueFaultRsp
+            } otherwise {
+              iWalkLevel := U(2, 2 bits)
+              iWalkTablePpn := trapLogic.vmContext.satpPpn
+              iAxiState := iWalkReq
+            }
+          } otherwise {
+            iWalkPhysAddr := fetch.io.iAxi.arw.addr
+            iAxiState := iIssueFetchReq
+          }
+        }
+      }
 
-    fetch.io.iAxi.r.valid := io.iAxi.r.valid
-    fetch.io.iAxi.r.data := io.iAxi.r.data
-    fetch.io.iAxi.r.id := io.iAxi.r.id
-    fetch.io.iAxi.r.resp := io.iAxi.r.resp
-    fetch.io.iAxi.r.last := io.iAxi.r.last
-    io.iAxi.r.ready := fetch.io.iAxi.r.ready
+      is(iWalkReq) {
+        when(!iWalkPmpAllowed) {
+          iWalkAccessFault := True
+          iAxiState := iIssueFaultRsp
+        } otherwise {
+          io.iAxi.arw.valid := True
+          io.iAxi.arw.addr := remapExternalAddr(iWalkPteAddr)
+          io.iAxi.arw.id := 0
+          when(io.iAxi.arw.ready) {
+            iAxiState := iWalkWait
+          }
+        }
+      }
+
+      is(iWalkWait) {
+        io.iAxi.r.ready := True
+        when(io.iAxi.r.valid) {
+          when(!iPteV || (iPteW && !iPteR) || iReservedUpper || iPointerReserved) {
+            iWalkPageFault := True
+            iAxiState := iIssueFaultRsp
+          } elsewhen(!iIsLeaf) {
+            when(iWalkLevel === U(0, 2 bits)) {
+              iWalkPageFault := True
+              iAxiState := iIssueFaultRsp
+            } otherwise {
+              iWalkTablePpn := iPte(53 downto 10).asUInt
+              iWalkLevel := iWalkLevel - 1
+              iAxiState := iWalkReq
+            }
+          } otherwise {
+            when(!iLeafExecOk) {
+              iWalkPageFault := True
+              iAxiState := iIssueFaultRsp
+            } otherwise {
+              iWalkPhysAddr := sv39LeafPhysAddr(iWalkVa, iPte, iWalkLevel)
+              iAxiState := iIssueFetchReq
+            }
+          }
+        }
+      }
+
+      is(iIssueFetchReq) {
+        val reqStillPresent = fetch.io.iAxi.arw.valid &&
+          (fetch.io.iAxi.arw.addr === iWalkVa) &&
+          (fetch.io.iAxi.arw.id === iFetchReqId)
+        io.iAxi.arw.valid := reqStillPresent
+        io.iAxi.arw.addr := remapExternalAddr(iWalkPhysAddr)
+        io.iAxi.arw.id := iFetchReqId
+        fetch.io.iAxi.arw.ready := reqStillPresent && io.iAxi.arw.ready
+        when(!reqStillPresent) {
+          iAxiState := iIdle
+        } elsewhen(io.iAxi.arw.ready) {
+          iAxiState := iWaitFetchRsp
+        }
+      }
+
+      is(iWaitFetchRsp) {
+        fetch.io.iAxi.r.valid := io.iAxi.r.valid
+        fetch.io.iAxi.r.data := io.iAxi.r.data
+        fetch.io.iAxi.r.id := io.iAxi.r.id
+        fetch.io.iAxi.r.resp := io.iAxi.r.resp
+        fetch.io.iAxi.r.last := io.iAxi.r.last
+        fetch.io.rspPhysAddr := iWalkPhysAddr
+        io.iAxi.r.ready := fetch.io.iAxi.r.ready
+        when(fetch.io.iAxi.r.fire) {
+          iAxiState := iIdle
+        }
+      }
+
+      is(iIssueFaultRsp) {
+        val reqStillPresent = fetch.io.iAxi.arw.valid &&
+          (fetch.io.iAxi.arw.addr === iWalkVa) &&
+          (fetch.io.iAxi.arw.id === iFetchReqId)
+        fetch.io.iAxi.arw.ready := reqStillPresent
+        when(!reqStillPresent) {
+          iAxiState := iIdle
+        } elsewhen(fetch.io.iAxi.arw.fire) {
+          iAxiState := iWaitFetchRsp
+        }
+      }
+    }
+
+    when(iAxiState === iWaitFetchRsp && (iWalkPageFault || iWalkAccessFault)) {
+      fetch.io.iAxi.r.valid := True
+      fetch.io.iAxi.r.data := 0
+      fetch.io.iAxi.r.id := iFetchReqId
+      fetch.io.iAxi.r.resp := 0
+      fetch.io.iAxi.r.last := True
+      fetch.io.rspPageFault := iWalkPageFault
+      fetch.io.rspAccessFault := iWalkAccessFault
+      fetch.io.rspPhysAddr := iWalkPhysAddr
+      when(fetch.io.iAxi.r.ready) {
+        iAxiState := iIdle
+      }
+    }
 
     // LSU DataBus -> AXI4Shared bridge
     val dCmd = lsuBus.cmd
     val dRsp = lsuBus.rsp
 
     object DMemAxiState extends SpinalEnum {
-      val idle, sendWrite, waitWriteResp, sendRead, waitReadResp = newElement()
+      val idle, walkReq, walkWait, fault, sendWrite, waitWriteResp, sendRead, waitReadResp = newElement()
     }
     import DMemAxiState._
-    val dAxiState = RegInit(idle)
+    val dAxiState = RegInit(DMemAxiState.idle)
     val dActiveCmd = Reg(DataBusCmd(64, 64, 16))
+    val dUseTranslation = RegInit(False)
+    val dWalkPriv = Reg(UInt(2 bits)) init(0)
+    val dWalkMxr = RegInit(False)
+    val dWalkSum = RegInit(False)
+    val dWalkLevel = Reg(UInt(2 bits)) init(0)
+    val dWalkTablePpn = Reg(UInt(44 bits)) init(0)
+    val dWalkPhysAddr = Reg(UInt(64 bits)) init(0)
+    val dWalkPageFault = RegInit(False)
+    val dWalkAccessFault = RegInit(False)
     val dArwFired = RegInit(False)
     val dWFired = RegInit(False)
-    val archBase = U(BigInt("80000000", 16), 64 bits)
-    val lowDataAliasBase = U(4 MiB, 64 bits)
-    val dPhysAddr = UInt(64 bits)
-    dPhysAddr := Mux(dActiveCmd.address < archBase, dActiveCmd.address + lowDataAliasBase, dActiveCmd.address)
+    val dWalkPteAddr = UInt(64 bits)
+    dWalkPteAddr := ((dWalkTablePpn.resize(64) |<< 12) + (sv39VpnIndex(dActiveCmd.address, dWalkLevel).resize(64) |<< 3)).resized
+    val dIssueAddr = UInt(64 bits)
+    dIssueAddr := dUseTranslation ? dWalkPhysAddr | dActiveCmd.address
+    val dPhysAddr = remapExternalAddr(dIssueAddr)
+    val dPte = io.dAxi.r.data
+    val dPteV = dPte(0)
+    val dPteR = dPte(1)
+    val dPteW = dPte(2)
+    val dPteX = dPte(3)
+    val dPteU = dPte(4)
+    val dPteA = dPte(6)
+    val dPteD = dPte(7)
+    val dPteReservedUpper = dPte(63 downto 54) =/= 0
+    val dPointerReserved = !dPteR && !dPteX && (dPteU || dPteA || dPteD)
+    val dPteLeaf = dPteR || dPteX
+    val dLeafPhysAddr = sv39LeafPhysAddr(dActiveCmd.address, dPte, dWalkLevel)
+    val dSuperpageMisaligned =
+      ((dWalkLevel === U(2, 2 bits)) && (dPte(27 downto 10) =/= 0)) ||
+      ((dWalkLevel === U(1, 2 bits)) && (dPte(18 downto 10) =/= 0))
+    val dUserOk = Mux(dWalkPriv === PRV_U, dPteU, Mux(dPteU, dWalkSum, True))
+    val dReadOk = (dPteR || (dWalkMxr && dPteX)) && dPteA && dUserOk
+    val dWriteOk = dPteW && dPteA && dPteD && dUserOk && !dSuperpageMisaligned
+    val dLeafAccessOk = Mux(dActiveCmd.write, dWriteOk, dReadOk && !dSuperpageMisaligned)
+    val dWalkPmpAllowed = Pmp.allow(
+      trapLogic.logic.pmpCfgBytes,
+      trapLogic.logic.pmpAddrRegs,
+      16,
+      dWalkPteAddr,
+      PRV_S,
+      needX = False,
+      needR = True,
+      needW = False,
+      accessBytes = U(8, 64 bits),
+      PRV_M
+    )
+    val dAccessBytes = UInt(64 bits)
+    dAccessBytes := dActiveCmd.mask.asBools.map(_.asUInt.resize(64)).reduce(_ + _)
+    val dFinalPmpAllowed = Pmp.allow(
+      trapLogic.logic.pmpCfgBytes,
+      trapLogic.logic.pmpAddrRegs,
+      16,
+      dLeafPhysAddr,
+      dWalkPriv,
+      needX = False,
+      needR = !dActiveCmd.write,
+      needW = dActiveCmd.write,
+      accessBytes = dAccessBytes,
+      PRV_M
+    )
     dCmd.ready := False
+    lsu.io.physAddr := dIssueAddr
+    val dWalkOrIssueBusy = Bool()
+    dWalkOrIssueBusy := dUseTranslation && (dAxiState =/= DMemAxiState.idle) && (dAxiState =/= DMemAxiState.fault)
+    val dCaptureBusy = Bool()
+    dCaptureBusy := (dAxiState === DMemAxiState.idle) &&
+      dCmd.valid &&
+      (trapLogic.vmContext.dataPriv =/= PRV_M) &&
+      (trapLogic.vmContext.satpMode === Sv39.modeSv39)
+    lsu.io.cmdBusy.allowOverride := dWalkOrIssueBusy || dCaptureBusy
 
     io.dAxi.arw.valid := False
     io.dAxi.arw.id := dActiveCmd.id.resized
@@ -616,12 +946,88 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         dWFired := False
         when(dCmd.valid) {
           dActiveCmd := dCmd.payload
-          when(dCmd.write) {
-            dAxiState := sendWrite
+          dUseTranslation := (trapLogic.vmContext.dataPriv =/= PRV_M) && (trapLogic.vmContext.satpMode === Sv39.modeSv39)
+          dWalkPriv := trapLogic.vmContext.dataPriv
+          dWalkMxr := trapLogic.vmContext.mxr
+          dWalkSum := trapLogic.vmContext.sum
+          dWalkPageFault := False
+          dWalkAccessFault := False
+          when((trapLogic.vmContext.dataPriv =/= PRV_M) && (trapLogic.vmContext.satpMode === Sv39.modeSv39)) {
+            when(!sv39Canonical(dCmd.address)) {
+              dWalkPageFault := True
+              dAxiState := fault
+            } otherwise {
+              dWalkLevel := U(2, 2 bits)
+              dWalkTablePpn := trapLogic.vmContext.satpPpn
+              dAxiState := walkReq
+            }
           } otherwise {
-            dAxiState := sendRead
+            when(dCmd.write) {
+              dAxiState := sendWrite
+            } otherwise {
+              dAxiState := sendRead
+            }
           }
         }
+      }
+
+      is(walkReq) {
+        when(!dWalkPmpAllowed) {
+          dWalkAccessFault := True
+          dAxiState := fault
+        } otherwise {
+          io.dAxi.arw.valid := True
+          io.dAxi.arw.id := 0
+          io.dAxi.arw.addr := remapExternalAddr(dWalkPteAddr)
+          // Page-table walks are always reads, even when translating a store.
+          // Driving them as writes wedges the shared RAM path waiting for a W beat.
+          io.dAxi.arw.write := False
+          when(io.dAxi.arw.ready) {
+            dAxiState := walkWait
+          }
+        }
+      }
+
+      is(walkWait) {
+        io.dAxi.r.ready := True
+        when(io.dAxi.r.valid) {
+          when(!dPteV || (dPteW && !dPteR) || dPteReservedUpper || dPointerReserved) {
+            dWalkPageFault := True
+            dAxiState := fault
+          } elsewhen(!dPteLeaf) {
+            when(dWalkLevel === U(0, 2 bits)) {
+              dWalkPageFault := True
+              dAxiState := fault
+            } otherwise {
+              dWalkTablePpn := dPte(53 downto 10).asUInt
+              dWalkLevel := dWalkLevel - 1
+              dAxiState := walkReq
+            }
+          } otherwise {
+            when(!dLeafAccessOk) {
+              dWalkPageFault := True
+              dAxiState := fault
+            } otherwise {
+              dWalkPhysAddr := dLeafPhysAddr
+              when(!dFinalPmpAllowed) {
+                dWalkAccessFault := True
+                dAxiState := fault
+              } otherwise {
+                when(dActiveCmd.write) {
+                  dAxiState := sendWrite
+                } otherwise {
+                  dAxiState := sendRead
+                }
+              }
+            }
+          }
+        }
+      }
+
+      is(fault) {
+        lsu.io.pageFault := dWalkPageFault
+        lsu.io.accessFault := dWalkAccessFault
+        dAxiState := idle
       }
 
       is(sendWrite) {
@@ -637,6 +1043,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       is(waitWriteResp) {
         io.dAxi.b.ready := True
         when(io.dAxi.b.valid) {
+          // Conservatively invalidate resident fetch beats after any committed
+          // store/AMO write so a later jump observes freshly written code.
+          fetch.io.invalidate := True
           dAxiState := idle
         }
       }

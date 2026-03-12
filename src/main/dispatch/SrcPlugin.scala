@@ -101,7 +101,9 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     def resolveInt(read: RegFileRead): Bits = {
       val resolved = Bits(64 bits)
       resolved := read.data
-      for (src <- bypassSources) {
+      // Bypass sources are passed youngest-to-oldest. Apply older sources
+      // first so a newer producer on the same register wins.
+      for (src <- bypassSources.reverse) {
         when(
           read.valid &&
           (read.address =/= 0) &&

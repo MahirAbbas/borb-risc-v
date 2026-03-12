@@ -200,6 +200,11 @@ object Dispatch extends AreaObject {
     stageHasLane(ctrl) && ctrl(WRITES_FP_RD) && (ctrl(Decoder.RD_ADDR) =/= 0)
   }
 
+  def stageWritesFpCsr(ctrl: CtrlLink): Bool = {
+    stageHasLane(ctrl) &&
+    borb.dispatch.ExecutionHazardMeta.writesFpCsrFromInsn(ctrl(Decoder.DECODED_INSTRUCTION))
+  }
+
   def stageIntBypassReady(stageId: Int, ctrl: CtrlLink): Bool = {
     val writesInt = stageWritesIntRd(ctrl)
     stageId match {
@@ -470,6 +475,7 @@ case class Dispatch(
       val fpReadsRs1 = readsFpRs1FromInsn(insn)
       val fpReadsRs2 = readsFpRs2FromInsn(insn)
       val fpReadsRs3 = readsFpRs3FromInsn(insn)
+      val fpCsrInteraction = readsFpCsrFromInsn(insn) || writesFpCsrFromInsn(insn)
       val consumerReads = Seq(
         readDescriptor(readsIntRs1, RegisterClass.INT, rs1.asUInt),
         readDescriptor(readsIntRs2, RegisterClass.INT, rs2.asUInt),
@@ -477,7 +483,14 @@ case class Dispatch(
         readDescriptor(fpReadsRs2, RegisterClass.FP, insn(24 downto 20).asUInt),
         readDescriptor(fpReadsRs3, RegisterClass.FP, insn(31 downto 27).asUInt)
       )
-      val hazard = valid && consumerReads.map(hasProducerHazard).reduce(_ || _)
+      val regHazard = consumerReads.map(hasProducerHazard).reduce(_ || _)
+      val fpCsrHazard =
+        if (hzRange.tail.isEmpty) {
+          False
+        } else {
+          hzRange.tail.map(stage => fpCsrInteraction && stageWritesFpCsr(stage.ctrl)).reduce(_ || _)
+        }
+      val hazard = valid && (regHazard || fpCsrHazard)
       hazard.simPublic()
 
       haltWhen(hazard)

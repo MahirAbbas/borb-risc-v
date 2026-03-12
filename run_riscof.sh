@@ -82,6 +82,51 @@ usage() {
   exit 0
 }
 
+clean_selected_test_artifacts() {
+  local work_dir="$1"
+  local testlist="$2"
+  python3 - "$work_dir" "$testlist" <<'PY'
+import os
+import shutil
+import sys
+from pathlib import Path
+import yaml
+
+work_dir = Path(sys.argv[1])
+testlist = Path(sys.argv[2])
+
+if not work_dir.exists() or not testlist.exists():
+    raise SystemExit(0)
+
+with testlist.open("r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+for meta in data.values():
+    test_work_dir = Path(meta["work_dir"])
+    test_work_dir.mkdir(parents=True, exist_ok=True)
+    for child in test_work_dir.iterdir():
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+
+for child in work_dir.iterdir():
+    if child.name in {
+        "database.yaml",
+        "report.html",
+        "style.css",
+        "borb_run_summary.json",
+        "resolved_budgets.json",
+        "Makefile.borb",
+        "Makefile.spike",
+    }:
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+PY
+}
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     --skip-gen)
@@ -347,6 +392,10 @@ if [[ -d "$(pwd)/oss-cad-suite/bin" ]]; then
   export PATH="$(pwd)/oss-cad-suite/bin:$PATH"
 fi
 
+DEFAULT_WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work"
+CHECKED_ISA="$DEFAULT_WORK_DIR/$(basename "${CONFIG_PATH%/*}/borb/borb_isa.yaml" .yaml)_checked.yaml"
+CHECKED_PLATFORM="$DEFAULT_WORK_DIR/$(basename "${CONFIG_PATH%/*}/borb/borb_platform.yaml" .yaml)_checked.yaml"
+
 if [ -n "${PYENV_VERSION:-}" ]; then
   :
 elif command -v pyenv >/dev/null 2>&1; then
@@ -440,7 +489,7 @@ fi
 
 if [[ "$SKIP_VALIDATE" = false ]]; then
   echo "[3/3] Validating ISA YAMLs..."
-  riscof validateyaml --config="$CONFIG_PATH"
+  riscof validateyaml --config="$CONFIG_PATH" --work-dir="$DEFAULT_WORK_DIR"
 else
   echo "[3/3] Skipping validateyaml"
 fi
@@ -451,7 +500,7 @@ if [[ "$CLEAN" = true ]]; then
   RUN_CMD+=(--clean)
 fi
 # Default work-dir used by riscof when --work-dir is not provided.
-WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work"
+WORK_DIR="$DEFAULT_WORK_DIR"
 FULL_TESTLIST="$WORK_DIR/test_list.yaml"
 FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
 
@@ -484,8 +533,6 @@ with open(out, "w", encoding="utf-8") as f:
 
 print(f"Wrote filtered testlist: {out} ({len(filtered)} tests)")
 PY
-
-RUN_CMD+=(--work-dir="$WORK_DIR")
 
 if [[ -n "$TESTS" ]]; then
   WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work_subset_$(date +%Y%m%d_%H%M%S)"
@@ -565,6 +612,15 @@ PY
 else
   RUN_CMD+=(--testfile="$FILTERED_TESTLIST")
 fi
+
+echo "Cleaning stale per-test artifacts under: $WORK_DIR"
+if [[ -n "$TESTS" ]]; then
+  clean_selected_test_artifacts "$WORK_DIR" "$SUBSET_TESTLIST"
+else
+  clean_selected_test_artifacts "$WORK_DIR" "$FILTERED_TESTLIST"
+fi
+
+RUN_CMD+=(--work-dir="$WORK_DIR")
 
 RESOLVED_BUDGET_FILE="$WORK_DIR/resolved_budgets.json"
 python3 - "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" "$TESTS" "$CYCLE_BUDGET_MODE" "$CYCLE_BUDGET_SCALE" "$CYCLE_BUDGET_SLACK" "/Users/mahir/fun/borb/verif/automation/overnight_queue.json" <<'PY'

@@ -272,7 +272,9 @@ int main(int argc, char** argv) {
 #endif
   }
 
-  const uint64_t mem_bytes = 8ULL * 1024ULL * 1024ULL;
+  const uint64_t ram_bank_bytes = 8ULL * 1024ULL * 1024ULL;
+  const uint64_t arch_base = 0x80000000ULL;
+  const uint64_t mem_bytes = 2ULL * ram_bank_bytes;
   const uint64_t word_count = mem_bytes / 8;
 
   VSoC* top = new VSoC();
@@ -315,8 +317,18 @@ int main(int argc, char** argv) {
 
   auto* rootp = top->rootp;
 
+  auto map_phys = [&](uint64_t addr) -> uint64_t {
+    if (addr < ram_bank_bytes) {
+      return addr;
+    }
+    if (addr >= arch_base && addr < (arch_base + ram_bank_bytes)) {
+      return ram_bank_bytes + (addr - arch_base);
+    }
+    return addr & (mem_bytes - 1);
+  };
+
   auto write_byte = [&](uint64_t addr, uint8_t val) {
-    uint64_t phys = addr & (mem_bytes - 1);
+    uint64_t phys = map_phys(addr);
     uint64_t word_index = (phys >> 3) & (word_count - 1);
     uint64_t lane = phys & 0x7;
     switch (lane) {
@@ -332,7 +344,7 @@ int main(int argc, char** argv) {
   };
 
   auto read_byte = [&](uint64_t addr) -> uint8_t {
-    uint64_t phys = addr & (mem_bytes - 1);
+    uint64_t phys = map_phys(addr);
     uint64_t word_index = (phys >> 3) & (word_count - 1);
     uint64_t lane = phys & 0x7;
     switch (lane) {
@@ -451,8 +463,8 @@ int main(int argc, char** argv) {
           << " s7_seq=" << (uint32_t)top->io_dbg_s7_seq
           << " s7_fire=" << (int)top->io_dbg_s7_fire
           << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
-          << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_PC
-          << " s2_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
+          << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_INSN_PC
+          << " s2_pc=0x" << (uint64_t)top->io_dbg_f_pc
           << " s2_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
           << " s2_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_down_isReady
           << " s3_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
@@ -487,7 +499,7 @@ int main(int argc, char** argv) {
     const bool enable_fetch_window_debug = false;
     const uint64_t fetch_rsp_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC;
     const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid != 0;
-    const uint64_t fetch_hold_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC;
+    const uint64_t fetch_hold_pc = top->io_dbg_f_pc;
     const bool in_fetch_window =
         ((fetch_rsp_pc >= 0x1f0ULL && fetch_rsp_pc <= 0x208ULL) ||
          (fetch_hold && fetch_hold_pc >= 0x1f0ULL && fetch_hold_pc <= 0x208ULL));
@@ -500,27 +512,26 @@ int main(int argc, char** argv) {
           << " holdPc=0x" << std::hex << fetch_hold_pc
           << " pcSeqValid=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pc_sequentialValid
           << " pktValid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
-          << " pktPop=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetPop
           << " pktSeq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_seq
           << " pktInsn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_insn
           << " first16=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_first16
           << " curData=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_curData
-          << " s2pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
+          << " s2pc=0x" << (uint64_t)top->io_dbg_f_pc
           << " s2v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
           << " s3v=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
           << " s3insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
-          << " s4pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_PC_PC
+          << " s4pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_PC_INSN_PC
           << " s4v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_valid
           << " s4f=" << (int)top->io_dbg_s4_fire
           << " s4seq=" << (uint32_t)top->io_dbg_s4_seq
           << " s4insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_Decoder_DECODED_INSTRUCTION
-          << " s5pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_PC_PC
+          << " s5pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_PC_INSN_PC
           << " s5v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_valid
           << " s5f=" << (int)top->io_dbg_s5_fire
           << " s5seq=" << (uint32_t)top->io_dbg_s5_seq
           << " s5lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
           << " s5insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Decoder_DECODED_INSTRUCTION
-          << " s6pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_PC_PC
+          << " s6pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_PC_INSN_PC
           << " s6v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_valid
           << " s6f=" << (int)top->io_dbg_s6_fire
           << " s6seq=" << (uint32_t)top->io_dbg_s6_seq
@@ -532,7 +543,7 @@ int main(int argc, char** argv) {
           << " s6rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
           << " s6rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
           << " s6imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
-          << " s7pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_PC_PC
+          << " s7pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_PC_INSN_PC
           << " s7v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_valid
           << " s7f=" << (int)top->io_dbg_s7_fire
           << " s7seq=" << (uint32_t)top->io_dbg_s7_seq

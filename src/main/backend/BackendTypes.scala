@@ -24,10 +24,13 @@ case class FpFlagsIntent() extends Bundle {
 
 case class TrapRedirectOutcome() extends Bundle {
   val trapFire = Bool()
+  val trapTargetPriv = UInt(2 bits)
   val mretFire = Bool()
   val mretTarget = UInt(64 bits)
+  val mretTargetPriv = UInt(2 bits)
   val sretFire = Bool()
   val sretTarget = UInt(64 bits)
+  val sretTargetPriv = UInt(2 bits)
   val trapCause = Bits(64 bits)
   val trapTval = Bits(64 bits)
 }

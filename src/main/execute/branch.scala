@@ -21,7 +21,7 @@ object Branch extends AreaObject {
   val BRANCH_TARGET = Payload(UInt(64 bits))
 }
 
-case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) extends Area {
+case class Branch(node : CtrlLink, pc : PC, currentEpoch: UInt, withCompressed: Boolean = false) extends Area {
   import Branch._
 
   val branchResolved = Bool()
@@ -30,7 +30,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     val src2 = up(RS2).asSInt
     val src1U = up(RS1).asUInt
     val src2U = up(RS2).asUInt
-    val pcValue = up(PC.PC)
+    val pcValue = up(PC.INSN_PC)
     val imm = up(IMMED).asUInt
 
     val condition = Bool()
@@ -47,10 +47,10 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     val target = UInt(64 bits)
     switch(up(MicroCode)) {
       is(uopJALR) { 
-        target := (src1U.asSInt + imm.asSInt).asUInt 
+        target := (src1U + imm).resize(64)
         target(0) := False
       }
-      default     { target := (pcValue.asSInt + imm.asSInt).asUInt }
+      default     { target := (pcValue + imm).resize(64) }
     }
 
     val isJump = Bool()
@@ -74,6 +74,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
     // Redirect must be one-shot per actual execute-stage firing transaction.
+    val epochMatches = up(borb.common.Common.SPEC_EPOCH) === currentEpoch
     val legacyBrRoute = (up(EXECUTION_UNIT) === ExecutionUnitEnum.BR) && up(SENDTOBRANCH)
     val newBrRoute =
       up(NEW_ROUTE_VALID) &&
@@ -82,14 +83,14 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     val isBrUnit = legacyBrRoute || newBrRoute
     val execFire = up.isFiring
     val doJump = (isJump || (isBranch && condition)) &&
-      isBrUnit && up(LANE_SEL) && up(VALID) && execFire
+      isBrUnit && up(LANE_SEL) && up(VALID) && epochMatches && execFire
     val misaligned = if(withCompressed) (target(0) =/= False) else (target(1 downto 0) =/= 0)
     val willTrap = doJump && misaligned
 
     // down(TRAP) := willTrap // Moved to CPU.scala logic integration
     down(BRANCH_TAKEN) := doJump && !willTrap
     down(BRANCH_TARGET) := target
-    branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(VALID) && execFire
+    branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(VALID) && epochMatches && execFire
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
     jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
@@ -97,7 +98,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     jumpCmd.payload.is_jump := isJump
     jumpCmd.payload.is_branch := isBranch
     
-    when(isBrUnit && up(LANE_SEL) && up(VALID) && execFire) {
+    when(isBrUnit && up(LANE_SEL) && up(VALID) && epochMatches && execFire) {
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt

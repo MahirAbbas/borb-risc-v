@@ -69,42 +69,42 @@
   },
   "tests": {
     "Fencei.S": {
-      "budget": 4400,
+      "budget": 6350,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 400,
+      "max_pass_cycles": 725,
       "scale": 6.0,
       "slack": 2000
     },
     "add-01.S": {
-      "budget": 146300,
+      "budget": 250706,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24050,
+      "max_pass_cycles": 41451,
       "scale": 6.0,
       "slack": 2000
     },
     "addi-01.S": {
-      "budget": 103862,
+      "budget": 148628,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16977,
+      "max_pass_cycles": 24438,
       "scale": 6.0,
       "slack": 2000
     },
     "addiw-01.S": {
-      "budget": 104666,
+      "budget": 145664,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17111,
+      "max_pass_cycles": 23944,
       "scale": 6.0,
       "slack": 2000
     },
     "addw-01.S": {
-      "budget": 146246,
+      "budget": 250502,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24041,
+      "max_pass_cycles": 41417,
       "scale": 6.0,
       "slack": 2000
     },
@@ -253,18 +253,18 @@
       "slack": 2000
     },
     "and-01.S": {
-      "budget": 146024,
+      "budget": 249896,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24004,
+      "max_pass_cycles": 41316,
       "scale": 6.0,
       "slack": 2000
     },
     "andi-01.S": {
-      "budget": 104312,
+      "budget": 144956,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17052,
+      "max_pass_cycles": 23826,
       "scale": 6.0,
       "slack": 2000
     },
@@ -277,50 +277,50 @@
       "slack": 2000
     },
     "beq-01.S": {
-      "budget": 375998,
+      "budget": 395828,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 62333,
+      "max_pass_cycles": 65638,
       "scale": 6.0,
       "slack": 2000
     },
     "bge-01.S": {
-      "budget": 382340,
+      "budget": 404192,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 63390,
+      "max_pass_cycles": 67032,
       "scale": 6.0,
       "slack": 2000
     },
     "bgeu-01.S": {
-      "budget": 452336,
+      "budget": 480290,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 75056,
+      "max_pass_cycles": 79715,
       "scale": 6.0,
       "slack": 2000
     },
     "blt-01.S": {
-      "budget": 380492,
+      "budget": 402062,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 63082,
+      "max_pass_cycles": 66677,
       "scale": 6.0,
       "slack": 2000
     },
     "bltu-01.S": {
-      "budget": 448568,
+      "budget": 476576,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 74428,
+      "max_pass_cycles": 79096,
       "scale": 6.0,
       "slack": 2000
     },
     "bne-01.S": {
-      "budget": 391832,
+      "budget": 416636,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 64972,
+      "max_pass_cycles": 69106,
       "scale": 6.0,
       "slack": 2000
     },
@@ -341,18 +341,18 @@
       "slack": 2000
     },
     "caddi16sp-01.S": {
-      "budget": 11978,
+      "budget": 23990,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1663,
+      "max_pass_cycles": 3665,
       "scale": 6.0,
       "slack": 2000
     },
     "caddi4spn-01.S": {
-      "budget": 4508,
+      "budget": 7052,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 418,
+      "max_pass_cycles": 842,
       "scale": 6.0,
       "slack": 2000
     },
@@ -389,36 +389,36 @@
       "slack": 2000
     },
     "cbeqz-01.S": {
-      "budget": 35728,
+      "budget": 54512,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 8682,
-      "scale": 4.0,
-      "slack": 1000
+      "max_pass_cycles": 8752,
+      "scale": 6.0,
+      "slack": 2000
     },
     "cbnez-01.S": {
-      "budget": 34896,
+      "budget": 55496,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 8474,
-      "scale": 4.0,
-      "slack": 1000
+      "max_pass_cycles": 8916,
+      "scale": 6.0,
+      "slack": 2000
     },
     "cebreak-01.S": {
-      "budget": 8510,
+      "budget": 12878,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1085,
+      "max_pass_cycles": 1813,
       "scale": 6.0,
       "slack": 2000
     },
     "cj-01.S": {
-      "budget": 5784,
+      "budget": 9242,
       "budget_class": "c.frontend",
       "family": "c.frontend-perf",
-      "max_pass_cycles": 1196,
-      "scale": 4.0,
-      "slack": 1000
+      "max_pass_cycles": 1207,
+      "scale": 6.0,
+      "slack": 2000
     },
     "cjalr-01.S": {
       "budget": 73088,
@@ -437,26 +437,26 @@
       "slack": 2000
     },
     "cld-01.S": {
-      "budget": 6758,
+      "budget": 12200,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 793,
+      "max_pass_cycles": 1700,
       "scale": 6.0,
       "slack": 2000
     },
     "cldsp-01.S": {
-      "budget": 11294,
+      "budget": 22010,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1549,
+      "max_pass_cycles": 3335,
       "scale": 6.0,
       "slack": 2000
     },
     "cli-01.S": {
-      "budget": 4766,
+      "budget": 7304,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 461,
+      "max_pass_cycles": 884,
       "scale": 6.0,
       "slack": 2000
     },
@@ -477,26 +477,26 @@
       "slack": 2000
     },
     "clwsp-01.S": {
-      "budget": 11294,
+      "budget": 22094,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1549,
+      "max_pass_cycles": 3349,
       "scale": 6.0,
       "slack": 2000
     },
     "cmv-01.S": {
-      "budget": 14306,
+      "budget": 27794,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2051,
+      "max_pass_cycles": 4299,
       "scale": 6.0,
       "slack": 2000
     },
     "cnop-01.S": {
-      "budget": 3974,
+      "budget": 5966,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 329,
+      "max_pass_cycles": 661,
       "scale": 6.0,
       "slack": 2000
     },
@@ -509,18 +509,18 @@
       "slack": 2000
     },
     "csd-01.S": {
-      "budget": 19664,
+      "budget": 37754,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2944,
+      "max_pass_cycles": 5959,
       "scale": 6.0,
       "slack": 2000
     },
     "csdsp-01.S": {
-      "budget": 19802,
+      "budget": 37880,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2967,
+      "max_pass_cycles": 5980,
       "scale": 6.0,
       "slack": 2000
     },
@@ -573,10 +573,10 @@
       "slack": 2000
     },
     "cswsp-01.S": {
-      "budget": 19928,
+      "budget": 38270,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2988,
+      "max_pass_cycles": 6045,
       "scale": 6.0,
       "slack": 2000
     },
@@ -589,50 +589,50 @@
       "slack": 2000
     },
     "div-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "divu-01.S": {
-      "budget": 169472,
+      "budget": 341390,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 27912,
+      "max_pass_cycles": 56565,
       "scale": 6.0,
       "slack": 2000
     },
     "divuw-01.S": {
-      "budget": 169472,
+      "budget": 341390,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 27912,
+      "max_pass_cycles": 56565,
       "scale": 6.0,
       "slack": 2000
     },
     "divw-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "ebreak.S": {
-      "budget": 8804,
+      "budget": 12956,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1134,
+      "max_pass_cycles": 1826,
       "scale": 6.0,
       "slack": 2000
     },
     "ecall.S": {
-      "budget": 8684,
+      "budget": 12764,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1114,
+      "max_pass_cycles": 1794,
       "scale": 6.0,
       "slack": 2000
     },
@@ -3757,50 +3757,50 @@
       "slack": 2000
     },
     "mul-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "mulh-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "mulhsu-01.S": {
-      "budget": 159266,
+      "budget": 321488,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 26211,
+      "max_pass_cycles": 53248,
       "scale": 6.0,
       "slack": 2000
     },
     "mulhu-01.S": {
-      "budget": 169472,
+      "budget": 341390,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 27912,
+      "max_pass_cycles": 56565,
       "scale": 6.0,
       "slack": 2000
     },
     "mulw-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "or-01.S": {
-      "budget": 146336,
+      "budget": 250880,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24056,
+      "max_pass_cycles": 41480,
       "scale": 6.0,
       "slack": 2000
     },
@@ -3813,134 +3813,310 @@
       "slack": 2000
     },
     "pmpm_access_double_region.S": {
-      "budget": 14276,
+      "budget": 23006,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2046,
+      "max_pass_cycles": 3501,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-01.S": {
-      "budget": 16412,
+      "budget": 28694,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2402,
+      "max_pass_cycles": 4449,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-02.S": {
-      "budget": 16940,
+      "budget": 29690,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2490,
+      "max_pass_cycles": 4615,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-03.S": {
-      "budget": 16940,
+      "budget": 29690,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 2490,
+      "max_pass_cycles": 4615,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-04.S": {
-      "budget": 61964,
+      "budget": 100826,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 9994,
+      "max_pass_cycles": 16471,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_all.S": {
-      "budget": 7712,
+      "budget": 12032,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 952,
+      "max_pass_cycles": 1672,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_off_all.S": {
-      "budget": 43406,
+      "budget": 74816,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 6901,
+      "max_pass_cycles": 12136,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_A_tor_bot.S": {
+      "budget": 48554,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 7759,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_tor_zero.S": {
-      "budget": 19166,
+      "budget": 19406,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2861,
+      "max_pass_cycles": 2901,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_access_all.S": {
-      "budget": 30632,
+      "budget": 56342,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 4772,
+      "max_pass_cycles": 9057,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_napot.S": {
-      "budget": 7862,
+      "budget": 12374,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 977,
+      "max_pass_cycles": 1729,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_off.S": {
-      "budget": 7826,
+      "budget": 12308,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 971,
+      "max_pass_cycles": 1718,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_tor.S": {
-      "budget": 7862,
+      "budget": 12374,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 977,
+      "max_pass_cycles": 1729,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_XWR_all-01.S": {
-      "budget": 319466,
+      "budget": 510704,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 52911,
+      "max_pass_cycles": 84784,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_XWR_all-02.S": {
-      "budget": 252764,
+      "budget": 404978,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 41794,
+      "max_pass_cycles": 67163,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_XWR_all-03.S": {
-      "budget": 267548,
+      "budget": 427844,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 44258,
+      "max_pass_cycles": 70974,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_XWR_all-04.S": {
-      "budget": 336644,
+      "budget": 537614,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 55774,
+      "max_pass_cycles": 89269,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_na4_all.S": {
+      "budget": 97184,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 15864,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_napot_all.S": {
+      "budget": 164096,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 27016,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_tor_all.S": {
+      "budget": 62324,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 10054,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_tor_check-01.S": {
+      "budget": 20198,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3033,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_tor_check-02.S": {
+      "budget": 20444,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3074,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_cfg_tor_check-03.S": {
+      "budget": 20432,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3072,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_csr_walk.S": {
+      "budget": 75362,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 12227,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_grain.S": {
+      "budget": 18686,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2781,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_grain_check.S": {
+      "budget": 13772,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 1962,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_boundary-01.S": {
+      "budget": 21800,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3300,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_boundary-02.S": {
+      "budget": 21800,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3300,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_legal_lxwr.S": {
+      "budget": 90230,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 14705,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_napot_legal_lxwr.S": {
+      "budget": 299936,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 49656,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_priority.S": {
+      "budget": 29840,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 4640,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_priority_off.S": {
+      "budget": 23402,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3567,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_tor_boundary-01.S": {
+      "budget": 22514,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3419,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_tor_boundary-02.S": {
+      "budget": 22520,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 3420,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_tor_legal_lxwr.S": {
+      "budget": 150698,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 24783,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmps_cfg_A_off.S": {
+      "budget": 16322,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 2387,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmps_cfg_XWR.S": {
+      "budget": 195332,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 32222,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmps_csr_access.S": {
+      "budget": 533690,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 88615,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmps_mprv_check-01.S": {
       "budget": 58694,
       "budget_class": "default",
       "family": null,
@@ -3948,363 +4124,243 @@
       "scale": 6.0,
       "slack": 2000
     },
-    "pmpm_cfg_napot_all.S": {
-      "budget": 101162,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 16527,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_cfg_tor_all.S": {
-      "budget": 36770,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 5795,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_cfg_tor_check-01.S": {
-      "budget": 11780,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1630,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_cfg_tor_check-02.S": {
-      "budget": 11924,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1654,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_cfg_tor_check-03.S": {
-      "budget": 11888,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1648,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_csr_walk.S": {
-      "budget": 47918,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 7653,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_grain.S": {
-      "budget": 11846,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1641,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_grain_check.S": {
-      "budget": 8804,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1134,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_na4_boundary-01.S": {
-      "budget": 13604,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1934,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_na4_boundary-02.S": {
-      "budget": 13664,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1944,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_priority.S": {
-      "budget": 16406,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 2401,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_priority_off.S": {
-      "budget": 14450,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 2075,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_tor_boundary-01.S": {
-      "budget": 14036,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 2006,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_tor_boundary-02.S": {
-      "budget": 13976,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1996,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmps_cfg_A_off.S": {
-      "budget": 10112,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 1352,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmps_cfg_XWR.S": {
-      "budget": 122072,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 20012,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmps_csr_access.S": {
-      "budget": 348512,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 57752,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmps_mprv_check-01.S": {
-      "budget": 35696,
-      "budget_class": "default",
-      "family": null,
-      "max_pass_cycles": 5616,
-      "scale": 6.0,
-      "slack": 2000
-    },
     "pmps_mprv_check-02.S": {
-      "budget": 12764,
+      "budget": 22244,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1794,
+      "max_pass_cycles": 3374,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_na4_legal_lxwr.S": {
-      "budget": 63224,
+      "budget": 103544,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 10204,
+      "max_pass_cycles": 16924,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_napot_legal_lxwr.S": {
-      "budget": 194246,
+      "budget": 313574,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 32041,
+      "max_pass_cycles": 51929,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmps_none.S": {
+      "budget": 18488,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2748,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_tor_legal_lxwr.S": {
-      "budget": 97082,
+      "budget": 160130,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 15847,
+      "max_pass_cycles": 26355,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_cfg_A_off.S": {
-      "budget": 10004,
+      "budget": 16088,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1334,
+      "max_pass_cycles": 2348,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_cfg_XWR.S": {
-      "budget": 122000,
+      "budget": 195290,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 20000,
+      "max_pass_cycles": 32215,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_csr_access.S": {
-      "budget": 343700,
+      "budget": 524090,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 56950,
+      "max_pass_cycles": 87015,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_mprv_check-01.S": {
-      "budget": 35576,
+      "budget": 58670,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 5596,
+      "max_pass_cycles": 9445,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_mprv_check-02.S": {
-      "budget": 12068,
+      "budget": 21284,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1678,
+      "max_pass_cycles": 3214,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_na4_legal_lxwr.S": {
-      "budget": 63152,
+      "budget": 103502,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 10192,
+      "max_pass_cycles": 16917,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpu_napot_legal_lxwr.S": {
+      "budget": 313382,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 51897,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpu_none.S": {
+      "budget": 18416,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2736,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_tor_legal_lxwr.S": {
-      "budget": 96902,
+      "budget": 160154,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 15817,
+      "max_pass_cycles": 26359,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzaamo_cfg_wr.S": {
-      "budget": 219812,
+      "budget": 351152,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 36302,
+      "max_pass_cycles": 58192,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_na4.S": {
-      "budget": 9272,
+      "budget": 15398,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1212,
+      "max_pass_cycles": 2233,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_napot.S": {
-      "budget": 8150,
+      "budget": 13286,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1025,
+      "max_pass_cycles": 1881,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_off.S": {
-      "budget": 9272,
+      "budget": 15398,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1212,
+      "max_pass_cycles": 2233,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_tor.S": {
-      "budget": 9260,
+      "budget": 15374,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1210,
+      "max_pass_cycles": 2229,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_na4.S": {
-      "budget": 9044,
+      "budget": 14720,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1174,
+      "max_pass_cycles": 2120,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_napot.S": {
-      "budget": 9068,
+      "budget": 14732,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1178,
+      "max_pass_cycles": 2122,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_tor.S": {
-      "budget": 9296,
+      "budget": 15188,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1216,
+      "max_pass_cycles": 2198,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_na4.S": {
-      "budget": 12146,
+      "budget": 19970,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1691,
+      "max_pass_cycles": 2995,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_napot.S": {
-      "budget": 10838,
+      "budget": 17534,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1473,
+      "max_pass_cycles": 2589,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_off.S": {
-      "budget": 9338,
+      "budget": 15410,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1223,
+      "max_pass_cycles": 2235,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_tor.S": {
-      "budget": 12218,
+      "budget": 19982,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 1703,
+      "max_pass_cycles": 2997,
       "scale": 6.0,
       "slack": 2000
     },
     "rem-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
     "remu-01.S": {
-      "budget": 169472,
+      "budget": 341390,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 27912,
+      "max_pass_cycles": 56565,
       "scale": 6.0,
       "slack": 2000
     },
     "remuw-01.S": {
-      "budget": 169472,
+      "budget": 341390,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 27912,
+      "max_pass_cycles": 56565,
       "scale": 6.0,
       "slack": 2000
     },
     "remw-01.S": {
-      "budget": 150404,
+      "budget": 302834,
       "budget_class": "default",
       "family": null,
-      "max_pass_cycles": 24734,
+      "max_pass_cycles": 50139,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4365,34 +4421,34 @@
       "slack": 2000
     },
     "slt-01.S": {
-      "budget": 146180,
+      "budget": 250520,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24030,
+      "max_pass_cycles": 41420,
       "scale": 6.0,
       "slack": 2000
     },
     "slti-01.S": {
-      "budget": 103448,
+      "budget": 146882,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16908,
+      "max_pass_cycles": 24147,
       "scale": 6.0,
       "slack": 2000
     },
     "sltiu-01.S": {
-      "budget": 121112,
+      "budget": 168812,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 19852,
+      "max_pass_cycles": 27802,
       "scale": 6.0,
       "slack": 2000
     },
     "sltu-01.S": {
-      "budget": 170240,
+      "budget": 290852,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 28040,
+      "max_pass_cycles": 48142,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4461,18 +4517,34 @@
       "slack": 2000
     },
     "sub-01.S": {
-      "budget": 145088,
+      "budget": 248312,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 23848,
+      "max_pass_cycles": 41052,
       "scale": 6.0,
       "slack": 2000
     },
     "subw-01.S": {
-      "budget": 146732,
+      "budget": 250958,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24122,
+      "max_pass_cycles": 41493,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sv39_pmp_on_pte_S_mode.S": {
+      "budget": 50576,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 8096,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "sv39_pmp_on_pte_U_mode.S": {
+      "budget": 50576,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 8096,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4481,6 +4553,54 @@
       "budget_class": "default",
       "family": "rv64.base",
       "max_pass_cycles": 12200,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_canonical_S_mode.S": {
+      "budget": 89804,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14634,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_canonical_U_mode.S": {
+      "budget": 88994,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14499,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_invalid_pte_S_mode.S": {
+      "budget": 89024,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14504,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_invalid_pte_U_mode.S": {
+      "budget": 89126,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14521,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_misaligned_S_mode.S": {
+      "budget": 58010,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 9335,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_misaligned_U_mode.S": {
+      "budget": 58130,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 9355,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4508,19 +4628,67 @@
       "scale": 6.0,
       "slack": 2000
     },
+    "vm_mprv_U_set_sum_unset_S_mode.S": {
+      "budget": 64568,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 10428,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "vm_mprv_bare_mode.S": {
-      "budget": 11234,
+      "budget": 16922,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1539,
+      "max_pass_cycles": 2487,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mstatus_sbe_set_S_mode.S": {
+      "budget": 95882,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 15647,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_mstatus_sbe_set_sum_set_S_mode.S": {
+      "budget": 95882,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 15647,
       "scale": 6.0,
       "slack": 2000
     },
     "vm_mstatus_tvm_test.S": {
-      "budget": 19940,
+      "budget": 29654,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2990,
+      "max_pass_cycles": 4609,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_nleaf_pte_level0_S_mode.S": {
+      "budget": 45284,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 7214,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_nleaf_pte_level0_U_mode.S": {
+      "budget": 45314,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 7219,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_pte_reserved_field_S_mode.S": {
+      "budget": 173048,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 28508,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4556,27 +4724,75 @@
       "scale": 6.0,
       "slack": 2000
     },
+    "vm_reserved_rwx_pte_S_mode.S": {
+      "budget": 156158,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 25693,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_reserved_rwx_pte_U_mode.S": {
+      "budget": 156362,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 25727,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_reserved_svnapot_S_mode.S": {
+      "budget": 37886,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 5981,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_reserved_svpbmt_S_mode.S": {
+      "budget": 86672,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14112,
+      "scale": 6.0,
+      "slack": 2000
+    },
     "vm_satp_access_tests.S": {
-      "budget": 31076,
+      "budget": 48884,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 4846,
+      "max_pass_cycles": 7814,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_spage_access_U_mode.S": {
+      "budget": 89126,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 14521,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "vm_sum_unset_S_mode.S": {
+      "budget": 357560,
+      "budget_class": "default",
+      "family": null,
+      "max_pass_cycles": 59260,
       "scale": 6.0,
       "slack": 2000
     },
     "xor-01.S": {
-      "budget": 179342,
+      "budget": 250436,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29557,
+      "max_pass_cycles": 41406,
       "scale": 6.0,
       "slack": 2000
     },
     "xori-01.S": {
-      "budget": 104582,
+      "budget": 149648,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17097,
+      "max_pass_cycles": 24608,
       "scale": 6.0,
       "slack": 2000
     }

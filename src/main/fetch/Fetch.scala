@@ -13,6 +13,12 @@ import borb.frontend.RVC
 object Fetch extends AreaObject {
   val addressWidth = 64
   val FETCH_SEQ = Payload(UInt(32 bits))
+  val FETCH_PAGE_FAULT = Payload(Bool())
+  val FETCH_ACCESS_FAULT = Payload(Bool())
+  val FETCH_SECOND_PAGE_FAULT = Payload(Bool())
+  val FETCH_SECOND_ACCESS_FAULT = Payload(Bool())
+  val FETCH_PHYS_PC = Payload(UInt(addressWidth bits))
+  val FETCH_SECOND_PHYS_PC = Payload(UInt(addressWidth bits))
 }
 
 case class Fetch(
@@ -44,9 +50,13 @@ case class Fetch(
   val io = new Bundle {
     val iAxi = Axi4Shared(axiConfig)
     val flush = Bool()
+    val invalidate = Bool()
     val currentEpoch = UInt(16 bits)
     val pcAdvance = Bool()
     val pcStep = UInt(3 bits)
+    val rspPageFault = Bool()
+    val rspAccessFault = Bool()
+    val rspPhysAddr = UInt(addressWidth bits)
   }
 
   case class FetchRequest() extends Bundle {
@@ -61,6 +71,9 @@ case class Fetch(
     val data = Bits(dataWidth bits)
     val epoch = UInt(16 bits)
     val beatAddr = UInt(addressWidth bits)
+    val pageFault = Bool()
+    val accessFault = Bool()
+    val physBeatAddr = UInt(addressWidth bits)
   }
 
   val fetchPacketDepth = 4
@@ -72,6 +85,12 @@ case class Fetch(
     val beatAddr = UInt(addressWidth bits)
     val step = UInt(3 bits)
     val seq = UInt(32 bits)
+    val pageFault = Bool()
+    val accessFault = Bool()
+    val secondPageFault = Bool()
+    val secondAccessFault = Bool()
+    val physPc = UInt(addressWidth bits)
+    val secondPhysPc = UInt(addressWidth bits)
   }
 
   val beats = Vec.fill(fetchBufferDepth)(Reg(FetchBeat()) init(FetchBeat().getZero))
@@ -92,6 +111,12 @@ case class Fetch(
   val packetEnqueueBeatAddr = UInt(addressWidth bits)
   val packetEnqueueStep = UInt(3 bits)
   val packetEnqueueSeq = UInt(32 bits)
+  val packetEnqueuePageFault = Bool()
+  val packetEnqueueAccessFault = Bool()
+  val packetEnqueueSecondPageFault = Bool()
+  val packetEnqueueSecondAccessFault = Bool()
+  val packetEnqueuePhysPc = UInt(addressWidth bits)
+  val packetEnqueueSecondPhysPc = UInt(addressWidth bits)
   val packetPop = Bool()
   val packetAccepted = Bool()
 
@@ -102,6 +127,12 @@ case class Fetch(
   packetEnqueueBeatAddr.allowOverride := 0
   packetEnqueueStep.allowOverride := 0
   packetEnqueueSeq.allowOverride := 0
+  packetEnqueuePageFault.allowOverride := False
+  packetEnqueueAccessFault.allowOverride := False
+  packetEnqueueSecondPageFault.allowOverride := False
+  packetEnqueueSecondAccessFault.allowOverride := False
+  packetEnqueuePhysPc.allowOverride := 0
+  packetEnqueueSecondPhysPc.allowOverride := 0
   packetPop.allowOverride := False
   packetAccepted.allowOverride := False
 
@@ -150,6 +181,9 @@ case class Fetch(
 
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
+  io.rspPageFault.allowOverride := False
+  io.rspAccessFault.allowOverride := False
+  io.rspPhysAddr.allowOverride := 0
 
   io.iAxi.arw.valid := False
   io.iAxi.arw.addr := 0
@@ -173,7 +207,7 @@ case class Fetch(
   val lastTakenPc = Reg(UInt(addressWidth bits)) init(0)
   val lastTakenEpoch = Reg(UInt(16 bits)) init(0)
   val lastTakenBeatAddr = Reg(UInt(addressWidth bits)) init(0)
-  when(io.flush) {
+  when(io.flush || io.invalidate) {
     for(slot <- beats) {
       slot.valid := False
     }
@@ -186,6 +220,9 @@ case class Fetch(
     streamNextAddr := 0
     compressedNextReqValid := False
     compressedNextReqAddr := 0
+    when(io.flush) {
+      replayGuardValid := False
+    }
   }
 
   def beatHit(slot: FetchBeat, addr: UInt): Bool = {
@@ -240,6 +277,39 @@ case class Fetch(
     for(i <- 0 until fetchBufferDepth) {
       when(hits(i)) {
         addr := beats(i).beatAddr
+      }
+    }
+    addr
+  }
+
+  def selectBeatPageFault(hits: Bits): Bool = {
+    val fault = Bool()
+    fault := beats(0).pageFault
+    for (i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        fault := beats(i).pageFault
+      }
+    }
+    fault
+  }
+
+  def selectBeatAccessFault(hits: Bits): Bool = {
+    val fault = Bool()
+    fault := beats(0).accessFault
+    for (i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        fault := beats(i).accessFault
+      }
+    }
+    fault
+  }
+
+  def selectBeatPhysAddr(hits: Bits): UInt = {
+    val addr = UInt(addressWidth bits)
+    addr := beats(0).physBeatAddr
+    for (i <- 0 until fetchBufferDepth) {
+      when(hits(i)) {
+        addr := beats(i).physBeatAddr
       }
     }
     addr
@@ -303,10 +373,16 @@ case class Fetch(
     val assembleCurData = curData
     val assembleSrcEpoch = selectBeatEpoch(assembleHits)
     val assembleSrcBeatAddr = selectBeatAddr(assembleHits)
+    val assembleCurPageFault = selectBeatPageFault(assembleHits)
+    val assembleCurAccessFault = selectBeatAccessFault(assembleHits)
+    val assembleCurPhysBeatAddr = selectBeatPhysAddr(assembleHits)
     val assembleNextBeatAddr = nextBeatAddr
     val assembleNextHits = nextHits
     val assembleNextValid = nextHit
     val assembleNextData = selectBeatData(assembleNextHits)
+    val assembleNextPageFault = selectBeatPageFault(assembleNextHits)
+    val assembleNextAccessFault = selectBeatAccessFault(assembleNextHits)
+    val assembleNextPhysBeatAddr = selectBeatPhysAddr(assembleNextHits)
     val assembleHwIndex = hwIndex
     val assembleFirst16 = first16
     val assembleNeeds32 = if(withCompressed) assembleFirst16(1 downto 0) === B"11" else True
@@ -330,7 +406,11 @@ case class Fetch(
       assembledInsn := Mux(cmdStage(PC.PC)(2), assembleCurData(63 downto 32), assembleCurData(31 downto 0))
     }
 
-    val packetHasSpace = !packetValid || packetAccepted
+    // Do not refill the single-entry packet in the same cycle it is accepted.
+    // The architectural PC advances only after the response-stage handshake,
+    // so same-cycle refill can re-enqueue the just-accepted PC and skip the
+    // following instruction.
+    val packetHasSpace = !packetValid
     val duplicatePc = assembleCurValid &&
       replayGuardValid &&
       (cmdPcRaw === lastTakenPc) &&
@@ -347,7 +427,10 @@ case class Fetch(
       takenStep := U(4, addressWidth bits)
     }
     val packetReady = assembleCurValid && !waitingSecond
-    val canEnqueuePacket = packetReady && !duplicatePc && packetHasSpace
+    // A redirect flush kills the current packet/beat state. Never advance the
+    // architectural PC or enqueue a packet in that same cycle, or the first
+    // instruction at the redirect target can be skipped.
+    val canEnqueuePacket = packetReady && !duplicatePc && packetHasSpace && !io.flush
 
     val issueAddr = UInt(addressWidth bits)
     issueAddr := pcBeatAddr
@@ -366,7 +449,10 @@ case class Fetch(
     val resetQueueOnRsp = Bool()
     resetQueueOnRsp := False
 
-    val needCurrentRequest = cmdStage.up.isValid && !curHit && !pendingReqValid && !io.flush
+    // The architectural PC remains meaningful even when the command-stage
+    // valid bit bubbles low for a cycle. Do not let that suppress a real miss,
+    // or the frontend can deadlock after draining the last queued packet.
+    val needCurrentRequest = !curHit && !pendingReqValid && !io.flush
     val needNextRequest = curHit && needStraddleBeat && !nextHit && !pendingReqValid && !io.flush && hasFreeSlot
     val compressedPrefetchWindow = curIsCompressed &&
       !curRvc.illegal &&
@@ -455,14 +541,22 @@ case class Fetch(
       packetEnqueueBeatAddr.allowOverride := assembleSrcBeatAddr
       packetEnqueueStep.allowOverride := takenStep.resize(3)
       packetEnqueueSeq.allowOverride := nextPacketSeq
+      packetEnqueuePageFault.allowOverride := assembleCurPageFault
+      packetEnqueueAccessFault.allowOverride := assembleCurAccessFault
+      packetEnqueueSecondPageFault.allowOverride := assembleStraddle && assembleNextPageFault
+      packetEnqueueSecondAccessFault.allowOverride := assembleStraddle && assembleNextAccessFault
+      packetEnqueuePhysPc.allowOverride := assembleCurPhysBeatAddr + cmdPcRaw(2 downto 0).resized
+      packetEnqueueSecondPhysPc.allowOverride := Mux(
+        assembleStraddle,
+        assembleNextPhysBeatAddr,
+        assembleCurPhysBeatAddr + U(2, addressWidth bits)
+      )
 
       perfTakeInsn := True
       replayGuardValid := True
       lastTakenPc := cmdPcRaw
       lastTakenEpoch := assembleSrcEpoch
       lastTakenBeatAddr := assembleSrcBeatAddr
-      io.pcAdvance := True
-      io.pcStep := takenStep.resize(3)
       nextPacketSeq := nextPacketSeq + 1
 
       val nextPc = cmdPcRaw + takenStep
@@ -489,10 +583,19 @@ case class Fetch(
 
     rspStage.up.valid := packetValid
     rspStage.up(PC.PC).allowOverride := headPacket.pc
+    rspStage.up(PC.INSN_PC).allowOverride := headPacket.pc
     rspStage.up(INSTRUCTION).allowOverride := headPacket.insn
     rspStage.up(SPEC_EPOCH).allowOverride := headPacket.epoch
     rspStage.up(Fetch.FETCH_SEQ).allowOverride := headPacket.seq
+    rspStage.up(Fetch.FETCH_PAGE_FAULT).allowOverride := headPacket.pageFault
+    rspStage.up(Fetch.FETCH_ACCESS_FAULT).allowOverride := headPacket.accessFault
+    rspStage.up(Fetch.FETCH_SECOND_PAGE_FAULT).allowOverride := headPacket.secondPageFault
+    rspStage.up(Fetch.FETCH_SECOND_ACCESS_FAULT).allowOverride := headPacket.secondAccessFault
+    rspStage.up(Fetch.FETCH_PHYS_PC).allowOverride := headPacket.physPc
+    rspStage.up(Fetch.FETCH_SECOND_PHYS_PC).allowOverride := headPacket.secondPhysPc
     packetAccepted.allowOverride := packetValid && rspStage.up.isFiring
+    io.pcAdvance.allowOverride := packetAccepted
+    io.pcStep.allowOverride := headPacket.step
     packetPop.allowOverride := packetAccepted
   }
   when(packetEnqueue) {
@@ -503,10 +606,19 @@ case class Fetch(
     packet.beatAddr := packetEnqueueBeatAddr
     packet.step := packetEnqueueStep
     packet.seq := packetEnqueueSeq
+    packet.pageFault := packetEnqueuePageFault
+    packet.accessFault := packetEnqueueAccessFault
+    packet.secondPageFault := packetEnqueueSecondPageFault
+    packet.secondAccessFault := packetEnqueueSecondAccessFault
+    packet.physPc := packetEnqueuePhysPc
+    packet.secondPhysPc := packetEnqueueSecondPhysPc
   }
   packetValid := Mux(io.flush, False, (packetValid && !packetPop) || packetEnqueue)
 
-  when(io.iAxi.r.fire) {
+  val rspMatchesPending = pendingReqValid && (io.iAxi.r.id === pendingReq.epoch.resized)
+  val dropStaleRsp = io.iAxi.r.valid && !rspMatchesPending
+
+  when(io.iAxi.r.fire && rspMatchesPending) {
     perfRspAccepted := True
     val rspResident = anyResident(pendingReq.baseAddr)
     when(pendingReq.resetQueue) {
@@ -533,9 +645,15 @@ case class Fetch(
       beats(pendingReq.slotIndex).data := io.iAxi.r.data
       beats(pendingReq.slotIndex).epoch := pendingReq.epoch
       beats(pendingReq.slotIndex).beatAddr := pendingReq.baseAddr
+      beats(pendingReq.slotIndex).pageFault := io.rspPageFault
+      beats(pendingReq.slotIndex).accessFault := io.rspAccessFault
+      beats(pendingReq.slotIndex).physBeatAddr := io.rspPhysAddr
     }
     pendingReqValid := False
   }
 
-  io.iAxi.r.ready.allowOverride := pendingReqValid
+  // Redirects can cancel a request after it has been issued on AXI. Drain any
+  // late response that no longer matches the tracked request ID so it cannot
+  // poison the beat queue with old-stream data under a new PC.
+  io.iAxi.r.ready.allowOverride := pendingReqValid || dropStaleRsp
 }

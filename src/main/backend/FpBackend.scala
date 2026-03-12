@@ -119,7 +119,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       lsu.logic.rawStoreData.allowOverride := fpRs2Data(31 downto 0).resize(64)
     }
 
-    val flwWritebackFire = aguFire && isFlwInsn && lsu.logic.responseArriving && !lsu.logic.suppress
+    val flwWritebackFire = aguFire && isFlwInsn && lsu.logic.responseArriving && !lsu.logic.commandSuppress
     when(flwWritebackFire) {
       fpWrite.valid := True
       fpWrite.address := flwRd

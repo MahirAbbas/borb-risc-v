@@ -81,7 +81,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
     io.rvfi.rd_addr := result.address
     io.rvfi.rd_wdata := result.data
 
-    val currentPc = up(PC.PC)
+    val currentPc = up(PC.INSN_PC)
     io.rvfi.pc_rdata := currentPc.asBits
     // Report actual next PC based on branch outcome
     val branchTaken = up(Branch.BRANCH_TAKEN)
