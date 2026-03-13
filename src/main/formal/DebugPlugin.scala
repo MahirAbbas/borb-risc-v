@@ -23,6 +23,11 @@ case class RedirectDebugProbe() extends Bundle {
   val pcExceptionTarget = UInt(64 bits)
   val liveTrapCause = Bits(64 bits)
   val liveTrapTval = Bits(64 bits)
+  val fetchPageFault = Bool()
+  val fetchAccessFault = Bool()
+  val pmpExecFault = Bool()
+  val trapInsnArrived = Bool()
+  val trapInsnValid = Bool()
 }
 
 case class DebugArea() extends Bundle {
@@ -76,6 +81,49 @@ case class DebugArea() extends Bundle {
   val s7_fire = Bool()
   val s7_lane = Bool()
   val s7_seq = UInt(32 bits)
+  val currentEpoch = UInt(16 bits)
+  val s6_specEpoch = UInt(16 bits)
+  val s7_specEpoch = UInt(16 bits)
+  val lsuPageFaultActive = Bool()
+  val lsuAccessFaultActive = Bool()
+  val lsuRawPageFault = Bool()
+  val lsuRawAccessFault = Bool()
+  val lsuWaitingResponse = Bool()
+  val lsuAmoWaitingResponse = Bool()
+  val lsuAmoStorePending = Bool()
+  val lsuAmoWaitId = UInt(16 bits)
+  val lsuAmoRd = UInt(5 bits)
+  val lsuAmoOp = Bits(8 bits)
+  val lsuAmoWaitAddr = UInt(64 bits)
+  val lsuAmoRs2 = Bits(64 bits)
+  val lsuAmoWbData = Bits(64 bits)
+  val lsuAmoStoreData = Bits(64 bits)
+  val lsuStoreBlocked = Bool()
+  val lsuCmdPending = Bool()
+  val lsuCmdBusy = Bool()
+  val lsuStoreAccepted = Bool()
+  val lsuStoreCompleted = Bool()
+  val lsuDuplicateInWb = Bool()
+  val lsuIsLoad = Bool()
+  val lsuIsStore = Bool()
+  val dmemState = UInt(3 bits)
+  val dmemUseTranslation = Bool()
+  val dmemCmdWrite = Bool()
+  val dmemArwValid = Bool()
+  val dmemArwReady = Bool()
+  val dmemWValid = Bool()
+  val dmemWReady = Bool()
+  val dmemBValid = Bool()
+  val dmemRValid = Bool()
+  val dmemWalkPageFault = Bool()
+  val dmemWalkAccessFault = Bool()
+  val dmemWalkLevel = UInt(2 bits)
+  val dmemWalkPteAddr = UInt(64 bits)
+  val fetchPageFault = Bool()
+  val fetchAccessFault = Bool()
+  val pmpExecFault = Bool()
+  val trapInsnArrived = Bool()
+  val trapInsnValid = Bool()
 
   // Memory access (from LSU payloads)
   val memAddr = UInt(64 bits)
@@ -88,7 +136,9 @@ case class DebugArea() extends Bundle {
 case class DebugPlugin(
     pipeline: StageCtrlPipeline,
     trapRedirect: TrapRedirectOutcome,
-    redirectProbe: RedirectDebugProbe
+    redirectProbe: RedirectDebugProbe,
+    lsu: Lsu,
+    currentEpoch: UInt
 ) extends Area {
   val s4Stage = pipeline.ctrl(4)
   val s5Stage = pipeline.ctrl(5)
@@ -168,4 +218,34 @@ case class DebugPlugin(
   io.dbg.s7_fire := wbStage.up.isFiring
   io.dbg.s7_lane := wbStage.up(LANE_SEL)
   io.dbg.s7_seq := wbStage.up(borb.fetch.Fetch.FETCH_SEQ)
+  io.dbg.currentEpoch := currentEpoch
+  io.dbg.s6_specEpoch := s6Stage.up(SPEC_EPOCH)
+  io.dbg.s7_specEpoch := wbStage.up(SPEC_EPOCH)
+  io.dbg.lsuPageFaultActive := lsu.logic.pageFaultActive
+  io.dbg.lsuAccessFaultActive := lsu.logic.accessFaultActive
+  io.dbg.lsuRawPageFault := lsu.io.pageFault
+  io.dbg.lsuRawAccessFault := lsu.io.accessFault
+  io.dbg.lsuWaitingResponse := lsu.logic.waitingResponse
+  io.dbg.lsuAmoWaitingResponse := lsu.logic.amoWaitingResponse
+  io.dbg.lsuAmoStorePending := lsu.logic.amoStorePending
+  io.dbg.lsuAmoWaitId := lsu.logic.amoWaitId
+  io.dbg.lsuAmoRd := lsu.logic.amoRd
+  io.dbg.lsuAmoOp := lsu.logic.amoOp.asBits.resized
+  io.dbg.lsuAmoWaitAddr := lsu.logic.waitAddr
+  io.dbg.lsuAmoRs2 := lsu.logic.amoRs2
+  io.dbg.lsuAmoWbData := lsu.logic.amoWbData
+  io.dbg.lsuAmoStoreData := lsu.logic.amoStoreData
+  io.dbg.lsuStoreBlocked := lsu.logic.storeBlocked
+  io.dbg.lsuCmdPending := lsu.logic.cmdPending
+  io.dbg.lsuCmdBusy := lsu.io.cmdBusy
+  io.dbg.lsuStoreAccepted := lsu.io.storeAccepted
+  io.dbg.lsuStoreCompleted := lsu.logic.translatedStoreIssued
+  io.dbg.lsuDuplicateInWb := lsu.logic.duplicateInWb
+  io.dbg.lsuIsLoad := lsu.logic.isLoad
+  io.dbg.lsuIsStore := lsu.logic.isStore
+  io.dbg.fetchPageFault := redirectProbe.fetchPageFault
+  io.dbg.fetchAccessFault := redirectProbe.fetchAccessFault
+  io.dbg.pmpExecFault := redirectProbe.pmpExecFault
+  io.dbg.trapInsnArrived := redirectProbe.trapInsnArrived
+  io.dbg.trapInsnValid := redirectProbe.trapInsnValid
 }

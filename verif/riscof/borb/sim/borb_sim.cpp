@@ -386,6 +386,12 @@ int main(int argc, char** argv) {
   uint64_t commit_traps = 0;
   uint64_t commit_mem_reads = 0;
   uint64_t commit_mem_writes = 0;
+  uint32_t prev_epoch = 0xffffffffu;
+  uint32_t prev_dmem_state = 0xffffffffu;
+  int prev_dmem_arw_v = -1;
+  int prev_dmem_arw_r = -1;
+  int prev_dmem_r_v = -1;
+  int prev_ram_r_v = -1;
   while (!done && cycles < opt.max_cycles) {
     tick(20 + cycles * 2);
 
@@ -405,6 +411,84 @@ int main(int argc, char** argv) {
           << " x_rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
           << " x_imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
           << " order=" << std::dec << top->io_dbg_commitOrder
+          << std::endl;
+    }
+
+    const uint32_t cur_epoch = (uint32_t)top->io_dbg_currentEpoch;
+    if (cur_epoch != prev_epoch) {
+      std::cerr
+          << "EPOCH cyc=" << cycles
+          << " epoch=" << cur_epoch
+          << " order=" << top->io_dbg_commitOrder
+          << " commit_valid=" << (int)top->io_dbg_commitValid
+          << " commit_pc=0x" << std::hex << (uint64_t)top->io_dbg_commitPc
+          << " commit_insn=0x" << (uint32_t)top->io_dbg_commitInsn
+          << " f_pc=0x" << (uint64_t)top->io_dbg_f_pc
+          << " d_pc=0x" << (uint64_t)top->io_dbg_d_pc
+          << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
+          << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
+          << " redir=" << (int)top->io_dbg_redirectAny
+          << " redir_branch=" << (int)top->io_dbg_redirectBranch
+          << " redir_trap=" << (int)top->io_dbg_redirectTrap
+          << " redir_mret=" << (int)top->io_dbg_redirectMret
+          << " redir_exec_epoch=" << (int)top->io_dbg_redirectExecEpochMatches
+          << " pc_jump_valid=" << (int)top->io_dbg_redirectPcJumpValid
+          << " pc_jump_target=0x" << (uint64_t)top->io_dbg_redirectPcJumpTarget
+          << " pc_exc_valid=" << (int)top->io_dbg_redirectPcExceptionValid
+          << " pc_exc_target=0x" << (uint64_t)top->io_dbg_redirectPcExceptionTarget
+          << " trap_cause=0x" << (uint64_t)top->io_dbg_liveTrapCause
+          << " trap_tval=0x" << (uint64_t)top->io_dbg_liveTrapTval
+          << " lsu_wait=" << (int)top->io_dbg_lsuWaitingResponse
+          << " lsu_amo_wait=" << (int)top->io_dbg_lsuAmoWaitingResponse
+          << " lsu_amo_store=" << (int)top->io_dbg_lsuAmoStorePending
+          << " dmem_state=" << (uint32_t)top->io_dbg_dmemState
+          << " dmem_xlate=" << (int)top->io_dbg_dmemUseTranslation
+          << " fetch_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReqValid
+          << " fetch_pending_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReq_baseAddr
+          << " fetch_pkt_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
+          << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
+          << std::dec
+          << std::endl;
+      prev_epoch = cur_epoch;
+    }
+
+    if (cycles >= 520 && cycles <= 545) {
+      std::cerr
+          << "WIN cyc=" << cycles
+          << " epoch=" << cur_epoch
+          << " order=" << top->io_dbg_commitOrder
+          << " commit_valid=" << (int)top->io_dbg_commitValid
+          << " commit_pc=0x" << std::hex << (uint64_t)top->io_dbg_commitPc
+          << " commit_insn=0x" << (uint32_t)top->io_dbg_commitInsn
+          << " f_pc=0x" << (uint64_t)top->io_dbg_f_pc
+          << " d_pc=0x" << (uint64_t)top->io_dbg_d_pc
+          << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
+          << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
+          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << " redir=" << (int)top->io_dbg_redirectAny
+          << " redir_branch=" << (int)top->io_dbg_redirectBranch
+          << " redir_trap=" << (int)top->io_dbg_redirectTrap
+          << " redir_mret=" << (int)top->io_dbg_redirectMret
+          << " redir_exec_epoch=" << (int)top->io_dbg_redirectExecEpochMatches
+          << " pc_jump_valid=" << (int)top->io_dbg_redirectPcJumpValid
+          << " pc_jump_target=0x" << (uint64_t)top->io_dbg_redirectPcJumpTarget
+          << " pc_exc_valid=" << (int)top->io_dbg_redirectPcExceptionValid
+          << " pc_exc_target=0x" << (uint64_t)top->io_dbg_redirectPcExceptionTarget
+          << " trap_cause=0x" << (uint64_t)top->io_dbg_liveTrapCause
+          << " trap_tval=0x" << (uint64_t)top->io_dbg_liveTrapTval
+          << " lsu_wait=" << (int)top->io_dbg_lsuWaitingResponse
+          << " lsu_amo_wait=" << (int)top->io_dbg_lsuAmoWaitingResponse
+          << " lsu_amo_store=" << (int)top->io_dbg_lsuAmoStorePending
+          << " lsu_store_accept=" << (int)top->io_dbg_lsuStoreAccepted
+          << " lsu_store_done=" << (int)top->io_dbg_lsuStoreCompleted
+          << " dmem_state=" << (uint32_t)top->io_dbg_dmemState
+          << " dmem_write=" << (int)top->io_dbg_dmemCmdWrite
+          << " fetch_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReqValid
+          << " fetch_pending_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReq_baseAddr
+          << " fetch_pkt_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
+          << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
+          << std::dec
           << std::endl;
     }
 
@@ -446,6 +530,11 @@ int main(int argc, char** argv) {
           << " pc_exc_target=0x" << std::hex << (uint64_t)top->io_dbg_redirectPcExceptionTarget << std::dec
           << " live_trap_cause=0x" << std::hex << (uint64_t)top->io_dbg_liveTrapCause << std::dec
           << " live_trap_tval=0x" << std::hex << (uint64_t)top->io_dbg_liveTrapTval << std::dec
+          << " fetch_pf=" << (int)top->io_dbg_fetchPageFault
+          << " fetch_af=" << (int)top->io_dbg_fetchAccessFault
+          << " pmp_exec_fault=" << (int)top->io_dbg_pmpExecFault
+          << " trap_insn_arrived=" << (int)top->io_dbg_trapInsnArrived
+          << " trap_insn_valid=" << (int)top->io_dbg_trapInsnValid
           << " rd=" << (int)top->io_dbg_commitRd
           << " we=" << (int)top->io_dbg_commitWe
           << " f_pc=0x" << std::hex << (uint64_t)top->io_dbg_f_pc
@@ -462,6 +551,49 @@ int main(int argc, char** argv) {
           << " s6_fire=" << (int)top->io_dbg_s6_fire
           << " s7_seq=" << (uint32_t)top->io_dbg_s7_seq
           << " s7_fire=" << (int)top->io_dbg_s7_fire
+          << " cur_epoch=" << (uint32_t)top->io_dbg_currentEpoch
+          << " s6_epoch=" << (uint32_t)top->io_dbg_s6_specEpoch
+          << " s7_epoch=" << (uint32_t)top->io_dbg_s7_specEpoch
+          << " lsu_pf=" << (int)top->io_dbg_lsuPageFaultActive
+          << " lsu_af=" << (int)top->io_dbg_lsuAccessFaultActive
+          << " lsu_pf_raw=" << (int)top->io_dbg_lsuRawPageFault
+          << " lsu_af_raw=" << (int)top->io_dbg_lsuRawAccessFault
+          << " lsu_wait=" << (int)top->io_dbg_lsuWaitingResponse
+          << " lsu_amo_wait=" << (int)top->io_dbg_lsuAmoWaitingResponse
+          << " lsu_amo_store=" << (int)top->io_dbg_lsuAmoStorePending
+          << " lsu_amo_wait_id=" << (uint32_t)top->io_dbg_lsuAmoWaitId
+          << " lsu_amo_rd=" << (uint32_t)top->io_dbg_lsuAmoRd
+          << " lsu_amo_op=0x" << std::hex << (uint32_t)top->io_dbg_lsuAmoOp << std::dec
+          << " lsu_amo_wait_addr=0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoWaitAddr << std::dec
+          << " lsu_amo_rs2=0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoRs2 << std::dec
+          << " lsu_amo_wb=0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoWbData << std::dec
+          << " lsu_amo_store_data=0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoStoreData << std::dec
+          << " lsu_store_blocked=" << (int)top->io_dbg_lsuStoreBlocked
+          << " lsu_cmd_pending=" << (int)top->io_dbg_lsuCmdPending
+          << " lsu_cmd_busy=" << (int)top->io_dbg_lsuCmdBusy
+          << " lsu_store_accept=" << (int)top->io_dbg_lsuStoreAccepted
+          << " lsu_store_done=" << (int)top->io_dbg_lsuStoreCompleted
+          << " lsu_dup_wb=" << (int)top->io_dbg_lsuDuplicateInWb
+          << " lsu_is_load=" << (int)top->io_dbg_lsuIsLoad
+          << " lsu_is_store=" << (int)top->io_dbg_lsuIsStore
+          << " dmem_state=" << (uint32_t)top->io_dbg_dmemState
+          << " dmem_xlate=" << (int)top->io_dbg_dmemUseTranslation
+          << " dmem_write=" << (int)top->io_dbg_dmemCmdWrite
+          << " dmem_arw_v=" << (int)top->io_dbg_dmemArwValid
+          << " dmem_arw_r=" << (int)top->io_dbg_dmemArwReady
+          << " dmem_w_v=" << (int)top->io_dbg_dmemWValid
+          << " dmem_w_r=" << (int)top->io_dbg_dmemWReady
+          << " dmem_b_v=" << (int)top->io_dbg_dmemBValid
+          << " dmem_r_v=" << (int)top->io_dbg_dmemRValid
+          << " dmem_walk_pf=" << (int)top->io_dbg_dmemWalkPageFault
+          << " dmem_walk_af=" << (int)top->io_dbg_dmemWalkAccessFault
+          << " dmem_walk_lvl=" << (uint32_t)top->io_dbg_dmemWalkLevel
+          << " dmem_walk_pte=0x" << (uint64_t)top->io_dbg_dmemWalkPteAddr
+          << " arb_cmd_v=" << (int)rootp->SoC__DOT__area_arbiter__DOT__cmdArbiter_io_output_valid
+          << " arb_route_v=" << (int)rootp->SoC__DOT__area_arbiter__DOT__cmdRouteFork_valid
+          << " arb_arw_v=" << (int)rootp->SoC__DOT__area_arbiter_io_output_arw_valid
+          << " ram_arw_r=" << (int)rootp->SoC__DOT__area_ram_io_axi_arw_ready
+          << " ram_r_v=" << (int)rootp->SoC__DOT__area_ram_io_axi_r_valid
           << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
           << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_INSN_PC
           << " s2_pc=0x" << (uint64_t)top->io_dbg_f_pc
@@ -494,6 +626,46 @@ int main(int argc, char** argv) {
           << " beat1_data=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_data
           << std::endl;
       stall_reported = true;
+    }
+
+    const bool enable_dmem_debug = false;
+    if (enable_dmem_debug && top->io_dbg_commitOrder >= 760) {
+      const uint32_t dmem_state = (uint32_t)top->io_dbg_dmemState;
+      const int dmem_arw_v = (int)top->io_dbg_dmemArwValid;
+      const int dmem_arw_r = (int)top->io_dbg_dmemArwReady;
+      const int dmem_r_v = (int)top->io_dbg_dmemRValid;
+      const int ram_r_v = (int)rootp->SoC__DOT__area_ram_io_axi_r_valid;
+      const bool dmem_changed =
+          dmem_state != prev_dmem_state ||
+          dmem_arw_v != prev_dmem_arw_v ||
+          dmem_arw_r != prev_dmem_arw_r ||
+          dmem_r_v != prev_dmem_r_v ||
+          ram_r_v != prev_ram_r_v;
+      if (dmem_changed) {
+        std::cerr
+            << "DMEMDBG cyc=" << cycles
+            << " order=" << top->io_dbg_commitOrder
+            << " dmem_state=" << dmem_state
+            << " dmem_arw_v=" << dmem_arw_v
+            << " dmem_arw_r=" << dmem_arw_r
+            << " dmem_r_v=" << dmem_r_v
+            << " dmem_walk_lvl=" << (uint32_t)top->io_dbg_dmemWalkLevel
+            << " dmem_walk_pte=0x" << std::hex << (uint64_t)top->io_dbg_dmemWalkPteAddr << std::dec
+            << " lsu_store_accept=" << (int)top->io_dbg_lsuStoreAccepted
+            << " lsu_store_done=" << (int)top->io_dbg_lsuStoreCompleted
+            << " arb_cmd_v=" << (int)rootp->SoC__DOT__area_arbiter__DOT__cmdArbiter_io_output_valid
+            << " arb_route_v=" << (int)rootp->SoC__DOT__area_arbiter__DOT__cmdRouteFork_valid
+            << " arb_arw_v=" << (int)rootp->SoC__DOT__area_arbiter_io_output_arw_valid
+            << " ram_arw_r=" << (int)rootp->SoC__DOT__area_ram_io_axi_arw_ready
+            << " ram_r_v=" << ram_r_v
+            << " pc=0x" << std::hex << (uint64_t)top->io_dbg_commitPc << std::dec
+            << std::endl;
+        prev_dmem_state = dmem_state;
+        prev_dmem_arw_v = dmem_arw_v;
+        prev_dmem_arw_r = dmem_arw_r;
+        prev_dmem_r_v = dmem_r_v;
+        prev_ram_r_v = ram_r_v;
+      }
     }
 
     const bool enable_fetch_window_debug = false;
@@ -593,7 +765,12 @@ int main(int argc, char** argv) {
                    << ",\"pc_exception_valid\":" << (top->io_dbg_redirectPcExceptionValid ? "true" : "false")
                    << ",\"pc_exception_target\":\"0x" << std::hex << (uint64_t)top->io_dbg_redirectPcExceptionTarget << std::dec << "\""
                    << ",\"live_trap_cause\":\"0x" << std::hex << (uint64_t)top->io_dbg_liveTrapCause << std::dec << "\""
-                   << ",\"live_trap_tval\":\"0x" << std::hex << (uint64_t)top->io_dbg_liveTrapTval << std::dec << "\"}"
+                   << ",\"live_trap_tval\":\"0x" << std::hex << (uint64_t)top->io_dbg_liveTrapTval << std::dec << "\""
+                   << ",\"fetch_page_fault\":" << (top->io_dbg_fetchPageFault ? "true" : "false")
+                   << ",\"fetch_access_fault\":" << (top->io_dbg_fetchAccessFault ? "true" : "false")
+                   << ",\"pmp_exec_fault\":" << (top->io_dbg_pmpExecFault ? "true" : "false")
+                   << ",\"trap_insn_arrived\":" << (top->io_dbg_trapInsnArrived ? "true" : "false")
+                   << ",\"trap_insn_valid\":" << (top->io_dbg_trapInsnValid ? "true" : "false") << "}"
                    << ",\"s4\":{\"valid\":" << (top->io_dbg_s4_valid ? "true" : "false")
                    << ",\"fire\":" << (top->io_dbg_s4_fire ? "true" : "false")
                    << ",\"seq\":" << top->io_dbg_s4_seq << "}"
@@ -608,7 +785,25 @@ int main(int argc, char** argv) {
                    << ",\"s7\":{\"valid\":" << (top->io_dbg_s7_valid ? "true" : "false")
                    << ",\"fire\":" << (top->io_dbg_s7_fire ? "true" : "false")
                    << ",\"lane\":" << (top->io_dbg_s7_lane ? "true" : "false")
-                   << ",\"seq\":" << top->io_dbg_s7_seq << "}"
+                   << ",\"seq\":" << top->io_dbg_s7_seq
+                   << ",\"spec_epoch\":" << top->io_dbg_s7_specEpoch << "}"
+                   << ",\"epoch\":{\"current\":" << top->io_dbg_currentEpoch
+                   << ",\"s6\":" << top->io_dbg_s6_specEpoch
+                   << ",\"s7\":" << top->io_dbg_s7_specEpoch << "}"
+                   << ",\"lsu_fault\":{\"page\":" << (top->io_dbg_lsuPageFaultActive ? "true" : "false")
+                   << ",\"access\":" << (top->io_dbg_lsuAccessFaultActive ? "true" : "false")
+                   << ",\"raw_page\":" << (top->io_dbg_lsuRawPageFault ? "true" : "false")
+                   << ",\"raw_access\":" << (top->io_dbg_lsuRawAccessFault ? "true" : "false") << "}"
+                   << ",\"lsu_state\":{\"wait\":" << (top->io_dbg_lsuWaitingResponse ? "true" : "false")
+                   << ",\"amo_wait\":" << (top->io_dbg_lsuAmoWaitingResponse ? "true" : "false")
+                   << ",\"amo_store\":" << (top->io_dbg_lsuAmoStorePending ? "true" : "false")
+                   << ",\"amo_wait_id\":" << (uint32_t)top->io_dbg_lsuAmoWaitId
+                   << ",\"amo_rd\":" << (uint32_t)top->io_dbg_lsuAmoRd
+                   << ",\"amo_op\":\"0x" << std::hex << (uint32_t)top->io_dbg_lsuAmoOp << std::dec << "\""
+                   << ",\"amo_wait_addr\":\"0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoWaitAddr << std::dec << "\""
+                   << ",\"amo_rs2\":\"0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoRs2 << std::dec << "\""
+                   << ",\"amo_wb_data\":\"0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoWbData << std::dec << "\""
+                   << ",\"amo_store_data\":\"0x" << std::hex << (uint64_t)top->io_dbg_lsuAmoStoreData << std::dec << "\"}"
                    << ",\"rs1\":{\"addr\":" << static_cast<unsigned>(rs1_addr)
                    << ",\"data\":\"0x" << std::hex << rs1_rdata << std::dec << "\"}"
                    << ",\"rs2\":{\"addr\":" << static_cast<unsigned>(rs2_addr)

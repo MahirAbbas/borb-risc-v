@@ -533,11 +533,7 @@ case class TrapCsrBackend(
 
     val trapFromBranch = branch.logic.willTrap
     val insn = trapInsn
-    val duplicateInWb = wbStage.up.isValid &&
-      wbStage(Decoder.VALID) &&
-      wbStage(LANE_SEL) &&
-      (wbStage(Fetch.FETCH_SEQ) === up(Fetch.FETCH_SEQ))
-    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU) && !duplicateInWb
+    val aguActive = up(Decoder.VALID) && up(LANE_SEL) && lsu.logic.isAguRoute
 
     when(up.isFiring && up(LANE_SEL) && (up(PC.INSN_PC) =/= U(0, 64 bits))) {
       sawNonZeroPc := True
@@ -617,20 +613,20 @@ case class TrapCsrBackend(
     val fetchPageFault = up(Fetch.FETCH_PAGE_FAULT) || up(Fetch.FETCH_SECOND_PAGE_FAULT)
     val fetchAccessFault = up(Fetch.FETCH_ACCESS_FAULT) || up(Fetch.FETCH_SECOND_ACCESS_FAULT)
     val pmpExecFault = up.isFiring && epochMatches && trapInsnArrived && !fetchPageFault && !fetchAccessFault && !pmpExecAllowed
-    val pmpLoadFault = aguFire && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
-    val pmpStoreFault = aguFire && (
+    val pmpLoadFault = aguActive && lsu.logic.isLoad && !isAmoOp && !pmpLoadAllowed
+    val pmpStoreFault = aguActive && (
       (lsu.logic.isStore && !isAmoOp && !pmpStoreAllowed) ||
       (isAmoOp && (!pmpLoadAllowed || !pmpStoreAllowed))
     )
     val pmpDataFault = pmpLoadFault || pmpStoreFault
     lsu.io.pmpFault := pmpDataFault
 
-    val trapFromLoadMisalign = lsu.logic.misaligned && lsu.logic.isLoad && !isAmoOp && aguFire
-    val trapFromStoreMisalign = lsu.logic.misaligned && lsu.logic.isStore && aguFire
-    val trapFromLoadPage = aguFire && lsu.logic.isLoad && lsu.io.pageFault
-    val trapFromStorePage = aguFire && (lsu.logic.isStore || isAmoOp) && lsu.io.pageFault
-    val trapFromLoadAccess = pmpLoadFault || (aguFire && lsu.logic.isLoad && lsu.io.accessFault)
-    val trapFromStoreAccess = pmpStoreFault || (aguFire && (lsu.logic.isStore || isAmoOp) && lsu.io.accessFault)
+    val trapFromLoadMisalign = lsu.logic.misaligned && lsu.logic.isLoad && !isAmoOp && aguActive
+    val trapFromStoreMisalign = lsu.logic.misaligned && lsu.logic.isStore && aguActive
+    val trapFromLoadPage = aguActive && lsu.logic.isLoad && lsu.logic.pageFaultActive
+    val trapFromStorePage = aguActive && (lsu.logic.isStore || isAmoOp) && lsu.logic.pageFaultActive
+    val trapFromLoadAccess = pmpLoadFault || (aguActive && lsu.logic.isLoad && lsu.logic.accessFaultActive)
+    val trapFromStoreAccess = pmpStoreFault || (aguActive && (lsu.logic.isStore || isAmoOp) && lsu.logic.accessFaultActive)
     val trapFromFetchPage = up.isFiring && epochMatches && trapInsnArrived && fetchPageFault
     val trapFromFetchAccess = up.isFiring && epochMatches && trapInsnArrived && (fetchAccessFault || pmpExecFault)
     val mretInsn = insn === B"32'h30200073"
@@ -650,8 +646,14 @@ case class TrapCsrBackend(
     val sretFire = up.isFiring && epochMatches && sretInsn && (currentPriv === PRV_S) && !csrMstatus(22)
     val mretTarget = mepcMasked(csrMepc).asUInt
     val sretTarget = mepcMasked(csrSepc).asUInt
-    val trapFire = up.isFiring && epochMatches &&
-      (trapFromBranch || trapFromFetchPage || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadPage || trapFromStorePage || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)
+    val memoryTrapPending =
+      trapFromLoadMisalign || trapFromStoreMisalign ||
+      trapFromLoadPage || trapFromStorePage ||
+      trapFromLoadAccess || trapFromStoreAccess
+    val trapFire = epochMatches && (
+      (up.isFiring && (trapFromBranch || trapFromFetchPage || trapFromFetchAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)) ||
+      memoryTrapPending
+    )
 
     val trapCause = Bits(64 bits)
     trapCause := CAUSE_MISALIGNED_STORE.asBits
@@ -795,6 +797,10 @@ case class TrapCsrBackend(
     vmContext.satpAsid := Sv39.asidOf(csrSatp)
     vmContext.satpPpn := Sv39.ppnOf(csrSatp)
 
-    down(TRAP) := trapFromBranch || trapFromFetchAccess || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromStoreAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
+    down(TRAP) := trapFromBranch || trapFromFetchPage || trapFromFetchAccess ||
+      trapFromLoadMisalign || trapFromStoreMisalign ||
+      trapFromLoadPage || trapFromStorePage ||
+      trapFromLoadAccess || trapFromStoreAccess ||
+      trapFromIllegalInsn || trapFromEcall || trapFromEbreak
   }
 }

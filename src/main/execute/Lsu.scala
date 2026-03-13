@@ -58,6 +58,8 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     val pageFault = Bool()
     val accessFault = Bool()
     val cmdBusy = Bool()
+    val storeAccepted = Bool()
+    val storeDone = Bool()
     val physAddr = UInt(64 bits)
   }
 
@@ -90,7 +92,6 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
 
     val amoIsWord = amoSwapW || amoAddW || amoXorW || amoAndW || amoOrW || amoMinW || amoMaxW || amoMinuW || amoMaxuW
     val isAmo = amoIsWord || amoSwapD || amoAddD || amoXorD || amoAndD || amoOrD || amoMinD || amoMaxD || amoMinuD || amoMaxuD
-
     // Address Generation: RS1 + sign-extended immediate for normal loads/stores,
     // RS1 only for AMOs.
     val aguEffectiveAddr = Mux(isAmo, up(RS1).asUInt, (up(RS1).asUInt + up(IMMED).asUInt).resize(64))
@@ -122,6 +123,12 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     val waitingResponse = RegInit(False)
     val loadCompleted = RegInit(False)
     val loadCompletedSeq = Reg(UInt(currentSeq.getWidth bits)) init 0
+    val translatedStoreIssued = RegInit(False)
+    val translatedStoreOutstanding = RegInit(False)
+    val translatedStoreSeq = Reg(UInt(currentSeq.getWidth bits)) init 0
+    val heldPageFault = RegInit(False)
+    val heldAccessFault = RegInit(False)
+    val heldFaultSeq = Reg(UInt(currentSeq.getWidth bits)) init 0
     val nextId = Reg(UInt(16 bits)) init 1
     val waitId = Reg(UInt(16 bits))
     val amoWaitingResponse = RegInit(False)
@@ -200,8 +207,31 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       default -> False
     )
 
-    // Raise trap on any misaligned memory access.
-    val localTrap = (misaligned || io.pmpFault || io.pageFault || io.accessFault) && (isStore || isLoad)
+    // Data page/access faults arrive from the AXI/PTW side as pulses. Keep them
+    // associated with the in-flight memory instruction until it can actually
+    // take the trap, otherwise a translated store can miss the exception and
+    // wedge in execute/writeback.
+    when((io.pageFault || io.accessFault) && aguPayloadValid && (isStore || isLoad) && epochMatches) {
+      heldPageFault := heldPageFault || io.pageFault
+      heldAccessFault := heldAccessFault || io.accessFault
+      heldFaultSeq := currentSeq
+    }
+    val heldFaultMatches = heldFaultSeq === currentSeq
+    val pageFaultActive = io.pageFault || (heldPageFault && up(VALID) && epochMatches && heldFaultMatches && (isStore || isLoad))
+    val accessFaultActive = io.accessFault || (heldAccessFault && up(VALID) && epochMatches && heldFaultMatches && (isStore || isLoad))
+    when(
+      (!up(VALID)) ||
+      (!epochMatches) ||
+      (!(isStore || isLoad)) ||
+      (heldPageFault || heldAccessFault) && !heldFaultMatches ||
+      (up.isFiring && (pageFaultActive || accessFaultActive))
+    ) {
+      heldPageFault := False
+      heldAccessFault := False
+    }
+
+    // Raise trap on any misaligned or translated memory access fault.
+    val localTrap = (misaligned || io.pmpFault || pageFaultActive || accessFaultActive) && (isStore || isLoad)
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = activeAddr(2 downto 0)
@@ -259,15 +289,19 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
-    val fatalSuppress = misaligned || illegalInsn || io.pmpFault || io.pageFault || io.accessFault
+    val fatalSuppress = misaligned || illegalInsn || io.pmpFault || pageFaultActive || accessFaultActive
+    val translatedStoreIssuedForCurrent = translatedStoreIssued && up(VALID) && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
+    val translatedStoreOutstandingForCurrent =
+      translatedStoreOutstanding && up(VALID) && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
     val commandSuppress = fatalSuppress || duplicateInWb
     val cmdPending = up(VALID) && up(LANE_SEL) && epochMatches && (isStore || isLoad) && io.cmdBusy && !commandSuppress
     // Firing logic
     val fireLoad = isLoadBase && up(VALID) && epochMatches && !waitingResponse
     val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress && !amoWaitingResponse && !amoStorePending
     val amoIssueStore = amoStorePending && (amoEpoch === currentEpoch)
+    val issueStore = isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress && !translatedStoreIssuedForCurrent
     
-    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress) || amoIssueLoad || amoIssueStore
+    io.dBus.cmd.valid := (issueStore || fireLoad || amoIssueLoad || amoIssueStore)
     io.dBus.cmd.payload.address := activeAddr
     io.dBus.cmd.payload.data := Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData)
     io.dBus.cmd.payload.mask := writeMask
@@ -276,9 +310,30 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
 
     // Stores must wait for command acceptance. Otherwise writes can be dropped
     // when the bus is temporarily not ready.
-    val storeBlocked = isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress && !io.dBus.cmd.ready
+    val storeBlocked = issueStore && !io.dBus.cmd.ready
     haltWhen(storeBlocked)
     haltWhen(cmdPending)
+
+    // Once the translated D-side path has accepted a store, keep that
+    // instruction from re-issuing even if it lingers in execute for extra
+    // cycles after the AXI write response returns.
+    when(io.storeAccepted && isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches) {
+      translatedStoreIssued := True
+      translatedStoreOutstanding := True
+      translatedStoreSeq := currentSeq
+      haltIt()
+    }
+    when(translatedStoreOutstandingForCurrent) {
+      when(io.storeDone || pageFaultActive || accessFaultActive || !epochMatches || !up(VALID)) {
+        translatedStoreOutstanding := False
+      } otherwise {
+        haltIt()
+      }
+    }
+    when(translatedStoreIssued && ((!up(VALID)) || !epochMatches || (up(Fetch.FETCH_SEQ) =/= translatedStoreSeq))) {
+      translatedStoreIssued := False
+      translatedStoreOutstanding := False
+    }
 
     // Stall Logic
     // IMPORTANT: When the response arrives, the pipeline advances at end of that cycle.

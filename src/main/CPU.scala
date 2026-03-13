@@ -302,6 +302,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lsu.io.pageFault := False
     lsu.io.accessFault := False
     lsu.io.cmdBusy := False
+    lsu.io.storeAccepted := False
+    lsu.io.storeDone := False
 
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
     io.perf := perfCounters.counters
@@ -452,8 +454,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     redirectProbe.pcExceptionTarget := pc.exception.payload.vector
     redirectProbe.liveTrapCause := trapLogic.redirect.trapCause
     redirectProbe.liveTrapTval := trapLogic.redirect.trapTval
+    redirectProbe.fetchPageFault := trapLogic.logic.fetchPageFault
+    redirectProbe.fetchAccessFault := trapLogic.logic.fetchAccessFault
+    redirectProbe.pmpExecFault := trapLogic.logic.pmpExecFault
+    redirectProbe.trapInsnArrived := trapLogic.logic.trapInsnArrived
+    redirectProbe.trapInsnValid := trapLogic.logic.trapInsnValid
 
-    val debugPlugin = new DebugPlugin(pipeline, trapLogic.redirect, redirectProbe)
+    val debugPlugin = new DebugPlugin(pipeline, trapLogic.redirect, redirectProbe, lsu, currentEpoch)
     io.dbg := debugPlugin.io.dbg
 
     // Once a sequence has committed, any lingering older-stage copy of that
@@ -942,9 +949,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     switch(dAxiState) {
       is(idle) {
         dCmd.ready := True
-        dArwFired := False
-        dWFired := False
         when(dCmd.valid) {
+          dArwFired := False
+          dWFired := False
+          lsu.io.storeAccepted := dCmd.write &&
+            ((trapLogic.vmContext.dataPriv =/= PRV_M) && (trapLogic.vmContext.satpMode === Sv39.modeSv39))
           dActiveCmd := dCmd.payload
           dUseTranslation := (trapLogic.vmContext.dataPriv =/= PRV_M) && (trapLogic.vmContext.satpMode === Sv39.modeSv39)
           dWalkPriv := trapLogic.vmContext.dataPriv
@@ -1031,10 +1040,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       }
 
       is(sendWrite) {
+        // Track ARW/W independently so neither side refires if the shared AXI
+        // path accepts them on different cycles.
         io.dAxi.arw.valid := !dArwFired
         io.dAxi.w.valid := !dWFired
-        when(io.dAxi.arw.fire) { dArwFired := True }
-        when(io.dAxi.w.fire) { dWFired := True }
+        when(io.dAxi.arw.fire) {
+          dArwFired := True
+        }
+        when(io.dAxi.w.fire) {
+          dWFired := True
+        }
         when((dArwFired || io.dAxi.arw.fire) && (dWFired || io.dAxi.w.fire)) {
           dAxiState := waitWriteResp
         }
@@ -1043,6 +1058,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       is(waitWriteResp) {
         io.dAxi.b.ready := True
         when(io.dAxi.b.valid) {
+          lsu.io.storeDone := True
           // Conservatively invalidate resident fetch beats after any committed
           // store/AMO write so a later jump observes freshly written code.
           fetch.io.invalidate := True
@@ -1065,6 +1081,20 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         }
       }
     }
+
+    debugPlugin.io.dbg.dmemState := dAxiState.asBits.asUInt
+    debugPlugin.io.dbg.dmemUseTranslation := dUseTranslation
+    debugPlugin.io.dbg.dmemCmdWrite := dActiveCmd.write
+    debugPlugin.io.dbg.dmemArwValid := io.dAxi.arw.valid
+    debugPlugin.io.dbg.dmemArwReady := io.dAxi.arw.ready
+    debugPlugin.io.dbg.dmemWValid := io.dAxi.w.valid
+    debugPlugin.io.dbg.dmemWReady := io.dAxi.w.ready
+    debugPlugin.io.dbg.dmemBValid := io.dAxi.b.valid
+    debugPlugin.io.dbg.dmemRValid := io.dAxi.r.valid
+    debugPlugin.io.dbg.dmemWalkPageFault := dWalkPageFault
+    debugPlugin.io.dbg.dmemWalkAccessFault := dWalkAccessFault
+    debugPlugin.io.dbg.dmemWalkLevel := dWalkLevel
+    debugPlugin.io.dbg.dmemWalkPteAddr := dWalkPteAddr
 
     pipeline.ctrls.drop(1).foreach(e => e._2.throwWhen(clockDomain.reset))
     // Build the pipeline
