@@ -533,7 +533,7 @@ case class TrapCsrBackend(
 
     val trapFromBranch = branch.logic.willTrap
     val insn = trapInsn
-    val aguActive = up(Decoder.VALID) && up(LANE_SEL) && lsu.logic.isAguRoute
+    val aguActive = up.isValid && up(Decoder.VALID) && up(LANE_SEL) && lsu.logic.isAguRoute && !lsu.logic.duplicateInWb
 
     when(up.isFiring && up(LANE_SEL) && (up(PC.INSN_PC) =/= U(0, 64 bits))) {
       sawNonZeroPc := True
@@ -650,10 +650,34 @@ case class TrapCsrBackend(
       trapFromLoadMisalign || trapFromStoreMisalign ||
       trapFromLoadPage || trapFromStorePage ||
       trapFromLoadAccess || trapFromStoreAccess
+    val memoryTrapSeqSeen = RegInit(False)
+    val memoryTrapSeq = Reg(UInt(up(Fetch.FETCH_SEQ).getWidth bits)) init(0)
+    val repeatedMemoryTrap =
+      memoryTrapSeqSeen &&
+      up(VALID) &&
+      epochMatches &&
+      (up(Fetch.FETCH_SEQ) === memoryTrapSeq)
     val trapFire = epochMatches && (
       (up.isFiring && (trapFromBranch || trapFromFetchPage || trapFromFetchAccess || trapFromIllegalInsn || trapFromEcall || trapFromEbreak)) ||
-      memoryTrapPending
+      (memoryTrapPending && !repeatedMemoryTrap)
     )
+
+    // VM/PMP faults can be discovered while execute is stalled waiting on the
+    // translated D-side path, so they cannot require up.isFiring. Suppress
+    // repeated redirects from the same stuck execute-stage instruction until
+    // the stage contents change.
+    when(trapFire && memoryTrapPending) {
+      memoryTrapSeqSeen := True
+      memoryTrapSeq := up(Fetch.FETCH_SEQ)
+    }
+    when(
+      !up(VALID) ||
+      !epochMatches ||
+      !memoryTrapPending ||
+      (memoryTrapSeqSeen && (up(Fetch.FETCH_SEQ) =/= memoryTrapSeq))
+    ) {
+      memoryTrapSeqSeen := False
+    }
 
     val trapCause = Bits(64 bits)
     trapCause := CAUSE_MISALIGNED_STORE.asBits

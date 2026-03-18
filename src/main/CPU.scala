@@ -264,7 +264,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       withCompressed = config.cExtensionEnabled,
       resetPc = resetPcValue
     )
-    //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
     val fetch = Fetch(
@@ -468,17 +467,26 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // effects or traps. This keeps backend ownership of a sequence exclusive.
     val lastCommittedSeqValid = RegInit(False)
     val lastCommittedSeq = Reg(UInt(32 bits)) init(0)
-    when(pipeline.ctrl(7).up(COMMIT)) {
+    val committedThisCycle = pipeline.ctrl(7).up(COMMIT)
+    val committedSeqThisCycle = pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ)
+    when(committedThisCycle) {
       lastCommittedSeqValid := True
-      lastCommittedSeq := pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ)
+      lastCommittedSeq := committedSeqThisCycle
     }
     Array(4, 5, 6).foreach { idx =>
       val ctrl = pipeline.ctrl(idx)
-      val staleCommittedSeq =
-        lastCommittedSeqValid &&
+      val sameCycleCommittedSeq =
+        committedThisCycle &&
         ctrl.up.isValid &&
         ctrl(VALID) &&
-        (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === lastCommittedSeq)
+        (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === committedSeqThisCycle)
+      val staleCommittedSeq =
+        sameCycleCommittedSeq || (
+          lastCommittedSeqValid &&
+          ctrl.up.isValid &&
+          ctrl(VALID) &&
+          (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === lastCommittedSeq)
+        )
       ctrl.throwWhen(staleCommittedSeq)
     }
 
@@ -489,7 +497,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val lsuReplayOrWait = lsu.logic.waitingResponse || lsu.logic.amoWaitingResponse || lsu.logic.amoStorePending
     val dispatchCtrl = pipeline.ctrl(4)
     val srcCtrlPerf = pipeline.ctrl(5)
-    val committedThisCycle = pipeline.ctrl(7).up(COMMIT)
     val writeCtrl = pipeline.ctrl(7)
     val dispatchValid = dispatchCtrl.up.isValid && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
     val srcValid = srcCtrlPerf.up.isValid && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)

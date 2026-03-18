@@ -113,12 +113,14 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       default -> False
     )
     val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
-    val aguPayloadValid = up(VALID) && up(LANE_SEL) && isAguRoute
+    val stageValid = up.isValid && up(VALID)
     val currentSeq = up(Fetch.FETCH_SEQ)
     val duplicateInWb = wbStage.up.isValid &&
       wbStage(VALID) &&
       wbStage(LANE_SEL) &&
       (wbStage(Fetch.FETCH_SEQ) === currentSeq)
+    val aguPayloadValid = stageValid && up(LANE_SEL) && isAguRoute
+    val memoryStageOwnsInsn = aguPayloadValid && epochMatches && !duplicateInWb
 
     val waitingResponse = RegInit(False)
     val loadCompleted = RegInit(False)
@@ -211,16 +213,16 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // associated with the in-flight memory instruction until it can actually
     // take the trap, otherwise a translated store can miss the exception and
     // wedge in execute/writeback.
-    when((io.pageFault || io.accessFault) && aguPayloadValid && (isStore || isLoad) && epochMatches) {
+    when((io.pageFault || io.accessFault) && memoryStageOwnsInsn && (isStore || isLoad)) {
       heldPageFault := heldPageFault || io.pageFault
       heldAccessFault := heldAccessFault || io.accessFault
       heldFaultSeq := currentSeq
     }
     val heldFaultMatches = heldFaultSeq === currentSeq
-    val pageFaultActive = io.pageFault || (heldPageFault && up(VALID) && epochMatches && heldFaultMatches && (isStore || isLoad))
-    val accessFaultActive = io.accessFault || (heldAccessFault && up(VALID) && epochMatches && heldFaultMatches && (isStore || isLoad))
+    val pageFaultActive = io.pageFault || (heldPageFault && memoryStageOwnsInsn && heldFaultMatches && (isStore || isLoad))
+    val accessFaultActive = io.accessFault || (heldAccessFault && memoryStageOwnsInsn && heldFaultMatches && (isStore || isLoad))
     when(
-      (!up(VALID)) ||
+      (!stageValid) ||
       (!epochMatches) ||
       (!(isStore || isLoad)) ||
       (heldPageFault || heldAccessFault) && !heldFaultMatches ||
@@ -231,7 +233,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     }
 
     // Raise trap on any misaligned or translated memory access fault.
-    val localTrap = (misaligned || io.pmpFault || pageFaultActive || accessFaultActive) && (isStore || isLoad)
+    val localTrap = (misaligned || io.pmpFault || pageFaultActive || accessFaultActive) && (isStore || isLoad) && !duplicateInWb
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = activeAddr(2 downto 0)
@@ -290,16 +292,16 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val fatalSuppress = misaligned || illegalInsn || io.pmpFault || pageFaultActive || accessFaultActive
-    val translatedStoreIssuedForCurrent = translatedStoreIssued && up(VALID) && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
+    val translatedStoreIssuedForCurrent = translatedStoreIssued && stageValid && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
     val translatedStoreOutstandingForCurrent =
-      translatedStoreOutstanding && up(VALID) && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
+      translatedStoreOutstanding && stageValid && (up(Fetch.FETCH_SEQ) === translatedStoreSeq)
     val commandSuppress = fatalSuppress || duplicateInWb
-    val cmdPending = up(VALID) && up(LANE_SEL) && epochMatches && (isStore || isLoad) && io.cmdBusy && !commandSuppress
+    val cmdPending = stageValid && up(LANE_SEL) && epochMatches && (isStore || isLoad) && io.cmdBusy && !commandSuppress
     // Firing logic
-    val fireLoad = isLoadBase && up(VALID) && epochMatches && !waitingResponse
-    val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress && !amoWaitingResponse && !amoStorePending
+    val fireLoad = isLoadBase && stageValid && epochMatches && !waitingResponse
+    val amoIssueLoad = isAmo && stageValid && up(LANE_SEL) && epochMatches && !commandSuppress && !amoWaitingResponse && !amoStorePending
     val amoIssueStore = amoStorePending && (amoEpoch === currentEpoch)
-    val issueStore = isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches && !commandSuppress && !translatedStoreIssuedForCurrent
+    val issueStore = isStoreBase && stageValid && up(LANE_SEL) && epochMatches && !commandSuppress && !translatedStoreIssuedForCurrent
     
     io.dBus.cmd.valid := (issueStore || fireLoad || amoIssueLoad || amoIssueStore)
     io.dBus.cmd.payload.address := activeAddr
@@ -317,20 +319,20 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // Once the translated D-side path has accepted a store, keep that
     // instruction from re-issuing even if it lingers in execute for extra
     // cycles after the AXI write response returns.
-    when(io.storeAccepted && isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches) {
+    when(io.storeAccepted && isStoreBase && stageValid && up(LANE_SEL) && epochMatches) {
       translatedStoreIssued := True
       translatedStoreOutstanding := True
       translatedStoreSeq := currentSeq
       haltIt()
     }
     when(translatedStoreOutstandingForCurrent) {
-      when(io.storeDone || pageFaultActive || accessFaultActive || !epochMatches || !up(VALID)) {
+      when(io.storeDone || pageFaultActive || accessFaultActive || !epochMatches || !stageValid) {
         translatedStoreOutstanding := False
       } otherwise {
         haltIt()
       }
     }
-    when(translatedStoreIssued && ((!up(VALID)) || !epochMatches || (up(Fetch.FETCH_SEQ) =/= translatedStoreSeq))) {
+    when(translatedStoreIssued && ((!stageValid) || !epochMatches || (up(Fetch.FETCH_SEQ) =/= translatedStoreSeq))) {
       translatedStoreIssued := False
       translatedStoreOutstanding := False
     }
@@ -341,7 +343,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // So we must use io.dBus.rsp.payload.data directly on the cycle response arrives.
     val latchedRspData = Reg(Bits(64 bits))
     val loadResponseArriving = waitingResponse && io.dBus.rsp.valid && (io.dBus.rsp.id === waitId)
-    val loadCompletedForCurrent = loadCompleted && up(VALID) && (up(Fetch.FETCH_SEQ) === loadCompletedSeq)
+    val loadCompletedForCurrent = loadCompleted && stageValid && (up(Fetch.FETCH_SEQ) === loadCompletedSeq)
     val loadDataReady = loadCompletedForCurrent || loadResponseArriving
 
     // Outstanding LSU response state must be retired by matching the bus response,
@@ -353,7 +355,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       latchedRspData := io.dBus.rsp.payload.data
     }
     
-    when(isLoadBase && up(VALID) && epochMatches && !commandSuppress && !loadCompletedForCurrent) {
+    when(isLoadBase && stageValid && epochMatches && !commandSuppress && !loadCompletedForCurrent) {
         when(!waitingResponse) {
              when(io.dBus.cmd.ready && !commandSuppress && up(LANE_SEL)) {
                  waitingResponse := True
@@ -373,14 +375,14 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
              }
         }
     }
-    when(isLoadBase && up(VALID) && (!epochMatches || fatalSuppress)) {
+    when(isLoadBase && stageValid && (!epochMatches || fatalSuppress)) {
       // Faulting/suppressed loads must not enter the response wait state.
       waitingResponse := False
       loadCompleted := False
     }
     when(
       loadCompleted &&
-      up(VALID) &&
+      stageValid &&
       (
         !isLoadBase ||
         (up(Fetch.FETCH_SEQ) =/= loadCompletedSeq)
@@ -462,7 +464,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
         haltIt()
       }
     }
-    when(isAmo && up(VALID) && (!epochMatches || fatalSuppress)) {
+    when(isAmo && stageValid && (!epochMatches || fatalSuppress)) {
       amoWaitingResponse := False
       amoStorePending := False
     }
@@ -473,7 +475,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
 
     // Load Data Processing - use LIVE data when response is arriving, latched data otherwise
     // This is critical: on the cycle response arrives, we use live data since that's what gets captured
-    val responseArriving = isLoadBase && up(VALID) && loadResponseArriving
+    val responseArriving = isLoadBase && stageValid && loadResponseArriving
     val rspData = Mux(responseArriving, io.dBus.rsp.payload.data, latchedRspData)
     val shiftedLoadData = rspData >> (byteOffset << 3)
     val loadResult = Bits(64 bits)
