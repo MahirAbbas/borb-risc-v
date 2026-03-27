@@ -238,7 +238,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val perfCounters = new borb.core.PerfCountersPlugin(pipeline.ctrl(7))
     io.perf := perfCounters.counters
 
-    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(7), config, currentEpoch, pc, branch, lsu, perfCounters.counters)
+    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(7), config, currentEpoch, pc, fetch, branch, lsu, perfCounters.counters)
     val fpBackend = FpBackend(execStage, lsu, currentEpoch, trapLogic.frm)
 
     trapLogic.fpFlagsSetValid := fpBackend.fpFlags.valid
@@ -330,6 +330,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       currentEpoch := currentEpoch + 1
     }
     val redirectCommitBubble = RegNext(redirectPipeline) init(False)
+    // A redirecting stage-6 instruction can otherwise allow the same-cycle
+    // stage-5 payload to advance into execute on the next cycle before its
+    // epoch mismatch is observed. Kill that post-redirect execute bubble
+    // explicitly so xRET/trap redirects cannot execute stale pre-redirect ops.
+    val redirectExecuteBubble = RegNext(redirectPipeline) init(False)
     
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.flush := redirectPipeline
@@ -343,6 +348,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     youngerStages.foreach { ctrl =>
       ctrl.throwWhen(redirectPipeline)
     }
+    pipeline.ctrl(6).throwWhen(redirectExecuteBubble)
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
     io.rvfi := rvfiPlugin.io.rvfi

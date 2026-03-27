@@ -47,6 +47,9 @@ case class Fetch(
     val currentEpoch = UInt(16 bits)
     val pcAdvance = Bool()
     val pcStep = UInt(3 bits)
+    val vmTranslateVirt = UInt(addressWidth bits)
+    val vmTranslatePhys = UInt(addressWidth bits)
+    val vmTranslateEnable = Bool()
   }
 
   case class FetchRequest() extends Bundle {
@@ -150,6 +153,7 @@ case class Fetch(
 
   io.pcAdvance := False
   io.pcStep := U(4, 3 bits)
+  io.vmTranslateVirt.allowOverride := 0
 
   io.iAxi.arw.valid := False
   io.iAxi.arw.addr := 0
@@ -409,6 +413,12 @@ case class Fetch(
     val issueResident = anyResident(issueAddr)
     val issuePending = pendingReqValid && (pendingReq.baseAddr === issueAddr)
     val needRequest = (needCurrentRequest || needNextRequest || usePrefetch) && !issueResident && !issuePending
+    val translatedIssueAddr = UInt(addressWidth bits)
+    translatedIssueAddr := issueAddr
+    when(io.vmTranslateEnable) {
+      translatedIssueAddr := io.vmTranslatePhys
+    }
+    io.vmTranslateVirt.allowOverride := issueAddr
     perfNeedCurrentReq.allowOverride := needCurrentRequest
     perfNeedNextReq.allowOverride := needNextRequest
     perfPrefetchReq.allowOverride := usePrefetch
@@ -423,11 +433,11 @@ case class Fetch(
     perfPrefetchBlockedNextHit.allowOverride := streamPrefetchWindow && streamHit && !io.flush
 
     io.iAxi.arw.valid.allowOverride := needRequest
-    io.iAxi.arw.addr.allowOverride := issueAddr
+    io.iAxi.arw.addr.allowOverride := translatedIssueAddr
     io.iAxi.arw.id.allowOverride := activeEpoch.resized
     io.iAxi.arw.len.allowOverride := 0
 
-    val packetQueueBlocks = packetReady && !duplicatePc && !packetHasSpace
+    val packetQueueBlocks = packetReady && !duplicatePc && !packetHasSpace && !io.flush
     haltWhen((needCurrentRequest || needNextRequest) && !io.iAxi.arw.fire)
     haltWhen(packetQueueBlocks)
 
@@ -447,7 +457,7 @@ case class Fetch(
       }
     }
 
-    when(canEnqueuePacket) {
+    when(canEnqueuePacket && !io.flush) {
       packetEnqueue.allowOverride := True
       packetEnqueuePc.allowOverride := cmdPcRaw
       packetEnqueueInsn.allowOverride := assembledInsn

@@ -53,6 +53,13 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
   val io = new Bundle {
     val dBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
     val pmpFault = Bool()
+    val bigEndian = Bool()
+    val storeCommit = Bool()
+    val storeAddr = UInt(64 bits)
+    val storeData = Bits(64 bits)
+    val storeMask = Bits(8 bits)
+    val translatedAddr = UInt(64 bits)
+    val useTranslatedAddr = Bool()
   }
 
   val logic = new stage.Area {
@@ -200,6 +207,24 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // Shifted mask for dBus
     val writeMask = accessSizeMask |<< byteOffset
 
+    def reverseBytesByMask(data: Bits, mask: Bits): Bits = {
+      val out = Bits(64 bits)
+      out := data
+      switch(mask) {
+        is(B"00000011") {
+          out(15 downto 0) := data(7 downto 0) ## data(15 downto 8)
+        }
+        is(B"00001111") {
+          out(31 downto 0) := data(7 downto 0) ## data(15 downto 8) ## data(23 downto 16) ## data(31 downto 24)
+        }
+        is(B"11111111") {
+          out := data(7 downto 0) ## data(15 downto 8) ## data(23 downto 16) ## data(31 downto 24) ##
+            data(39 downto 32) ## data(47 downto 40) ## data(55 downto 48) ## data(63 downto 56)
+        }
+      }
+      out
+    }
+
     // Align store data to the correct byte lanes
     val rawStoreData = Bits(64 bits)
     rawStoreData := up(MicroCode).mux(
@@ -209,8 +234,14 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       uopSD -> up(RS2),
       default -> B(0, 64 bits)
     )
-    
-    val storeData = rawStoreData |<< (byteOffset << 3)
+
+    val endianStoreData = Bits(64 bits)
+    endianStoreData := rawStoreData
+    when(io.bigEndian) {
+      endianStoreData := reverseBytesByMask(rawStoreData, accessSizeMask)
+    }
+
+    val storeData = endianStoreData |<< (byteOffset << 3)
 
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
@@ -220,13 +251,23 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     val fireLoad = isLoadBase && up(VALID) && epochMatches && !waitingResponse
     val amoIssueLoad = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !suppress && !amoWaitingResponse && !amoStorePending
     val amoIssueStore = isAmo && up(VALID) && up(LANE_SEL) && epochMatches && !suppress && amoStorePending
-    
+    val storeIssueFire = ((isStoreBase && up(VALID) && up(LANE_SEL) && epochMatches && !suppress) || amoIssueStore) && io.dBus.cmd.ready
+    val busAddr = UInt(64 bits)
+    busAddr := activeAddr
+    when(io.useTranslatedAddr) {
+      busAddr := io.translatedAddr
+    }
+
     io.dBus.cmd.valid := ((isStoreBase || fireLoad) && up(VALID) && up(LANE_SEL) && epochMatches && !suppress) || amoIssueLoad || amoIssueStore
-    io.dBus.cmd.payload.address := activeAddr
+    io.dBus.cmd.payload.address := busAddr
     io.dBus.cmd.payload.data := Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData)
     io.dBus.cmd.payload.mask := writeMask
     io.dBus.cmd.payload.id := Mux((isStoreBase || amoIssueStore), U(0, 16 bits), nextId)
     io.dBus.cmd.payload.write := isStoreBase || amoIssueStore
+    io.storeCommit := storeIssueFire
+    io.storeAddr := busAddr
+    io.storeData := io.dBus.cmd.payload.data
+    io.storeMask := io.dBus.cmd.payload.mask
 
     // Stores must wait for command acceptance. Otherwise writes can be dropped
     // when the bus is temporarily not ready.
@@ -293,11 +334,16 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
         when(amoResponseArriving) {
           val rspData = io.dBus.rsp.payload.data
           val shifted = rspData >> (byteOffset << 3)
-          val oldWord = shifted(31 downto 0)
+          val shiftedEndian = Bits(64 bits)
+          shiftedEndian := shifted
+          when(io.bigEndian) {
+            shiftedEndian := reverseBytesByMask(shifted, accessSizeMask)
+          }
+          val oldWord = shiftedEndian(31 downto 0)
           val rs2Word = up(RS2)(31 downto 0)
           val oldWordS = oldWord.asSInt
           val rs2WordS = rs2Word.asSInt
-          val oldD = shifted
+          val oldD = shiftedEndian
           val rs2D = up(RS2)
           val oldDS = oldD.asSInt
           val rs2DS = rs2D.asSInt
@@ -327,7 +373,14 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
           when(amoMaxuD) { newD := Mux(oldD.asUInt > rs2D.asUInt, oldD, rs2D) }
 
           amoWbData := Mux(amoIsWord, oldWord.asSInt.resize(64).asBits, shifted)
-          amoStoreData := Mux(amoIsWord, newWord.resize(64), newD)
+          val rawAmoStoreData = Bits(64 bits)
+          rawAmoStoreData := Mux(amoIsWord, newWord.resize(64), newD)
+          val storeEndianData = Bits(64 bits)
+          storeEndianData := rawAmoStoreData
+          when(io.bigEndian) {
+            storeEndianData := reverseBytesByMask(rawAmoStoreData, accessSizeMask)
+          }
+          amoStoreData := storeEndianData
           amoStorePending := True
           haltIt()
         } otherwise {
@@ -351,15 +404,20 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     val responseArriving = isLoadBase && up(VALID) && loadResponseArriving
     val rspData = Mux(responseArriving, io.dBus.rsp.payload.data, latchedRspData)
     val shiftedLoadData = rspData >> (byteOffset << 3)
+    val shiftedEndianLoadData = Bits(64 bits)
+    shiftedEndianLoadData := shiftedLoadData
+    when(io.bigEndian) {
+      shiftedEndianLoadData := reverseBytesByMask(shiftedLoadData, accessSizeMask)
+    }
     val loadResult = Bits(64 bits)
     loadResult := up(MicroCode).mux(
-       uopLB -> shiftedLoadData(7 downto 0).asSInt.resize(64).asBits,
-       uopLBU -> shiftedLoadData(7 downto 0).resize(64),
-       uopLH -> shiftedLoadData(15 downto 0).asSInt.resize(64).asBits,
-       uopLHU -> shiftedLoadData(15 downto 0).resize(64),
-       uopLW -> shiftedLoadData(31 downto 0).asSInt.resize(64).asBits,
-       uopLWU -> shiftedLoadData(31 downto 0).resize(64),
-       uopLD -> shiftedLoadData,
+       uopLB -> shiftedEndianLoadData(7 downto 0).asSInt.resize(64).asBits,
+       uopLBU -> shiftedEndianLoadData(7 downto 0).resize(64),
+       uopLH -> shiftedEndianLoadData(15 downto 0).asSInt.resize(64).asBits,
+       uopLHU -> shiftedEndianLoadData(15 downto 0).resize(64),
+       uopLW -> shiftedEndianLoadData(31 downto 0).asSInt.resize(64).asBits,
+       uopLWU -> shiftedEndianLoadData(31 downto 0).resize(64),
+       uopLD -> shiftedEndianLoadData,
        default -> B(0, 64 bits)
     )
 
@@ -401,7 +459,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     down(MEM_RMASK) := Mux(isLoad && !suppress, accessSizeMask, B(0, 8 bits))
     // MEM_RDATA: riscv-formal expects the raw extracted data (shifted to LSB, BEFORE sign-extension)
     // The formal model applies its own sign-extension based on instruction type
-    down(MEM_RDATA) := Mux(isLoad && !suppress, shiftedLoadData, B(0, 64 bits))
+    down(MEM_RDATA) := Mux(isLoad && !suppress, shiftedEndianLoadData, B(0, 64 bits))
 
     // Stores do not write to register file
     // RESULT payload should remain 0/invalid (handled by IntAlu defaults)

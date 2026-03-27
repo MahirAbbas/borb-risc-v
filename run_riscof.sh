@@ -380,6 +380,111 @@ run_scala_main() {
   fi
 }
 
+count_tests_in_yaml() {
+  local yaml_path="$1"
+  python3 - "$yaml_path" <<'PY'
+import sys
+import yaml
+
+path = sys.argv[1]
+with open(path, "r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+print(len(data))
+PY
+}
+
+progress_snapshot() {
+  local workdir="$1"
+  local start_epoch="$2"
+  python3 - "$workdir" "$start_epoch" <<'PY'
+import os
+import sys
+from pathlib import Path
+
+workdir = Path(sys.argv[1])
+start_epoch = float(sys.argv[2])
+done = 0
+latest = None
+for path in workdir.glob("**/dut/borb.status.json"):
+    try:
+        mtime = path.stat().st_mtime
+    except FileNotFoundError:
+        continue
+    if mtime + 1e-6 < start_epoch:
+        continue
+    done += 1
+    if latest is None or mtime > latest:
+        latest = mtime
+if latest is None:
+    print(f"{done} -1")
+else:
+    print(f"{done} {int(latest)}")
+PY
+}
+
+print_progress_line() {
+  local done="$1"
+  local total="$2"
+  local stale_secs="$3"
+  local width=30
+  local filled=0
+  local percent=0
+  local bar=""
+  local i
+
+  if [[ "$total" -gt 0 ]]; then
+    filled=$(( done * width / total ))
+    percent=$(( done * 100 / total ))
+  fi
+
+  for ((i=0; i<width; i++)); do
+    if [[ "$i" -lt "$filled" ]]; then
+      bar+="#"
+    else
+      bar+="-"
+    fi
+  done
+
+  if [[ "$stale_secs" -lt 0 ]]; then
+    echo "[progress] [$bar] $done/$total (${percent}%) no completed tests yet"
+  else
+    echo "[progress] [$bar] $done/$total (${percent}%) last completion ${stale_secs}s ago"
+  fi
+}
+
+monitor_riscof_progress() {
+  local pid="$1"
+  local workdir="$2"
+  local total="$3"
+  local start_epoch="$4"
+  local last_done=-1
+  local unchanged_ticks=0
+
+  while kill -0 "$pid" 2>/dev/null; do
+    local snapshot done latest stale now
+    snapshot="$(progress_snapshot "$workdir" "$start_epoch")"
+    done="${snapshot%% *}"
+    latest="${snapshot##* }"
+    now="$(date +%s)"
+
+    if [[ "$latest" -lt 0 ]]; then
+      stale=-1
+    else
+      stale=$(( now - latest ))
+    fi
+
+    if [[ "$done" -ne "$last_done" || "$unchanged_ticks" -ge 5 ]]; then
+      print_progress_line "$done" "$total" "$stale"
+      unchanged_ticks=0
+      last_done="$done"
+    else
+      unchanged_ticks=$((unchanged_ticks + 1))
+    fi
+
+    sleep 10
+  done
+}
+
 echo "=== Borb RISCOF Run ==="
 
 if [[ "$SKIP_GEN" = false ]]; then
@@ -491,7 +596,20 @@ PY
 
   RUN_CMD+=(--work-dir="$WORK_DIR")
   RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
+  PROGRESS_TESTLIST="$SUBSET_TESTLIST"
+else
+  mkdir -p "$WORK_DIR"
+  FULL_TESTLIST="$WORK_DIR/test_list.yaml"
+  if [[ "$CLEAN" = true || ! -f "$FULL_TESTLIST" ]]; then
+    echo "Generating full test list first..."
+    riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
+  fi
+  RUN_CMD+=(--work-dir="$WORK_DIR")
+  PROGRESS_TESTLIST="$FULL_TESTLIST"
 fi
+
+TOTAL_TESTS="$(count_tests_in_yaml "$PROGRESS_TESTLIST")"
+echo "Progress tracking: ${TOTAL_TESTS} tests in this run"
 
 RESOLVED_BUDGET_FILE="$WORK_DIR/resolved_budgets.json"
 python3 - "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" "$TESTS" "$CYCLE_BUDGET_MODE" "$CYCLE_BUDGET_SCALE" "$CYCLE_BUDGET_SLACK" "/Users/mahir/fun/borb/verif/automation/overnight_queue.json" <<'PY'
@@ -616,9 +734,19 @@ export BORB_RESOLVED_BUDGET_FILE="$RESOLVED_BUDGET_FILE"
 export BORB_MAX_CYCLES_DEFAULT="200000"
 
 set +e
-"${RUN_CMD[@]}"
+"${RUN_CMD[@]}" &
+RUN_PID=$!
+RUN_START_EPOCH="$(date +%s)"
+monitor_riscof_progress "$RUN_PID" "$WORK_DIR" "$TOTAL_TESTS" "$RUN_START_EPOCH" &
+MONITOR_PID=$!
+wait "$RUN_PID"
 RUN_STATUS=$?
+wait "$MONITOR_PID" 2>/dev/null
 set -e
+
+FINAL_SNAPSHOT="$(progress_snapshot "$WORK_DIR" "$RUN_START_EPOCH")"
+FINAL_DONE="${FINAL_SNAPSHOT%% *}"
+echo "[progress] final completion count: ${FINAL_DONE}/${TOTAL_TESTS}"
 
 if [[ "$SKIP_REPORT" = false ]]; then
   echo "Generating RISCOF debug reports..."

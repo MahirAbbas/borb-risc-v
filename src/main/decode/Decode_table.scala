@@ -51,7 +51,9 @@ object RV32I {
   val FENCEI = M"00000000000000000001000000001111"
   val ECALL = M"00000000000000000000000001110011"
   val EBREAK = M"00000000000100000000000001110011"
+  val SRET = M"00010000001000000000000001110011"
   val MRET = M"00110000001000000000000001110011"
+  val SFENCE_VMA = M"0001001----------000000001110011"
 
   val CSRRW = M"-----------------001-----1110011"
   val CSRRS = M"-----------------010-----1110011"
@@ -343,7 +345,9 @@ object DecodeTable {
   FENCEI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFENCE_I, N, N, N, N),
   ECALL      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopECALL , N, N, N, N),
   EBREAK     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopEBREAK, N, N, N, N),
+  SRET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP   , N, N, N, N),
   MRET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopNOP   , N, N, N, N),
+  SFENCE_VMA ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopNOP   , N, N, N, N),
   FCVTLS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLS, N, N, N, N),
   FCVTLUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUS, N, N, N, N),
   FCVTSL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSL, N, N, N, N),
