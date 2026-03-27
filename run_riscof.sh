@@ -33,6 +33,7 @@ CYCLE_BUDGET_MODE="hybrid"
 CYCLE_BUDGET_SCALE=""
 CYCLE_BUDGET_SLACK=""
 CYCLE_BUDGET_FILE="/Users/mahir/fun/borb/verif/riscof/cycle_budgets.json"
+EXCLUDE_HIGHER_VM=true
 SMOKE_RV32F_CORE=false
 SMOKE_RV32F_ARITH=false
 SMOKE_RV32F_LONGLAT=false
@@ -68,6 +69,7 @@ usage() {
   echo "  --cycle-budget-scale <f>     Override learned-budget scale"
   echo "  --cycle-budget-slack <n>     Override learned-budget slack"
   echo "  --cycle-budget-file <path>   Cycle budget database (default: $CYCLE_BUDGET_FILE)"
+  echo "  --include-higher-vm          Include SV48/SV57 VM tests (default: excluded)"
   echo "  --tests <list>    Run only selected tests (name fragments, comma-separated)"
   echo "                    Example: --tests add-01.S,addi-01.S"
   echo "  --config <path>   Path to config.ini (default: $CONFIG_PATH)"
@@ -183,6 +185,10 @@ while [[ $# -gt 0 ]]; do
       CYCLE_BUDGET_FILE="$2"
       shift 2
       ;;
+    --include-higher-vm)
+      EXCLUDE_HIGHER_VM=false
+      shift
+      ;;
     --config)
       CONFIG_PATH="$2"
       shift 2
@@ -261,7 +267,7 @@ if [[ "$FAST_RV64F" = true ]]; then
     echo "Error: RV64F test directory not found: $RV64F_DIR"
     exit 2
   fi
-  TESTS="$(ls "$RV64F_DIR"/*.S 2>/dev/null | xargs -n1 basename | paste -sd, -)"
+  TESTS="$(find "$RV64F_DIR" -maxdepth 1 -name '*.S' -print | sort | paste -sd, -)"
   if [[ -z "$TESTS" ]]; then
     echo "Error: no RV64F tests found under: $RV64F_DIR"
     exit 2
@@ -279,7 +285,7 @@ if [[ "$FAST_RV32F" = true ]]; then
     echo "Error: RV32F test directory not found: $RV32F_DIR"
     exit 2
   fi
-  TESTS="$(ls "$RV32F_DIR"/*.S 2>/dev/null | xargs -n1 basename | paste -sd, -)"
+  TESTS="$(find "$RV32F_DIR" -maxdepth 1 -name '*.S' -print | sort | paste -sd, -)"
   if [[ -z "$TESTS" ]]; then
     echo "Error: no RV32F tests found under: $RV32F_DIR"
     exit 2
@@ -297,7 +303,7 @@ if [[ "$FAST_RV64I" = true ]]; then
     echo "Error: RV64I test directory not found: $RV64I_DIR"
     exit 2
   fi
-  TESTS="$(ls "$RV64I_DIR"/*.S 2>/dev/null | xargs -n1 basename | paste -sd, -)"
+  TESTS="$(find "$RV64I_DIR" -maxdepth 1 -name '*.S' -print | sort | paste -sd, -)"
   if [[ -z "$TESTS" ]]; then
     echo "Error: no RV64I tests found under: $RV64I_DIR"
     exit 2
@@ -393,6 +399,86 @@ print(len(data))
 PY
 }
 
+filter_testlist() {
+  local in_yaml="$1"
+  local out_yaml="$2"
+  local exclude_higher_vm="$3"
+  python3 - "$in_yaml" "$out_yaml" "$exclude_higher_vm" <<'PY'
+import sys
+from pathlib import Path
+import yaml
+
+in_yaml = Path(sys.argv[1])
+out_yaml = Path(sys.argv[2])
+exclude_higher_vm = sys.argv[3].lower() == "true"
+
+with in_yaml.open("r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+def keep_test(test_path: str) -> bool:
+    if not exclude_higher_vm:
+        return True
+    return not (
+        "/vm_sv48/" in test_path
+        or "/vm_sv57/" in test_path
+        or "/vm_pmp/src/sv48/" in test_path
+        or "/vm_pmp/src/sv57/" in test_path
+    )
+
+filtered = {test_path: meta for test_path, meta in data.items() if keep_test(test_path)}
+
+with out_yaml.open("w", encoding="utf-8") as f:
+    yaml.safe_dump(filtered, f, sort_keys=False)
+
+print(f"{len(data)} {len(filtered)}")
+PY
+}
+
+clean_selected_test_artifacts() {
+  local testlist_yaml="$1"
+  local clean_requested="$2"
+  python3 - "$testlist_yaml" "$clean_requested" <<'PY'
+import shutil
+import sys
+from pathlib import Path
+import yaml
+
+testlist_yaml = Path(sys.argv[1])
+clean_requested = sys.argv[2].lower() == "true"
+
+with testlist_yaml.open("r", encoding="utf-8") as f:
+    data = yaml.safe_load(f) or {}
+
+removed = 0
+removed_paths = (
+    "dut",
+    "ref",
+    "model_test.h",
+    "Makefile.borb",
+    "Makefile.spike",
+    "test.S",
+)
+for meta in data.values():
+    work_dir = meta.get("work_dir")
+    if not work_dir:
+        continue
+    path = Path(work_dir)
+    path.mkdir(parents=True, exist_ok=True)
+    for rel in removed_paths:
+        target = path / rel
+        if target.is_dir():
+            shutil.rmtree(target)
+            removed += 1
+        elif target.exists():
+            target.unlink()
+            removed += 1
+
+if removed:
+    action = "Cleaning" if not clean_requested else "Refreshing"
+    print(f"{action} stale per-test artifacts under: {testlist_yaml.parent} ({removed} paths)")
+PY
+}
+
 progress_snapshot() {
   local workdir="$1"
   local start_epoch="$2"
@@ -485,6 +571,56 @@ monitor_riscof_progress() {
   done
 }
 
+child_pids() {
+  local parent_pid="$1"
+  ps -ax -o pid= -o ppid= | awk -v parent="$parent_pid" '$2 == parent { print $1 }'
+}
+
+terminate_process_tree() {
+  local root_pid="$1"
+  local child_pid=""
+  if [[ -z "$root_pid" ]]; then
+    return
+  fi
+  while read -r child_pid; do
+    [[ -z "$child_pid" ]] && continue
+    terminate_process_tree "$child_pid"
+  done < <(child_pids "$root_pid")
+  kill -TERM "$root_pid" 2>/dev/null || true
+}
+
+force_kill_process_tree() {
+  local root_pid="$1"
+  local child_pid=""
+  if [[ -z "$root_pid" ]]; then
+    return
+  fi
+  while read -r child_pid; do
+    [[ -z "$child_pid" ]] && continue
+    force_kill_process_tree "$child_pid"
+  done < <(child_pids "$root_pid")
+  kill -KILL "$root_pid" 2>/dev/null || true
+}
+
+cleanup_background_jobs() {
+  local monitor_pid="$1"
+  local run_pid="$2"
+
+  if [[ -n "$monitor_pid" ]] && kill -0 "$monitor_pid" 2>/dev/null; then
+    kill -TERM "$monitor_pid" 2>/dev/null || true
+    wait "$monitor_pid" 2>/dev/null || true
+  fi
+
+  if [[ -n "$run_pid" ]] && kill -0 "$run_pid" 2>/dev/null; then
+    terminate_process_tree "$run_pid"
+    sleep 1
+    if kill -0 "$run_pid" 2>/dev/null; then
+      force_kill_process_tree "$run_pid"
+    fi
+    wait "$run_pid" 2>/dev/null || true
+  fi
+}
+
 echo "=== Borb RISCOF Run ==="
 
 if [[ "$SKIP_GEN" = false ]]; then
@@ -549,6 +685,7 @@ if [[ -n "$TESTS" ]]; then
   mkdir -p "$WORK_DIR"
   FULL_TESTLIST="$WORK_DIR/test_list.yaml"
   SUBSET_TESTLIST="$WORK_DIR/test_list.subset.yaml"
+  FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
 
   if [[ ! -f "$FULL_TESTLIST" ]]; then
     echo "Generating full test list first..."
@@ -578,7 +715,7 @@ for test_path, meta in data.items():
                 matched = True
                 break
         else:
-            if base == n or test_path.endswith(n):
+            if base == n or test_path == n or test_path.endswith("/" + n):
                 matched = True
                 break
     if matched:
@@ -594,36 +731,54 @@ with open(out, "w", encoding="utf-8") as f:
 print(f"Wrote subset testlist: {out} ({len(picked)} tests)")
 PY
 
+  FILTER_COUNTS="$(filter_testlist "$SUBSET_TESTLIST" "$FILTERED_TESTLIST" "$EXCLUDE_HIGHER_VM")"
+  FILTER_INPUT_COUNT="${FILTER_COUNTS%% *}"
+  FILTER_OUTPUT_COUNT="${FILTER_COUNTS##* }"
+  if [[ "$EXCLUDE_HIGHER_VM" = true && "$FILTER_INPUT_COUNT" != "$FILTER_OUTPUT_COUNT" ]]; then
+    echo "Filtered higher-VM tests from subset: ${FILTER_INPUT_COUNT} -> ${FILTER_OUTPUT_COUNT}"
+  fi
+
   RUN_CMD+=(--work-dir="$WORK_DIR")
-  RUN_CMD+=(--testfile="$SUBSET_TESTLIST")
-  PROGRESS_TESTLIST="$SUBSET_TESTLIST"
+  RUN_CMD+=(--testfile="$FILTERED_TESTLIST")
+  PROGRESS_TESTLIST="$FILTERED_TESTLIST"
 else
   mkdir -p "$WORK_DIR"
   FULL_TESTLIST="$WORK_DIR/test_list.yaml"
+  FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
   if [[ "$CLEAN" = true || ! -f "$FULL_TESTLIST" ]]; then
     echo "Generating full test list first..."
     riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
   fi
+  FILTER_COUNTS="$(filter_testlist "$FULL_TESTLIST" "$FILTERED_TESTLIST" "$EXCLUDE_HIGHER_VM")"
+  FILTER_INPUT_COUNT="${FILTER_COUNTS%% *}"
+  FILTER_OUTPUT_COUNT="${FILTER_COUNTS##* }"
+  if [[ "$EXCLUDE_HIGHER_VM" = true && "$FILTER_INPUT_COUNT" != "$FILTER_OUTPUT_COUNT" ]]; then
+    echo "Filtered higher-VM tests from full run: ${FILTER_INPUT_COUNT} -> ${FILTER_OUTPUT_COUNT}"
+  fi
   RUN_CMD+=(--work-dir="$WORK_DIR")
-  PROGRESS_TESTLIST="$FULL_TESTLIST"
+  RUN_CMD+=(--testfile="$FILTERED_TESTLIST")
+  PROGRESS_TESTLIST="$FILTERED_TESTLIST"
 fi
 
 TOTAL_TESTS="$(count_tests_in_yaml "$PROGRESS_TESTLIST")"
 echo "Progress tracking: ${TOTAL_TESTS} tests in this run"
+clean_selected_test_artifacts "$PROGRESS_TESTLIST" "$CLEAN"
 
 RESOLVED_BUDGET_FILE="$WORK_DIR/resolved_budgets.json"
-python3 - "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" "$TESTS" "$CYCLE_BUDGET_MODE" "$CYCLE_BUDGET_SCALE" "$CYCLE_BUDGET_SLACK" "/Users/mahir/fun/borb/verif/automation/overnight_queue.json" <<'PY'
+python3 - "$CYCLE_BUDGET_FILE" "$RESOLVED_BUDGET_FILE" "$PROGRESS_TESTLIST" "$CYCLE_BUDGET_MODE" "$CYCLE_BUDGET_SCALE" "$CYCLE_BUDGET_SLACK" "/Users/mahir/fun/borb/verif/automation/overnight_queue.json" <<'PY'
 import json
 import os
 import sys
 from pathlib import Path
+import yaml
 
-budget_file, out_file, tests_csv, mode, scale_override, slack_override, queue_file = sys.argv[1:]
-tests = [t.strip() for t in tests_csv.split(",") if t.strip()]
+budget_file, out_file, testlist_file, mode, scale_override, slack_override, queue_file = sys.argv[1:]
 scale_override = float(scale_override) if scale_override else None
 slack_override = int(slack_override) if slack_override else None
 
 DEFAULTS = {
+    "vm.sv39": {"scale": 3.0, "slack": 1000},
+    "vm.higher": {"scale": 2.0, "slack": 1000},
     "rv32f.move": {"scale": 4.0, "slack": 500},
     "rv32f.compare": {"scale": 4.0, "slack": 500},
     "rv32f.classify": {"scale": 4.0, "slack": 500},
@@ -639,6 +794,8 @@ DEFAULTS = {
     "default": {"scale": 6.0, "slack": 2000},
 }
 FALLBACK_BUDGETS = {
+    "vm.sv39": 120000,
+    "vm.higher": 120000,
     "rv32f.move": 200000,
     "rv32f.compare": 200000,
     "rv32f.classify": 200000,
@@ -656,6 +813,10 @@ FALLBACK_BUDGETS = {
 
 def classify(test_name):
     t = test_name.lower()
+    if t.startswith("vm_") or t.startswith("sv39_"):
+        return "vm.sv39", "vm.sv39"
+    if t.startswith("sv48_") or t.startswith("sv57_"):
+        return "vm.higher", "vm.higher"
     if t.startswith("fmv."):
         return "rv32f.move", "rv32f.move"
     if t.startswith("fclass"):
@@ -682,6 +843,10 @@ def classify(test_name):
         return "zb.core", "zb.core"
     return "rv64.base", "default"
 
+with open(testlist_file, "r", encoding="utf-8") as f:
+    testlist_data = yaml.safe_load(f) or {}
+tests = [os.path.basename(test_path) for test_path in testlist_data.keys()]
+
 queue_map = {}
 if Path(queue_file).exists():
     with open(queue_file, "r", encoding="utf-8") as f:
@@ -707,11 +872,17 @@ for test in tests:
     slack = slack_override if slack_override is not None else defaults["slack"]
     test_db = db.get("tests", {}).get(test, {})
     family_db = db.get("families", {}).get(budget_class, {})
-    budget = test_db.get("budget")
-    if budget is None:
-        budget = family_db.get("budget")
-    if budget is None:
-        budget = FALLBACK_BUDGETS.get(budget_class, FALLBACK_BUDGETS["default"])
+    max_pass_cycles = test_db.get("max_pass_cycles")
+    if max_pass_cycles is None:
+        max_pass_cycles = family_db.get("max_pass_cycles")
+    if max_pass_cycles is not None:
+        budget = int(max_pass_cycles * scale + slack)
+    else:
+        budget = test_db.get("budget")
+        if budget is None:
+            budget = family_db.get("budget")
+        if budget is None:
+            budget = FALLBACK_BUDGETS.get(budget_class, FALLBACK_BUDGETS["default"])
     if mode == "strict" and budget is None:
         raise SystemExit(f"Strict budget mode requires budget for {test}")
     resolved["tests"][test] = {
@@ -733,6 +904,18 @@ export BORB_CYCLE_BUDGET_FILE="$CYCLE_BUDGET_FILE"
 export BORB_RESOLVED_BUDGET_FILE="$RESOLVED_BUDGET_FILE"
 export BORB_MAX_CYCLES_DEFAULT="200000"
 
+RUN_PID=""
+MONITOR_PID=""
+
+handle_interrupt() {
+  echo
+  echo "Interrupted, stopping RISCOF subprocesses..."
+  cleanup_background_jobs "$MONITOR_PID" "$RUN_PID"
+  exit 130
+}
+
+trap 'handle_interrupt' INT TERM
+
 set +e
 "${RUN_CMD[@]}" &
 RUN_PID=$!
@@ -742,7 +925,11 @@ MONITOR_PID=$!
 wait "$RUN_PID"
 RUN_STATUS=$?
 wait "$MONITOR_PID" 2>/dev/null
+RUN_PID=""
+MONITOR_PID=""
 set -e
+
+trap - INT TERM
 
 FINAL_SNAPSHOT="$(progress_snapshot "$WORK_DIR" "$RUN_START_EPOCH")"
 FINAL_DONE="${FINAL_SNAPSHOT%% *}"
