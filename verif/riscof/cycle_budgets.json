@@ -4730,6 +4730,14 @@
       "scale": 3.0,
       "slack": 1000
     },
+    "vm_VA_all_ones_S_mode.S": {
+      "budget": 12955,
+      "budget_class": "vm.sv39",
+      "family": "vm.sv39",
+      "max_pass_cycles": 3985,
+      "scale": 3.0,
+      "slack": 1000
+    },
     "vm_VA_all_zeros_S_mode.S": {
       "budget": 12847,
       "budget_class": "vm.sv39",
@@ -4827,20 +4835,20 @@
       "slack": 1000
     },
     "vm_mstatus_sbe_set_S_mode.S": {
-      "budget": 60974,
-      "budget_class": "default",
-      "family": "rv64.base",
+      "budget": 30487,
+      "budget_class": "vm.sv39",
+      "family": "vm.sv39",
       "max_pass_cycles": 9829,
-      "scale": 6.0,
-      "slack": 2000
+      "scale": 3.0,
+      "slack": 1000
     },
     "vm_mstatus_sbe_set_sum_set_S_mode.S": {
-      "budget": 60998,
-      "budget_class": "default",
-      "family": "rv64.base",
+      "budget": 30499,
+      "budget_class": "vm.sv39",
+      "family": "vm.sv39",
       "max_pass_cycles": 9833,
-      "scale": 6.0,
-      "slack": 2000
+      "scale": 3.0,
+      "slack": 1000
     },
     "vm_mstatus_tvm_test.S": {
       "budget": 9901,

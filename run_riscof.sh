@@ -681,8 +681,7 @@ fi
 WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work"
 
 if [[ -n "$TESTS" ]]; then
-  WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work_subset_$(date +%Y%m%d_%H%M%S)"
-  mkdir -p "$WORK_DIR"
+  WORK_DIR="$(mktemp -d "$(dirname "$CONFIG_PATH")/riscof_work_subset_$(date +%Y%m%d_%H%M%S)_XXXXXX")"
   FULL_TESTLIST="$WORK_DIR/test_list.yaml"
   SUBSET_TESTLIST="$WORK_DIR/test_list.subset.yaml"
   FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
