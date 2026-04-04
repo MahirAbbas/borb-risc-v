@@ -995,7 +995,7 @@ case class TrapCsrBackend(
     loadBytes := U(1, 64 bits)
     switch(up(Decoder.MicroCode)) {
       is(uopLH, uopLHU) { loadBytes := U(2, 64 bits) }
-      is(uopLW, uopLWU) { loadBytes := U(4, 64 bits) }
+      is(uopLW, uopLWU, uopFLW) { loadBytes := U(4, 64 bits) }
       is(uopLD) { loadBytes := U(8, 64 bits) }
     }
 
@@ -1003,7 +1003,7 @@ case class TrapCsrBackend(
     storeBytes := U(1, 64 bits)
     switch(up(Decoder.MicroCode)) {
       is(uopSH) { storeBytes := U(2, 64 bits) }
-      is(uopSW) { storeBytes := U(4, 64 bits) }
+      is(uopSW, uopFSW) { storeBytes := U(4, 64 bits) }
       is(uopSD) { storeBytes := U(8, 64 bits) }
     }
 

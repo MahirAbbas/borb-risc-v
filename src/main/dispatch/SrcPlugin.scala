@@ -4,10 +4,6 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
-import spinal.lib.logic.DecodingSpec
-import spinal.lib.logic.Masked
-
-import scala.collection.mutable
 import borb.frontend.Imm_Select
 
 case class IMM(instruction: Bits) extends Area {
@@ -52,7 +48,7 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     val sext = Bits(64 bits).simPublic()
     sext := B(0, 64 bits)
     val imm = new IMM(up(borb.frontend.Decoder.DECODED_INSTRUCTION))
-    switch(up(IMMSEL)) {
+    switch(up(IssueSemantics.PROPS).immSel) {
       is(Imm_Select.I_IMM) { sext := imm.i_sext.asBits }
       is(Imm_Select.S_IMM) { sext := imm.s_sext.asBits }
       is(Imm_Select.B_IMM) { sext := imm.b_sext.asBits }
@@ -62,16 +58,14 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     }
   }
 
-  import borb.frontend.REGFILE._
-
   val rs1Reader = (new RegFileRead())
   val rs2Reader = (new RegFileRead())
 
   val regfileread = new stage.Area {
     val regfile = new IntRegFile(dataWidth = 64)
 
-    rs1Reader.valid := (RS1TYPE === RSTYPE.RS_INT && up(VALID) === True)
-    rs2Reader.valid := (RS2TYPE === RSTYPE.RS_INT && up(VALID) === True)
+    rs1Reader.valid := up(IssueSemantics.PROPS).readsIntRs1 && up(VALID)
+    rs2Reader.valid := up(IssueSemantics.PROPS).readsIntRs2 && up(VALID)
     rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
     rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
 
@@ -115,9 +109,9 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     }
 
     val rs1Data =
-      (up(RS1TYPE) === RSTYPE.RS_INT) ? resolveInt(rs1Reader) | B(0, 64 bits)
+      up(IssueSemantics.PROPS).readsIntRs1 ? resolveInt(rs1Reader) | B(0, 64 bits)
     val rs2Data =
-      (up(RS2TYPE) === RSTYPE.RS_INT) ? resolveInt(rs2Reader) | B(0, 64 bits)
+      up(IssueSemantics.PROPS).readsIntRs2 ? resolveInt(rs2Reader) | B(0, 64 bits)
 
     down(RS1) := rs1Data
     down(RS2) := rs2Data

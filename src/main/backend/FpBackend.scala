@@ -64,45 +64,46 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     }
 
     val insn = up(Decoder.DECODED_INSTRUCTION)
+    val microCode = up(Decoder.MicroCode)
     val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(Dispatch.SENDTOAGU)
     val aluFire = up(Decoder.VALID) && up(LANE_SEL) && up(Dispatch.SENDTOALU)
 
-    val isFlwInsn = (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
-    val isFswInsn = (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
-    val isFcvtWsInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00000")
-    val isFcvtWuSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00001")
-    val isFcvtLsInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00010")
-    val isFcvtLuSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000") && (insn(24 downto 20) === B"00011")
-    val isFcvtSwInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00000")
-    val isFcvtSwuInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00001")
-    val isFcvtSlInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00010")
-    val isFcvtSluInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000") && (insn(24 downto 20) === B"00011")
-    val isFaddSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0000000")
-    val isFsubSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0000100")
-    val isFmulSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001000")
-    val isFdivSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001100")
-    val isFsqrtSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0101100") && (insn(24 downto 20) === B"00000")
-    val isFmaddSInsn = (insn(6 downto 0) === B"1000011") && (insn(26 downto 25) === B"00")
-    val isFmsubSInsn = (insn(6 downto 0) === B"1000111") && (insn(26 downto 25) === B"00")
-    val isFnmsubSInsn = (insn(6 downto 0) === B"1001011") && (insn(26 downto 25) === B"00")
-    val isFnmaddSInsn = (insn(6 downto 0) === B"1001111") && (insn(26 downto 25) === B"00")
-    val isFmvXWInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    val isFmvWXInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1111000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    val isFclassSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") && (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"001")
-    val isFsgnjSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"000")
-    val isFsgnjnSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"001")
-    val isFsgnjxSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") && (insn(14 downto 12) === B"010")
-    val isFminSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010100") && (insn(14 downto 12) === B"000")
-    val isFmaxSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010100") && (insn(14 downto 12) === B"001")
-    val isFleSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"000")
-    val isFltSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"001")
-    val isFeqSInsn = (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") && (insn(14 downto 12) === B"010")
+    val isFlwOp = microCode === uopFLW
+    val isFswOp = microCode === uopFSW
+    val isFcvtWsOp = microCode === uopFCVTWS
+    val isFcvtWuSOp = microCode === uopFCVTWUS
+    val isFcvtLsOp = microCode === uopFCVTLS
+    val isFcvtLuSOp = microCode === uopFCVTLUS
+    val isFcvtSwOp = microCode === uopFCVTSW
+    val isFcvtSwuOp = microCode === uopFCVTSWU
+    val isFcvtSlOp = microCode === uopFCVTSL
+    val isFcvtSluOp = microCode === uopFCVTSLU
+    val isFaddSOp = microCode === uopFADDS
+    val isFsubSOp = microCode === uopFSUBS
+    val isFmulSOp = microCode === uopFMULS
+    val isFdivSOp = microCode === uopFDIVS
+    val isFsqrtSOp = microCode === uopFSQRTS
+    val isFmaddSOp = microCode === uopFMADDS
+    val isFmsubSOp = microCode === uopFMSUBS
+    val isFnmsubSOp = microCode === uopFNMSUBS
+    val isFnmaddSOp = microCode === uopFNMADDS
+    val isFmvXWOp = microCode === uopFMVXW
+    val isFmvWXOp = microCode === uopFMVWX
+    val isFclassSOp = microCode === uopFCLASSS
+    val isFsgnjSOp = microCode === uopFSGNJS
+    val isFsgnjnSOp = microCode === uopFSGNJNS
+    val isFsgnjxSOp = microCode === uopFSGNJXS
+    val isFminSOp = microCode === uopFMINS
+    val isFmaxSOp = microCode === uopFMAXS
+    val isFleSOp = microCode === uopFLES
+    val isFltSOp = microCode === uopFLTS
+    val isFeqSOp = microCode === uopFEQS
 
-    val flwRd = insn(11 downto 7).asUInt
-    val fcvtSRd = insn(11 downto 7).asUInt
-    val fpRs1Addr = insn(19 downto 15).asUInt
-    val fpRs2Addr = insn(24 downto 20).asUInt
-    val fpRs3Addr = insn(31 downto 27).asUInt
+    val flwRd = up(Decoder.RD_ADDR).asUInt
+    val fcvtSRd = up(Decoder.RD_ADDR).asUInt
+    val fpRs1Addr = up(Decoder.RS1_ADDR).asUInt
+    val fpRs2Addr = up(Decoder.RS2_ADDR).asUInt
+    val fpRs3Addr = up(Decoder.RS3_ADDR).asUInt
 
     fpRegFile.io.reads(0).valid := True
     fpRegFile.io.reads(0).address := fpRs1Addr
@@ -115,11 +116,11 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val fpRs2Data = fpRegFile.io.reads(1).data
     val fpRs3Data = fpRegFile.io.reads(2).data
 
-    when(aguFire && isFswInsn) {
+    when(aguFire && isFswOp) {
       lsu.logic.rawStoreData.allowOverride := fpRs2Data(31 downto 0).resize(64)
     }
 
-    val flwWritebackFire = aguFire && isFlwInsn && lsu.logic.responseArriving && !lsu.logic.suppress
+    val flwWritebackFire = aguFire && isFlwOp && lsu.logic.responseArriving && !lsu.logic.suppress
     when(flwWritebackFire) {
       fpWrite.valid := True
       fpWrite.address := flwRd
@@ -130,26 +131,19 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       down(WriteBack.RESULT).valid.allowOverride := False
     }
 
-    val isFcvtWsOp = (up(Decoder.MicroCode) === uopFCVTWS) || isFcvtWsInsn
-    val isFcvtWuSOp = (up(Decoder.MicroCode) === uopFCVTWUS) || isFcvtWuSInsn
-    val isFcvtLsOp = (up(Decoder.MicroCode) === uopFCVTLS) || isFcvtLsInsn
-    val isFcvtLuSOp = (up(Decoder.MicroCode) === uopFCVTLUS) || isFcvtLuSInsn
-    val isFmvXWOp = (up(Decoder.MicroCode) === uopFMVXW) || isFmvXWInsn
-    val isFmvWXOp = (up(Decoder.MicroCode) === uopFMVWX) || isFmvWXInsn
-
     val fcvtFToIntFire = aluFire && (isFcvtWsOp || isFcvtWuSOp || isFcvtLsOp || isFcvtLuSOp)
-    val fcvtSToFpFire = aluFire && (isFcvtSwInsn || isFcvtSwuInsn || isFcvtSlInsn || isFcvtSluInsn)
+    val fcvtSToFpFire = aluFire && (isFcvtSwOp || isFcvtSwuOp || isFcvtSlOp || isFcvtSluOp)
     val fmvXWFire = aluFire && isFmvXWOp
     val fmvWXFire = aluFire && isFmvWXOp
-    val faddsubSFire = aluFire && (isFaddSInsn || isFsubSInsn)
-    val fmulSFire = aluFire && isFmulSInsn
-    val fdivSFire = aluFire && isFdivSInsn
-    val fsqrtSFire = aluFire && isFsqrtSInsn
-    val fmaSFire = aluFire && (isFmaddSInsn || isFmsubSInsn || isFnmsubSInsn || isFnmaddSInsn)
-    val fclassSFire = aluFire && isFclassSInsn
-    val fsgnjSFire = aluFire && (isFsgnjSInsn || isFsgnjnSInsn || isFsgnjxSInsn)
-    val fminmaxSFire = aluFire && (isFminSInsn || isFmaxSInsn)
-    val fcmpSFire = aluFire && (isFleSInsn || isFltSInsn || isFeqSInsn)
+    val faddsubSFire = aluFire && (isFaddSOp || isFsubSOp)
+    val fmulSFire = aluFire && isFmulSOp
+    val fdivSFire = aluFire && isFdivSOp
+    val fsqrtSFire = aluFire && isFsqrtSOp
+    val fmaSFire = aluFire && (isFmaddSOp || isFmsubSOp || isFnmsubSOp || isFnmaddSOp)
+    val fclassSFire = aluFire && isFclassSOp
+    val fsgnjSFire = aluFire && (isFsgnjSOp || isFsgnjnSOp || isFsgnjxSOp)
+    val fminmaxSFire = aluFire && (isFminSOp || isFmaxSOp)
+    val fcmpSFire = aluFire && (isFleSOp || isFltSOp || isFeqSOp)
 
     val fcvtRmRaw = Mux(insn(14 downto 12) === B"111", frm, insn(14 downto 12))
     val fcvtRm = Bits(3 bits)
@@ -279,8 +273,8 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     when(fcvtSToFpFire) {
       val srcInt64 = up(SrcPlugin.RS1).asUInt
       val srcInt32 = up(SrcPlugin.RS1)(31 downto 0).asUInt
-      val srcFrom32 = isFcvtSwInsn || isFcvtSwuInsn
-      val srcSigned = isFcvtSwInsn || isFcvtSlInsn
+      val srcFrom32 = isFcvtSwOp || isFcvtSwuOp
+      val srcSigned = isFcvtSwOp || isFcvtSlOp
       val srcSign = srcSigned && Mux(srcFrom32, srcInt32.msb, srcInt64.msb)
       val srcMag = UInt(64 bits)
       srcMag := Mux(srcFrom32, srcInt32.resize(64), srcInt64)
@@ -356,9 +350,9 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     }
 
     when(faddsubSFire) {
-      val addSub = FpuAddSub.addSubS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), fcvtRm, isFsubSInsn)
+      val addSub = FpuAddSub.addSubS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), fcvtRm, isFsubSOp)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## addSub.data
       requestFlags(addSub.flags)
     }
@@ -366,7 +360,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     when(fmulSFire) {
       val mul = FpuMul.mulS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), fcvtRm)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## mul.data
       requestFlags(mul.flags)
     }
@@ -374,7 +368,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     when(fdivSFire) {
       val div = FpuDivSqrt.divS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), fcvtRm)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## div.data
       requestFlags(div.flags)
     }
@@ -382,7 +376,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     when(fsqrtSFire) {
       val sqrt = FpuDivSqrt.sqrtS(fpRs1Data(31 downto 0), fcvtRm)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## sqrt.data
       requestFlags(sqrt.flags)
     }
@@ -393,12 +387,12 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
         fpRs2Data(31 downto 0),
         fpRs3Data(31 downto 0),
         fcvtRm,
-        isFmsubSInsn,
-        isFnmsubSInsn,
-        isFnmaddSInsn
+        isFmsubSOp,
+        isFnmsubSOp,
+        isFnmaddSOp
       )
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## fma.data
       requestFlags(fma.flags)
     }
@@ -415,23 +409,23 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     }
 
     when(fsgnjSFire) {
-      val out = FpuScalarMisc.signInjectS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFsgnjnSInsn, isFsgnjxSInsn)
+      val out = FpuScalarMisc.signInjectS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFsgnjnSOp, isFsgnjxSOp)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## out
     }
 
     when(fcmpSFire) {
-      val cmp = FpuScalarMisc.compareS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFeqSInsn, isFltSInsn, isFleSInsn)
+      val cmp = FpuScalarMisc.compareS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFeqSOp, isFltSOp, isFleSOp)
       requestFlags(cmp.flags)
       requestIntResult(up(Decoder.RD_ADDR).asUInt, cmp.result)
     }
 
     when(fminmaxSFire) {
-      val minMax = FpuScalarMisc.minMaxS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFminSInsn)
+      val minMax = FpuScalarMisc.minMaxS(fpRs1Data(31 downto 0), fpRs2Data(31 downto 0), isFminSOp)
       requestFlags(minMax.flags)
       fpWrite.valid := True
-      fpWrite.address := insn(11 downto 7).asUInt
+      fpWrite.address := up(Decoder.RD_ADDR).asUInt
       fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## minMax.data
     }
   }

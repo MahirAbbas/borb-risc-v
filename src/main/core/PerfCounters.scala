@@ -143,10 +143,10 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
       instret := instret + 1
 
       switch(up(borb.frontend.Decoder.MicroCode)) {
-        is(uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD) {
+        is(uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD, uopFLW) {
           loads := loads + 1
         }
-        is(uopSB, uopSH, uopSW, uopSD) {
+        is(uopSB, uopSH, uopSW, uopSD, uopFSW) {
           stores := stores + 1
         }
         is(uopJAL, uopJALR) {

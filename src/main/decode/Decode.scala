@@ -21,22 +21,12 @@ object Decoder extends AreaObject {
   val IS_COMPRESSED = Payload(Bool())
 
   val LEGAL = Payload(YESNO())
-  val IS_FP = Payload(YESNO())
-  val EXECUTION_UNIT = Payload(ExecutionUnitEnum())
-  val RDTYPE = Payload(REGFILE.RDTYPE())
-  val RS1TYPE = Payload(REGFILE.RSTYPE())
-  val RS2TYPE = Payload(REGFILE.RSTYPE())
-  val FSR3EN = Payload(YESNO())
-  val IMMSEL = Payload(Imm_Select())
   val MicroCode = Payload(common.MicroCode())
-  val IS_BR = Payload(YESNO())
-  val IS_W = Payload(YESNO())
-  val USE_LDQ = Payload(YESNO())
-  val USE_STQ = Payload(YESNO())
 
   val RD_ADDR = Payload(Bits(5 bits))
   val RS1_ADDR = Payload(Bits(5 bits))
   val RS2_ADDR = Payload(Bits(5 bits))
+  val RS3_ADDR = Payload(Bits(5 bits))
 
   val VALID = Payload(Bool())
 }
@@ -64,50 +54,28 @@ object YESNO extends SpinalEnum {
   val Y, N = newElement()
 }
 
-// object AluOp extends SpinalEnum(binarySequential) {
-//   val add, sub, sll, srl, sra, or, xor, slt, sltu, and, na, lui = newElement()
-//   val addw, sllw, sraw, srlw, subw = newElement()
-//   val jal, jalr = newElement()
-//   val beq, bne, bge, bgeu, blt, bltu = newElement()
-//   val auipc = newElement()
-//
-// }
-
 case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int = 64) extends Area {
   import DecodeTable._
-  import ExecutionUnitEnum._
   import Decoder._
 
   val all = mutable.LinkedHashSet[Masked]()
   val payloads = Seq(
-    LEGAL,
-    IS_FP,
-    EXECUTION_UNIT,
-    RDTYPE,
-    RS1TYPE,
-    RS2TYPE,
-    FSR3EN,
-    IMMSEL,
-    MicroCode,
-    IS_BR,
-    IS_W,
-    USE_LDQ,
-    USE_STQ
+    LEGAL -> 0,
+    MicroCode -> 8
   )
 
-  val specs = payloads.map(k => new DecodingSpec(k)).zip(payloads)
+  val specs = payloads.map { case (payload, column) => (new DecodingSpec(payload), payload, column) }
 
-  assert(payloads.length == DecodeTable.X_table(0)._2.length)
+  assert(DecodeTable.X_table(0)._2.length > 8)
   for ((instr, vals) <- DecodeTable.X_table) {
     all += Masked(instr)
-    for (((spec, signal), i) <- specs.zipWithIndex) {
-      // each spec is the DecodingSpec and its associated CtrlSig
-      spec.addNeeds(Masked(instr), Masked(vals(i)))
+    for ((spec, _, column) <- specs) {
+      spec.addNeeds(Masked(instr), Masked(vals(column)))
     }
   }
 
   //set defaults for sigs as nop
-  specs.zipWithIndex.foreach(e => e._1._1.setDefault(Masked(nop(e._2))))
+  specs.foreach { case (spec, _, column) => spec.setDefault(Masked(nop(column))) }
 
 
   import spinal.core.sim._
@@ -135,11 +103,8 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
     }
     VALID := Symplify(decodeInst, all) && !decodeIllegal
 
-    for (spec <- specs) {
-      // down(spec._2).assignDontCare()
-      // when(up.isFiring) {
-        down(spec._2).assignFromBits(spec._1.build(decodeInst, all).asBits)
-      // }
+    for ((spec, signal, _) <- specs) {
+      down(signal).assignFromBits(spec.build(decodeInst, all).asBits)
     }
 
   }
@@ -148,6 +113,7 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
     down(Decoder.RD_ADDR) := down(Decoder.DECODED_INSTRUCTION)(11 downto 7)
     down(Decoder.RS1_ADDR) := down(Decoder.DECODED_INSTRUCTION)(19 downto 15)
     down(Decoder.RS2_ADDR) := down(Decoder.DECODED_INSTRUCTION)(24 downto 20)
+    down(Decoder.RS3_ADDR) := down(Decoder.DECODED_INSTRUCTION)(31 downto 27)
   }
 
   // branchResolved signal - set by branch.scala when a branch resolves

@@ -5,8 +5,6 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.frontend.Decoder._
 import borb.frontend.YESNO
-import borb.frontend.Imm_Select
-import borb.frontend.ExecutionUnitEnum.ALU
 // import borb.dispatch.SrcPlugin.IMMED
 
 import borb.dispatch._
@@ -150,7 +148,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
       val isX0 = up(RD_ADDR).asUInt === 0
       down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
       down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
-      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID) && (up(RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT)
+      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID) && up(IssueSemantics.PROPS).writesIntRd
     }
   }
 }

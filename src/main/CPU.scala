@@ -4,10 +4,12 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
+import borb.fetch.FrontendRedirectReason
 import borb.backend.{FpBackend, IntegerBackend, TrapCsrBackend}
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
+import borb.dispatch.IssueSemantics
 import borb.execute.IntAlu
 import borb.execute.IntAlu._
 import borb.execute.{DataBus, DataBusCmd}
@@ -116,40 +118,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.LEGAL).setAsReg().init(borb.frontend.YESNO.N)
     }
     pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_FP).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.EXECUTION_UNIT).setAsReg().init(borb.frontend.ExecutionUnitEnum.NA)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RDTYPE).setAsReg().init(borb.frontend.REGFILE.RDTYPE.RD_NA)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS1TYPE).setAsReg().init(borb.frontend.REGFILE.RSTYPE.RS_NA)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS2TYPE).setAsReg().init(borb.frontend.REGFILE.RSTYPE.RS_NA)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.FSR3EN).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IMMSEL).setAsReg().init(borb.frontend.Imm_Select.N_IMM)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.MicroCode).setAsReg().init(borb.common.MicroCode.uopNOP)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_BR).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_W).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USE_LDQ).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USE_STQ).setAsReg().init(borb.frontend.YESNO.N)
     }
     pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RD_ADDR).setAsReg().init(0)
@@ -161,7 +130,13 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS2_ADDR).setAsReg().init(0)
     }
     pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS3_ADDR).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.VALID).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(IssueSemantics.PROPS).setAsReg().init(IssuePropertyBundle().getZero)
     }
     // Keep dispatch lane routing instruction-local once an instruction leaves
     // dispatch. Otherwise a stalled backend instruction can observe a newer
@@ -201,6 +176,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     //pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
+    pc.redirect.setIdle()
     val fetch = Fetch(
       pipeline.ctrl(1),
       pipeline.ctrl(2),
@@ -255,11 +231,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val srcHasControlFlow = srcCtrl.up.isValid &&
       srcCtrl(Decoder.VALID) &&
       srcCtrl(borb.common.Common.LANE_SEL) &&
-      (srcCtrl(Decoder.EXECUTION_UNIT) === borb.frontend.ExecutionUnitEnum.BR)
+      srcCtrl(IssueSemantics.PROPS).isControlFlow
     val exeHasControlFlow = exeCtrl.up.isValid &&
       exeCtrl(Decoder.VALID) &&
       exeCtrl(borb.common.Common.LANE_SEL) &&
-      (exeCtrl(Decoder.EXECUTION_UNIT) === borb.frontend.ExecutionUnitEnum.BR)
+      exeCtrl(IssueSemantics.PROPS).isControlFlow
     val controlHazardBusy = srcHasControlFlow || exeHasControlFlow
     Array(2, 3, 4).map(pipeline.ctrl(_)).foreach { ctrl =>
       ctrl.haltWhen(controlHazardBusy)
@@ -269,22 +245,22 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val exeIntProducer = exeCtrl.up.isValid &&
       exeCtrl(Decoder.VALID) &&
       exeCtrl(borb.common.Common.LANE_SEL) &&
-      (exeCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+      exeCtrl(IssueSemantics.PROPS).writesIntRd &&
       (exeCtrl(Decoder.RD_ADDR) =/= 0)
-    val srcNeedsExeRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+    val srcNeedsExeRdRs1 = srcCtrl(IssueSemantics.PROPS).readsIntRs1 &&
       (srcCtrl(Decoder.RS1_ADDR) === exeCtrl(Decoder.RD_ADDR))
-    val srcNeedsExeRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+    val srcNeedsExeRdRs2 = srcCtrl(IssueSemantics.PROPS).readsIntRs2 &&
       (srcCtrl(Decoder.RS2_ADDR) === exeCtrl(Decoder.RD_ADDR))
     srcCtrl.haltWhen(exeIntProducer && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
 
     val wbIntProducer = wbCtrl.up.isValid &&
       wbCtrl(Decoder.VALID) &&
       wbCtrl(borb.common.Common.LANE_SEL) &&
-      (wbCtrl(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+      wbCtrl(IssueSemantics.PROPS).writesIntRd &&
       (wbCtrl(Decoder.RD_ADDR) =/= 0)
-    val srcNeedsWbRdRs1 = (srcCtrl(Decoder.RS1TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+    val srcNeedsWbRdRs1 = srcCtrl(IssueSemantics.PROPS).readsIntRs1 &&
       (srcCtrl(Decoder.RS1_ADDR) === wbCtrl(Decoder.RD_ADDR))
-    val srcNeedsWbRdRs2 = (srcCtrl(Decoder.RS2TYPE) === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+    val srcNeedsWbRdRs2 = srcCtrl(IssueSemantics.PROPS).readsIntRs2 &&
       (srcCtrl(Decoder.RS2_ADDR) === wbCtrl(Decoder.RD_ADDR))
     srcCtrl.haltWhen(wbIntProducer && (srcNeedsWbRdRs1 || srcNeedsWbRdRs2))
 
@@ -310,9 +286,19 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
     pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
     val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
-    pc.jump.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || fenceiRedirect
-    pc.jump.payload.target := mretRedirect ? trapLogic.redirect.mretTarget |
+    pc.redirect.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || fenceiRedirect
+    pc.redirect.payload.target := mretRedirect ? trapLogic.redirect.mretTarget |
       (fenceiRedirect ? fenceiTarget | branch.logic.jumpCmd.payload.target)
+    pc.redirect.payload.reason := FrontendRedirectReason.branch
+    when(mretRedirect) {
+      pc.redirect.payload.reason := FrontendRedirectReason.mret
+    } elsewhen(fenceiRedirect) {
+      pc.redirect.payload.reason := FrontendRedirectReason.fencei
+    }
+    pc.redirect.payload.epoch := currentEpoch
+    pc.redirect.payload.flushFrontend := True
+    pc.jump.valid := pc.redirect.valid
+    pc.jump.payload.target := pc.redirect.payload.target
     pc.jump.payload.is_jump := mretRedirect || fenceiRedirect || branch.logic.jumpCmd.payload.is_jump
     pc.jump.payload.is_branch := (!mretRedirect) && (!fenceiRedirect) && branch.logic.jumpCmd.payload.is_branch
     

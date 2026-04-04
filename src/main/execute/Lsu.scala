@@ -95,6 +95,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       uopSB -> True,
       uopSH -> True,
       uopSW -> True,
+      uopFSW -> True,
       uopSD -> True,
       default -> False
     )
@@ -103,7 +104,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
     // Load Logic
     val isLoadBase = up(MicroCode).mux(
       uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
-      uopLBU -> True, uopLHU -> True, uopLWU -> True,
+      uopLBU -> True, uopLHU -> True, uopLWU -> True, uopFLW -> True,
       default -> False
     )
     val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
@@ -137,6 +138,8 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       uopLH -> (activeAddr(0) =/= False),
       uopLHU -> (activeAddr(0) =/= False),
       uopSH -> (activeAddr(0) =/= False),
+      uopFLW -> (activeAddr(1 downto 0) =/= 0),
+      uopFSW -> (activeAddr(1 downto 0) =/= 0),
       uopLW -> (activeAddr(1 downto 0) =/= 0),
       uopLWU -> (activeAddr(1 downto 0) =/= 0),
       uopSW -> (activeAddr(1 downto 0) =/= 0),
@@ -180,9 +183,11 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
       uopLBU -> B"00000001",
       uopLH -> B"00000011",
       uopLHU -> B"00000011",
+      uopFLW -> B"00001111",
       uopLW -> B"00001111",
       uopLWU -> B"00001111",
       uopLD -> B"11111111",
+      uopFSW -> B"00001111",
       uopAMOSWAPW -> B"00001111",
       uopAMOADDW -> B"00001111",
       uopAMOXORW -> B"00001111",
@@ -415,6 +420,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt) extends A
        uopLBU -> shiftedEndianLoadData(7 downto 0).resize(64),
        uopLH -> shiftedEndianLoadData(15 downto 0).asSInt.resize(64).asBits,
        uopLHU -> shiftedEndianLoadData(15 downto 0).resize(64),
+       uopFLW -> shiftedEndianLoadData(31 downto 0).resize(64),
        uopLW -> shiftedEndianLoadData(31 downto 0).asSInt.resize(64).asBits,
        uopLWU -> shiftedEndianLoadData(31 downto 0).resize(64),
        uopLD -> shiftedEndianLoadData,

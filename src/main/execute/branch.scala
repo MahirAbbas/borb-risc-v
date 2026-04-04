@@ -7,11 +7,11 @@ import spinal.lib.misc.pipeline._
 import borb.fetch.PC
 import borb.fetch.JumpCmd
 import borb.frontend.Decoder._
-import borb.frontend.ExecutionUnitEnum
 import borb.common.Common._
 import borb.common.MicroCode._
 import borb.dispatch.SrcPlugin._
 import borb.dispatch.Dispatch._
+import borb.dispatch.IssueSemantics
 import borb.frontend.YESNO
 import borb.dispatch.RegFileWrite
 
@@ -73,7 +73,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
     // Redirect must be one-shot per actual execute-stage firing transaction.
-    val isBrUnit = up(EXECUTION_UNIT) === ExecutionUnitEnum.BR
+    val isBrUnit = up(IssueSemantics.PROPS).isControlFlow
     val execFire = up.isFiring
     val doJump = (isJump || (isBranch && condition)) &&
       isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire

@@ -8,8 +8,8 @@ import spinal.lib.misc.pipeline._
 
 import borb.frontend.Decoder._
 import borb.frontend.Decoder
-import borb.frontend.ExecutionUnitEnum
 import borb.execute.WriteBack
+import borb.dispatch.IssueSemantics
 // import borb.frontend.AluOp
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
@@ -129,7 +129,10 @@ case class Dispatch(
 
   val logic = new dispatchNode.Area {
     import borb.common.Common._
+    val issueProps = IssueSemantics.classify(up(Decoder.MicroCode))
+
     down(LANE_SEL) := False
+    down(IssueSemantics.PROPS) := issueProps
 
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)
@@ -143,15 +146,15 @@ case class Dispatch(
     // LANE_SEL acts as the valid bit for the lane.
     val firing = up.isFiring
 
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
+    when(up(Decoder.VALID) && issueProps.fuMask(0)) {
       down(SENDTOALU) := True
       down(LANE_SEL) := firing
     }
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
+    when(up(Decoder.VALID) && issueProps.fuMask(1)) {
       down(SENDTOBRANCH) := True
       down(LANE_SEL) := firing
     }
-    when(up(Decoder.VALID) && up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.AGU) {
+    when(up(Decoder.VALID) && issueProps.fuMask(2)) {
       down(SENDTOAGU) := True
       down(LANE_SEL) := firing
     }
@@ -165,72 +168,6 @@ case class Dispatch(
     } else {
       Seq.fill(hzRange.tail.size)(False)
     }
-    def isFlw(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"0000111") && (insn(14 downto 12) === B"010")
-    }
-
-    def isFsw(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"0100111") && (insn(14 downto 12) === B"010")
-    }
-
-    def isFcvtFToInt(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1100000")
-    }
-
-    def isFaddsubS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") &&
-      ((insn(31 downto 25) === B"0000000") || (insn(31 downto 25) === B"0000100"))
-    }
-
-    def isFmulS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001000")
-    }
-
-    def isFdivsqrtS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") &&
-      ((insn(31 downto 25) === B"0001100") || (insn(31 downto 25) === B"0101100"))
-    }
-
-    def isFmaS(insn: Bits): Bool = {
-      ((insn(6 downto 0) === B"1000011") || (insn(6 downto 0) === B"1000111") ||
-        (insn(6 downto 0) === B"1001011") || (insn(6 downto 0) === B"1001111")) &&
-      (insn(26 downto 25) === B"00")
-    }
-
-    def isFcvtIntToF(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1101000")
-    }
-
-    def isFmvXW(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    }
-
-    def isFmvWX(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1111000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"000")
-    }
-
-    def isFclassS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1110000") &&
-      (insn(24 downto 20) === B"00000") && (insn(14 downto 12) === B"001")
-    }
-
-    def isFsgnjFamily(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010000") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
-    }
-
-    def isFminmaxS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0010100") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001"))
-    }
-
-    def isFcmpS(insn: Bits): Bool = {
-      (insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"1010000") &&
-      ((insn(14 downto 12) === B"000") || (insn(14 downto 12) === B"001") || (insn(14 downto 12) === B"010"))
-    }
-
     // Derive a combinational busy map from younger in-flight stages.
     // This avoids sticky scoreboard bits after flushes/stalls.
     val regBusy = Bits(regCount bits)
@@ -240,13 +177,13 @@ case class Dispatch(
     for ((stage, bypassReady) <- hzRange.tail.zip(bypassReadyPerStage)) {
       val stValid = stage.up.isValid && stage(Decoder.VALID) && stage(borb.common.Common.LANE_SEL)
       val stRd = stage(Decoder.RD_ADDR)
-      val stInsn = stage(Decoder.DECODED_INSTRUCTION)
+      val stProps = stage(IssueSemantics.PROPS)
       val stWritesIntRd = stValid &&
-        (stage(Decoder.RDTYPE) === borb.frontend.REGFILE.RDTYPE.RD_INT) &&
+        stProps.writesIntRd &&
         (stRd =/= 0)
       val stWritesFpRd = stValid &&
         (stRd =/= 0) &&
-        (isFlw(stInsn) || isFcvtIntToF(stInsn) || isFmvWX(stInsn) || isFsgnjFamily(stInsn) || isFminmaxS(stInsn) || isFaddsubS(stInsn) || isFmulS(stInsn) || isFdivsqrtS(stInsn) || isFmaS(stInsn))
+        stProps.writesFpRd
       when(stWritesIntRd && !bypassReady) {
         regBusy(stRd.asUInt) := True
       }
@@ -258,22 +195,18 @@ case class Dispatch(
     val writes = new dispatchNode.Area {
       val valid = up.isValid && up(Decoder.VALID)
       val rd = up(Decoder.RD_ADDR)
-      val rs1Type = up(Decoder.RS1TYPE)
-      val rs2Type = up(Decoder.RS2TYPE)
       val rs1 = up(Decoder.RS1_ADDR)
       val rs2 = up(Decoder.RS2_ADDR)
-      val insn = up(Decoder.DECODED_INSTRUCTION)
+      val rs3 = up(Decoder.RS3_ADDR)
+      val props = IssueSemantics.classify(up(Decoder.MicroCode))
 
-      val rs1Busy = (rs1Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      val rs1Busy = props.readsIntRs1 &&
         (rs1 =/= 0) && regBusy(rs1.asUInt)
-      val rs2Busy = (rs2Type === borb.frontend.REGFILE.RSTYPE.RS_INT) &&
+      val rs2Busy = props.readsIntRs2 &&
         (rs2 =/= 0) && regBusy(rs2.asUInt)
-      val fpReadsRs1 = isFcvtFToInt(insn) || isFmvXW(insn) || isFclassS(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || isFdivsqrtS(insn) || isFmaS(insn)
-      val fpRs1Busy = fpReadsRs1 && (insn(19 downto 15) =/= 0) && fpRegBusy(insn(19 downto 15).asUInt)
-      val fpReadsRs2 = isFsw(insn) || isFsgnjFamily(insn) || isFcmpS(insn) || isFminmaxS(insn) || isFaddsubS(insn) || isFmulS(insn) || ((insn(6 downto 0) === B"1010011") && (insn(31 downto 25) === B"0001100")) || isFmaS(insn)
-      val fpRs2Busy = fpReadsRs2 && (insn(24 downto 20) =/= 0) && fpRegBusy(insn(24 downto 20).asUInt)
-      val fpReadsRs3 = isFmaS(insn)
-      val fpRs3Busy = fpReadsRs3 && (insn(31 downto 27) =/= 0) && fpRegBusy(insn(31 downto 27).asUInt)
+      val fpRs1Busy = props.readsFpRs1 && (rs1 =/= 0) && fpRegBusy(rs1.asUInt)
+      val fpRs2Busy = props.readsFpRs2 && (rs2 =/= 0) && fpRegBusy(rs2.asUInt)
+      val fpRs3Busy = props.readsFpRs3 && (rs3 =/= 0) && fpRegBusy(rs3.asUInt)
 
       val hazard = valid && (rs1Busy || rs2Busy || fpRs1Busy || fpRs2Busy || fpRs3Busy)
       hazard.simPublic()
