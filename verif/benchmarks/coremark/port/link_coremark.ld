@@ -20,17 +20,19 @@ SECTIONS {
     *(.rodata .rodata.*)
   } > RAM
 
-  .tohost : ALIGN(16) {
+  .tohost ALIGN(0x1000) : {
     *(.tohost)
   } > RAM
 
-  .data : ALIGN(16) {
+  .data ALIGN(0x1000) : {
     *(.data .data.*)
   } > RAM
 
   .bss (NOLOAD) : ALIGN(16) {
+    __bss_start = .;
     *(.bss .bss.*)
     *(COMMON)
+    __bss_end = .;
   } > RAM
 
   .signature : ALIGN(16) {

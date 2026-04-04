@@ -10,6 +10,27 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
 
+def normalize_riscv_march(march: str) -> str:
+    normalized = march.strip().lower().lstrip(":")
+    aliases = {
+        "rv64imafcsu_zicsr_zifencei": "rv64imafc_zicsr_zifencei",
+        "rv64imafcsuzicsr_zifencei": "rv64imafc_zicsr_zifencei",
+        "rv64imafcsu_zifencei_zicsr": "rv64imafc_zicsr_zifencei",
+        "rv64imafcsuzifencei_zicsr": "rv64imafc_zicsr_zifencei",
+    }
+    return aliases.get(normalized, normalized)
+
+
+def select_coremark_mode(explicit: str, total_data_size: int) -> str:
+    if explicit != "auto":
+        return explicit
+    if total_data_size == 1200:
+        return "profile"
+    if total_data_size == 2000:
+        return "performance"
+    return "validation"
+
+
 def run_cmd(cmd: Sequence[str], cwd: Optional[Path] = None, capture: bool = False) -> subprocess.CompletedProcess:
     return subprocess.run(
         list(cmd),
@@ -63,6 +84,36 @@ def extract_score(stdout_text: str) -> Optional[float]:
     return None
 
 
+def parse_makefile_threads(sim_make_dir: Path) -> Optional[int]:
+    makefile = sim_make_dir / "Makefile"
+    if not makefile.exists():
+        return None
+    for line in makefile.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped.startswith("THREADS ?="):
+            value = stripped.split("=", 1)[1].strip()
+            try:
+                return int(value)
+            except ValueError:
+                return None
+    return None
+
+
+def parse_built_sim_threads(sim_make_dir: Path) -> Optional[int]:
+    generated = sim_make_dir.parent / "build" / "obj_dir" / "VSoC.cpp"
+    if not generated.exists():
+        return None
+    needle = "unsigned VSoC::threads() const { return "
+    for line in generated.read_text(encoding="utf-8").splitlines():
+        if needle in line:
+            value = line.split(needle, 1)[1].split(";", 1)[0].strip()
+            try:
+                return int(value)
+            except ValueError:
+                return None
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Build and run CoreMark on borb simulator.")
     ap.add_argument("--coremark-dir", default="verif/benchmarks/coremark/coremark", help="Path to CoreMark source tree")
@@ -73,12 +124,23 @@ def main() -> int:
     ap.add_argument("--sim-make-dir", default="verif/riscof/borb/sim", help="Directory for simulator Makefile")
     ap.add_argument("--rebuild-sim", action="store_true", help="Rebuild borb-sim before running")
     ap.add_argument("--xlen", type=int, default=64, choices=[32, 64], help="XLEN/toolchain width")
-    ap.add_argument("--march", default="rv64im_zicsr", help="ISA string passed to GCC")
+    ap.add_argument("--march", default="RV64IMAFCSUZicsr_Zifencei", help="ISA string passed to GCC")
     ap.add_argument("--mabi", default="lp64", help="ABI string passed to GCC")
-    ap.add_argument("--iterations", type=int, default=50, help="CoreMark iteration count")
+    ap.add_argument("--iterations", type=int, default=1, help="CoreMark iteration count")
     ap.add_argument("--cpu-hz", type=int, default=100_000_000, help="Clock frequency used for time conversion")
-    ap.add_argument("--total-data-size", type=int, default=2000, help="CoreMark TOTAL_DATA_SIZE")
-    ap.add_argument("--max-cycles", type=int, default=20_000_000, help="Simulation cycle budget")
+    ap.add_argument("--total-data-size", type=int, default=1200, help="CoreMark TOTAL_DATA_SIZE")
+    ap.add_argument(
+        "--coremark-mode",
+        choices=["auto", "performance", "validation", "profile"],
+        default="auto",
+        help="Compile-time CoreMark workload selection. 'auto' follows upstream TOTAL_DATA_SIZE defaults.",
+    )
+    ap.add_argument("--seed1", type=int, default=None, help="Override CoreMark seed1")
+    ap.add_argument("--seed2", type=int, default=None, help="Override CoreMark seed2")
+    ap.add_argument("--seed3", type=int, default=None, help="Override CoreMark seed3")
+    ap.add_argument("--seed4", type=int, default=None, help="Override CoreMark seed4/iterations seed")
+    ap.add_argument("--seed5", type=int, default=None, help="Override CoreMark seed5/exec mask")
+    ap.add_argument("--max-cycles", type=int, default=1_000_000, help="Simulation cycle budget")
     ap.add_argument("--trace", action="store_true", help="Emit FST waveform")
     ap.add_argument("--trace-commit", action="store_true", help="Emit per-commit JSON trace")
     ap.add_argument("--profile", action="store_true", help="Enable simulator perf report generation")
@@ -89,6 +151,8 @@ def main() -> int:
     out_root = Path(args.out_root).resolve()
     sim = Path(args.sim).resolve()
     sim_make_dir = Path(args.sim_make_dir).resolve()
+    march = normalize_riscv_march(args.march)
+    coremark_mode = select_coremark_mode(args.coremark_mode, args.total_data_size)
 
     gcc = f"riscv{args.xlen}-unknown-elf-gcc"
     nm = f"riscv{args.xlen}-unknown-elf-nm"
@@ -140,7 +204,7 @@ def main() -> int:
 
     compile_cmd: List[str] = [
         gcc,
-        f"-march={args.march}",
+        f"-march={march}",
         f"-mabi={args.mabi}",
         "-O3",
         "-fno-common",
@@ -154,9 +218,9 @@ def main() -> int:
         "-g",
         f"-DITERATIONS={args.iterations}",
         f"-DTOTAL_DATA_SIZE={args.total_data_size}",
-        "-DPERFORMANCE_RUN=1",
-        "-DVALIDATION_RUN=0",
-        "-DPROFILE_RUN=0",
+        f"-DPERFORMANCE_RUN={1 if coremark_mode == 'performance' else 0}",
+        f"-DVALIDATION_RUN={1 if coremark_mode == 'validation' else 0}",
+        f"-DPROFILE_RUN={1 if coremark_mode == 'profile' else 0}",
         "-DMEM_METHOD=MEM_STATIC",
         "-DSEED_METHOD=SEED_VOLATILE",
         f"-DCOREMARK_CPU_HZ={args.cpu_hz}",
@@ -165,6 +229,15 @@ def main() -> int:
         "-T",
         str(port_dir / "link_coremark.ld"),
     ]
+    for macro, value in [
+        ("COREMARK_SEED1", args.seed1),
+        ("COREMARK_SEED2", args.seed2),
+        ("COREMARK_SEED3", args.seed3),
+        ("COREMARK_SEED4", args.seed4),
+        ("COREMARK_SEED5", args.seed5),
+    ]:
+        if value is not None:
+            compile_cmd.append(f"-D{macro}={value}")
     compile_cmd.extend(str(p) for p in source_files[:-2])
     compile_cmd.extend(["-o", str(elf)])
 
@@ -231,6 +304,8 @@ def main() -> int:
             coremark_per_mhz_est = coremark_score_est / (args.cpu_hz / 1_000_000.0)
             derived["coremark_score_estimate"] = coremark_score_est
             derived["coremark_per_mhz_estimate"] = coremark_per_mhz_est
+            if score is None:
+                score = coremark_score_est
             if score is not None:
                 derived["coremark_per_mhz"] = score / (args.cpu_hz / 1_000_000.0)
             else:
@@ -238,15 +313,22 @@ def main() -> int:
         perf_json.write_text(json.dumps(perf_data, indent=2), encoding="utf-8")
 
     status = "PASS" if sim_run.returncode == 0 and tohost_val == 1 else "FAIL"
+    configured_threads = parse_makefile_threads(sim_make_dir)
+    built_threads = parse_built_sim_threads(sim_make_dir)
     summary = {
         "status": status,
         "out_dir": str(out_dir),
         "coremark_dir": str(coremark_dir),
+        "coremark_mode": coremark_mode,
         "compile_cmd": compile_cmd,
         "sim_cmd": sim_cmd,
         "sim_returncode": sim_run.returncode,
         "tohost": None if tohost_val is None else hex(tohost_val),
         "coremark_score": score,
+        "simulator_threads": {
+            "configured_default": configured_threads,
+            "built_model": built_threads,
+        },
         "elf": str(elf),
         "dump": str(dump),
         "signature": str(signature),

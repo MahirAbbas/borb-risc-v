@@ -104,10 +104,14 @@ struct Options {
   bool report_tohost = false;
   std::string perf_report_path;
   bool report_perf = false;
+  uint64_t dump_begin = 0;
+  uint64_t dump_end = 0;
+  std::string dump_mem_path;
+  bool dump_mem = false;
 };
 
 static void usage(const char* prog) {
-  std::cerr << "Usage: " << prog << " (--bin <path> | --elf <path>) --sig-begin <hex> --sig-end <hex> --tohost <hex> --signature <path> [--max-cycles <n>] [--fst <path>] [--trace-commit <path>] [--report-tohost <path>] [--report-perf <path>]" << std::endl;
+  std::cerr << "Usage: " << prog << " (--bin <path> | --elf <path>) --sig-begin <hex> --sig-end <hex> --tohost <hex> --signature <path> [--max-cycles <n>] [--fst <path>] [--trace-commit <path>] [--report-tohost <path>] [--report-perf <path>] [--dump-begin <hex> --dump-end <hex> --dump-mem <path>]" << std::endl;
 }
 
 static bool parse_args(int argc, char** argv, Options& opt) {
@@ -175,6 +179,19 @@ static bool parse_args(int argc, char** argv, Options& opt) {
       if (!v) return false;
       opt.perf_report_path = v;
       opt.report_perf = true;
+    } else if (a == "--dump-begin") {
+      const char* v = need("--dump-begin");
+      if (!v) return false;
+      opt.dump_begin = std::stoull(v, nullptr, 0);
+    } else if (a == "--dump-end") {
+      const char* v = need("--dump-end");
+      if (!v) return false;
+      opt.dump_end = std::stoull(v, nullptr, 0);
+    } else if (a == "--dump-mem") {
+      const char* v = need("--dump-mem");
+      if (!v) return false;
+      opt.dump_mem_path = v;
+      opt.dump_mem = true;
     } else {
       std::cerr << "Unknown arg: " << a << std::endl;
       return false;
@@ -684,6 +701,25 @@ int main(int argc, char** argv) {
     }
     tf << "0x" << std::hex << t << "\n";
     tf.close();
+  }
+  if (opt.dump_mem) {
+    if (opt.dump_end < opt.dump_begin) {
+      std::cerr << "Invalid dump range: end < begin" << std::endl;
+      return 1;
+    }
+    std::ofstream df(opt.dump_mem_path);
+    if (!df) {
+      std::cerr << "Failed to open memory dump file: " << opt.dump_mem_path << std::endl;
+      return 1;
+    }
+    for (uint64_t addr = opt.dump_begin; addr < opt.dump_end; addr += 8) {
+      uint64_t val = 0;
+      for (int i = 0; i < 8; i++) {
+        val |= (uint64_t)read_byte(addr + i) << (8 * i);
+      }
+      df << "0x" << std::hex << addr << ": 0x" << val << "\n";
+    }
+    df.close();
   }
   if (opt.report_perf) {
     std::ofstream pf(opt.perf_report_path);

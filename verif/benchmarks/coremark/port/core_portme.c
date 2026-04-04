@@ -1,10 +1,52 @@
 #include "coremark.h"
 
+#if defined(COREMARK_SEED1)
+volatile ee_s32 seed1_volatile = COREMARK_SEED1;
+#else
+#if defined(PROFILE_RUN) && PROFILE_RUN
+volatile ee_s32 seed1_volatile = 0x8;
+#elif defined(VALIDATION_RUN) && VALIDATION_RUN
 volatile ee_s32 seed1_volatile = 0x3415;
+#else
+volatile ee_s32 seed1_volatile = 0x0;
+#endif
+#endif
+
+#if defined(COREMARK_SEED2)
+volatile ee_s32 seed2_volatile = COREMARK_SEED2;
+#else
+#if defined(PROFILE_RUN) && PROFILE_RUN
+volatile ee_s32 seed2_volatile = 0x8;
+#elif defined(VALIDATION_RUN) && VALIDATION_RUN
 volatile ee_s32 seed2_volatile = 0x3415;
+#else
+volatile ee_s32 seed2_volatile = 0x0;
+#endif
+#endif
+
+#if defined(COREMARK_SEED3)
+volatile ee_s32 seed3_volatile = COREMARK_SEED3;
+#else
+#if defined(PROFILE_RUN) && PROFILE_RUN
+volatile ee_s32 seed3_volatile = 0x8;
+#elif defined(VALIDATION_RUN) && VALIDATION_RUN
 volatile ee_s32 seed3_volatile = 0x66;
+#else
+volatile ee_s32 seed3_volatile = 0x66;
+#endif
+#endif
+
+#if defined(COREMARK_SEED4)
+volatile ee_s32 seed4_volatile = COREMARK_SEED4;
+#else
 volatile ee_s32 seed4_volatile = ITERATIONS;
+#endif
+
+#if defined(COREMARK_SEED5)
+volatile ee_s32 seed5_volatile = COREMARK_SEED5;
+#else
 volatile ee_s32 seed5_volatile = 0;
+#endif
 ee_u32 default_num_contexts = 1;
 
 static ee_u64 start_cycles = 0;
