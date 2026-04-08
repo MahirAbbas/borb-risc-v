@@ -482,28 +482,17 @@ int main(int argc, char** argv) {
           << " wb_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID
           << " wb_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
           << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
-          << " fetch_qhead=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queueHead
-          << " fetch_qcount=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queueCount
-          << " fetch_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReqValid
-          << " fetch_pending_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_pendingReq_baseAddr
-          << " fetch_stream_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_streamNextValid
-          << " fetch_stream_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_streamNextAddr
-          << " fetch_pkt_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
-          << " fetch_cnext=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_compressedNextReqValid
-          << " fetch_cnext_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_compressedNextReqAddr
-          << " beat0_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_valid
-          << " beat0_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_beatAddr
-          << " beat0_data=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_0_data
-          << " beat1_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_valid
-          << " beat1_addr=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_beatAddr
-          << " beat1_data=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_beats_1_data
+          << " frontendPending=" << (uint64_t)top->io_perf_frontendPendingReqCycles
+          << " frontendTakeInsn=" << (uint64_t)top->io_perf_frontendTakeInsn
+          << " frontendFtqAlloc=" << (uint64_t)top->io_perf_frontendFtqAlloc
+          << " frontendPredRedirect=" << (uint64_t)top->io_perf_frontendPredictedRedirect
           << std::endl;
       stall_reported = true;
     }
 
     const bool enable_fetch_window_debug = false;
     const uint64_t fetch_rsp_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC;
-    const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid != 0;
+    const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid != 0;
     const uint64_t fetch_hold_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC;
     const bool in_fetch_window =
         ((fetch_rsp_pc >= 0x1f0ULL && fetch_rsp_pc <= 0x208ULL) ||
@@ -515,13 +504,9 @@ int main(int argc, char** argv) {
           << " rspPc=0x" << std::hex << fetch_rsp_pc
           << " hold=" << std::dec << (int)fetch_hold
           << " holdPc=0x" << std::hex << fetch_hold_pc
-          << " pcSeqValid=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pc_sequentialValid
-          << " pktValid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetValid
-          << " pktPop=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packetPop
-          << " pktSeq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_seq
-          << " pktInsn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_packet_insn
-          << " first16=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_first16
-          << " curData=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_cmdArea_curData
+          << " frontendTakeInsn=" << std::dec << (uint64_t)top->io_perf_frontendTakeInsn
+          << " frontendLoopUsed=" << (uint64_t)top->io_perf_frontendLoopPredictUsed
+          << " frontendIndirectHit=" << (uint64_t)top->io_perf_frontendIndirectPredictHit
           << " s2pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
           << " s2v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
           << " s3v=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
@@ -767,6 +752,16 @@ int main(int argc, char** argv) {
     const uint64_t perf_frontend_prefetch_blocked_no_cmd = top->io_perf_frontendPrefetchBlockedNoCmd;
     const uint64_t perf_frontend_prefetch_blocked_pending = top->io_perf_frontendPrefetchBlockedPending;
     const uint64_t perf_frontend_prefetch_blocked_next_hit = top->io_perf_frontendPrefetchBlockedNextHit;
+    const uint64_t perf_frontend_loop_predict_used = top->io_perf_frontendLoopPredictUsed;
+    const uint64_t perf_frontend_loop_predict_hit = top->io_perf_frontendLoopPredictHit;
+    const uint64_t perf_frontend_fast_predict_hit = top->io_perf_frontendFastPredictHit;
+    const uint64_t perf_frontend_main_predict_hit = top->io_perf_frontendMainPredictHit;
+    const uint64_t perf_frontend_indirect_predict_hit = top->io_perf_frontendIndirectPredictHit;
+    const uint64_t perf_frontend_ras_use = top->io_perf_frontendRasUse;
+    const uint64_t perf_frontend_ras_repair = top->io_perf_frontendRasRepair;
+    const uint64_t perf_frontend_ftq_alloc = top->io_perf_frontendFtqAlloc;
+    const uint64_t perf_frontend_ftq_restore = top->io_perf_frontendFtqRestore;
+    const uint64_t perf_frontend_predicted_redirect = top->io_perf_frontendPredictedRedirect;
     const uint64_t perf_backend_occupancy0 = top->io_perf_backendOccupancy0;
     const uint64_t perf_backend_occupancy1 = top->io_perf_backendOccupancy1;
     const uint64_t perf_backend_occupancy2 = top->io_perf_backendOccupancy2;
@@ -841,6 +836,16 @@ int main(int argc, char** argv) {
     pf << "    \"frontend_prefetch_blocked_no_cmd\": " << perf_frontend_prefetch_blocked_no_cmd << ",\n";
     pf << "    \"frontend_prefetch_blocked_pending\": " << perf_frontend_prefetch_blocked_pending << ",\n";
     pf << "    \"frontend_prefetch_blocked_next_hit\": " << perf_frontend_prefetch_blocked_next_hit << ",\n";
+    pf << "    \"frontend_loop_predict_used\": " << perf_frontend_loop_predict_used << ",\n";
+    pf << "    \"frontend_loop_predict_hit\": " << perf_frontend_loop_predict_hit << ",\n";
+    pf << "    \"frontend_fast_predict_hit\": " << perf_frontend_fast_predict_hit << ",\n";
+    pf << "    \"frontend_main_predict_hit\": " << perf_frontend_main_predict_hit << ",\n";
+    pf << "    \"frontend_indirect_predict_hit\": " << perf_frontend_indirect_predict_hit << ",\n";
+    pf << "    \"frontend_ras_use\": " << perf_frontend_ras_use << ",\n";
+    pf << "    \"frontend_ras_repair\": " << perf_frontend_ras_repair << ",\n";
+    pf << "    \"frontend_ftq_alloc\": " << perf_frontend_ftq_alloc << ",\n";
+    pf << "    \"frontend_ftq_restore\": " << perf_frontend_ftq_restore << ",\n";
+    pf << "    \"frontend_predicted_redirect\": " << perf_frontend_predicted_redirect << ",\n";
     pf << "    \"backend_occupancy0\": " << perf_backend_occupancy0 << ",\n";
     pf << "    \"backend_occupancy1\": " << perf_backend_occupancy1 << ",\n";
     pf << "    \"backend_occupancy2\": " << perf_backend_occupancy2 << ",\n";

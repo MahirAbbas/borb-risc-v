@@ -32,22 +32,7 @@ object IssueSemantics extends AreaObject {
 
   def classify(microCode: MicroCode.C): IssuePropertyBundle = {
     val props = IssuePropertyBundle()
-    props.readsIntRs1 := False
-    props.readsIntRs2 := False
-    props.readsFpRs1 := False
-    props.readsFpRs2 := False
-    props.readsFpRs3 := False
-    props.writesIntRd := False
-    props.writesFpRd := False
-    props.isLoad := False
-    props.isStore := False
-    props.isBranch := False
-    props.isControlFlow := False
-    props.isSerializing := False
-    props.immSel := Imm_Select.N_IMM
-    props.fuMask := B"000"
-
-    props.readsIntRs1 := oneOf(
+    val readsIntRs1 = oneOf(
       microCode,
       uopADDI, uopSLTI, uopSLTIU, uopXORI, uopORI, uopANDI, uopSLLI, uopSRLI, uopSRAI,
       uopADDIW, uopSLLIW, uopSRLIW, uopSRAIW,
@@ -64,7 +49,7 @@ object IssueSemantics extends AreaObject {
       uopCSRRW, uopCSRRS, uopCSRRC, uopSFENCEVMA,
       uopFCVTSW, uopFCVTSWU, uopFCVTSL, uopFCVTSLU, uopFMVWX
     )
-    props.readsIntRs2 := oneOf(
+    val readsIntRs2 = oneOf(
       microCode,
       uopSB, uopSH, uopSW, uopSD,
       uopADD, uopSUB, uopSLL, uopSLT, uopSLTU, uopXOR, uopSRL, uopSRA, uopOR, uopAND,
@@ -76,21 +61,21 @@ object IssueSemantics extends AreaObject {
       uopAMOMAXW, uopAMOMAXD, uopAMOMINUW, uopAMOMINUD, uopAMOMAXUW, uopAMOMAXUD,
       uopBEQ, uopBNE, uopBLT, uopBGE, uopBLTU, uopBGEU, uopSFENCEVMA
     )
-    props.readsFpRs1 := oneOf(
+    val readsFpRs1 = oneOf(
       microCode,
       uopFCVTLS, uopFCVTLUS, uopFCVTWS, uopFCVTWUS, uopFMVXW, uopFCLASSS,
       uopFSGNJS, uopFSGNJNS, uopFSGNJXS, uopFMINS, uopFMAXS, uopFLES, uopFLTS, uopFEQS,
       uopFADDS, uopFSUBS, uopFMULS, uopFDIVS, uopFSQRTS,
       uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS
     )
-    props.readsFpRs2 := oneOf(
+    val readsFpRs2 = oneOf(
       microCode,
       uopFSW, uopFSGNJS, uopFSGNJNS, uopFSGNJXS, uopFMINS, uopFMAXS, uopFLES, uopFLTS, uopFEQS,
       uopFADDS, uopFSUBS, uopFMULS, uopFDIVS,
       uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS
     )
-    props.readsFpRs3 := oneOf(microCode, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS)
-    props.writesIntRd := oneOf(
+    val readsFpRs3 = oneOf(microCode, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS)
+    val writesIntRd = oneOf(
       microCode,
       uopLUI, uopAUIPC, uopJAL, uopJALR,
       uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD,
@@ -105,59 +90,76 @@ object IssueSemantics extends AreaObject {
       uopCSRRW, uopCSRRS, uopCSRRC, uopCSRRWI, uopCSRRSI, uopCSRRCI,
       uopFCVTLS, uopFCVTLUS, uopFCVTWS, uopFCVTWUS, uopFMVXW, uopFCLASSS, uopFLES, uopFLTS, uopFEQS
     )
-    props.writesFpRd := oneOf(
+    val writesFpRd = oneOf(
       microCode,
       uopFLW, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS,
       uopFADDS, uopFSUBS, uopFMULS, uopFDIVS, uopFSQRTS,
       uopFSGNJS, uopFSGNJNS, uopFSGNJXS, uopFMINS, uopFMAXS,
       uopFCVTSW, uopFCVTSWU, uopFCVTSL, uopFCVTSLU, uopFMVWX
     )
-    props.isLoad := oneOf(
+    val isLoad = oneOf(
       microCode,
       uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD, uopFLW,
       uopAMOSWAPW, uopAMOSWAPD, uopAMOADDW, uopAMOADDD, uopAMOXORW, uopAMOXORD,
       uopAMOANDW, uopAMOANDD, uopAMOORW, uopAMOORD, uopAMOMINW, uopAMOMIND,
       uopAMOMAXW, uopAMOMAXD, uopAMOMINUW, uopAMOMINUD, uopAMOMAXUW, uopAMOMAXUD
     )
-    props.isStore := oneOf(
+    val isStore = oneOf(
       microCode,
       uopSB, uopSH, uopSW, uopSD, uopFSW,
       uopAMOSWAPW, uopAMOSWAPD, uopAMOADDW, uopAMOADDD, uopAMOXORW, uopAMOXORD,
       uopAMOANDW, uopAMOANDD, uopAMOORW, uopAMOORD, uopAMOMINW, uopAMOMIND,
       uopAMOMAXW, uopAMOMAXD, uopAMOMINUW, uopAMOMINUD, uopAMOMAXUW, uopAMOMAXUD
     )
-    props.isBranch := oneOf(microCode, uopJAL, uopJALR, uopBEQ, uopBNE, uopBLT, uopBGE, uopBLTU, uopBGEU)
-    props.isControlFlow := props.isBranch
-    props.isSerializing := oneOf(microCode, uopFENCE, uopFENCE_I, uopECALL, uopEBREAK, uopSRET, uopMRET, uopSFENCEVMA)
+    val isBranch = oneOf(microCode, uopJAL, uopJALR, uopBEQ, uopBNE, uopBLT, uopBGE, uopBLTU, uopBGEU)
+    val isControlFlow = isBranch
+    val isSerializing = oneOf(microCode, uopFENCE, uopFENCE_I, uopECALL, uopEBREAK, uopSRET, uopMRET, uopSFENCEVMA)
+    val immSel = Imm_Select()
+    immSel := Imm_Select.N_IMM
 
     switch(microCode) {
       is(uopADDI, uopSLTI, uopSLTIU, uopXORI, uopORI, uopANDI, uopSLLI, uopSRLI, uopSRAI,
          uopADDIW, uopSLLIW, uopSRLIW, uopSRAIW,
          uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD, uopFLW,
          uopJALR) {
-        props.immSel := Imm_Select.I_IMM
+        immSel := Imm_Select.I_IMM
       }
       is(uopSB, uopSH, uopSW, uopSD, uopFSW) {
-        props.immSel := Imm_Select.S_IMM
+        immSel := Imm_Select.S_IMM
       }
       is(uopBEQ, uopBNE, uopBLT, uopBGE, uopBLTU, uopBGEU) {
-        props.immSel := Imm_Select.B_IMM
+        immSel := Imm_Select.B_IMM
       }
       is(uopLUI, uopAUIPC) {
-        props.immSel := Imm_Select.U_IMM
+        immSel := Imm_Select.U_IMM
       }
       is(uopJAL) {
-        props.immSel := Imm_Select.J_IMM
+        immSel := Imm_Select.J_IMM
       }
     }
 
-    when(props.isLoad || props.isStore) {
-      props.fuMask(2) := True
-    } elsewhen(props.isControlFlow) {
-      props.fuMask(1) := True
-    } otherwise {
-      props.fuMask(0) := True
+    val fuMask = Bits(3 bits)
+    fuMask := B"001"
+    when(isLoad || isStore) {
+      fuMask := B"100"
+    } elsewhen(isControlFlow) {
+      fuMask := B"010"
     }
+
+    props.readsIntRs1 := readsIntRs1
+    props.readsIntRs2 := readsIntRs2
+    props.readsFpRs1 := readsFpRs1
+    props.readsFpRs2 := readsFpRs2
+    props.readsFpRs3 := readsFpRs3
+    props.writesIntRd := writesIntRd
+    props.writesFpRd := writesFpRd
+    props.isLoad := isLoad
+    props.isStore := isStore
+    props.isBranch := isBranch
+    props.isControlFlow := isControlFlow
+    props.isSerializing := isSerializing
+    props.immSel := immSel
+    props.fuMask := fuMask
 
     props
   }

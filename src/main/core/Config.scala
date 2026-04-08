@@ -1,6 +1,19 @@
 package borb.core
 
 import spinal.core._
+import borb.fetch.FrontendConfig
+
+object BORBEnvConfig {
+  private def parseBool(name: String, default: Boolean): Boolean = {
+    sys.env.get(name).map(_.trim.toLowerCase) match {
+      case Some("1" | "true" | "yes" | "on" | "enable" | "enabled") => true
+      case Some("0" | "false" | "no" | "off" | "disable" | "disabled") => false
+      case _ => default
+    }
+  }
+
+  val frontendEnabled: Boolean = parseBool("BORB_FRONTEND_ENABLE", default = true)
+}
 
 /**
   * Centralized CPU configuration.
@@ -18,6 +31,16 @@ case class CpuConfig(
   // Bus ID widths
   fetchIdWidth: Int = 16,
   dataIdWidth: Int = 16,
+
+  // Frontend configuration
+  frontendConfig: FrontendConfig = FrontendConfig(
+    addressWidth = 64,
+    dataWidth = 64,
+    withCompressed = true,
+    experimentalFrontendEnable = BORBEnvConfig.frontendEnabled,
+    enablePredictorTraining = BORBEnvConfig.frontendEnabled,
+    enablePredictedRedirect = BORBEnvConfig.frontendEnabled
+  ),
   
   // Features
   perfCountersEnabled: Boolean = true,

@@ -105,6 +105,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 3).foreach {
       case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SEQ).setAsReg().init(0)
     }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_FTQ_IDX).setAsReg().init(0)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_VALID).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN).setAsReg().init(False)
+    }
+    pipeline.ctrls.filter(_._1 >= 3).foreach {
+      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET).setAsReg().init(0)
+    }
     // Keep decode outputs instruction-local once they leave decode. Otherwise
     // a stalled downstream instruction can observe a newer decode result while
     // still carrying the older PC/epoch payloads.
@@ -185,8 +197,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       idWidth = config.fetchIdWidth,
       withCompressed = config.cExtensionEnabled,
       fetchBufferDepth = 16,
-      xlen = config.xlen
+      xlen = config.xlen,
+      frontendConfig = config.frontendConfig
     )
+    fetch.io.learn.valid.allowOverride := False
+    fetch.io.learn.payload.assignDontCare()
     pc.sequentialValid := fetch.io.pcAdvance
     pc.sequentialStep := fetch.io.pcStep
     // RAM is external (via io.iAxi/io.dAxi)
@@ -280,15 +295,32 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(6)(Decoder.VALID) &&
       pipeline.ctrl(6)(borb.common.Common.LANE_SEL) &&
       (pipeline.ctrl(6)(Decoder.MicroCode) === uopFENCE_I)
-    val flushPipeline = branch.logic.jumpCmd.valid && execEpochMatches
+    val predictedValid = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
+    val predictedTaken = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
+    val predictedTarget = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
+    val frontendPredictedRedirectsEnabled = config.frontendConfig.predictedRedirectEnabled
+    val frontendPredictorTrainingEnabled = config.frontendConfig.predictorTrainingEnabled
+    val actualTaken = branch.actualTaken
+    val actualTarget = branch.actualTarget
+    val controlResolved = branch.branchResolved && execEpochMatches
+    val branchMispredict = controlResolved && (
+      (actualTaken =/= predictedTaken) ||
+      (actualTaken && predictedTaken && (actualTarget =/= predictedTarget))
+    )
+    val branchRedirect = branchMispredict && !trapLogic.redirect.trapFire
+    val flushPipeline = branchRedirect
     val trapRedirect = trapLogic.redirect.trapFire && execEpochMatches
     val mretRedirect = trapLogic.redirect.mretFire && execEpochMatches
     val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
     pipeline.ctrl(6).down(SELF_REDIRECT) := redirectPipeline
     val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
-    pc.redirect.valid := (branch.logic.jumpCmd.valid && execEpochMatches) || mretRedirect || fenceiRedirect
-    pc.redirect.payload.target := mretRedirect ? trapLogic.redirect.mretTarget |
-      (fenceiRedirect ? fenceiTarget | branch.logic.jumpCmd.payload.target)
+
+    pc.redirect.valid.allowOverride := branchRedirect || mretRedirect || fenceiRedirect
+    pc.redirect.payload.target := Mux(
+      mretRedirect,
+      trapLogic.redirect.mretTarget,
+      Mux(fenceiRedirect, fenceiTarget, Mux(actualTaken, actualTarget, branch.fallthroughPc))
+    )
     pc.redirect.payload.reason := FrontendRedirectReason.branch
     when(mretRedirect) {
       pc.redirect.payload.reason := FrontendRedirectReason.mret
@@ -297,13 +329,17 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     pc.redirect.payload.epoch := currentEpoch
     pc.redirect.payload.flushFrontend := True
-    pc.jump.valid := pc.redirect.valid
-    pc.jump.payload.target := pc.redirect.payload.target
-    pc.jump.payload.is_jump := mretRedirect || fenceiRedirect || branch.logic.jumpCmd.payload.is_jump
-    pc.jump.payload.is_branch := (!mretRedirect) && (!fenceiRedirect) && branch.logic.jumpCmd.payload.is_branch
+    val frontendPredictedJumpValid = if(frontendPredictedRedirectsEnabled) fetch.io.predictedJump.valid else False
+    val frontendPredictedJumpTarget = if(frontendPredictedRedirectsEnabled) fetch.io.predictedJump.payload.target else U(0, 64 bits)
+    val frontendPredictedIsJump = if(frontendPredictedRedirectsEnabled) fetch.io.predictedJump.payload.is_jump else False
+    val frontendPredictedIsBranch = if(frontendPredictedRedirectsEnabled) fetch.io.predictedJump.payload.is_branch else False
+    pc.jump.valid := pc.redirect.valid || (!pc.redirect.valid && frontendPredictedJumpValid)
+    pc.jump.payload.target := Mux(pc.redirect.valid, pc.redirect.payload.target, frontendPredictedJumpTarget)
+    pc.jump.payload.is_jump := Mux(pc.redirect.valid, mretRedirect || fenceiRedirect || branch.actualIsJump, frontendPredictedIsJump)
+    pc.jump.payload.is_branch := Mux(pc.redirect.valid, ((!mretRedirect) && (!fenceiRedirect) && branch.actualIsBranch), frontendPredictedIsBranch)
     
     // Increment epoch on taken branch
-    when(flushPipeline) {
+    when(branchRedirect) {
       currentEpoch := currentEpoch + 1
     }
     when(trapRedirect) {
@@ -325,6 +361,39 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.flush := redirectPipeline
     fetch.io.currentEpoch := currentEpoch
+    val branchBlockPc = UInt(64 bits)
+    branchBlockPc := pipeline.ctrl(6).up(borb.fetch.PC.PC)
+    if(config.frontendConfig.fetchBlockBytes > 1) {
+      branchBlockPc(log2Up(config.frontendConfig.fetchBlockBytes) - 1 downto 0) := 0
+    }
+    val takenByteOffset = UInt(log2Up(config.frontendConfig.fetchBlockBytes max 2) bits)
+    takenByteOffset := pipeline.ctrl(6).up(borb.fetch.PC.PC)(log2Up(config.frontendConfig.fetchBlockBytes max 2) - 1 downto 0)
+    val isCall = branch.actualIsJump &&
+      (
+        (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJAL && ((pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00101"))) ||
+        (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR && ((pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00101")))
+      )
+    val isReturn = (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR) &&
+      (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00000") &&
+      ((pipeline.ctrl(6).up(Decoder.RS1_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RS1_ADDR) === B"00101"))
+    val isIndirect = (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR) && !isReturn
+    fetch.io.learn.valid := (if(frontendPredictorTrainingEnabled) (branch.branchResolved && execEpochMatches) else False)
+    fetch.io.learn.redirect.ftqIndex := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
+    fetch.io.learn.redirect.blockPc := branchBlockPc
+    fetch.io.learn.redirect.branchPc := pipeline.ctrl(6).up(borb.fetch.PC.PC)
+    fetch.io.learn.redirect.target := actualTarget
+    fetch.io.learn.redirect.fallthrough := branch.fallthroughPc
+    fetch.io.learn.redirect.epoch := currentEpoch
+    fetch.io.learn.redirect.taken := actualTaken
+    fetch.io.learn.redirect.predictedTaken := predictedTaken
+    fetch.io.learn.redirect.predictedTarget := predictedTarget
+    fetch.io.learn.redirect.mispredict := branchMispredict
+    fetch.io.learn.redirect.isConditional := branch.actualIsBranch
+    fetch.io.learn.redirect.isJump := branch.actualIsJump
+    fetch.io.learn.redirect.isCall := isCall
+    fetch.io.learn.redirect.isReturn := isReturn
+    fetch.io.learn.redirect.isIndirect := isIndirect
+    fetch.io.learn.redirect.takenByteOffset := takenByteOffset
     
     // Flush fetch/decode/src younger stages on redirect so a new target beat
     // cannot be consumed against a stale stage-local PC offset.
@@ -451,6 +520,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     perfCounters.frontendPrefetchBlockedNoCmdEvent := fetch.perfPrefetchBlockedNoCmd
     perfCounters.frontendPrefetchBlockedPendingEvent := fetch.perfPrefetchBlockedPending
     perfCounters.frontendPrefetchBlockedNextHitEvent := fetch.perfPrefetchBlockedNextHit
+    perfCounters.frontendLoopPredictUsedEvent := fetch.perfLoopPredictUsed
+    perfCounters.frontendLoopPredictHitEvent := fetch.perfLoopPredictHit
+    perfCounters.frontendFastPredictHitEvent := fetch.perfFastPredictHit
+    perfCounters.frontendMainPredictHitEvent := fetch.perfMainPredictHit
+    perfCounters.frontendIndirectPredictHitEvent := fetch.perfIndirectPredictHit
+    perfCounters.frontendRasUseEvent := fetch.perfRasUse
+    perfCounters.frontendRasRepairEvent := fetch.perfRasRepair
+    perfCounters.frontendFtqAllocEvent := fetch.perfFtqAlloc
+    perfCounters.frontendFtqRestoreEvent := fetch.perfFtqRestore
+    perfCounters.frontendPredictedRedirectEvent := fetch.perfPredictedRedirect
     perfCounters.backendOcc0 := backendOccCount === U(0, 3 bits)
     perfCounters.backendOcc1 := backendOccCount === U(1, 3 bits)
     perfCounters.backendOcc2 := backendOccCount === U(2, 3 bits)

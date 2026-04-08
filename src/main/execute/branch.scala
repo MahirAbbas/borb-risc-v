@@ -24,6 +24,11 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
   import Branch._
 
   val branchResolved = Bool()
+  val actualTaken = Bool()
+  val actualTarget = UInt(64 bits)
+  val actualIsJump = Bool()
+  val actualIsBranch = Bool()
+  val fallthroughPc = UInt(64 bits)
   val logic = new node.Area {
     val src1 = up(RS1).asSInt
     val src2 = up(RS2).asSInt
@@ -79,11 +84,17 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
       isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire
     val misaligned = if(withCompressed) (target(0) =/= False) else (target(1 downto 0) =/= 0)
     val willTrap = doJump && misaligned
+    val fallthrough = pcValue + Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
 
     // down(TRAP) := willTrap // Moved to CPU.scala logic integration
     down(BRANCH_TAKEN) := doJump && !willTrap
     down(BRANCH_TARGET) := target
     branchResolved := (isJump || isBranch) && isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && execFire
+    actualTaken := doJump && !willTrap
+    actualTarget := target
+    actualIsJump := isJump
+    actualIsBranch := isBranch
+    fallthroughPc := fallthrough
 
     val jumpCmd = Flow(JumpCmd(pc.addressWidth))
     jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
@@ -95,8 +106,7 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
       when(isJump) {
         val isX0 = up(RD_ADDR).asUInt === 0
         down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt
-        val linkStep = Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
-        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | (pcValue + linkStep).asBits
+        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | fallthrough.asBits
         // Squash writeback if trapping
         down(WriteBack.RESULT).valid.allowOverride := (up(LEGAL) === YESNO.Y) && up(VALID) && !willTrap
       }
