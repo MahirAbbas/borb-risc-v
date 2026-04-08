@@ -80,29 +80,38 @@ case class Fetch(
 
   case class BtbEntry() extends Bundle {
     val valid = Bool()
-    val tag = UInt((addressWidth - cfg.fetchBlockOffsetWidth - log2Up(cfg.ftbEntries max 2)) bits)
+    val tag = UInt(addressWidth bits)
     val target = UInt(addressWidth bits)
     val takenByteOffset = UInt(cfg.fetchBlockOffsetWidth bits)
     val isConditional = Bool()
     val isReturn = Bool()
     val isIndirect = Bool()
     val isCall = Bool()
+    val quality = UInt(2 bits)
   }
 
   case class IndirectEntry() extends Bundle {
     val valid = Bool()
-    val tag = UInt((addressWidth - cfg.fetchBlockOffsetWidth - log2Up(cfg.indirectEntries max 2)) bits)
+    val tag = UInt(cfg.indirectTagWidth bits)
     val target = UInt(addressWidth bits)
+    val ctr = UInt(cfg.indirectCtrBits bits)
   }
 
   case class LoopEntry() extends Bundle {
     val valid = Bool()
-    val tag = UInt((addressWidth - cfg.fetchBlockOffsetWidth - log2Up(cfg.loopPredictorEntries max 2)) bits)
+    val tag = UInt(addressWidth bits)
     val target = UInt(addressWidth bits)
     val fallthrough = UInt(addressWidth bits)
     val tripCount = UInt(8 bits)
     val iterCount = UInt(8 bits)
     val confidence = UInt(2 bits)
+  }
+
+  case class TageEntry() extends Bundle {
+    val valid = Bool()
+    val tag = UInt(cfg.tageTagWidth bits)
+    val ctr = UInt(cfg.tageCtrBits bits)
+    val useful = UInt(cfg.tageUsefulBits bits)
   }
 
   case class FetchBeat() extends Bundle {
@@ -175,10 +184,13 @@ case class Fetch(
   val rasStack = Vec.fill(cfg.rasDepth)(Reg(UInt(addressWidth bits)) init(0))
   val ftq = Vec.fill(cfg.ftqDepth)(Reg(FtqState()) init(FtqState().getZero))
   val ftqAllocPtr = Reg(UInt(cfg.ftqIndexWidth bits)) init(0)
-  val gshareTable = Vec.fill(cfg.gshareEntries)(Reg(UInt(2 bits)) init(1))
+  val bimodalTable = Vec.fill(cfg.gshareEntries)(Reg(UInt(2 bits)) init(1))
+  val tageTables = Vec.fill(cfg.tageTableCount)(Vec.fill(cfg.tageTableEntries)(Reg(TageEntry()) init(TageEntry().getZero)))
   val nanoBtb = Vec.fill(cfg.nanoBtbEntries)(Reg(BtbEntry()) init(BtbEntry().getZero))
-  val ftb = Vec.fill(cfg.ftbEntries)(Reg(BtbEntry()) init(BtbEntry().getZero))
-  val indirectTable = Vec.fill(cfg.indirectEntries)(Reg(IndirectEntry()) init(IndirectEntry().getZero))
+  val ftb = Vec.fill(cfg.ftbSets)(Vec.fill(cfg.ftbWays)(Reg(BtbEntry()) init(BtbEntry().getZero)))
+  val ftbReplace = Vec.fill(cfg.ftbSets)(Reg(UInt(log2Up(cfg.ftbWays max 2) bits)) init(0))
+  val indirectTable = Vec.fill(cfg.indirectSets)(Vec.fill(cfg.indirectWays)(Reg(IndirectEntry()) init(IndirectEntry().getZero)))
+  val indirectReplace = Vec.fill(cfg.indirectSets)(Reg(UInt(log2Up(cfg.indirectWays max 2) bits)) init(0))
   val loopTable = Vec.fill(cfg.loopPredictorEntries)(Reg(LoopEntry()) init(LoopEntry().getZero))
 
   val inflight = UInt(4 bits)
@@ -270,8 +282,13 @@ case class Fetch(
   val frontendTrainingEnabled = cfg.predictorTrainingEnabled
   val predictedRedirectEnabled = cfg.predictedRedirectEnabled
 
-  def satInc2(value: UInt): UInt = Mux(value === U(3, 2 bits), value, value + 1)
-  def satDec2(value: UInt): UInt = Mux(value === U(0, 2 bits), value, value - 1)
+  def satInc(value: UInt): UInt = {
+    val maxValue = U((BigInt(1) << value.getWidth) - 1, value.getWidth bits)
+    Mux(value === maxValue, value, value + 1)
+  }
+  def satDec(value: UInt): UInt = Mux(value === 0, value, value - 1)
+  def satInc2(value: UInt): UInt = satInc(value)
+  def satDec2(value: UInt): UInt = satDec(value)
   def blockPc(pc: UInt): UInt = {
     val ret = UInt(addressWidth bits)
     ret := pc
@@ -285,9 +302,46 @@ case class Fetch(
   def branchImm(inst: Bits): UInt = (inst(31) ## inst(7) ## inst(30 downto 25) ## inst(11 downto 8) ## B"0").asSInt.resize(addressWidth).asUInt
   def jalImm(inst: Bits): UInt = (inst(31) ## inst(19 downto 12) ## inst(20) ## inst(30 downto 21) ## B"0").asSInt.resize(addressWidth).asUInt
   def blockOffset(pc: UInt): UInt = (pc & U(cfg.fetchBlockBytes - 1, addressWidth bits)).resized
-  def gshareIndex(pc: UInt, history: UInt): UInt = (pc(cfg.gshareHistoryWidth + 1 downto 2) ^ history).resized
+  def historyLengthForTable(table: Int): Int = {
+    if(cfg.tageTableCount <= 1) 4
+    else {
+      val minHist = 4
+      val maxHist = cfg.globalHistoryWidth max minHist
+      minHist + (((maxHist - minHist) * table) / ((cfg.tageTableCount - 1) max 1))
+    }
+  }
+  def historySlice(history: UInt, length: Int, width: Int): UInt = {
+    val truncated = UInt(width bits)
+    truncated := history(width - 1 downto 0)
+    if(length <= width) truncated
+    else {
+      val extra = UInt(width bits)
+      extra := history((length min cfg.gshareHistoryWidth) - 1 downto ((length min cfg.gshareHistoryWidth) - width max 0)).resized
+      truncated ^ extra
+    }
+  }
+  def bimodalIndex(pc: UInt): UInt = pc(cfg.bimodalIndexWidth + 1 downto 2).resized
+  def tageIndex(pc: UInt, history: UInt, table: Int): UInt = {
+    val width = log2Up(cfg.tageTableEntries max 2)
+    val slice = historySlice(history, historyLengthForTable(table), width)
+    (pc(width + 1 downto 2) ^ slice).resized
+  }
+  def tageTag(pc: UInt, history: UInt, table: Int): UInt = {
+    val sliceA = historySlice(history, historyLengthForTable(table), cfg.tageTagWidth)
+    val sliceB = historySlice(history, (historyLengthForTable(table) / 2) max 1, cfg.tageTagWidth)
+    (pc(cfg.tageTagWidth + 1 downto 2) ^ sliceA ^ (sliceB |<< 1).resized).resized
+  }
   def btbIndex(pc: UInt, entries: Int): UInt = pc(cfg.fetchBlockOffsetWidth + log2Up(entries max 2) - 1 downto cfg.fetchBlockOffsetWidth)
-  def btbTag(pc: UInt, entries: Int): UInt = pc(addressWidth - 1 downto cfg.fetchBlockOffsetWidth + log2Up(entries max 2))
+  def ftbSetIndex(pc: UInt): UInt = pc(cfg.fetchBlockOffsetWidth + cfg.ftbSetIndexWidth - 1 downto cfg.fetchBlockOffsetWidth)
+  def indirectSetIndex(pc: UInt, history: UInt): UInt = {
+    val width = cfg.indirectSetIndexWidth
+    val hist = historySlice(history, cfg.indirectHistoryWidth, width)
+    (pc(cfg.fetchBlockOffsetWidth + width - 1 downto cfg.fetchBlockOffsetWidth) ^ hist).resized
+  }
+  def indirectTag(pc: UInt, history: UInt): UInt = {
+    val folded = historySlice(history, cfg.indirectHistoryWidth, cfg.indirectTagWidth)
+    (pc(cfg.indirectTagWidth + 1 downto 2) ^ folded).resized
+  }
 
   val replayGuardValid = RegInit(False)
   val lastTakenPc = Reg(UInt(addressWidth bits)) init (0)
@@ -343,44 +397,120 @@ case class Fetch(
 
   if(frontendTrainingEnabled) when(io.learn.valid) {
     val learn = io.learn.redirect
+    val snapshot = ftq(learn.ftqIndex)
+    val trainHistory = UInt(cfg.gshareHistoryWidth bits)
+    trainHistory := Mux(snapshot.valid, snapshot.history, committedHistory)
     when(learn.isConditional) {
-      val idx = gshareIndex(learn.branchPc, committedHistory)
-      gshareTable(idx) := Mux(learn.taken, satInc2(gshareTable(idx)), satDec2(gshareTable(idx)))
+      val idx = bimodalIndex(learn.branchPc)
+      bimodalTable(idx) := Mux(learn.taken, satInc2(bimodalTable(idx)), satDec2(bimodalTable(idx)))
+      val providerHit = Bool()
+      providerHit := False
+      for(table <- 0 until cfg.tageTableCount) {
+        val idxT = tageIndex(learn.branchPc, trainHistory, table)
+        val tagT = tageTag(learn.branchPc, trainHistory, table)
+        when(tageTables(table)(idxT).valid && (tageTables(table)(idxT).tag === tagT)) {
+          providerHit := True
+        }
+      }
+      for(table <- 0 until cfg.tageTableCount) {
+        val idxT = tageIndex(learn.branchPc, trainHistory, table)
+        val tagT = tageTag(learn.branchPc, trainHistory, table)
+        when(tageTables(table)(idxT).valid && (tageTables(table)(idxT).tag === tagT)) {
+          tageTables(table)(idxT).ctr := Mux(learn.taken, satInc(tageTables(table)(idxT).ctr), satDec(tageTables(table)(idxT).ctr))
+          when(learn.taken === tageTables(table)(idxT).ctr.msb) {
+            tageTables(table)(idxT).useful := satInc(tageTables(table)(idxT).useful)
+          } otherwise {
+            tageTables(table)(idxT).useful := satDec(tageTables(table)(idxT).useful)
+          }
+        }
+      }
+      when(learn.mispredict || !providerHit) {
+        for(table <- 0 until cfg.tageTableCount) {
+          val idxT = tageIndex(learn.branchPc, trainHistory, table)
+          val tagT = tageTag(learn.branchPc, trainHistory, table)
+          when(!tageTables(table)(idxT).valid || (tageTables(table)(idxT).useful === 0)) {
+            tageTables(table)(idxT).valid := True
+            tageTables(table)(idxT).tag := tagT
+            tageTables(table)(idxT).ctr := Mux(learn.taken, U(1 << (cfg.tageCtrBits - 1), cfg.tageCtrBits bits), U((1 << (cfg.tageCtrBits - 1)) - 1, cfg.tageCtrBits bits))
+            tageTables(table)(idxT).useful := U(0, cfg.tageUsefulBits bits)
+          }
+        }
+      }
       committedHistory := nextHistory(committedHistory, learn.taken)
     }
 
-    val mainIdx = btbIndex(learn.blockPc, cfg.ftbEntries)
-    ftb(mainIdx).valid := True
-    ftb(mainIdx).tag := btbTag(learn.blockPc, cfg.ftbEntries)
-    ftb(mainIdx).target := learn.target
-    ftb(mainIdx).takenByteOffset := learn.takenByteOffset
-    ftb(mainIdx).isConditional := learn.isConditional
-    ftb(mainIdx).isReturn := learn.isReturn
-    ftb(mainIdx).isIndirect := learn.isIndirect
-    ftb(mainIdx).isCall := learn.isCall
+    val mainSet = ftbSetIndex(learn.blockPc)
+    val ftbHit = Bool()
+    ftbHit := False
+    val ftbHitWay = UInt(log2Up(cfg.ftbWays max 2) bits)
+    ftbHitWay := 0
+    for(way <- 0 until cfg.ftbWays) {
+      when(ftb(mainSet)(way).valid && (ftb(mainSet)(way).tag === learn.blockPc)) {
+        ftbHit := True
+        ftbHitWay := way
+      }
+    }
+    val ftbWriteWay = UInt(log2Up(cfg.ftbWays max 2) bits)
+    ftbWriteWay := ftbReplace(mainSet)
+    when(ftbHit) {
+      ftbWriteWay := ftbHitWay
+    }
+    ftb(mainSet)(ftbWriteWay).valid := True
+    ftb(mainSet)(ftbWriteWay).tag := learn.blockPc
+    ftb(mainSet)(ftbWriteWay).target := learn.target
+    ftb(mainSet)(ftbWriteWay).takenByteOffset := learn.takenByteOffset
+    ftb(mainSet)(ftbWriteWay).isConditional := learn.isConditional
+    ftb(mainSet)(ftbWriteWay).isReturn := learn.isReturn
+    ftb(mainSet)(ftbWriteWay).isIndirect := learn.isIndirect
+    ftb(mainSet)(ftbWriteWay).isCall := learn.isCall
+    ftb(mainSet)(ftbWriteWay).quality := Mux(learn.mispredict, U(1, 2 bits), satInc2(ftb(mainSet)(ftbWriteWay).quality))
+    when(!ftbHit) {
+      ftbReplace(mainSet) := ftbReplace(mainSet) + 1
+    }
 
     when(learn.taken || learn.isConditional) {
       val l0Idx = btbIndex(learn.blockPc, cfg.nanoBtbEntries)
       nanoBtb(l0Idx).valid := True
-      nanoBtb(l0Idx).tag := btbTag(learn.blockPc, cfg.nanoBtbEntries).resized
+      nanoBtb(l0Idx).tag := learn.blockPc
       nanoBtb(l0Idx).target := learn.target
       nanoBtb(l0Idx).takenByteOffset := learn.takenByteOffset
       nanoBtb(l0Idx).isConditional := learn.isConditional
       nanoBtb(l0Idx).isReturn := learn.isReturn
       nanoBtb(l0Idx).isIndirect := learn.isIndirect
       nanoBtb(l0Idx).isCall := learn.isCall
+      nanoBtb(l0Idx).quality := Mux(learn.mispredict, U(1, 2 bits), satInc2(nanoBtb(l0Idx).quality))
     }
 
     when(learn.isIndirect && learn.taken) {
-      val indIdx = btbIndex(learn.blockPc, cfg.indirectEntries)
-      indirectTable(indIdx).valid := True
-      indirectTable(indIdx).tag := btbTag(learn.blockPc, cfg.indirectEntries).resized
-      indirectTable(indIdx).target := learn.target
+      val indSet = indirectSetIndex(learn.blockPc, trainHistory)
+      val indTag = indirectTag(learn.blockPc, trainHistory)
+      val indHit = Bool()
+      indHit := False
+      val indWay = UInt(log2Up(cfg.indirectWays max 2) bits)
+      indWay := 0
+      for(way <- 0 until cfg.indirectWays) {
+        when(indirectTable(indSet)(way).valid && (indirectTable(indSet)(way).tag === indTag)) {
+          indHit := True
+          indWay := way
+        }
+      }
+      val indWriteWay = UInt(log2Up(cfg.indirectWays max 2) bits)
+      indWriteWay := indirectReplace(indSet)
+      when(indHit) {
+        indWriteWay := indWay
+      }
+      indirectTable(indSet)(indWriteWay).valid := True
+      indirectTable(indSet)(indWriteWay).tag := indTag
+      indirectTable(indSet)(indWriteWay).target := learn.target
+      indirectTable(indSet)(indWriteWay).ctr := Mux(indHit && (indirectTable(indSet)(indWriteWay).target === learn.target), satInc(indirectTable(indSet)(indWriteWay).ctr), U(1, cfg.indirectCtrBits bits))
+      when(!indHit) {
+        indirectReplace(indSet) := indirectReplace(indSet) + 1
+      }
     }
 
     if(cfg.loopPredictorActive) when(learn.isConditional && (learn.target < learn.fallthrough)) {
       val loopIdx = btbIndex(learn.blockPc, cfg.loopPredictorEntries)
-      val loopTagValue = btbTag(learn.blockPc, cfg.loopPredictorEntries).resized
+      val loopTagValue = learn.blockPc
       when(!loopTable(loopIdx).valid || (loopTable(loopIdx).tag =/= loopTagValue)) {
         loopTable(loopIdx).valid := True
         loopTable(loopIdx).tag := loopTagValue
@@ -599,16 +729,61 @@ case class Fetch(
     val isIndirect = isJalr && !isReturn
     val thisBlockPc = blockPc(cmdPcRaw)
     val thisBlockOffset = blockOffset(cmdPcRaw)
-    val gIdx = gshareIndex(cmdPcRaw, speculativeHistory)
-    val gTaken = gshareTable(gIdx) >= 2
+    val bimodalIdx = bimodalIndex(cmdPcRaw)
+    val baseTaken = bimodalTable(bimodalIdx) >= 2
+    val tageProviderValid = Bool()
+    val tageProviderCtr = UInt(cfg.tageCtrBits bits)
+    tageProviderValid := False
+    tageProviderCtr := U(1 << (cfg.tageCtrBits - 1), cfg.tageCtrBits bits)
+    for(table <- 0 until cfg.tageTableCount) {
+      val idxT = tageIndex(cmdPcRaw, speculativeHistory, table)
+      val tagT = tageTag(cmdPcRaw, speculativeHistory, table)
+      when(tageTables(table)(idxT).valid && (tageTables(table)(idxT).tag === tagT)) {
+        tageProviderValid := True
+        tageProviderCtr := tageTables(table)(idxT).ctr
+      }
+    }
+    val directionTaken = Bool()
+    directionTaken := Mux(tageProviderValid, tageProviderCtr.msb, baseTaken)
     val l0Idx = btbIndex(thisBlockPc, cfg.nanoBtbEntries)
-    val l0Hit = nanoBtb(l0Idx).valid && (nanoBtb(l0Idx).tag === btbTag(thisBlockPc, cfg.nanoBtbEntries).resized)
-    val mainIdx = btbIndex(thisBlockPc, cfg.ftbEntries)
-    val mainHit = ftb(mainIdx).valid && (ftb(mainIdx).tag === btbTag(thisBlockPc, cfg.ftbEntries))
+    val l0Hit = nanoBtb(l0Idx).valid && (nanoBtb(l0Idx).tag === thisBlockPc)
+    val mainSet = ftbSetIndex(thisBlockPc)
+    val mainHit = Bool()
+    val mainTarget = UInt(addressWidth bits)
+    val mainTakenOffset = UInt(cfg.fetchBlockOffsetWidth bits)
+    val mainIsReturn = Bool()
+    val mainIsConditional = Bool()
+    mainHit := False
+    mainTarget := 0
+    mainTakenOffset := 0
+    mainIsReturn := False
+    mainIsConditional := False
+    for(way <- 0 until cfg.ftbWays) {
+      when(ftb(mainSet)(way).valid && (ftb(mainSet)(way).tag === thisBlockPc)) {
+        mainHit := True
+        mainTarget := ftb(mainSet)(way).target
+        mainTakenOffset := ftb(mainSet)(way).takenByteOffset
+        mainIsReturn := ftb(mainSet)(way).isReturn
+        mainIsConditional := ftb(mainSet)(way).isConditional
+      }
+    }
     val loopIdx = btbIndex(thisBlockPc, cfg.loopPredictorEntries)
-    val loopHit = if(cfg.loopPredictorActive) (loopTable(loopIdx).valid && (loopTable(loopIdx).tag === btbTag(thisBlockPc, cfg.loopPredictorEntries).resized)) else False
-    val indIdx = btbIndex(thisBlockPc, cfg.indirectEntries)
-    val indHit = indirectTable(indIdx).valid && (indirectTable(indIdx).tag === btbTag(thisBlockPc, cfg.indirectEntries).resized)
+    val loopHit = if(cfg.loopPredictorActive) (loopTable(loopIdx).valid && (loopTable(loopIdx).tag === thisBlockPc)) else False
+    val indSet = indirectSetIndex(thisBlockPc, speculativeHistory)
+    val indTag = indirectTag(thisBlockPc, speculativeHistory)
+    val indHit = Bool()
+    val indTarget = UInt(addressWidth bits)
+    val indStrong = Bool()
+    indHit := False
+    indTarget := 0
+    indStrong := False
+    for(way <- 0 until cfg.indirectWays) {
+      when(indirectTable(indSet)(way).valid && (indirectTable(indSet)(way).tag === indTag)) {
+        indHit := True
+        indTarget := indirectTable(indSet)(way).target
+        indStrong := indirectTable(indSet)(way).ctr.msb
+      }
+    }
     val directTarget = UInt(addressWidth bits)
     directTarget := cmdPcRaw + branchImm(decodedForPredict).asSInt.asUInt
     when(isJal) {
@@ -643,10 +818,10 @@ case class Fetch(
           predictedTaken := False
           predictedTarget := loopTable(loopIdx).fallthrough
         }
-      } elsewhen(isConditional && mainHit && (ftb(mainIdx).takenByteOffset === thisBlockOffset)) {
+      } elsewhen(isConditional && mainHit && (mainTakenOffset === thisBlockOffset)) {
         predictedValid := True
-        predictedTaken := gTaken
-        predictedTarget := ftb(mainIdx).target
+        predictedTaken := directionTaken
+        predictedTarget := mainTarget
         mainPredictHit := True
       } elsewhen(isJal) {
         predictedValid := True
@@ -658,15 +833,15 @@ case class Fetch(
         predictedTarget := rasStack(rasSpecSp)
         fastPredictHit := True
         rasUsed := True
-      } elsewhen(isIndirect && indHit) {
+      } elsewhen(isIndirect && indHit && indStrong) {
         predictedValid := True
         predictedTaken := True
-        predictedTarget := indirectTable(indIdx).target
+        predictedTarget := indTarget
         indirectProvided := True
         mainPredictHit := True
       } elsewhen(l0Hit && (nanoBtb(l0Idx).takenByteOffset === thisBlockOffset)) {
         predictedValid := True
-        predictedTaken := !nanoBtb(l0Idx).isConditional || gTaken
+        predictedTaken := !nanoBtb(l0Idx).isConditional || directionTaken
         predictedTarget := Mux(nanoBtb(l0Idx).isReturn && (rasSpecCount =/= 0), rasStack(rasSpecSp), nanoBtb(l0Idx).target)
         fastPredictHit := True
         rasUsed := nanoBtb(l0Idx).isReturn && (rasSpecCount =/= 0)
