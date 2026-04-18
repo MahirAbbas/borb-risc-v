@@ -65,8 +65,9 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
 
     val insn = up(Decoder.DECODED_INSTRUCTION)
     val microCode = up(Decoder.MicroCode)
-    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(Dispatch.SENDTOAGU)
-    val aluFire = up(Decoder.VALID) && up(LANE_SEL) && up(Dispatch.SENDTOALU)
+    val stagePayloadValid = up.isValid && up(Decoder.VALID) && up(LANE_SEL)
+    val aguFire = stagePayloadValid && up(Dispatch.SENDTOAGU)
+    val aluFire = stagePayloadValid && up(Dispatch.SENDTOALU)
 
     val isFlwOp = microCode === uopFLW
     val isFswOp = microCode === uopFSW

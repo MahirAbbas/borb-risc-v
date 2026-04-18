@@ -141,22 +141,22 @@ case class Dispatch(
     down(SENDTOBRANCH) := False
     down(SENDTOAGU) := False
 
-    // Logic to select an execution lane implies LANE_SEL is true
-    // Crucially, it must only be True if we are actually firing (not stalled by hazard)
-    // LANE_SEL acts as the valid bit for the lane.
-    val firing = up.isFiring
+    // LANE_SEL identifies that this instruction occupies the lane.
+    // Downstream hazard/flush logic relies on it staying asserted while stalled;
+    // actual side effects are still gated by stage fire conditions elsewhere.
+    val laneOccupied = up(Decoder.VALID)
 
     when(up(Decoder.VALID) && issueProps.fuMask(0)) {
       down(SENDTOALU) := True
-      down(LANE_SEL) := firing
+      down(LANE_SEL) := laneOccupied
     }
     when(up(Decoder.VALID) && issueProps.fuMask(1)) {
       down(SENDTOBRANCH) := True
-      down(LANE_SEL) := firing
+      down(LANE_SEL) := laneOccupied
     }
     when(up(Decoder.VALID) && issueProps.fuMask(2)) {
       down(SENDTOAGU) := True
-      down(LANE_SEL) := firing
+      down(LANE_SEL) := laneOccupied
     }
 
     // Explicitly handle invalid/bubble case if needed, but default False covers it.

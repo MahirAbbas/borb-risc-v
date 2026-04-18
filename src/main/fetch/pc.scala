@@ -51,7 +51,7 @@ case class PC(stage: CtrlLink,addressWidth: Int , withCompressed: Boolean = fals
   val exception = Flow(ExceptionCmd(addressWidth))
   val redirect = Flow(FrontendRedirect(addressWidth))
   val sequentialValid = Bool()
-  val sequentialStep = UInt(3 bits)
+  val sequentialStep = UInt(4 bits)
   val state = FrontendPcState(addressWidth)
   state.epoch := 0
 

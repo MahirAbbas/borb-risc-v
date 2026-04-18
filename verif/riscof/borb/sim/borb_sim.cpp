@@ -384,6 +384,8 @@ int main(int argc, char** argv) {
   uint64_t stalled_cycles = 0;
   uint64_t max_stall_streak = 0;
   bool stall_reported = false;
+  bool stale_wb_reported = false;
+  const bool verbose_diag = std::getenv("BORB_SIM_VERBOSE_DIAG") != nullptr;
   uint64_t fetch_window_logs = 0;
   bool done = false;
   bool timed_out = false;
@@ -391,8 +393,191 @@ int main(int argc, char** argv) {
   uint64_t commit_traps = 0;
   uint64_t commit_mem_reads = 0;
   uint64_t commit_mem_writes = 0;
+  struct RecentCycle {
+    uint64_t cycle = 0;
+    bool commit_valid = false;
+    bool commit_pulse = false;
+    bool duplicate_retire = false;
+    bool redirect_any = false;
+    bool redirect_branch = false;
+    bool redirect_exec_epoch = false;
+    bool redirect_pc_jump_valid = false;
+    uint64_t redirect_pc_jump_target = 0;
+    bool redirect_pending = false;
+    uint32_t redirect_seq = 0;
+    uint32_t current_epoch = 0;
+    uint32_t s5_epoch = 0;
+    uint32_t s6_epoch = 0;
+    uint32_t s7_epoch = 0;
+    uint32_t s4_seq = 0;
+    uint32_t s5_seq = 0;
+    uint32_t s6_seq = 0;
+    uint32_t s7_seq = 0;
+    uint64_t f_pc = 0;
+    uint64_t d_pc = 0;
+    uint64_t x_pc = 0;
+    uint64_t wb_pc = 0;
+    uint32_t s3_insn = 0;
+    uint32_t x_insn = 0;
+    uint32_t wb_insn = 0;
+    bool s2_valid = false;
+    bool s2_ready = false;
+    bool s3_valid = false;
+    bool s3_ready = false;
+    bool x_valid = false;
+    bool x_lane = false;
+    bool wb_valid = false;
+    bool wb_lane = false;
+    bool fetch_ctl_active = false;
+    uint64_t fetch_ctl_pc = 0;
+    uint32_t fetch_ctl_epoch = 0;
+    bool adapter_active = false;
+    bool scalar_boundary_valid = false;
+    uint64_t scalar_boundary_pc = 0;
+    uint32_t scalar_boundary_seq = 0;
+    uint32_t scalar_boundary_bundle_seq = 0;
+    uint32_t scalar_boundary_epoch = 0;
+    uint32_t ftq_alloc_ptr = 0;
+    bool builder_valid = false;
+    bool queue_push_ready = false;
+    bool bus_rsp_valid = false;
+    bool bus_inflight0 = false;
+    bool bus_inflight1 = false;
+    bool stale_rsp_dropped = false;
+    bool l1i_hit1 = false;
+  };
+  std::vector<RecentCycle> recent_cycles(64);
+  size_t recent_head = 0;
+  size_t recent_count = 0;
+  auto push_recent_cycle = [&](const RecentCycle& sample) {
+    recent_cycles[recent_head] = sample;
+    recent_head = (recent_head + 1) % recent_cycles.size();
+    if (recent_count < recent_cycles.size()) recent_count++;
+  };
+  auto dump_recent_cycles = [&](const char* reason) {
+    std::cerr << "RECENT[" << reason << "] count=" << recent_count << std::endl;
+    for (size_t i = 0; i < recent_count; ++i) {
+      const size_t idx = (recent_head + recent_cycles.size() - recent_count + i) % recent_cycles.size();
+      const auto& rc = recent_cycles[idx];
+      std::cerr
+          << "  cyc=" << rc.cycle
+          << " commit_valid=" << (int)rc.commit_valid
+          << " commit_pulse=" << (int)rc.commit_pulse
+          << " dup_retire=" << (int)rc.duplicate_retire
+          << " redir_any=" << (int)rc.redirect_any
+          << " redir_branch=" << (int)rc.redirect_branch
+          << " redir_exec_epoch=" << (int)rc.redirect_exec_epoch
+          << " redir_jump_valid=" << (int)rc.redirect_pc_jump_valid
+          << " redir_jump_target=0x" << std::hex << rc.redirect_pc_jump_target
+          << " redir_pending=" << (int)rc.redirect_pending
+          << " redir_seq=0x" << rc.redirect_seq
+          << " cur_epoch=" << std::dec << rc.current_epoch
+          << " s5_epoch=" << rc.s5_epoch
+          << " s6_epoch=" << rc.s6_epoch
+          << " s7_epoch=" << rc.s7_epoch
+          << " s4_seq=0x" << std::hex << rc.s4_seq
+          << " s5_seq=0x" << rc.s5_seq
+          << " s6_seq=0x" << rc.s6_seq
+          << " s7_seq=0x" << rc.s7_seq
+          << " f_pc=0x" << rc.f_pc
+          << " d_pc=0x" << rc.d_pc
+          << " x_pc=0x" << rc.x_pc
+          << " wb_pc=0x" << rc.wb_pc
+          << " s3_insn=0x" << rc.s3_insn
+          << " x_insn=0x" << rc.x_insn
+          << " wb_insn=0x" << rc.wb_insn
+          << " s2_valid=" << std::dec << (int)rc.s2_valid
+          << " s2_ready=" << (int)rc.s2_ready
+          << " s3_valid=" << (int)rc.s3_valid
+          << " s3_ready=" << (int)rc.s3_ready
+          << " x_valid=" << (int)rc.x_valid
+          << " x_lane=" << (int)rc.x_lane
+          << " wb_valid=" << (int)rc.wb_valid
+          << " wb_lane=" << (int)rc.wb_lane
+          << " fetch_ctl_active=" << (int)rc.fetch_ctl_active
+          << " fetch_ctl_pc=0x" << std::hex << rc.fetch_ctl_pc
+          << " fetch_ctl_epoch=" << std::dec << rc.fetch_ctl_epoch
+          << " adapter_active=" << (int)rc.adapter_active
+          << " scalar_boundary_valid=" << (int)rc.scalar_boundary_valid
+          << " scalar_boundary_pc=0x" << std::hex << rc.scalar_boundary_pc
+          << " scalar_boundary_seq=0x" << rc.scalar_boundary_seq
+          << " scalar_boundary_bundle_seq=0x" << rc.scalar_boundary_bundle_seq
+          << " scalar_boundary_epoch=" << std::dec << rc.scalar_boundary_epoch
+          << " ftq_alloc_ptr=0x" << std::hex << rc.ftq_alloc_ptr
+          << " builder_valid=" << std::dec << (int)rc.builder_valid
+          << " queue_push_ready=" << (int)rc.queue_push_ready
+          << " bus_rsp_valid=" << (int)rc.bus_rsp_valid
+          << " bus_inflight0=" << (int)rc.bus_inflight0
+          << " bus_inflight1=" << (int)rc.bus_inflight1
+          << " stale_rsp_drop=" << (int)rc.stale_rsp_dropped
+          << " l1i_hit1=" << (int)rc.l1i_hit1
+          << std::endl;
+    }
+  };
   while (!done && cycles < opt.max_cycles) {
     tick(20 + cycles * 2);
+
+    const uint32_t current_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_currentEpoch);
+    const uint32_t s5_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH);
+    const uint32_t s6_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH);
+    const uint32_t s7_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_SPEC_EPOCH);
+    const bool wb_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID;
+    const bool wb_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL;
+    const bool stale_wb = wb_valid && wb_lane && (s7_epoch != current_epoch) && !top->io_dbg_commitPulse;
+
+    RecentCycle sample;
+    sample.cycle = cycles;
+    sample.commit_valid = top->io_dbg_commitValid;
+    sample.commit_pulse = top->io_dbg_commitPulse;
+    sample.duplicate_retire = top->io_dbg_duplicateRetire;
+    sample.redirect_any = top->io_dbg_redirectAny;
+    sample.redirect_branch = top->io_dbg_redirectBranch;
+    sample.redirect_exec_epoch = top->io_dbg_redirectExecEpochMatches;
+    sample.redirect_pc_jump_valid = top->io_dbg_redirectPcJumpValid;
+    sample.redirect_pc_jump_target = top->io_dbg_redirectPcJumpTarget;
+    sample.redirect_pending = rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitPending;
+    sample.redirect_seq = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitSeq);
+    sample.current_epoch = current_epoch;
+    sample.s5_epoch = s5_epoch;
+    sample.s6_epoch = s6_epoch;
+    sample.s7_epoch = s7_epoch;
+    sample.s4_seq = static_cast<uint32_t>(top->io_dbg_s4_seq);
+    sample.s5_seq = static_cast<uint32_t>(top->io_dbg_s5_seq);
+    sample.s6_seq = static_cast<uint32_t>(top->io_dbg_s6_seq);
+    sample.s7_seq = static_cast<uint32_t>(top->io_dbg_s7_seq);
+    sample.f_pc = static_cast<uint64_t>(top->io_dbg_f_pc);
+    sample.d_pc = static_cast<uint64_t>(top->io_dbg_d_pc);
+    sample.x_pc = static_cast<uint64_t>(top->io_dbg_x_pc);
+    sample.wb_pc = static_cast<uint64_t>(top->io_dbg_wb_pc);
+    sample.s3_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION);
+    sample.x_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION);
+    sample.wb_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION);
+    sample.s2_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid;
+    sample.s2_ready = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_down_isReady;
+    sample.s3_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid;
+    sample.s3_ready = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_isReady;
+    sample.x_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_VALID;
+    sample.x_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
+    sample.wb_valid = wb_valid;
+    sample.wb_lane = wb_lane;
+    sample.fetch_ctl_active = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control_io_activeValid;
+    sample.fetch_ctl_pc = static_cast<uint64_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control__DOT__activePc);
+    sample.fetch_ctl_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control__DOT__activeEpoch);
+    sample.adapter_active = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeValid;
+    sample.scalar_boundary_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryValid;
+    sample.scalar_boundary_pc = static_cast<uint64_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_pc);
+    sample.scalar_boundary_seq = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_scalarSeq);
+    sample.scalar_boundary_bundle_seq = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_bundleSeq);
+    sample.scalar_boundary_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_epoch);
+    sample.ftq_alloc_ptr = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_predictor__DOT__ftqAllocPtr);
+    sample.builder_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_builder_io_bundle_valid;
+    sample.queue_push_ready = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queue_io_push_ready;
+    sample.bus_rsp_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_rspValid;
+    sample.bus_inflight0 = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_inflightValid_0;
+    sample.bus_inflight1 = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_inflightValid_1;
+    sample.stale_rsp_dropped = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_l1i_io_staleRspDropped;
+    sample.l1i_hit1 = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_l1i_io_lookupRsp_1_hit;
+    push_recent_cycle(sample);
 
     const bool enable_pc_exception_debug = false;
     if (enable_pc_exception_debug && top->io_dbg_redirectPcExceptionValid) {
@@ -433,6 +618,31 @@ int main(int argc, char** argv) {
       }
     }
 
+    if (verbose_diag && stale_wb && !stale_wb_reported) {
+      std::cerr
+          << "STALEWB: cyc=" << cycles
+          << " wb_pc=0x" << std::hex << (uint64_t)top->io_dbg_wb_pc
+          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << " wb_seq=0x" << (uint32_t)top->io_dbg_s7_seq
+          << " wb_epoch=" << std::dec << s7_epoch
+          << " cur_epoch=" << current_epoch
+          << " dup_retire=" << (int)top->io_dbg_duplicateRetire
+          << " redir_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitPending
+          << " redir_seq=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitSeq
+          << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
+          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " s6_seq=0x" << (uint32_t)top->io_dbg_s6_seq
+          << " mem_wmask=0x" << (uint32_t)top->io_dbg_memWmask
+          << " mem_addr=0x" << (uint64_t)top->io_dbg_memAddr
+          << " mem_wdata=0x" << (uint64_t)top->io_dbg_memWdata
+          << " redir_any=" << std::dec << (int)top->io_dbg_redirectAny
+          << std::endl;
+      dump_recent_cycles("stale_wb");
+      stale_wb_reported = true;
+    } else if (!stale_wb) {
+      stale_wb_reported = false;
+    }
+
     if (!stall_reported && stalled_cycles > 50000) {
       std::cerr
           << "STALL: no commit for " << stalled_cycles << " cycles"
@@ -469,11 +679,13 @@ int main(int argc, char** argv) {
           << " s7_fire=" << (int)top->io_dbg_s7_fire
           << " s1_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC
           << " s3_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_PC_PC
-          << " s2_pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
           << " s2_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
           << " s2_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_down_isReady
           << " s3_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
           << " s3_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_isReady
+          << " s3_down_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_valid
+          << " s3_seq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_Fetch_FETCH_SEQ
+          << " s3_epoch=" << rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH
           << " s3_dec_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_VALID
           << " s3_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
           << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_VALID
@@ -482,68 +694,48 @@ int main(int argc, char** argv) {
           << " wb_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID
           << " wb_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
           << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << " cur_epoch=" << std::dec << current_epoch
+          << " s5_epoch=" << s5_epoch
+          << " s6_epoch=" << s6_epoch
+          << " wb_epoch=" << s7_epoch
+          << " rsp_bubble=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectRspBubbleCounter
+          << " redir_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitPending
+          << " redir_seq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitSeq
+          << " fetch_ctl_active=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control_io_activeValid
+          << " fetch_ctl_pc=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control__DOT__activePc
+          << " fetch_ctl_epoch=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control__DOT__activeEpoch
+          << " adapter_active=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeValid
+          << " adapter_epoch=" << rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_epoch
+          << " adapter_slot=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeSlot
+          << " adapter_slotCount=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slotCount
+          << " adapter_bundleSeq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_bundleSeq
+          << " adapter_scalarSeqBase=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_bundleMeta_scalarSeqBase
+          << " scalar_boundary_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryValid
+          << " scalar_boundary_pc=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_pc
+          << " scalar_boundary_seq=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_scalarSeq
+          << " scalar_boundary_bundleSeq=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_bundleSeq
+          << " scalar_boundary_epoch=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_scalarBoundaryPayload_epoch
+          << " ftq_alloc_ptr=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_predictor__DOT__ftqAllocPtr
+          << " builder_valid=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_builder_io_bundle_valid
+          << " queue_push_ready=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_queue_io_push_ready
+          << " bus_rsp_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_rspValid
+          << " bus_inflight0=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_inflightValid_0
+          << " bus_inflight1=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_busBridge_inflightValid_1
+          << " stale_rsp_drop=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_l1i_io_staleRspDropped
+          << " l1i_hit1=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_l1i_io_lookupRsp_1_hit
+          << " adapter_slot0_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_0_valid
+          << " adapter_slot0_pc=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_0_pc
+          << " adapter_slot0_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_0_insn
+          << " adapter_slot1_valid=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_1_valid
+          << " adapter_slot1_pc=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_1_pc
+          << " adapter_slot1_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_adapter__DOT__activeBundle_slots_1_insn
           << " frontendPending=" << (uint64_t)top->io_perf_frontendPendingReqCycles
           << " frontendTakeInsn=" << (uint64_t)top->io_perf_frontendTakeInsn
           << " frontendFtqAlloc=" << (uint64_t)top->io_perf_frontendFtqAlloc
           << " frontendPredRedirect=" << (uint64_t)top->io_perf_frontendPredictedRedirect
           << std::endl;
+      dump_recent_cycles("stall");
       stall_reported = true;
-    }
-
-    const bool enable_fetch_window_debug = false;
-    const uint64_t fetch_rsp_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_1_up_PC_PC;
-    const bool fetch_hold = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid != 0;
-    const uint64_t fetch_hold_pc = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC;
-    const bool in_fetch_window =
-        ((fetch_rsp_pc >= 0x1f0ULL && fetch_rsp_pc <= 0x208ULL) ||
-         (fetch_hold && fetch_hold_pc >= 0x1f0ULL && fetch_hold_pc <= 0x208ULL));
-    if (enable_fetch_window_debug && in_fetch_window && fetch_window_logs < 240) {
-      std::cerr
-          << "FETCHDBG cyc=" << cycles
-          << " order=" << top->io_dbg_commitOrder
-          << " rspPc=0x" << std::hex << fetch_rsp_pc
-          << " hold=" << std::dec << (int)fetch_hold
-          << " holdPc=0x" << std::hex << fetch_hold_pc
-          << " frontendTakeInsn=" << std::dec << (uint64_t)top->io_perf_frontendTakeInsn
-          << " frontendLoopUsed=" << (uint64_t)top->io_perf_frontendLoopPredictUsed
-          << " frontendIndirectHit=" << (uint64_t)top->io_perf_frontendIndirectPredictHit
-          << " s2pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_PC_PC
-          << " s2v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid
-          << " s3v=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid
-          << " s3insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
-          << " s4pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_PC_PC
-          << " s4v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_valid
-          << " s4f=" << (int)top->io_dbg_s4_fire
-          << " s4seq=" << (uint32_t)top->io_dbg_s4_seq
-          << " s4insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_4_up_Decoder_DECODED_INSTRUCTION
-          << " s5pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_PC_PC
-          << " s5v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_valid
-          << " s5f=" << (int)top->io_dbg_s5_fire
-          << " s5seq=" << (uint32_t)top->io_dbg_s5_seq
-          << " s5lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Common_LANE_SEL
-          << " s5insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Decoder_DECODED_INSTRUCTION
-          << " s6pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_PC_PC
-          << " s6v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_valid
-          << " s6f=" << (int)top->io_dbg_s6_fire
-          << " s6seq=" << (uint32_t)top->io_dbg_s6_seq
-          << " s6lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
-          << " s6insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
-          << " s6rs1a=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
-          << " s6rs2a=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
-          << " s6agu=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU
-          << " s6rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
-          << " s6rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
-          << " s6imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
-          << " s7pc=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_PC_PC
-          << " s7v=" << std::dec << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_valid
-          << " s7f=" << (int)top->io_dbg_s7_fire
-          << " s7seq=" << (uint32_t)top->io_dbg_s7_seq
-          << " s7lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
-          << " commitPulse=" << (int)top->io_dbg_commitPulse
-          << " dupRetire=" << (int)top->io_dbg_duplicateRetire
-          << " s7insn=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
-          << std::endl;
-      fetch_window_logs++;
     }
 
     if (opt.commit_trace && top->io_dbg_commitValid) {
@@ -563,17 +755,20 @@ int main(int argc, char** argv) {
       const uint8_t mem_wmask = static_cast<uint8_t>(top->io_dbg_memWmask);
       const uint64_t mem_rdata = top->io_dbg_memRdata;
       const uint64_t mem_wdata = top->io_dbg_memWdata;
-      const uint8_t rs1_addr = static_cast<uint8_t>(top->io_dbg_commitRs1);
-      const uint8_t rs2_addr = static_cast<uint8_t>(top->io_dbg_commitRs2);
-      const uint64_t rs1_rdata = top->io_dbg_commitRs1Data;
-      const uint64_t rs2_rdata = top->io_dbg_commitRs2Data;
-
-      commit_trace << "{\"i\":" << order
-                   << ",\"seq\":" << seq
-                   << ",\"pc\":\"0x" << std::hex << pc << std::dec << "\""
-                   << ",\"insn\":\"0x" << std::hex << insn << std::dec << "\""
-                   << ",\"commit_pulse\":" << (top->io_dbg_commitPulse ? "true" : "false")
-                   << ",\"dup_retire\":" << (top->io_dbg_duplicateRetire ? "true" : "false")
+	      const uint8_t rs1_addr = static_cast<uint8_t>(top->io_dbg_commitRs1);
+	      const uint8_t rs2_addr = static_cast<uint8_t>(top->io_dbg_commitRs2);
+	      const uint64_t rs1_rdata = top->io_dbg_commitRs1Data;
+	      const uint64_t rs2_rdata = top->io_dbg_commitRs2Data;
+	      commit_trace << "{\"i\":" << order
+	                   << ",\"seq\":" << seq
+	                   << ",\"pc\":\"0x" << std::hex << pc << std::dec << "\""
+	                   << ",\"insn\":\"0x" << std::hex << insn << std::dec << "\""
+	                   << ",\"epoch\":{\"current\":" << current_epoch
+	                   << ",\"s5\":" << s5_epoch
+	                   << ",\"s6\":" << s6_epoch
+	                   << ",\"s7\":" << s7_epoch << "}"
+	                   << ",\"commit_pulse\":" << (top->io_dbg_commitPulse ? "true" : "false")
+	                   << ",\"dup_retire\":" << (top->io_dbg_duplicateRetire ? "true" : "false")
                    << ",\"redirect\":{\"any\":" << (top->io_dbg_redirectAny ? "true" : "false")
                    << ",\"branch\":" << (top->io_dbg_redirectBranch ? "true" : "false")
                    << ",\"trap\":" << (top->io_dbg_redirectTrap ? "true" : "false")
@@ -762,6 +957,19 @@ int main(int argc, char** argv) {
     const uint64_t perf_frontend_ftq_alloc = top->io_perf_frontendFtqAlloc;
     const uint64_t perf_frontend_ftq_restore = top->io_perf_frontendFtqRestore;
     const uint64_t perf_frontend_predicted_redirect = top->io_perf_frontendPredictedRedirect;
+    const uint64_t perf_frontend_miss_current_block = top->io_perf_frontendMissCurrentBlock;
+    const uint64_t perf_frontend_miss_next_block = top->io_perf_frontendMissNextBlock;
+    const uint64_t perf_frontend_miss_prefetch = top->io_perf_frontendMissPrefetch;
+    const uint64_t perf_frontend_req_blocked_outstanding = top->io_perf_frontendReqBlockedOutstanding;
+    const uint64_t perf_frontend_packet_queue_full_cycles = top->io_perf_frontendPacketQueueFullCycles;
+    const uint64_t perf_frontend_straddle_packets = top->io_perf_frontendStraddlePackets;
+    const uint64_t perf_frontend_second_block_used = top->io_perf_frontendSecondBlockUsed;
+    const uint64_t perf_frontend_second_block_late = top->io_perf_frontendSecondBlockLate;
+    const uint64_t perf_frontend_wrong_path_beats = top->io_perf_frontendWrongPathBeats;
+    const uint64_t perf_frontend_wrong_path_insns = top->io_perf_frontendWrongPathInsns;
+    const uint64_t perf_l1i_bank_conflict_cycles = top->io_perf_l1iBankConflictCycles;
+    const uint64_t perf_l1i_bank_busy_cycles = top->io_perf_l1iBankBusyCycles;
+    const uint64_t perf_l1i_cross_bank_dual_fetch_success = top->io_perf_l1iCrossBankDualFetchSuccess;
     const uint64_t perf_backend_occupancy0 = top->io_perf_backendOccupancy0;
     const uint64_t perf_backend_occupancy1 = top->io_perf_backendOccupancy1;
     const uint64_t perf_backend_occupancy2 = top->io_perf_backendOccupancy2;
@@ -846,6 +1054,19 @@ int main(int argc, char** argv) {
     pf << "    \"frontend_ftq_alloc\": " << perf_frontend_ftq_alloc << ",\n";
     pf << "    \"frontend_ftq_restore\": " << perf_frontend_ftq_restore << ",\n";
     pf << "    \"frontend_predicted_redirect\": " << perf_frontend_predicted_redirect << ",\n";
+    pf << "    \"frontend_miss_current_block\": " << perf_frontend_miss_current_block << ",\n";
+    pf << "    \"frontend_miss_next_block\": " << perf_frontend_miss_next_block << ",\n";
+    pf << "    \"frontend_miss_prefetch\": " << perf_frontend_miss_prefetch << ",\n";
+    pf << "    \"frontend_req_blocked_outstanding\": " << perf_frontend_req_blocked_outstanding << ",\n";
+    pf << "    \"frontend_packet_queue_full_cycles\": " << perf_frontend_packet_queue_full_cycles << ",\n";
+    pf << "    \"frontend_straddle_packets\": " << perf_frontend_straddle_packets << ",\n";
+    pf << "    \"frontend_second_block_used\": " << perf_frontend_second_block_used << ",\n";
+    pf << "    \"frontend_second_block_late\": " << perf_frontend_second_block_late << ",\n";
+    pf << "    \"frontend_wrong_path_beats\": " << perf_frontend_wrong_path_beats << ",\n";
+    pf << "    \"frontend_wrong_path_insns\": " << perf_frontend_wrong_path_insns << ",\n";
+    pf << "    \"l1i_bank_conflict_cycles\": " << perf_l1i_bank_conflict_cycles << ",\n";
+    pf << "    \"l1i_bank_busy_cycles\": " << perf_l1i_bank_busy_cycles << ",\n";
+    pf << "    \"l1i_cross_bank_dual_fetch_success\": " << perf_l1i_cross_bank_dual_fetch_success << ",\n";
     pf << "    \"backend_occupancy0\": " << perf_backend_occupancy0 << ",\n";
     pf << "    \"backend_occupancy1\": " << perf_backend_occupancy1 << ",\n";
     pf << "    \"backend_occupancy2\": " << perf_backend_occupancy2 << ",\n";

@@ -25,6 +25,7 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
     import borb.dispatch.Dispatch._
     import borb.dispatch.SrcPlugin._
     // import borb.frontend.AluOp
+    val execFire = up.isFiring && up(VALID) && up(LANE_SEL) && up(SENDTOALU)
     val result = Bits(64 bits)
     result.assignDontCare()
     when(up(borb.dispatch.Dispatch.SENDTOALU) === True) {
@@ -141,14 +142,14 @@ case class IntAlu(aluNode: CtrlLink) extends FiberPlugin {
     down(WriteBack.RESULT).valid.allowOverride := False
 
     // Only drive result if this instruction is dispatched to ALU
-    when(up(VALID) === True && up(SENDTOALU)) {
+    when(execFire) {
       // down(RESULT) := result.asBits
       // Enforce x0 invariant: writes to x0 must have 0 data (architecturally).
       // This ensures RVFI sees the correct "ignore" behavior.
       val isX0 = up(RD_ADDR).asUInt === 0
       down(WriteBack.RESULT).data := isX0 ? B(0, 64 bits) | result.asBits
       down(WriteBack.RESULT).address := up(RD_ADDR).asUInt
-      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(VALID) && up(IssueSemantics.PROPS).writesIntRd
+      down(WriteBack.RESULT).valid := (up(LEGAL) === YESNO.Y) && up(IssueSemantics.PROPS).writesIntRd
     }
   }
 }

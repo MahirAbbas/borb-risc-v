@@ -101,7 +101,7 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
     } else {
       down(IS_COMPRESSED) := False
     }
-    VALID := Symplify(decodeInst, all) && !decodeIllegal
+    VALID := stage.up.isValid && Symplify(decodeInst, all) && !decodeIllegal
 
     for ((spec, signal, _) <- specs) {
       down(signal).assignFromBits(spec.build(decodeInst, all).asBits)

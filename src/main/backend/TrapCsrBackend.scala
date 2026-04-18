@@ -418,12 +418,10 @@ case class TrapCsrBackend(
         trapInsn := rawRvc.inst
       }
     }
-    // Raw 0x00000000 is a real architectural illegal instruction in tests like
-    // the PMP TOR zero-address execution case, but the pipeline can also expose
-    // startup garbage before the first real fetch packet advances. Use decode
-    // validity or a nonzero fetch sequence to distinguish a real arrived
-    // instruction from bootstrap junk.
-    val trapInsnArrived = up.isValid && (up(Decoder.VALID) || (up(Fetch.FETCH_SEQ) =/= 0))
+    // Trap logic must follow decoded packet validity, not residual fetch
+    // sequence state, otherwise a killed redirect bubble can still look like
+    // an architecturally arrived instruction.
+    val trapInsnArrived = up.isValid && up(Decoder.VALID)
     val trapInsnDecodeIllegal = if (config.cExtensionEnabled) rawIsCompressed && rawRvc.illegal else False
     val trapInsnSupported = Symplify(trapInsn, decodeMasks)
     val trapInsnValid = trapInsnSupported && !trapInsnDecodeIllegal
@@ -616,9 +614,11 @@ case class TrapCsrBackend(
       wbStage(Decoder.VALID) &&
       wbStage(LANE_SEL) &&
       (wbStage(Fetch.FETCH_SEQ) === up(Fetch.FETCH_SEQ))
-    val aguFire = up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU) && !duplicateInWb
+    val aguFire = up.isValid && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU) && !duplicateInWb
 
-    when(up.isFiring && up(LANE_SEL) && (up(PC.PC) =/= U(0, 64 bits))) {
+    val stageExecFire = up.isFiring && up(Decoder.VALID) && up(LANE_SEL)
+
+    when(stageExecFire && (up(PC.PC) =/= U(0, 64 bits))) {
       sawNonZeroPc := True
     }
 
@@ -1134,15 +1134,15 @@ case class TrapCsrBackend(
     val mretIllegal = mretInsn && (currentPriv =/= PRV_M)
     val sretIllegal = sretInsn && (currentPriv =/= PRV_S)
     val sfenceIllegal = sfenceInsn && ((currentPriv === PRV_U) || ((currentPriv === PRV_S) && csrMstatus(20)))
-    val trapFromEcall = up.isFiring && insn === B"32'h00000073"
-    val trapFromEbreak = up.isFiring && insn === B"32'h00100073"
+    val trapFromEcall = stageExecFire && insn === B"32'h00000073"
+    val trapFromEbreak = stageExecFire && insn === B"32'h00100073"
     val isHandledSystem = mretInsn || sretInsn || sfenceInsn || trapFromEcall || trapFromEbreak
     val atomicOpcode = insn(6 downto 0) === B"0101111"
     val trapFromAtomicDisabled = if (config.aExtensionEnabled) False else atomicOpcode
     val trapFromIllegal32 = (trapInsnArrived && !trapInsnValid && !isHandledSystem) || trapFromAtomicDisabled
-    val trapFromIllegalInsn = up.isFiring && (trapFromIllegal32 || csrIllegal || mretIllegal || sretIllegal || sfenceIllegal)
-    val mretFire = up.isFiring && epochMatches && mretInsn && (currentPriv === PRV_M)
-    val sretFire = up.isFiring && epochMatches && sretInsn && (currentPriv === PRV_S)
+    val trapFromIllegalInsn = stageExecFire && (trapFromIllegal32 || csrIllegal || mretIllegal || sretIllegal || sfenceIllegal)
+    val mretFire = stageExecFire && epochMatches && mretInsn && (currentPriv === PRV_M)
+    val sretFire = stageExecFire && epochMatches && sretInsn && (currentPriv === PRV_S)
     val returnFire = mretFire || sretFire
     val mretPriv = csrMstatus(12 downto 11).asUInt
     val sretPriv = UInt(2 bits)
@@ -1197,7 +1197,7 @@ case class TrapCsrBackend(
     val returnTrap = trapFromReturnFetchAccess || trapFromReturnFetchPage
     val mretComplete = mretFire && !returnTrap
     val sretComplete = sretFire && !returnTrap
-    val trapEligible = up.isFiring && epochMatches
+    val trapEligible = stageExecFire && epochMatches
     val trapSelBranch = trapEligible && trapFromBranch
     val trapSelBranchFetchAccess = trapEligible && trapFromBranchFetchAccess
     val trapSelBranchFetchPage = trapEligible && trapFromBranchFetchPage
@@ -1384,6 +1384,9 @@ case class TrapCsrBackend(
     redirect.trapCause := trapCause
     redirect.trapTval := trapTval
 
-    down(TRAP) := trapFromBranch || trapFromBranchFetchAccess || trapFromBranchFetchPage || trapFromReturnFetchAccess || trapFromReturnFetchPage || trapFromFetchAccess || trapFromFetchPage || trapFromLoadMisalign || trapFromStoreMisalign || trapFromLoadAccess || trapFromLoadPage || trapFromStoreAccess || trapFromStorePage || trapFromIllegalInsn || trapFromEcall || trapFromEbreak
+    // Keep trap ownership instruction-local. Raw trap-source unions can stay
+    // high for non-firing or stale-epoch execute occupants, which incorrectly
+    // tags adjacent instructions in writeback as traps.
+    down(TRAP) := trapFire
   }
 }

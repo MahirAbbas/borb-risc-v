@@ -64,8 +64,8 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
   val regfileread = new stage.Area {
     val regfile = new IntRegFile(dataWidth = 64)
 
-    rs1Reader.valid := up(IssueSemantics.PROPS).readsIntRs1 && up(VALID)
-    rs2Reader.valid := up(IssueSemantics.PROPS).readsIntRs2 && up(VALID)
+    rs1Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs1 && up(VALID)
+    rs2Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs2 && up(VALID)
     rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
     rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
 

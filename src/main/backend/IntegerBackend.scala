@@ -10,6 +10,7 @@ import borb.frontend.Decoder._
 
 case class IntegerBackend(stage6: CtrlLink, stage7: CtrlLink) extends Area {
   private val exeHasResult = stage6.up.isValid &&
+    stage6.up.isFiring &&
     stage6(VALID) &&
     stage6(LANE_SEL) &&
     stage6.down(WriteBack.RESULT).valid

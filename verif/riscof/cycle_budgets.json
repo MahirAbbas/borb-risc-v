@@ -67,210 +67,210 @@
       "slack": 2000
     },
     "vm.sv39": {
-      "budget": 113263,
-      "max_pass_cycles": 37421,
+      "budget": 117424,
+      "max_pass_cycles": 38808,
       "scale": 3.0,
       "slack": 1000
     }
   },
   "tests": {
     "Fencei.S": {
-      "budget": 4400,
+      "budget": 5390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 400,
+      "max_pass_cycles": 565,
       "scale": 6.0,
       "slack": 2000
     },
     "add-01.S": {
-      "budget": 146300,
+      "budget": 211706,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24050,
+      "max_pass_cycles": 34951,
       "scale": 6.0,
       "slack": 2000
     },
     "addi-01.S": {
-      "budget": 103862,
+      "budget": 118490,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16977,
+      "max_pass_cycles": 19415,
       "scale": 6.0,
       "slack": 2000
     },
     "addiw-01.S": {
-      "budget": 104666,
+      "budget": 119450,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17111,
+      "max_pass_cycles": 19575,
       "scale": 6.0,
       "slack": 2000
     },
     "addw-01.S": {
-      "budget": 146246,
+      "budget": 211592,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24041,
+      "max_pass_cycles": 34932,
       "scale": 6.0,
       "slack": 2000
     },
     "amoadd.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoadd.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoand.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoand.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomax.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomax.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomaxu.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomaxu.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomin.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amomin.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amominu.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amominu.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoor.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoor.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoswap.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoswap.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoxor.d-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "amoxor.w-01.S": {
-      "budget": 23084,
+      "budget": 25118,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3514,
+      "max_pass_cycles": 3853,
       "scale": 6.0,
       "slack": 2000
     },
     "and-01.S": {
-      "budget": 146024,
+      "budget": 211064,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24004,
+      "max_pass_cycles": 34844,
       "scale": 6.0,
       "slack": 2000
     },
     "andi-01.S": {
-      "budget": 104312,
+      "budget": 119000,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17052,
+      "max_pass_cycles": 19500,
       "scale": 6.0,
       "slack": 2000
     },
@@ -347,18 +347,18 @@
       "slack": 1000
     },
     "caddi16sp-01.S": {
-      "budget": 9268,
+      "budget": 11920,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 2067,
+      "max_pass_cycles": 2730,
       "scale": 4.0,
       "slack": 1000
     },
     "caddi4spn-01.S": {
-      "budget": 2828,
+      "budget": 3748,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 457,
+      "max_pass_cycles": 687,
       "scale": 4.0,
       "slack": 1000
     },
@@ -411,10 +411,10 @@
       "slack": 1000
     },
     "cebreak-01.S": {
-      "budget": 5524,
+      "budget": 7172,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 1131,
+      "max_pass_cycles": 1543,
       "scale": 4.0,
       "slack": 1000
     },
@@ -443,26 +443,26 @@
       "slack": 1000
     },
     "cld-01.S": {
-      "budget": 4200,
+      "budget": 6488,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 800,
+      "max_pass_cycles": 1372,
       "scale": 4.0,
       "slack": 1000
     },
     "cldsp-01.S": {
-      "budget": 7224,
+      "budget": 11800,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 1556,
+      "max_pass_cycles": 2700,
       "scale": 4.0,
       "slack": 1000
     },
     "cli-01.S": {
-      "budget": 3016,
+      "budget": 3984,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 504,
+      "max_pass_cycles": 746,
       "scale": 4.0,
       "slack": 1000
     },
@@ -483,26 +483,26 @@
       "slack": 1000
     },
     "clwsp-01.S": {
-      "budget": 7240,
+      "budget": 11816,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 1560,
+      "max_pass_cycles": 2704,
       "scale": 4.0,
       "slack": 1000
     },
     "cmv-01.S": {
-      "budget": 11196,
+      "budget": 15016,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 2549,
+      "max_pass_cycles": 3504,
       "scale": 4.0,
       "slack": 1000
     },
     "cnop-01.S": {
-      "budget": 2340,
+      "budget": 3264,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 335,
+      "max_pass_cycles": 566,
       "scale": 4.0,
       "slack": 1000
     },
@@ -515,18 +515,18 @@
       "slack": 1000
     },
     "csd-01.S": {
-      "budget": 14228,
+      "budget": 20360,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 3307,
+      "max_pass_cycles": 4840,
       "scale": 4.0,
       "slack": 1000
     },
     "csdsp-01.S": {
-      "budget": 14340,
+      "budget": 20472,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 3335,
+      "max_pass_cycles": 4868,
       "scale": 4.0,
       "slack": 1000
     },
@@ -579,10 +579,10 @@
       "slack": 1000
     },
     "cswsp-01.S": {
-      "budget": 14464,
+      "budget": 20696,
       "budget_class": "c.frontend",
       "family": "c.frontend",
-      "max_pass_cycles": 3366,
+      "max_pass_cycles": 4924,
       "scale": 4.0,
       "slack": 1000
     },
@@ -595,50 +595,50 @@
       "slack": 1000
     },
     "div-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "divu-01.S": {
-      "budget": 200180,
+      "budget": 290390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 33030,
+      "max_pass_cycles": 48065,
       "scale": 6.0,
       "slack": 2000
     },
     "divuw-01.S": {
-      "budget": 200180,
+      "budget": 290390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 33030,
+      "max_pass_cycles": 48065,
       "scale": 6.0,
       "slack": 2000
     },
     "divw-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "ebreak.S": {
-      "budget": 8804,
+      "budget": 11282,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1134,
+      "max_pass_cycles": 1547,
       "scale": 6.0,
       "slack": 2000
     },
     "ecall.S": {
-      "budget": 8684,
+      "budget": 11036,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1114,
+      "max_pass_cycles": 1506,
       "scale": 6.0,
       "slack": 2000
     },
@@ -1195,402 +1195,402 @@
       "slack": 2000
     },
     "fmadd_b15-001.S": {
-      "budget": 309656,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38457,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-002.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-003.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-004.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-005.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-006.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-007.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-008.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-009.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-010.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-011.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-012.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-013.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-014.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-015.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-016.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-017.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-018.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-019.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-020.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-021.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-022.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-023.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-024.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-025.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-026.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-027.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-028.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-029.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-030.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-031.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-032.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-033.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-034.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-035.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-036.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-037.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-038.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-039.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-040.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-041.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-042.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-043.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-044.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-045.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-046.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-047.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-048.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-049.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmadd_b15-050.S": {
-      "budget": 186744,
+      "budget": 241400,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 23093,
+      "max_pass_cycles": 29925,
       "scale": 8.0,
       "slack": 2000
     },
@@ -1723,402 +1723,402 @@
       "slack": 2000
     },
     "fmsub_b15-001.S": {
-      "budget": 309664,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38458,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-002.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-003.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-004.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-005.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-006.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-007.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-008.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-009.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-010.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-011.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-012.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-013.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-014.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-015.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-016.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-017.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-018.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-019.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-020.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-021.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-022.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-023.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-024.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-025.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-026.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-027.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-028.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-029.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-030.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-031.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-032.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-033.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-034.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-035.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-036.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-037.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-038.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-039.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-040.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-041.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-042.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-043.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-044.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-045.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-046.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-047.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-048.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-049.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fmsub_b15-050.S": {
-      "budget": 186744,
+      "budget": 241400,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 23093,
+      "max_pass_cycles": 29925,
       "scale": 8.0,
       "slack": 2000
     },
@@ -2363,402 +2363,402 @@
       "slack": 2000
     },
     "fnmadd_b15-001.S": {
-      "budget": 309664,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38458,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-002.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-003.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-004.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-005.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-006.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-007.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-008.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-009.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-010.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-011.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-012.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-013.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-014.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-015.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-016.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-017.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-018.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-019.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-020.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-021.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-022.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-023.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-024.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-025.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-026.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-027.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-028.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-029.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-030.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-031.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-032.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-033.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-034.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-035.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-036.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-037.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-038.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-039.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-040.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-041.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-042.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-043.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-044.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-045.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-046.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-047.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-048.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-049.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmadd_b15-050.S": {
-      "budget": 186744,
+      "budget": 241400,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 23093,
+      "max_pass_cycles": 29925,
       "scale": 8.0,
       "slack": 2000
     },
@@ -2859,402 +2859,402 @@
       "slack": 2000
     },
     "fnmsub_b15-001.S": {
-      "budget": 309664,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38458,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-002.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-003.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-004.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-005.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-006.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-007.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-008.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-009.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-010.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-011.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-012.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-013.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-014.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-015.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-016.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-017.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-018.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-019.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-020.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-021.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-022.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-023.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-024.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-025.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-026.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-027.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-028.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-029.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-030.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-031.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-032.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-033.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-034.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-035.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-036.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-037.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-038.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-039.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-040.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-041.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-042.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-043.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-044.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-045.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-046.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-047.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-048.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-049.S": {
-      "budget": 309648,
+      "budget": 401304,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 38456,
+      "max_pass_cycles": 49913,
       "scale": 8.0,
       "slack": 2000
     },
     "fnmsub_b15-050.S": {
-      "budget": 186744,
+      "budget": 241400,
       "budget_class": "rv32f.fma",
       "family": "rv32f.fma",
-      "max_pass_cycles": 23093,
+      "max_pass_cycles": 29925,
       "scale": 8.0,
       "slack": 2000
     },
@@ -3667,66 +3667,66 @@
       "slack": 2000
     },
     "misalign-ld-01.S": {
-      "budget": 30560,
+      "budget": 35354,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 4760,
+      "max_pass_cycles": 5559,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-lh-01.S": {
-      "budget": 9104,
+      "budget": 11654,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1184,
+      "max_pass_cycles": 1609,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-lhu-01.S": {
-      "budget": 9104,
+      "budget": 11654,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1184,
+      "max_pass_cycles": 1609,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-lw-01.S": {
-      "budget": 16256,
+      "budget": 19586,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2376,
+      "max_pass_cycles": 2931,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-lwu-01.S": {
-      "budget": 16256,
+      "budget": 19586,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2376,
+      "max_pass_cycles": 2931,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-sd-01.S": {
-      "budget": 28742,
+      "budget": 32588,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 4457,
+      "max_pass_cycles": 5098,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-sh-01.S": {
-      "budget": 8870,
+      "budget": 11294,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1145,
+      "max_pass_cycles": 1549,
       "scale": 6.0,
       "slack": 2000
     },
     "misalign-sw-01.S": {
-      "budget": 15470,
+      "budget": 18410,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2245,
+      "max_pass_cycles": 2735,
       "scale": 6.0,
       "slack": 2000
     },
@@ -3763,50 +3763,50 @@
       "slack": 2000
     },
     "mul-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "mulh-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "mulhsu-01.S": {
-      "budget": 188504,
+      "budget": 273686,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 31084,
+      "max_pass_cycles": 45281,
       "scale": 6.0,
       "slack": 2000
     },
     "mulhu-01.S": {
-      "budget": 200180,
+      "budget": 290390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 33030,
+      "max_pass_cycles": 48065,
       "scale": 6.0,
       "slack": 2000
     },
     "mulw-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "or-01.S": {
-      "budget": 146336,
+      "budget": 211898,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24056,
+      "max_pass_cycles": 34983,
       "scale": 6.0,
       "slack": 2000
     },
@@ -3819,106 +3819,106 @@
       "slack": 2000
     },
     "pmpm_access_double_region.S": {
-      "budget": 14678,
+      "budget": 19112,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2113,
+      "max_pass_cycles": 2852,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-01.S": {
-      "budget": 15752,
+      "budget": 23756,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2292,
+      "max_pass_cycles": 3626,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-02.S": {
-      "budget": 16256,
+      "budget": 24572,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2376,
+      "max_pass_cycles": 3762,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-03.S": {
-      "budget": 16256,
+      "budget": 24572,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2376,
+      "max_pass_cycles": 3762,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_all_entries_check-04.S": {
-      "budget": 64514,
+      "budget": 76898,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10419,
+      "max_pass_cycles": 12483,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_all.S": {
-      "budget": 7706,
+      "budget": 10358,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 951,
+      "max_pass_cycles": 1393,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_off_all.S": {
-      "budget": 45500,
+      "budget": 53714,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 7250,
+      "max_pass_cycles": 8619,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_tor_bot.S": {
-      "budget": 29498,
+      "budget": 39584,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 4583,
+      "max_pass_cycles": 6264,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_A_tor_zero.S": {
-      "budget": 20138,
+      "budget": 25988,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 3023,
+      "max_pass_cycles": 3998,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_access_all.S": {
-      "budget": 32000,
+      "budget": 47054,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 5000,
+      "max_pass_cycles": 7509,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_napot.S": {
-      "budget": 7724,
+      "budget": 10556,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 954,
+      "max_pass_cycles": 1426,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_off.S": {
-      "budget": 7688,
+      "budget": 10508,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 948,
+      "max_pass_cycles": 1418,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_L_modify_tor.S": {
-      "budget": 7724,
+      "budget": 10556,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 954,
+      "max_pass_cycles": 1426,
       "scale": 6.0,
       "slack": 2000
     },
@@ -3955,86 +3955,62 @@
       "slack": 2000
     },
     "pmpm_cfg_na4_all.S": {
-      "budget": 61670,
+      "budget": 74534,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 9945,
+      "max_pass_cycles": 12089,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_napot_all.S": {
-      "budget": 107420,
+      "budget": 122708,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17570,
+      "max_pass_cycles": 20118,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_tor_all.S": {
-      "budget": 38780,
+      "budget": 49358,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6130,
+      "max_pass_cycles": 7893,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_tor_check-01.S": {
-      "budget": 11936,
+      "budget": 15506,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1656,
+      "max_pass_cycles": 2251,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_tor_check-02.S": {
-      "budget": 12056,
+      "budget": 15674,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1676,
+      "max_pass_cycles": 2279,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_cfg_tor_check-03.S": {
-      "budget": 12044,
+      "budget": 15674,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1674,
+      "max_pass_cycles": 2279,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_csr_walk.S": {
-      "budget": 40772,
+      "budget": 46766,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6462,
+      "max_pass_cycles": 7461,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_grain.S": {
-      "budget": 11348,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 1558,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_grain_check.S": {
-      "budget": 8840,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 1140,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_na4_boundary-01.S": {
-      "budget": 14078,
-      "budget_class": "default",
-      "family": "rv64.base",
-      "max_pass_cycles": 2013,
-      "scale": 6.0,
-      "slack": 2000
-    },
-    "pmpm_na4_boundary-02.S": {
       "budget": 14066,
       "budget_class": "default",
       "family": "rv64.base",
@@ -4042,75 +4018,99 @@
       "scale": 6.0,
       "slack": 2000
     },
-    "pmpm_na4_legal_lxwr.S": {
-      "budget": 56882,
+    "pmpm_grain_check.S": {
+      "budget": 10610,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 9147,
+      "max_pass_cycles": 1435,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_boundary-01.S": {
+      "budget": 18176,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2696,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_boundary-02.S": {
+      "budget": 18176,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 2696,
+      "scale": 6.0,
+      "slack": 2000
+    },
+    "pmpm_na4_legal_lxwr.S": {
+      "budget": 70592,
+      "budget_class": "default",
+      "family": "rv64.base",
+      "max_pass_cycles": 11432,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_napot_legal_lxwr.S": {
-      "budget": 197708,
+      "budget": 200066,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 32618,
+      "max_pass_cycles": 33011,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_priority.S": {
-      "budget": 16586,
+      "budget": 25040,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2431,
+      "max_pass_cycles": 3840,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_priority_off.S": {
-      "budget": 14834,
+      "budget": 19712,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2139,
+      "max_pass_cycles": 2952,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_tor_boundary-01.S": {
-      "budget": 14438,
+      "budget": 18704,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2073,
+      "max_pass_cycles": 2784,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_tor_boundary-02.S": {
-      "budget": 14450,
+      "budget": 18704,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 2075,
+      "max_pass_cycles": 2784,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpm_tor_legal_lxwr.S": {
-      "budget": 94868,
+      "budget": 117434,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 15478,
+      "max_pass_cycles": 19239,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_cfg_A_off.S": {
-      "budget": 10250,
+      "budget": 13682,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1375,
+      "max_pass_cycles": 1947,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_cfg_XWR.S": {
-      "budget": 129944,
+      "budget": 131522,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 21324,
+      "max_pass_cycles": 21587,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4123,66 +4123,66 @@
       "slack": 2000
     },
     "pmps_mprv_check-01.S": {
-      "budget": 38126,
+      "budget": 46652,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 6021,
+      "max_pass_cycles": 7442,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_mprv_check-02.S": {
-      "budget": 12974,
+      "budget": 18782,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1829,
+      "max_pass_cycles": 2797,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_na4_legal_lxwr.S": {
-      "budget": 66776,
+      "budget": 73172,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10796,
+      "max_pass_cycles": 11862,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_napot_legal_lxwr.S": {
-      "budget": 207602,
+      "budget": 210794,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 34267,
+      "max_pass_cycles": 34799,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_none.S": {
-      "budget": 12128,
+      "budget": 15452,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1688,
+      "max_pass_cycles": 2242,
       "scale": 6.0,
       "slack": 2000
     },
     "pmps_tor_legal_lxwr.S": {
-      "budget": 103268,
+      "budget": 111986,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16878,
+      "max_pass_cycles": 18331,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_cfg_A_off.S": {
-      "budget": 10142,
+      "budget": 13490,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1357,
+      "max_pass_cycles": 1915,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_cfg_XWR.S": {
-      "budget": 129896,
+      "budget": 131450,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 21316,
+      "max_pass_cycles": 21575,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4195,178 +4195,178 @@
       "slack": 2000
     },
     "pmpu_mprv_check-01.S": {
-      "budget": 37982,
+      "budget": 46652,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 5997,
+      "max_pass_cycles": 7442,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_mprv_check-02.S": {
-      "budget": 12350,
+      "budget": 17990,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1725,
+      "max_pass_cycles": 2665,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_na4_legal_lxwr.S": {
-      "budget": 66728,
+      "budget": 73100,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 10788,
+      "max_pass_cycles": 11850,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_napot_legal_lxwr.S": {
-      "budget": 207362,
+      "budget": 210584,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 34227,
+      "max_pass_cycles": 34764,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_none.S": {
-      "budget": 12086,
+      "budget": 15380,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1681,
+      "max_pass_cycles": 2230,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpu_tor_legal_lxwr.S": {
-      "budget": 103064,
+      "budget": 111950,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16844,
+      "max_pass_cycles": 18325,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzaamo_cfg_wr.S": {
-      "budget": 234530,
+      "budget": 257126,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 38755,
+      "max_pass_cycles": 42521,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_na4.S": {
-      "budget": 9218,
+      "budget": 13172,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1203,
+      "max_pass_cycles": 1862,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_napot.S": {
-      "budget": 8048,
+      "budget": 11462,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1008,
+      "max_pass_cycles": 1577,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_off.S": {
-      "budget": 9218,
+      "budget": 13172,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1203,
+      "max_pass_cycles": 1862,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_aligned_tor.S": {
-      "budget": 9200,
+      "budget": 13190,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1200,
+      "max_pass_cycles": 1865,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_na4.S": {
-      "budget": 9044,
+      "budget": 12608,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1174,
+      "max_pass_cycles": 1768,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_napot.S": {
-      "budget": 9062,
+      "budget": 12608,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1177,
+      "max_pass_cycles": 1768,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_cret_tor.S": {
-      "budget": 9278,
+      "budget": 12992,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1213,
+      "max_pass_cycles": 1832,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_na4.S": {
-      "budget": 12278,
+      "budget": 17024,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1713,
+      "max_pass_cycles": 2504,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_napot.S": {
-      "budget": 11060,
+      "budget": 15206,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1510,
+      "max_pass_cycles": 2201,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_off.S": {
-      "budget": 9302,
+      "budget": 13190,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1217,
+      "max_pass_cycles": 1865,
       "scale": 6.0,
       "slack": 2000
     },
     "pmpzca_misaligned_tor.S": {
-      "budget": 12350,
+      "budget": 17144,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 1725,
+      "max_pass_cycles": 2524,
       "scale": 6.0,
       "slack": 2000
     },
     "rem-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
     "remu-01.S": {
-      "budget": 200180,
+      "budget": 290390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 33030,
+      "max_pass_cycles": 48065,
       "scale": 6.0,
       "slack": 2000
     },
     "remuw-01.S": {
-      "budget": 200180,
+      "budget": 290390,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 33030,
+      "max_pass_cycles": 48065,
       "scale": 6.0,
       "slack": 2000
     },
     "remw-01.S": {
-      "budget": 177308,
+      "budget": 257546,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29218,
+      "max_pass_cycles": 42591,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4427,34 +4427,34 @@
       "slack": 2000
     },
     "slt-01.S": {
-      "budget": 146180,
+      "budget": 211754,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24030,
+      "max_pass_cycles": 34959,
       "scale": 6.0,
       "slack": 2000
     },
     "slti-01.S": {
-      "budget": 103448,
+      "budget": 117986,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 16908,
+      "max_pass_cycles": 19331,
       "scale": 6.0,
       "slack": 2000
     },
     "sltiu-01.S": {
-      "budget": 121112,
+      "budget": 138386,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 19852,
+      "max_pass_cycles": 22731,
       "scale": 6.0,
       "slack": 2000
     },
     "sltu-01.S": {
-      "budget": 170240,
+      "budget": 245996,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 28040,
+      "max_pass_cycles": 40666,
       "scale": 6.0,
       "slack": 2000
     },
@@ -4523,50 +4523,50 @@
       "slack": 2000
     },
     "sub-01.S": {
-      "budget": 145088,
+      "budget": 209738,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 23848,
+      "max_pass_cycles": 34623,
       "scale": 6.0,
       "slack": 2000
     },
     "subw-01.S": {
-      "budget": 146732,
+      "budget": 212102,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 24122,
+      "max_pass_cycles": 35017,
       "scale": 6.0,
       "slack": 2000
     },
     "sv39_pmp_on_pa_S_mode.S": {
-      "budget": 39289,
+      "budget": 42865,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 12763,
+      "max_pass_cycles": 13955,
       "scale": 3.0,
       "slack": 1000
     },
     "sv39_pmp_on_pa_U_mode.S": {
-      "budget": 39568,
+      "budget": 42721,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 12856,
+      "max_pass_cycles": 13907,
       "scale": 3.0,
       "slack": 1000
     },
     "sv39_pmp_on_pte_S_mode.S": {
-      "budget": 26545,
+      "budget": 28498,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8515,
+      "max_pass_cycles": 9166,
       "scale": 3.0,
       "slack": 1000
     },
     "sv39_pmp_on_pte_U_mode.S": {
-      "budget": 26635,
+      "budget": 28453,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8545,
+      "max_pass_cycles": 9151,
       "scale": 3.0,
       "slack": 1000
     },
@@ -4715,306 +4715,306 @@
       "slack": 2000
     },
     "vm_A_and_D_S_mode.S": {
-      "budget": 69688,
+      "budget": 74830,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 22896,
+      "max_pass_cycles": 24610,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_A_and_D_U_mode.S": {
-      "budget": 70219,
+      "budget": 74650,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 23073,
+      "max_pass_cycles": 24550,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_VA_all_ones_S_mode.S": {
-      "budget": 12955,
+      "budget": 16819,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3985,
+      "max_pass_cycles": 5273,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_VA_all_zeros_S_mode.S": {
-      "budget": 12847,
+      "budget": 16717,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3949,
+      "max_pass_cycles": 5239,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_canonical_S_mode.S": {
-      "budget": 27844,
+      "budget": 30727,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8948,
+      "max_pass_cycles": 9909,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_canonical_U_mode.S": {
-      "budget": 27682,
+      "budget": 30448,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8894,
+      "max_pass_cycles": 9816,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_invalid_pte_S_mode.S": {
-      "budget": 27583,
+      "budget": 30475,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8861,
+      "max_pass_cycles": 9825,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_invalid_pte_U_mode.S": {
-      "budget": 27745,
+      "budget": 30430,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8915,
+      "max_pass_cycles": 9810,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_misaligned_S_mode.S": {
-      "budget": 18505,
+      "budget": 20035,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 5835,
+      "max_pass_cycles": 6345,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_misaligned_U_mode.S": {
-      "budget": 18547,
+      "budget": 20035,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 5849,
+      "max_pass_cycles": 6345,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mprv_S_mode.S": {
-      "budget": 10834,
+      "budget": 14407,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3278,
+      "max_pass_cycles": 4469,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mprv_U_mode.S": {
-      "budget": 10843,
+      "budget": 14407,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3281,
+      "max_pass_cycles": 4469,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mprv_U_set_sum_set_S_mode.S": {
-      "budget": 10987,
+      "budget": 14659,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3329,
+      "max_pass_cycles": 4553,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mprv_U_set_sum_unset_S_mode.S": {
-      "budget": 19717,
+      "budget": 26008,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 6239,
+      "max_pass_cycles": 8336,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mprv_bare_mode.S": {
-      "budget": 5545,
+      "budget": 6514,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 1515,
+      "max_pass_cycles": 1838,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mstatus_sbe_set_S_mode.S": {
-      "budget": 30487,
+      "budget": 35875,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 9829,
+      "max_pass_cycles": 11625,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mstatus_sbe_set_sum_set_S_mode.S": {
-      "budget": 30499,
+      "budget": 35875,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 9833,
+      "max_pass_cycles": 11625,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mstatus_tvm_test.S": {
-      "budget": 9901,
+      "budget": 11764,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 2967,
+      "max_pass_cycles": 3588,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mxr_S_mode.S": {
-      "budget": 36691,
+      "budget": 40603,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 11897,
+      "max_pass_cycles": 13201,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_mxr_U_mode.S": {
-      "budget": 37006,
+      "budget": 40474,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 12002,
+      "max_pass_cycles": 13158,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_nleaf_pte_level0_S_mode.S": {
-      "budget": 13456,
+      "budget": 18184,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 4152,
+      "max_pass_cycles": 5728,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_nleaf_pte_level0_U_mode.S": {
-      "budget": 13510,
+      "budget": 18184,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 4170,
+      "max_pass_cycles": 5728,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_pte_reserved_field_S_mode.S": {
-      "budget": 55084,
+      "budget": 57445,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 18028,
+      "max_pass_cycles": 18815,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_res_global_pte_S_mode.S": {
-      "budget": 22795,
+      "budget": 26668,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 7265,
+      "max_pass_cycles": 8556,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_res_global_pte_U_mode.S": {
-      "budget": 22867,
+      "budget": 26599,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 7289,
+      "max_pass_cycles": 8533,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_rsw_pte_S_mode.S": {
-      "budget": 33082,
+      "budget": 38671,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 10694,
+      "max_pass_cycles": 12557,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_rsw_pte_U_mode.S": {
-      "budget": 33352,
+      "budget": 38536,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 10784,
+      "max_pass_cycles": 12512,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_rwx_pte_S_mode.S": {
-      "budget": 49138,
+      "budget": 52207,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 16046,
+      "max_pass_cycles": 17069,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_rwx_pte_U_mode.S": {
-      "budget": 49462,
+      "budget": 52138,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 16154,
+      "max_pass_cycles": 17046,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_svnapot_S_mode.S": {
-      "budget": 11878,
+      "budget": 15100,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 3626,
+      "max_pass_cycles": 4700,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_reserved_svpbmt_S_mode.S": {
-      "budget": 27052,
+      "budget": 29611,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8684,
+      "max_pass_cycles": 9537,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_satp_access_tests.S": {
-      "budget": 15424,
+      "budget": 18247,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 4808,
+      "max_pass_cycles": 5749,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_spage_access_U_mode.S": {
-      "budget": 27745,
+      "budget": 30430,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 8915,
+      "max_pass_cycles": 9810,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_sum_set_S_mode.S": {
-      "budget": 68455,
+      "budget": 73075,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 22485,
+      "max_pass_cycles": 24025,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_sum_set_U_bit_unset_S_mode.S": {
-      "budget": 49876,
+      "budget": 54532,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 16292,
+      "max_pass_cycles": 17844,
       "scale": 3.0,
       "slack": 1000
     },
     "vm_sum_unset_S_mode.S": {
-      "budget": 113263,
+      "budget": 117424,
       "budget_class": "vm.sv39",
       "family": "vm.sv39",
-      "max_pass_cycles": 37421,
+      "max_pass_cycles": 38808,
       "scale": 3.0,
       "slack": 1000
     },
     "xor-01.S": {
-      "budget": 179342,
+      "budget": 211568,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 29557,
+      "max_pass_cycles": 34928,
       "scale": 6.0,
       "slack": 2000
     },
     "xori-01.S": {
-      "budget": 104582,
+      "budget": 119396,
       "budget_class": "default",
       "family": "rv64.base",
-      "max_pass_cycles": 17097,
+      "max_pass_cycles": 19566,
       "scale": 6.0,
       "slack": 2000
     }

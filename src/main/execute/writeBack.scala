@@ -14,26 +14,38 @@ object WriteBack extends AreaObject {
   val DUPLICATE_RETIRE = Payload(Bool())
 }
 
-case class WriteBack(wbNode: CtrlLink, writePort: RegFileWrite, currentEpoch: UInt, squashCycle: Bool = False) extends Area {
+case class WriteBack(
+    wbNode: CtrlLink,
+    writePort: RegFileWrite,
+    currentEpoch: UInt,
+    squashCycle: Bool = False,
+    redirectPending: Bool = False,
+    redirectSeq: UInt = U(0, 32 bits)
+) extends Area {
   val logic = new wbNode.Area {
      val epochMatches = up(SPEC_EPOCH) === currentEpoch
      val redirectingInsn = up(SELF_REDIRECT)
      val stageValid = up.isValid && up(Decoder.VALID)
-     val retireReq = stageValid && up(LANE_SEL) && ((epochMatches && !squashCycle) || redirectingInsn)
-     val lastRetireValid = RegInit(False)
-     val lastRetireSeq = Reg(UInt(32 bits)) init(0)
+     val olderThanPendingRedirect = redirectPending && (up(Fetch.FETCH_SEQ) < redirectSeq)
+     val retireReq = stageValid && up(LANE_SEL) && ((((epochMatches || olderThanPendingRedirect) && !squashCycle)) || redirectingInsn)
+     val recentRetireValid = Reg(Bits(2 bits)) init(0)
+     val recentRetireSeq0 = Reg(UInt(32 bits)) init(0)
+     val recentRetireSeq1 = Reg(UInt(32 bits)) init(0)
      val duplicateRetire =
-       lastRetireValid &&
        retireReq &&
-       (up(Fetch.FETCH_SEQ) === lastRetireSeq)
+       (
+         (recentRetireValid(0) && (up(Fetch.FETCH_SEQ) === recentRetireSeq0)) ||
+         (recentRetireValid(1) && (up(Fetch.FETCH_SEQ) === recentRetireSeq1))
+       )
      val commitPulse = retireReq && !duplicateRetire
      // Retire every lane-selected instruction (including traps).
      // Traps still suppress register writeback via RESULT.valid path below.
      up(COMMIT) := commitPulse
      up(WriteBack.DUPLICATE_RETIRE) := duplicateRetire
-     when(retireReq) {
-       lastRetireValid := True
-       lastRetireSeq := up(Fetch.FETCH_SEQ)
+     when(commitPulse) {
+       recentRetireValid := B"11"
+       recentRetireSeq1 := recentRetireSeq0
+       recentRetireSeq0 := up(Fetch.FETCH_SEQ)
      }
      
      // Drive write port

@@ -12,7 +12,7 @@ case class FrontendConfig(
   enablePredictorTraining: Boolean = false,
   enablePredictedRedirect: Boolean = false,
   fetchBlockBytes: Int = 8,
-  lineBytes: Int = 8,
+  lineBytes: Int = 16,
   ftqDepth: Int = 16,
   requestQueueDepth: Int = 8,
   rasDepth: Int = 32,
@@ -33,11 +33,25 @@ case class FrontendConfig(
   indirectHistoryWidth: Int = 16,
   indirectCtrBits: Int = 2,
   indirectTagWidth: Int = 10,
-  icacheSets: Int = 32,
-  icacheWays: Int = 1
+  icacheBanks: Int = 2,
+  icacheSets: Int = 64,
+  icacheWays: Int = 2,
+  lookupLanes: Int = 2,
+  maxOutstandingMisses: Int = 2,
+  bundleQueueDepth: Int = 4,
+  bundleSlots: Int = 2,
+  maxBlocksPerCycle: Int = 2
 ) {
+  require(lineBytes >= fetchBlockBytes, "Frontend line must be at least one fetch block")
+  require((lineBytes % fetchBlockBytes) == 0, "Frontend lineBytes must be a multiple of fetchBlockBytes")
+  require((lineBytes % beatBytes) == 0, "Frontend lineBytes must be a multiple of data bus beatBytes")
+
   def beatBytes: Int = dataWidth / 8
+  def lineDataWidth: Int = lineBytes * 8
+  def blocksPerLine: Int = lineBytes / fetchBlockBytes
   def ftqIndexWidth: Int = log2Up(ftqDepth max 2)
+  def bundleSlotIdxWidth: Int = log2Up(bundleSlots max 2)
+  def bundleQueueIdxWidth: Int = log2Up(bundleQueueDepth max 2)
   def gshareHistoryWidth: Int = globalHistoryWidth
   def bimodalIndexWidth: Int = log2Up(gshareEntries max 2)
   def fetchBlockOffsetWidth: Int = log2Up(fetchBlockBytes max 2)
@@ -46,23 +60,78 @@ case class FrontendConfig(
   def ftbSetIndexWidth: Int = log2Up(ftbSets max 2)
   def indirectSets: Int = (indirectEntries / (indirectWays max 1)) max 1
   def indirectSetIndexWidth: Int = log2Up(indirectSets max 2)
+  def requestTagWidth: Int = log2Up(maxOutstandingMisses max 2)
+  def beatsPerLine: Int = lineBytes / beatBytes
   def predictorTrainingEnabled: Boolean = experimentalFrontendEnable && enablePredictorTraining
   def predictedRedirectEnabled: Boolean = experimentalFrontendEnable && enablePredictedRedirect
   def loopPredictorActive: Boolean = predictorTrainingEnabled && loopPredictorEnable
+
+  // Compatibility aliases while the rest of the core catches up.
+  def packetQueueDepth: Int = bundleQueueDepth
+  def maxOutstandingFetchReqs: Int = maxOutstandingMisses
 }
 
 object FrontendTargetKind extends SpinalEnum {
   val none, direct, ret, indirect = newElement()
 }
 
-case class FetchBlockMeta(config: FrontendConfig) extends Bundle {
+object FrontendStopReason extends SpinalEnum {
+  val none, slotLimit, predictedTaken, cacheMiss, redirect, invalidate = newElement()
+}
+
+object ICacheLookupKind extends SpinalEnum {
+  val demand, prefetch = newElement()
+}
+
+object FrontendMissReason extends SpinalEnum {
+  val demand, prefetch = newElement()
+}
+
+case class RasCheckpoint(config: FrontendConfig) extends Bundle {
+  val sp = UInt(log2Up(config.rasDepth max 2) bits)
+  val count = UInt(log2Up(config.rasDepth + 1) bits)
+}
+
+case class PredictorCheckpoint(config: FrontendConfig) extends Bundle {
+  val history = UInt(config.gshareHistoryWidth bits)
+  val ras = RasCheckpoint(config)
+}
+
+case class FtqEntry(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
   val blockPc = UInt(config.addressWidth bits)
-  val fallthrough = UInt(config.addressWidth bits)
+  val epoch = UInt(config.epochWidth bits)
+  val bundleSeq = UInt(32 bits)
+  val checkpoint = PredictorCheckpoint(config)
+}
+
+case class FtqRecoveryPoint(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val bundleSeq = UInt(32 bits)
+  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
+  val blockPc = UInt(config.addressWidth bits)
+  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
+}
+
+case class TraversalReq(config: FrontendConfig) extends Bundle {
+  val startPc = UInt(config.addressWidth bits)
+  val history = UInt(config.gshareHistoryWidth bits)
+  val rasCheckpoint = RasCheckpoint(config)
+  val epoch = UInt(config.epochWidth bits)
+}
+
+case class TraversalBlockDescriptor(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val blockPc = UInt(config.addressWidth bits)
+  val needLookup = Bool()
   val predictedTaken = Bool()
-  val predictedPcValid = Bool()
-  val takenByteOffset = UInt(config.fetchBlockOffsetWidth bits)
   val target = UInt(config.addressWidth bits)
   val targetKind = FrontendTargetKind()
+  val takenByteOffset = UInt(config.fetchBlockOffsetWidth bits)
+  val fallthrough = UInt(config.addressWidth bits)
+  val checkpoint = PredictorCheckpoint(config)
   val isConditional = Bool()
   val isCall = Bool()
   val isReturn = Bool()
@@ -72,65 +141,133 @@ case class FetchBlockMeta(config: FrontendConfig) extends Bundle {
   val rasUsed = Bool()
 }
 
-case class RasCheckpoint(config: FrontendConfig) extends Bundle {
-  val sp = UInt(log2Up(config.rasDepth max 2) bits)
-  val count = UInt(log2Up(config.rasDepth + 1) bits)
-}
-
-case class FtqEntry(config: FrontendConfig) extends Bundle {
+case class TraversalRsp(config: FrontendConfig) extends Bundle {
   val valid = Bool()
-  val blockPc = UInt(config.addressWidth bits)
+  val startPc = UInt(config.addressWidth bits)
   val epoch = UInt(config.epochWidth bits)
-  val meta = FetchBlockMeta(config)
-  val history = UInt(config.gshareHistoryWidth bits)
-  val ras = RasCheckpoint(config)
+  val blockCount = UInt(log2Up(config.maxBlocksPerCycle + 1) bits)
+  val blocks = Vec(TraversalBlockDescriptor(config), config.maxBlocksPerCycle)
+  val predictedStopReason = FrontendStopReason()
+  val predictedRedirectValid = Bool()
+  val predictedRedirectTarget = UInt(config.addressWidth bits)
+  val nextStartPc = UInt(config.addressWidth bits)
 }
 
-case class PredictRequest(config: FrontendConfig) extends Bundle {
+case class FrontendAcceptedTraversal(config: FrontendConfig) extends Bundle {
+  val bundleSeq = UInt(32 bits)
+  val traversal = TraversalRsp(config)
+}
+
+case class ICacheLookupReq(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val blockAddr = UInt(config.addressWidth bits)
+  val epoch = UInt(config.epochWidth bits)
+  val kind = ICacheLookupKind()
+}
+
+case class ICacheLookupRsp(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val accepted = Bool()
+  val hit = Bool()
+  val blockAddr = UInt(config.addressWidth bits)
+  val lineAddr = UInt(config.addressWidth bits)
+  val lineData = Bits(config.lineDataWidth bits)
+  val missPending = Bool()
+  val bankConflict = Bool()
+}
+
+case class ICacheMissReq(config: FrontendConfig) extends Bundle {
+  val lineAddr = UInt(config.addressWidth bits)
+  val tag = UInt(config.requestTagWidth bits)
+  val epoch = UInt(config.epochWidth bits)
+  val reason = FrontendMissReason()
+}
+
+case class ICacheMissRsp(config: FrontendConfig) extends Bundle {
+  val lineAddr = UInt(config.addressWidth bits)
+  val data = Bits(config.lineDataWidth bits)
+  val tag = UInt(config.requestTagWidth bits)
+  val epoch = UInt(config.epochWidth bits)
+}
+
+case class FetchSlotPredictionMeta(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val predictedTaken = Bool()
+  val predictedTarget = UInt(config.addressWidth bits)
+  val targetKind = FrontendTargetKind()
+  val blockStop = Bool()
+}
+
+case class FetchSlot(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
   val pc = UInt(config.addressWidth bits)
-  val history = UInt(config.gshareHistoryWidth bits)
-}
-
-case class PredictResponse(config: FrontendConfig) extends Bundle {
-  val valid = Bool()
-  val meta = FetchBlockMeta(config)
-  val fastHit = Bool()
-  val mainHit = Bool()
-  val indirectHit = Bool()
-}
-
-case class LoopPredictRequest(config: FrontendConfig) extends Bundle {
-  val blockPc = UInt(config.addressWidth bits)
-  val branchPc = UInt(config.addressWidth bits)
-  val fallthrough = UInt(config.addressWidth bits)
-}
-
-case class LoopPredictResponse(config: FrontendConfig) extends Bundle {
-  val valid = Bool()
-  val taken = Bool()
-  val target = UInt(config.addressWidth bits)
-  val fallthrough = UInt(config.addressWidth bits)
-  val tripCount = UInt(8 bits)
-  val confidence = UInt(2 bits)
-}
-
-case class LoopLearn(config: FrontendConfig) extends Bundle {
-  val valid = Bool()
-  val blockPc = UInt(config.addressWidth bits)
-  val branchPc = UInt(config.addressWidth bits)
-  val target = UInt(config.addressWidth bits)
-  val fallthrough = UInt(config.addressWidth bits)
-  val taken = Bool()
-}
-
-case class RedirectUpdate(config: FrontendConfig) extends Bundle {
+  val insn = Bits(32 bits)
+  val isCompressed = Bool()
+  val nextPc = UInt(config.addressWidth bits)
+  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
   val ftqIndex = UInt(config.ftqIndexWidth bits)
   val blockPc = UInt(config.addressWidth bits)
-  val branchPc = UInt(config.addressWidth bits)
-  val target = UInt(config.addressWidth bits)
-  val fallthrough = UInt(config.addressWidth bits)
+  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
+  val predictionMeta = FetchSlotPredictionMeta(config)
+  val illegal = Bool()
+  val fetchFault = Bool()
+}
+
+case class FetchBundleMeta(config: FrontendConfig) extends Bundle {
+  val traversedBlockCount = UInt(log2Up(config.maxBlocksPerCycle + 1) bits)
+  val traversedBlocks = Vec(TraversalBlockDescriptor(config), config.maxBlocksPerCycle)
+  val predictedStopReason = FrontendStopReason()
+  val predictedRedirectValid = Bool()
+  val predictedRedirectTarget = UInt(config.addressWidth bits)
+  val recovery = FtqRecoveryPoint(config)
+  val nextStartPc = UInt(config.addressWidth bits)
+  val scalarSeqBase = UInt(32 bits)
+}
+
+case class FetchBundle(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val bundleSeq = UInt(32 bits)
+  val ftqIndexBase = UInt(config.ftqIndexWidth bits)
   val epoch = UInt(config.epochWidth bits)
-  val taken = Bool()
+  val startPc = UInt(config.addressWidth bits)
+  val slotCount = UInt(log2Up(config.bundleSlots + 1) bits)
+  val slots = Vec(FetchSlot(config), config.bundleSlots)
+  val bundleMeta = FetchBundleMeta(config)
+}
+
+case class ScalarFetchEntry(config: FrontendConfig) extends Bundle {
+  val valid = Bool()
+  val scalarSeq = UInt(32 bits)
+  val bundleSeq = UInt(32 bits)
+  val epoch = UInt(config.epochWidth bits)
+  val pc = UInt(config.addressWidth bits)
+  val insn = Bits(32 bits)
+  val isCompressed = Bool()
+  val nextPc = UInt(config.addressWidth bits)
+  val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
+  val blockPc = UInt(config.addressWidth bits)
+  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
+  val predictedValid = Bool()
+  val predictedTaken = Bool()
+  val predictedTarget = UInt(config.addressWidth bits)
+  val illegal = Bool()
+  val fetchFault = Bool()
+}
+
+case class BranchResolveUpdate(config: FrontendConfig) extends Bundle {
+  val epoch = UInt(config.epochWidth bits)
+  val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val bundleSeq = UInt(32 bits)
+  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
+  val pc = UInt(config.addressWidth bits)
+  val blockPc = UInt(config.addressWidth bits)
+  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
+  val fallthrough = UInt(config.addressWidth bits)
+  val actualTaken = Bool()
+  val actualTarget = UInt(config.addressWidth bits)
+  val predictedValid = Bool()
   val predictedTaken = Bool()
   val predictedTarget = UInt(config.addressWidth bits)
   val mispredict = Bool()
@@ -139,69 +276,23 @@ case class RedirectUpdate(config: FrontendConfig) extends Bundle {
   val isCall = Bool()
   val isReturn = Bool()
   val isIndirect = Bool()
-  val takenByteOffset = UInt(config.fetchBlockOffsetWidth bits)
 }
 
-case class BranchLearn(config: FrontendConfig) extends Bundle {
-  val redirect = RedirectUpdate(config)
-}
-
-case class IndirectLearn(config: FrontendConfig) extends Bundle {
-  val valid = Bool()
-  val blockPc = UInt(config.addressWidth bits)
-  val history = UInt(config.gshareHistoryWidth bits)
-  val target = UInt(config.addressWidth bits)
-}
-
-case class FrontendMissReq(config: FrontendConfig) extends Bundle {
-  val address = UInt(config.addressWidth bits)
+case class IndirectResolveUpdate(config: FrontendConfig) extends Bundle {
+  val epoch = UInt(config.epochWidth bits)
   val ftqIndex = UInt(config.ftqIndexWidth bits)
+  val bundleSeq = UInt(32 bits)
+  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
+  val blockPc = UInt(config.addressWidth bits)
+  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
+  val target = UInt(config.addressWidth bits)
+  val history = UInt(config.gshareHistoryWidth bits)
 }
 
-case class FrontendMissRsp(config: FrontendConfig) extends Bundle {
-  val address = UInt(config.addressWidth bits)
-  val data = Bits(config.dataWidth bits)
-}
-
-case class FetchReq(addressWidth: Int, epochWidth: Int) extends Bundle {
-  val address = UInt(addressWidth bits)
-  val epoch = UInt(epochWidth bits)
-}
-
-case class FetchRspBeat(addressWidth: Int, dataWidth: Int, epochWidth: Int) extends Bundle {
-  val data = Bits(dataWidth bits)
-  val address = UInt(addressWidth bits)
-  val epoch = UInt(epochWidth bits)
-}
-
-case class FetchPacket(addressWidth: Int, dataWidth: Int, epochWidth: Int) extends Bundle {
-  val data = Bits(dataWidth bits)
-  val beatAddr = UInt(addressWidth bits)
-  val epoch = UInt(epochWidth bits)
-}
-
-case class FrontendPacket(addressWidth: Int, epochWidth: Int) extends Bundle {
-  val instruction = Bits(32 bits)
-  val isCompressed = Bool()
-  val pc = UInt(addressWidth bits)
-  val nextPc = UInt(addressWidth bits)
-  val epoch = UInt(epochWidth bits)
-  val fetchSeq = UInt(32 bits)
-  val valid = Bool()
-  val illegal = Bool()
-  val fetchFault = Bool()
-  val rd = Bits(5 bits)
-  val rs1 = Bits(5 bits)
-  val rs2 = Bits(5 bits)
-  val rs3 = Bits(5 bits)
-}
-
-case class FetchSourceBus(addressWidth: Int, dataWidth: Int, epochWidth: Int) extends Bundle with IMasterSlave {
-  val req = Stream(FetchReq(addressWidth, epochWidth))
-  val rsp = Flow(FetchRspBeat(addressWidth, dataWidth, epochWidth))
-
-  override def asMaster(): Unit = {
-    master(req)
-    slave(rsp)
-  }
+case class FrontendRecoverUpdate(config: FrontendConfig) extends Bundle {
+  val redirectTarget = UInt(config.addressWidth bits)
+  val redirectReason = FrontendRedirectReason()
+  val epoch = UInt(config.epochWidth bits)
+  val invalidateIcache = Bool()
+  val recovery = FtqRecoveryPoint(config)
 }
