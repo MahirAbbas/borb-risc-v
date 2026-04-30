@@ -47,10 +47,12 @@ case class FrontendBundleBuilder(config: FrontendConfig) extends Component {
   def blockDataFromLine(blockAddr: UInt, lineData: Bits): Bits = {
     val ret = Bits(config.fetchBlockBytes * 8 bits)
     ret := lineData(config.fetchBlockBytes * 8 - 1 downto 0)
-    if(config.blocksPerLine == 2) {
+    if(config.blocksPerLine > 1) {
       val blockSel = blockAddr(config.lineOffsetWidth - 1 downto config.fetchBlockOffsetWidth)
-      when(blockSel === U(1, blockSel.getWidth bits)) {
-        ret := lineData((2 * config.fetchBlockBytes * 8) - 1 downto config.fetchBlockBytes * 8)
+      for(block <- 1 until config.blocksPerLine) {
+        when(blockSel === U(block, blockSel.getWidth bits)) {
+          ret := lineData(((block + 1) * config.fetchBlockBytes * 8) - 1 downto block * config.fetchBlockBytes * 8)
+        }
       }
     }
     ret
@@ -228,24 +230,33 @@ case class FrontendBundleBuilder(config: FrontendConfig) extends Component {
 
   def predictionFor(pc: UInt, desc: TraversalBlockDescriptor, insn: Bits, isCompressed: Bool): FetchSlotPredictionMeta = {
     val meta = FetchSlotPredictionMeta(config)
-    val slotOffset = pc(config.fetchBlockOffsetWidth - 1 downto 0).resized
-    val slotIsControl = isControlInstruction(insn, isCompressed)
-    val controlSlot = desc.valid &&
-      slotIsControl &&
-      (
-        desc.isConditional ||
-        desc.isReturn ||
-        desc.isIndirect ||
-        (desc.targetKind =/= FrontendTargetKind.none)
-      ) &&
-      (slotOffset === desc.takenByteOffset)
+    if(config.predictedRedirectEnabled) {
+      val slotOffset = pc(config.fetchBlockOffsetWidth - 1 downto 0).resized
+      val slotIsControl = isControlInstruction(insn, isCompressed)
+      val controlSlot = desc.valid &&
+        slotIsControl &&
+        (
+          desc.isConditional ||
+          desc.isReturn ||
+          desc.isIndirect ||
+          (desc.targetKind =/= FrontendTargetKind.none)
+        ) &&
+        (slotOffset === desc.takenByteOffset)
 
-    meta.valid := controlSlot
-    meta.ftqIndex := desc.ftqIndex
-    meta.predictedTaken := controlSlot && desc.predictedTaken
-    meta.predictedTarget := Mux(desc.predictedTaken, desc.target, desc.fallthrough)
-    meta.targetKind := desc.targetKind
-    meta.blockStop := controlSlot && desc.predictedTaken
+      meta.ftqIndex := desc.ftqIndex
+      meta.valid := controlSlot
+      meta.predictedTaken := controlSlot && desc.predictedTaken
+      meta.predictedTarget := Mux(desc.predictedTaken, desc.target, desc.fallthrough)
+      meta.targetKind := desc.targetKind
+      meta.blockStop := controlSlot && desc.predictedTaken
+    } else {
+      meta.ftqIndex := desc.ftqIndex
+      meta.valid := False
+      meta.predictedTaken := False
+      meta.predictedTarget := desc.fallthrough
+      meta.targetKind := FrontendTargetKind.none
+      meta.blockStop := False
+    }
     meta
   }
 

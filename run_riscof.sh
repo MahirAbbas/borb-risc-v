@@ -54,7 +54,7 @@ usage() {
   echo "  --verilate-jobs <n> Parallel jobs for Verilator code generation"
   echo "  --trace-sim       Build simulator with FST trace support enabled"
   echo "  --skip-validate   Skip riscof validateyaml step"
-  echo "  --clean           Pass --clean to riscof run"
+  echo "  --clean           Refresh generated testlists and stale per-test artifacts"
   echo "  --report-rerun    Re-run failing tests while generating debug reports (slow)"
   echo "  --skip-report     Skip post-run failure report generation"
   echo "  --fast-rv64f      Run only RV64F arch-tests (auto-populates --tests)"
@@ -416,6 +416,39 @@ with in_yaml.open("r", encoding="utf-8") as f:
     data = yaml.safe_load(f) or {}
 
 def keep_test(test_path: str) -> bool:
+    # The local riscv-config version used by this repo accepts Zfa only when
+    # the ISA string also names Zfh, and does not understand the narrower
+    # Zfhmin spelling.  borb currently implements the Milestone 12 half
+    # conversion subset, so keep full regressions scoped to that verified
+    # surface instead of pulling in the rest of the full Zfh arithmetic suite.
+    zfhmin_tests = {
+        "fcvt.h.l_b25-01.S",
+        "fcvt.h.l_b26-01.S",
+        "fcvt.h.lu_b25-01.S",
+        "fcvt.h.lu_b26-01.S",
+        "fcvt.l.h_b1-01.S",
+        "fcvt.l.h_b22-01.S",
+        "fcvt.l.h_b23-01.S",
+        "fcvt.l.h_b24-01.S",
+        "fcvt.l.h_b27-01.S",
+        "fcvt.l.h_b28-01.S",
+        "fcvt.l.h_b29-01.S",
+        "fcvt.lu.h_b1-01.S",
+        "fcvt.lu.h_b22-01.S",
+        "fcvt.lu.h_b23-01.S",
+        "fcvt.lu.h_b24-01.S",
+        "fcvt.lu.h_b27-01.S",
+        "fcvt.lu.h_b28-01.S",
+        "fcvt.lu.h_b29-01.S",
+    }
+    if "/Zfh/src/" in test_path:
+        return Path(test_path).name in zfhmin_tests
+    # This architectural test is a negative check for cores that do not
+    # implement Svnapot.  Milestone 16 enables Svnapot 64 KiB leaf PTEs, so
+    # keep it out of the full filtered regression and cover Svnapot behavior
+    # with the focused VM/directed checks instead.
+    if Path(test_path).name == "vm_reserved_svnapot_S_mode.S":
+        return False
     if not exclude_higher_vm:
         return True
     return not (
@@ -674,9 +707,6 @@ fi
 
 echo "[4/4] Running RISCOF..."
 RUN_CMD=(riscof run --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH")
-if [[ "$CLEAN" = true ]]; then
-  RUN_CMD+=(--clean)
-fi
 # Default work-dir used by riscof when --work-dir is not provided.
 WORK_DIR="$(dirname "$CONFIG_PATH")/riscof_work"
 
@@ -745,6 +775,9 @@ else
   FULL_TESTLIST="$WORK_DIR/test_list.yaml"
   FILTERED_TESTLIST="$WORK_DIR/test_list.filtered.yaml"
   if [[ "$CLEAN" = true || ! -f "$FULL_TESTLIST" ]]; then
+    if [[ "$CLEAN" = true ]]; then
+      rm -f "$FULL_TESTLIST" "$FILTERED_TESTLIST" "$WORK_DIR/database.yaml"
+    fi
     echo "Generating full test list first..."
     riscof testlist --config="$CONFIG_PATH" --suite="$SUITE_PATH" --env="$ENV_PATH" --work-dir="$WORK_DIR"
   fi
@@ -936,6 +969,21 @@ echo "[progress] final completion count: ${FINAL_DONE}/${TOTAL_TESTS}"
 
 if [[ "$SKIP_REPORT" = false ]]; then
   echo "Generating RISCOF debug reports..."
+  python3 - "$WORK_DIR" <<'PY'
+import shutil
+import sys
+from pathlib import Path
+
+work_dir = Path(sys.argv[1])
+obsolete_dirs = [
+    work_dir / "rv64i_m/vm_sv39/src/vm_reserved_svnapot_S_mode.S",
+]
+for path in obsolete_dirs:
+    if path.exists():
+        shutil.rmtree(path)
+for path in work_dir.glob("**/dut/debug/failure_report.*"):
+    path.unlink()
+PY
   REPORT_ARGS=()
   if [[ -n "${WORK_DIR:-}" ]]; then
     REPORT_ARGS+=(--workdir "$WORK_DIR")

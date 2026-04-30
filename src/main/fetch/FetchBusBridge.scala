@@ -18,6 +18,7 @@ case class FetchBusBridge(
     val physAddr = UInt(config.addressWidth bits)
     val epoch = UInt(config.epochWidth bits)
     val tag = UInt(config.requestTagWidth bits)
+    val reason = FrontendMissReason()
     val reqId = UInt(axi.arw.id.getWidth bits)
     val beatCount = UInt(log2Up(config.beatsPerLine + 1) bits)
     val lineData = Bits(config.lineDataWidth bits)
@@ -35,10 +36,13 @@ case class FetchBusBridge(
   issueQ.io.push.payload.physAddr := Mux(translateEnable, translatedAddress, missReq.lineAddr)
   issueQ.io.push.payload.epoch := missReq.epoch
   issueQ.io.push.payload.tag := missReq.tag
+  issueQ.io.push.payload.reason := missReq.reason
   issueQ.io.push.payload.reqId := 0
   issueQ.io.push.payload.beatCount := U(0, issueQ.io.push.payload.beatCount.getWidth bits)
   issueQ.io.push.payload.lineData := 0
   missReq.ready := issueQ.io.push.ready
+
+  val issuingPrefetch = issueQ.io.pop.valid && (issueQ.io.pop.reason === FrontendMissReason.prefetch)
 
   val issueSlot = issueQ.io.pop.tag.resized
   val issueFire = issueQ.io.pop.valid && axi.arw.ready && !flush

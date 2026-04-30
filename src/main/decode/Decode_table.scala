@@ -49,11 +49,20 @@ object RV32I {
 
   val FENCE = M"-----------------000-----0001111"
   val FENCEI = M"00000000000000000001000000001111"
+  val CBO_INVAL = M"000000000000-----010000000001111"
+  val CBO_CLEAN = M"000000000001-----010000000001111"
+  val CBO_FLUSH = M"000000000010-----010000000001111"
+  val CBO_ZERO = M"000000000100-----010000000001111"
   val ECALL = M"00000000000000000000000001110011"
   val EBREAK = M"00000000000100000000000001110011"
   val SRET = M"00010000001000000000000001110011"
   val MRET = M"00110000001000000000000001110011"
   val SFENCE_VMA = M"0001001----------000000001110011"
+  val SINVAL_VMA = M"0001011----------000000001110011"
+  val SFENCE_W_INVAL = M"00011000000000000000000001110011"
+  val SFENCE_INVAL_IR = M"00011000000100000000000001110011"
+  val WRS_NTO = M"00000000110100000000000001110011"
+  val WRS_STO = M"00000001110100000000000001110011"
 
   val CSRRW = M"-----------------001-----1110011"
   val CSRRS = M"-----------------010-----1110011"
@@ -102,6 +111,87 @@ object RV64M {
   val DIVUW = M"0000001----------101-----0111011"
   val REMW = M"0000001----------110-----0111011"
   val REMUW = M"0000001----------111-----0111011"
+}
+
+object RV64B {
+  val SH1ADD = M"0010000----------010-----0110011"
+  val SH2ADD = M"0010000----------100-----0110011"
+  val SH3ADD = M"0010000----------110-----0110011"
+  val ADD_UW = M"0000100----------000-----0111011"
+  val SH1ADD_UW = M"0010000----------010-----0111011"
+  val SH2ADD_UW = M"0010000----------100-----0111011"
+  val SH3ADD_UW = M"0010000----------110-----0111011"
+  val SLLI_UW = M"000010-----------001-----0011011"
+
+  val ANDN = M"0100000----------111-----0110011"
+  val ORN = M"0100000----------110-----0110011"
+  val XNOR = M"0100000----------100-----0110011"
+  val CLZ = M"011000000000-----001-----0010011"
+  val CTZ = M"011000000001-----001-----0010011"
+  val CPOP = M"011000000010-----001-----0010011"
+  val CLZW = M"011000000000-----001-----0011011"
+  val CTZW = M"011000000001-----001-----0011011"
+  val CPOPW = M"011000000010-----001-----0011011"
+  val MAX = M"0000101----------110-----0110011"
+  val MAXU = M"0000101----------111-----0110011"
+  val MIN = M"0000101----------100-----0110011"
+  val MINU = M"0000101----------101-----0110011"
+  val SEXTB = M"011000000100-----001-----0010011"
+  val SEXTH = M"011000000101-----001-----0010011"
+  val ZEXTH = M"000010000000-----100-----0111011"
+  val ROL = M"0110000----------001-----0110011"
+  val ROR = M"0110000----------101-----0110011"
+  val RORI = M"011000-----------101-----0010011"
+  val ROLW = M"0110000----------001-----0111011"
+  val RORW = M"0110000----------101-----0111011"
+  val RORIW = M"0110000----------101-----0011011"
+  val ORCB = M"001010000111-----101-----0010011"
+  val REV8 = M"011010111000-----101-----0010011"
+
+  val BCLR = M"0100100----------001-----0110011"
+  val BCLRI = M"010010-----------001-----0010011"
+  val BEXT = M"0100100----------101-----0110011"
+  val BEXTI = M"010010-----------101-----0010011"
+  val BINV = M"0110100----------001-----0110011"
+  val BINVI = M"011010-----------001-----0010011"
+  val BSET = M"0010100----------001-----0110011"
+  val BSETI = M"001010-----------001-----0010011"
+}
+
+object RVZicond {
+  val CZERO_EQZ = M"0000111----------101-----0110011"
+  val CZERO_NEZ = M"0000111----------111-----0110011"
+}
+
+object RVZimop {
+  val MOP_R = M"1-00--0111-------100-----1110011"
+  val MOP_RR = M"1-00--1----------100-----1110011"
+}
+
+object RVV {
+  val VSETVLI = M"0----------------111-----1010111"
+  val VSETIVLI = M"11---------------111-----1010111"
+  val VSETVL = M"1000000----------111-----1010111"
+  val VADDVV = M"000000-----------000-----1010111"
+  val VADDVI = M"000000-----------011-----1010111"
+  val VMVVI = M"010111100000-----011-----1010111"
+  val VMVXS = M"0100001-----00000010-----1010111"
+  val VLE32 = M"0000001----------110-----0000111"
+  val VSE32 = M"0000001----------110-----0100111"
+  val VSLIDEUPVI = M"001110-----------011-----1010111"
+  val VSLIDEDOWNVI = M"001111-----------011-----1010111"
+  val VRGATHERVI = M"001100-----------011-----1010111"
+  val VREDSUMVS = M"000000-----------010-----1010111"
+  val VFADDVV = M"000000-----------001-----1010111"
+  val VFSUBVV = M"000010-----------001-----1010111"
+  val VFWCVTFFV = M"0100101-----01100001-----1010111"
+  val VFNCVTFFW = M"0100101-----10100001-----1010111"
+  val VANDNVV = M"000001-----------000-----1010111"
+  val VBREV8V = M"0100101-----01000010-----1010111"
+  val VREV8V = M"0100101-----01001010-----1010111"
+  val VCLZV = M"0100101-----01100010-----1010111"
+  val VCPOPV = M"0100101-----01110010-----1010111"
+  val VRORVI = M"010100-----------011-----1010111"
 }
 
 object RV32A {
@@ -160,6 +250,11 @@ object RV32F {
   val FEQS = M"1010000----------010-----1010011"
 }
 
+object RVZfh {
+  val FLH = M"-----------------001-----0000111"
+  val FSH = M"-----------------001-----0100111"
+}
+
 object RV64F {
   val FCVTLS = M"110000000010-------------1010011"
   val FCVTLUS = M"110000000011-------------1010011"
@@ -167,18 +262,86 @@ object RV64F {
   val FCVTSLU = M"110100000011-------------1010011"
 }
 
-object RV32D {}
-object RV64D {}
+object RV32D {
+  val FLD = M"-----------------011-----0000111"
+  val FSD = M"-----------------011-----0100111"
+  val FMADDD = M"-----01------------------1000011"
+  val FMSUBD = M"-----01------------------1000111"
+  val FNMSUBD = M"-----01------------------1001011"
+  val FNMADDD = M"-----01------------------1001111"
+  val FADDD = M"0000001------------------1010011"
+  val FSUBD = M"0000101------------------1010011"
+  val FMULD = M"0001001------------------1010011"
+  val FDIVD = M"0001101------------------1010011"
+  val FSQRTD = M"010110100000-------------1010011"
+  val FCVTSD = M"010000000001-------------1010011"
+  val FCVTDS = M"010000100000-------------1010011"
+  val FCVTWD = M"110000100000-------------1010011"
+  val FCVTWUD = M"110000100001-------------1010011"
+  val FCVTDW = M"110100100000-------------1010011"
+  val FCVTDWU = M"110100100001-------------1010011"
+  val FSGNJD = M"0010001----------000-----1010011"
+  val FSGNJND = M"0010001----------001-----1010011"
+  val FSGNJXD = M"0010001----------010-----1010011"
+  val FMIND = M"0010101----------000-----1010011"
+  val FMAXD = M"0010101----------001-----1010011"
+  val FCLASSD = M"111000100000-----001-----1010011"
+  val FLED = M"1010001----------000-----1010011"
+  val FLTD = M"1010001----------001-----1010011"
+  val FEQD = M"1010001----------010-----1010011"
+}
+object RV64D {
+  val FCVTLD = M"110000100010-------------1010011"
+  val FCVTLUD = M"110000100011-------------1010011"
+  val FCVTDL = M"110100100010-------------1010011"
+  val FCVTDLU = M"110100100011-------------1010011"
+  val FMVXD = M"111000100000-----000-----1010011"
+  val FMVDX = M"111100100000-----000-----1010011"
+}
+
+object RVZfa {
+  val FLIS = M"111100000001-----000-----1010011"
+  val FLID = M"111100100001-----000-----1010011"
+  val FMINMS = M"0010100----------010-----1010011"
+  val FMAXMS = M"0010100----------011-----1010011"
+  val FMINMD = M"0010101----------010-----1010011"
+  val FMAXMD = M"0010101----------011-----1010011"
+  val FLEQS = M"1010000----------100-----1010011"
+  val FLTQS = M"1010000----------101-----1010011"
+  val FLEQD = M"1010001----------100-----1010011"
+  val FLTQD = M"1010001----------101-----1010011"
+  val FROUNDS = M"010000000100-------------1010011"
+  val FROUNDNXS = M"010000000101-------------1010011"
+  val FROUNDD = M"010000100100-------------1010011"
+  val FROUNDNXD = M"010000100101-------------1010011"
+  val FCVTMODWD = M"110000101000-------------1010011"
+}
+
+object RV64Zfh {
+  val FCVTLH = M"110001000010-------------1010011"
+  val FCVTLUH = M"110001000011-------------1010011"
+  val FCVTHL = M"110101000010-------------1010011"
+  val FCVTHLU = M"110101000011-------------1010011"
+}
 
 object DecodeTable {
   import RV32I._
   import RV64I._
   import RV32M._
   import RV64M._
+  import RV64B._
+  import RVZicond._
+  import RVZimop._
+  import RVV._
   import RV32A._
   import RV64A._
   import RV32F._
   import RV64F._
+  import RV32D._
+  import RV64D._
+  import RVZfh._
+  import RVZfa._
+  import RV64Zfh._
   import REGFILE._
   import Imm_Select._
   import YESNO._
@@ -257,21 +420,55 @@ object DecodeTable {
   LHU             -> List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopLHU, N, N, N, N),
   LB              -> List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopLB , N, N, N, N),
   LBU             -> List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , uopLBU, N, N, N, N),
+  VSETVLI         -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED,  N, N_IMM, uopVSETVLI, N, N, N, N),
+  VSETIVLI        -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.IMMED, RSTYPE.IMMED,  N, N_IMM, uopVSETIVLI, N, N, N, N),
+  VSETVL          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, uopVSETVL, N, N, N, N),
+  VADDVV          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.RS_VEC, N, N_IMM, uopVADDVV, N, N, N, N),
+  VADDVI          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVADDVI, N, N, N, N),
+  VMVVI           -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.IMMED, RSTYPE.IMMED,  N, N_IMM, uopVMVVI, N, N, N, N),
+  VMVXS           -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVMVXS, N, N, N, N),
+  VLE32           -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_INT, RSTYPE.IMMED,  N, N_IMM, uopVLE32, N, N, N, N),
+  VSE32           -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA,  RSTYPE.RS_INT, RSTYPE.RS_VEC, N, N_IMM, uopVSE32, N, N, N, N),
+  VSLIDEUPVI      -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVSLIDEUPVI, N, N, N, N),
+  VSLIDEDOWNVI    -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVSLIDEDOWNVI, N, N, N, N),
+  VRGATHERVI      -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVRGATHERVI, N, N, N, N),
+  VREDSUMVS       -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.RS_VEC, N, N_IMM, uopVREDSUMVS, N, N, N, N),
+  VFADDVV         -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.RS_VEC, N, N_IMM, uopVFADDVV, N, N, N, N),
+  VFSUBVV         -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.RS_VEC, N, N_IMM, uopVFSUBVV, N, N, N, N),
+  VFWCVTFFV       -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVFWCVTFFV, N, N, N, N),
+  VFNCVTFFW       -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVFNCVTFFW, N, N, N, N),
+  VANDNVV         -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.RS_VEC, N, N_IMM, uopVANDNVV, N, N, N, N),
+  VBREV8V         -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVBREV8V, N, N, N, N),
+  VREV8V          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVREV8V, N, N, N, N),
+  VCLZV           -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVCLZV, N, N, N, N),
+  VCPOPV          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVCPOPV, N, N, N, N),
+  VRORVI          -> List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_VEC, RSTYPE.RS_VEC, RSTYPE.IMMED,  N, N_IMM, uopVRORVI, N, N, N, N),
 
   // Store Instructions (dispatch to AGU/LSU, RS1=base, RS2=store data, S-type imm)
   SB              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSB, N, N, N, Y),
   SH              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSH, N, N, N, Y),
   SW              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSW, N, N, N, Y),
   SD              -> List( Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, S_IMM, uopSD, N, N, N, Y),
+  FLH             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.IMMED,  N, I_IMM, uopFLH, N, N, N, N),
   FLW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.IMMED,  N, I_IMM, uopFLW, N, N, N, N),
+  FLD             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.IMMED,  N, I_IMM, uopFLD, N, N, N, N),
+  FSH             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA,  N, S_IMM, uopFSH, N, N, N, Y),
   FSW             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA,  N, S_IMM, uopFSW, N, N, N, Y),
+  FSD             -> List( Y, Y, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA,  N, S_IMM, uopFSD, N, N, N, Y),
   FMADDS          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFMADDS, N, N, N, N),
   FMSUBS          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFMSUBS, N, N, N, N),
   FNMSUBS         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFNMSUBS, N, N, N, N),
   FNMADDS         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFNMADDS, N, N, N, N),
+  FMADDD          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFMADDD, N, N, N, N),
+  FMSUBD          -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFMSUBD, N, N, N, N),
+  FNMSUBD         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFNMSUBD, N, N, N, N),
+  FNMADDD         -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , Y, N_IMM , uopFNMADDD, N, N, N, N),
   FADDS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFADDS, N, N, N, N),
   FSUBS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSUBS, N, N, N, N),
   FMULS           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMULS, N, N, N, N),
+  FADDD           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFADDD, N, N, N, N),
+  FSUBD           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSUBD, N, N, N, N),
+  FMULD           -> List( Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMULD, N, N, N, N),
 
   LUI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , uopLUI , N, N, N, N),
 
@@ -305,6 +502,50 @@ object DecodeTable {
   DIVUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopDIVUW, N, Y, N, N),
   REMW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMW, N, Y, N, N),
   REMUW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopREMUW, N, Y, N, N),
+  SH1ADD     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH1ADD, N, N, N, N),
+  SH2ADD     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH2ADD, N, N, N, N),
+  SH3ADD     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH3ADD, N, N, N, N),
+  ADD_UW     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopADD_UW, N, Y, N, N),
+  SH1ADD_UW  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH1ADD_UW, N, Y, N, N),
+  SH2ADD_UW  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH2ADD_UW, N, Y, N, N),
+  SH3ADD_UW  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSH3ADD_UW, N, Y, N, N),
+  SLLI_UW    ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopSLLI_UW, N, Y, N, N),
+  ANDN       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopANDN, N, N, N, N),
+  ORN        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopORN, N, N, N, N),
+  XNOR       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopXNOR, N, N, N, N),
+  CLZ        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCLZ, N, N, N, N),
+  CTZ        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCTZ, N, N, N, N),
+  CPOP       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCPOP, N, N, N, N),
+  CLZW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCLZW, N, Y, N, N),
+  CTZW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCTZW, N, Y, N, N),
+  CPOPW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopCPOPW, N, Y, N, N),
+  MAX        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMAX, N, N, N, N),
+  MAXU       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMAXU, N, N, N, N),
+  MIN        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMIN, N, N, N, N),
+  MINU       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopMINU, N, N, N, N),
+  SEXTB      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopSEXTB, N, N, N, N),
+  SEXTH      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopSEXTH, N, N, N, N),
+  ZEXTH      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopZEXTH, N, N, N, N),
+  ROL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopROL, N, N, N, N),
+  ROR        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopROR, N, N, N, N),
+  RORI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopRORI, N, N, N, N),
+  ROLW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopROLW, N, Y, N, N),
+  RORW       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopRORW, N, Y, N, N),
+  RORIW      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopRORIW, N, Y, N, N),
+  ORCB       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopORCB, N, N, N, N),
+  REV8       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopREV8, N, N, N, N),
+  BCLR       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopBCLR, N, N, N, N),
+  BCLRI      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopBCLRI, N, N, N, N),
+  BEXT       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopBEXT, N, N, N, N),
+  BEXTI      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopBEXTI, N, N, N, N),
+  BINV       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopBINV, N, N, N, N),
+  BINVI      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopBINVI, N, N, N, N),
+  BSET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopBSET, N, N, N, N),
+  BSETI      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED, N, I_IMM , uopBSETI, N, N, N, N),
+  CZERO_EQZ  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopCZERO_EQZ, N, N, N, N),
+  CZERO_NEZ  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopCZERO_NEZ, N, N, N, N),
+  MOP_R      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopMOP_R, N, N, N, N),
+  MOP_RR     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopMOP_RR, N, N, N, N),
   AMOADDW    ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopAMOADDW, N, N, N, Y),
   AMOADDD    ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopAMOADDD, N, N, N, Y),
   AMOSWAPW   ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopAMOSWAPW, N, N, N, Y),
@@ -343,11 +584,20 @@ object DecodeTable {
   CSRRCI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopCSRRCI, N, N, N, N),
   FENCE      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
   FENCEI     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFENCE_I, N, N, N, N),
+  CBO_INVAL  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
+  CBO_CLEAN  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
+  CBO_FLUSH  ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
+  CBO_ZERO   ->        List(Y, N, ExecutionUnitEnum.AGU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopCBOZERO, N, N, N, Y),
+  WRS_NTO    ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
+  WRS_STO    ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFENCE , N, N, N, N),
   ECALL      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopECALL , N, N, N, N),
   EBREAK     ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopEBREAK, N, N, N, N),
   SRET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopSRET   , N, N, N, N),
   MRET       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopMRET   , N, N, N, N),
   SFENCE_VMA ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSFENCEVMA   , N, N, N, N),
+  SINVAL_VMA ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , uopSFENCEVMA   , N, N, N, N),
+  SFENCE_W_INVAL ->    List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopSFENCEVMA   , N, N, N, N),
+  SFENCE_INVAL_IR ->   List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopSFENCEVMA   , N, N, N, N),
   FCVTLS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLS, N, N, N, N),
   FCVTLUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUS, N, N, N, N),
   FCVTSL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSL, N, N, N, N),
@@ -356,42 +606,62 @@ object DecodeTable {
   FCVTWUS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTWUS, N, N, N, N),
   FCVTSW     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSW, N, N, N, N),
   FCVTSWU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTSWU, N, N, N, N),
+  FCVTWD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTWD, N, N, N, N),
+  FCVTWUD    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTWUD, N, N, N, N),
+  FCVTLD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLD, N, N, N, N),
+  FCVTLUD    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUD, N, N, N, N),
+  FCVTDW     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTDW, N, N, N, N),
+  FCVTDWU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTDWU, N, N, N, N),
+  FCVTDL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTDL, N, N, N, N),
+  FCVTDLU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTDLU, N, N, N, N),
+  FCVTSD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTSD, N, N, N, N),
+  FCVTDS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTDS, N, N, N, N),
+  FCVTLH     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLH, N, N, N, N),
+  FCVTLUH    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTLUH, N, N, N, N),
+  FCVTHL     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTHL, N, N, N, N),
+  FCVTHLU    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFCVTHLU, N, N, N, N),
   FMVXW      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMVXW, N, N, N, N),
   FMVWX      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFMVWX, N, N, N, N),
+  FMVXD      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMVXD, N, N, N, N),
+  FMVDX      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_INT, RSTYPE.RS_NA , N, N_IMM , uopFMVDX, N, N, N, N),
   FDIVS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFDIVS, N, N, N, N),
   FSQRTS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSQRTS, N, N, N, N),
+  FDIVD      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFDIVD, N, N, N, N),
+  FSQRTD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSQRTD, N, N, N, N),
   FCLASSS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCLASSS, N, N, N, N),
+  FCLASSD    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCLASSD, N, N, N, N),
   FSGNJS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJS, N, N, N, N),
   FSGNJNS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJNS, N, N, N, N),
   FSGNJXS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJXS, N, N, N, N),
+  FSGNJD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJD, N, N, N, N),
+  FSGNJND    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJND, N, N, N, N),
+  FSGNJXD    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFSGNJXD, N, N, N, N),
   FMINS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMINS, N, N, N, N),
   FMAXS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMAXS, N, N, N, N),
+  FMINMS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMINMS, N, N, N, N),
+  FMAXMS     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMAXMS, N, N, N, N),
+  FMIND      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMIND, N, N, N, N),
+  FMAXD      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMAXD, N, N, N, N),
+  FMINMD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMINMD, N, N, N, N),
+  FMAXMD     ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFMAXMD, N, N, N, N),
   FLES       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLES, N, N, N, N),
   FLTS       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLTS, N, N, N, N),
   FEQS       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFEQS, N, N, N, N),
+  FLEQS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLEQS, N, N, N, N),
+  FLTQS      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLTQS, N, N, N, N),
+  FLED       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLED, N, N, N, N),
+  FLTD       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLTD, N, N, N, N),
+  FEQD       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFEQD, N, N, N, N),
+  FLEQD      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLEQD, N, N, N, N),
+  FLTQD      ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLTQD, N, N, N, N),
+  FLIS       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLIS, N, N, N, N),
+  FLID       ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFLID, N, N, N, N),
+  FROUNDS    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFROUNDS, N, N, N, N),
+  FROUNDNXS  ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFROUNDNXS, N, N, N, N),
+  FROUNDD    ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFROUNDD, N, N, N, N),
+  FROUNDNXD  ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFROUNDNXD, N, N, N, N),
+  FCVTMODWD  ->        List(Y, Y, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, N_IMM , uopFCVTMODWD, N, N, N, N),
                                                                                                                               
-  // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
-  // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULHU   -> List(Y, N, X, uopMULHU, IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULHSU  -> List(Y, N, X, uopMULHSU,IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULW    -> List(Y, N, X, uopMULW , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-
-    // DIV     -> List(Y, N, X, uopDIV  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // DIVU    -> List(Y, N, X, uopDIVU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // REM     -> List(Y, N, X, uopREM  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // REMU    -> List(Y, N, X, uopREMU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // DIVW    -> List(Y, N, X, uopDIVW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // DIVUW   -> List(Y, N, X, uopDIVUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // REMW    -> List(Y, N, X, uopREMW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-    // REMUW   -> List(Y, N, X, uopREMUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-
-//  CSRRW              -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.W, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
-//  CSRRS              -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.S, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
-//  CSRRC              -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.C, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
-//
-//  CSRRWI             -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_X  , RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.W, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
-//  CSRRSI             -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_X  , RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.S, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
-//  CSRRCI             -> List(Y, N, fc2oh(FC_CSR) , RT_FIX, RT_X  , RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.C, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
 //
 //  SFENCE_VMA          ->List(Y, N, fc2oh(FC_CSR) , RT_X  , RT_FIX, RT_FIX, N, IS_N, N, N, N,M_SFENCE , Y, Y, CSR.R, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),
 //  ECALL              -> List(Y, N, fc2oh(FC_CSR) , RT_X  , RT_X  , RT_X  , N, IS_I, N, N, N, M_X     , Y, Y, CSR.I, DW_XPR, FN_ADD , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X),

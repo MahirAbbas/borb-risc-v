@@ -4,11 +4,10 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.common.Common._
-import borb.fetch.PC
+import borb.fetch.{Fetch, PC}
 import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin
-import borb.execute.IntAlu
-import borb.execute.Branch
+import borb.common.MicroCode._
 
 case class Rvfi() extends Bundle {
   val valid = Bool()
@@ -67,26 +66,66 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
     io.rvfi.mode := B"11" // M-Mode
     io.rvfi.ixl := B"10" // 64-bit
 
-    io.rvfi.rs1_addr := up(Decoder.RS1_ADDR).asUInt
-    io.rvfi.rs2_addr := up(Decoder.RS2_ADDR).asUInt
+    val issueProps = up(borb.dispatch.IssueSemantics.PROPS)
+    val readsIntRs1 = issueProps.readsIntRs1
+    val readsIntRs2 = issueProps.readsIntRs2
 
-    // Source operands from SrcPlugin (x0 masking is enforced in SrcPlugin's regfile read)
-    io.rvfi.rs1_rdata := up(SrcPlugin.RS1)
-    io.rvfi.rs2_rdata := up(SrcPlugin.RS2)
+    io.rvfi.rs1_addr := readsIntRs1 ? up(Decoder.RS1_ADDR).asUInt | U(0, 5 bits)
+    io.rvfi.rs2_addr := readsIntRs2 ? up(Decoder.RS2_ADDR).asUInt | U(0, 5 bits)
+
+    // RVFI integer source operands are only meaningful for integer-register
+    // reads. FP/other register classes must report x0/0 here.
+    io.rvfi.rs1_rdata := readsIntRs1 ? up(SrcPlugin.RS1) | B(0, 64 bits)
+    io.rvfi.rs2_rdata := readsIntRs2 ? up(SrcPlugin.RS2) | B(0, 64 bits)
 
     val result = up(borb.execute.WriteBack.RESULT)
     // Retire Packet Logic for RD
     // If result.valid is set, it writes to RD.
 
-    io.rvfi.rd_addr := result.address
-    io.rvfi.rd_wdata := result.data
+    io.rvfi.rd_addr := (issueProps.writesIntRd && result.valid) ? result.address | U(0, 5 bits)
+    io.rvfi.rd_wdata := (issueProps.writesIntRd && result.valid) ? result.data | B(0, 64 bits)
 
-    val currentPc = up(PC.PC)
+    val currentPc = (up(Fetch.FETCH_BLOCK_PC) + up(Fetch.FETCH_BYTE_OFFSET).resized).resize(64)
     io.rvfi.pc_rdata := currentPc.asBits
-    // Report actual next PC based on branch outcome
-    val branchTaken = up(Branch.BRANCH_TAKEN)
-    val branchTarget = up(Branch.BRANCH_TARGET)
-    io.rvfi.pc_wdata := Mux(branchTaken, branchTarget.asBits, (currentPc + 4).asBits)
+    val microOp = up(Decoder.MicroCode)
+    val rs1S = up(SrcPlugin.RS1).asSInt
+    val rs2S = up(SrcPlugin.RS2).asSInt
+    val rs1U = up(SrcPlugin.RS1).asUInt
+    val rs2U = up(SrcPlugin.RS2).asUInt
+    val immS = up(SrcPlugin.IMMED).asSInt
+    val branchCondition = Bool()
+    switch(microOp) {
+      is(uopBEQ)  { branchCondition := rs1S === rs2S }
+      is(uopBNE)  { branchCondition := rs1S =/= rs2S }
+      is(uopBLT)  { branchCondition := rs1S < rs2S }
+      is(uopBGE)  { branchCondition := rs1S >= rs2S }
+      is(uopBLTU) { branchCondition := rs1U < rs2U }
+      is(uopBGEU) { branchCondition := rs1U >= rs2U }
+      default     { branchCondition := False }
+    }
+
+    val branchTarget = UInt(64 bits)
+    switch(microOp) {
+      is(uopJALR) {
+        branchTarget := (rs1U.asSInt + immS).asUInt
+        branchTarget(0) := False
+      }
+      default {
+        branchTarget := (currentPc.asSInt + immS).asUInt
+      }
+    }
+
+    val branchTaken =
+      (microOp === uopJAL) ||
+      (microOp === uopJALR) ||
+      ((microOp === uopBEQ) && branchCondition) ||
+      ((microOp === uopBNE) && branchCondition) ||
+      ((microOp === uopBLT) && branchCondition) ||
+      ((microOp === uopBGE) && branchCondition) ||
+      ((microOp === uopBLTU) && branchCondition) ||
+      ((microOp === uopBGEU) && branchCondition)
+    val sequentialPcStep = Mux(up(Decoder.IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
+    io.rvfi.pc_wdata := Mux(branchTaken, branchTarget.asBits, (currentPc + sequentialPcStep).asBits)
 
     // Memory access signals from LSU
     io.rvfi.mem_addr := up(borb.execute.Lsu.MEM_ADDR).asBits

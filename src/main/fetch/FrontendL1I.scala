@@ -26,6 +26,7 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
     val flush = in Bool()
     val invalidate = in Bool()
     val currentEpoch = in UInt(config.epochWidth bits)
+    val suppressPrefetch = in Bool()
     val lookupReq = in Vec(ICacheLookupReq(config), config.lookupLanes)
     val lookupRsp = out Vec(ICacheLookupRsp(config), config.lookupLanes)
     val missReq = master(Stream(ICacheMissReq(config)))
@@ -36,6 +37,7 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
     val bankBusyCycle = out Bool()
     val dualLookupSuccess = out Bool()
     val staleRspDropped = out Bool()
+    val prefetchReqIssued = out Bool()
   }
 
   val cache = Vec.fill(config.icacheBanks)(
@@ -183,6 +185,29 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
   io.bankBusyCycle := io.bankConflictCycle
   io.dualLookupSuccess := (if(config.lookupLanes > 1) (io.lookupRsp(0).hit && io.lookupRsp(1).hit && !bankConflict01) else io.lookupRsp(0).hit)
   io.staleRspDropped := False
+  io.prefetchReqIssued := False
+  val enableNextLinePrefetch = True
+
+  val nextLineAddr = UInt(config.addressWidth bits)
+  nextLineAddr := lineAddr(0) + U(config.lineBytes, config.addressWidth bits)
+  val prefetchLookupReq = ICacheLookupReq(config)
+  prefetchLookupReq.valid := True
+  prefetchLookupReq.blockAddr := nextLineAddr
+  prefetchLookupReq.epoch := io.currentEpoch
+  prefetchLookupReq.kind := ICacheLookupKind.prefetch
+  val prefetchLookupRsp = rawLookup(prefetchLookupReq)
+  val demandHit =
+    io.lookupReq(0).valid &&
+    io.lookupRsp(0).accepted &&
+    io.lookupRsp(0).hit
+  val demandLinesNeeded = lane0Needs.asUInt.resize(freeCount.getWidth) + lane1Needs.asUInt.resize(freeCount.getWidth)
+  val prefetchNeeds =
+    enableNextLinePrefetch &&
+    !io.suppressPrefetch &&
+    demandHit &&
+    !prefetchLookupRsp.hit &&
+    !prefetchLookupRsp.missPending &&
+    (freeCount > demandLinesNeeded)
 
   when(!io.flush && !io.invalidate) {
     when(lane0Needs && (freeCount =/= 0)) {
@@ -199,6 +224,20 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
       misses(slot).lineAddr := lineAddr(1)
       misses(slot).epoch := io.lookupReq(1).epoch
       misses(slot).reason := Mux(io.lookupReq(1).kind === ICacheLookupKind.prefetch, FrontendMissReason.prefetch, FrontendMissReason.demand)
+    }
+    when(prefetchNeeds) {
+      val slot = UInt(config.requestTagWidth bits)
+      slot := alloc0Slot
+      when(lane0Needs && lane1Needs) {
+        slot := alloc1Slot
+      } elsewhen(lane0Needs || lane1Needs) {
+        slot := alloc0Slot
+      }
+      misses(slot).valid := True
+      misses(slot).issued := False
+      misses(slot).lineAddr := nextLineAddr
+      misses(slot).epoch := io.currentEpoch
+      misses(slot).reason := FrontendMissReason.prefetch
     }
   }
 
@@ -217,6 +256,7 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
 
   when(io.missReq.fire) {
     misses(issueSlot).issued := True
+    io.prefetchReqIssued := misses(issueSlot).reason === FrontendMissReason.prefetch
   }
 
   when(io.missRsp.valid) {
@@ -246,8 +286,7 @@ case class FrontendL1I(config: FrontendConfig) extends Component {
       misses(rspSlot).valid &&
       misses(rspSlot).issued &&
       (misses(rspSlot).lineAddr === rspLine) &&
-      (misses(rspSlot).epoch === io.missRsp.epoch) &&
-      (io.missRsp.epoch === io.currentEpoch)
+      (misses(rspSlot).epoch === io.missRsp.epoch)
 
     when(rspMatchesSlot) {
       cache(rspBank)(rspSet)(writeWay).valid := True

@@ -45,19 +45,6 @@ case class SoC() extends Component {
     io.dbg := cpu.io.dbg
     io.perf := cpu.io.perf
 
-    // Arbiter (2 Inputs -> 1 Output)
-    val arbiter = new Axi4SharedArbiter(
-      outputConfig = socAxiConfig,
-      readInputsCount = 0,
-      writeInputsCount = 0,
-      sharedInputsCount = 2,
-      routeBufferSize = 4
-    )
-    
-    // Connect CPU AXI masters to Arbiter
-    arbiter.io.sharedInputs(0) <> cpu.io.iAxi
-    arbiter.io.sharedInputs(1) <> cpu.io.dAxi
-
     // RAM
     val ram = Axi4SharedOnChipRam(
       dataWidth = 64,
@@ -67,39 +54,151 @@ case class SoC() extends Component {
     import spinal.core.sim._
     ram.ram.simPublic()
     
-    // Connect Arbiter to RAM with address resize to the RAM address bus width.
-    ram.io.axi.arw.valid   := arbiter.io.output.arw.valid
-    ram.io.axi.arw.addr    := arbiter.io.output.arw.addr.resized
-    ram.io.axi.arw.id      := arbiter.io.output.arw.id
-    ram.io.axi.arw.len     := arbiter.io.output.arw.len
-    ram.io.axi.arw.size    := arbiter.io.output.arw.size
-    ram.io.axi.arw.burst   := arbiter.io.output.arw.burst
-    // Optional signals disabled in config (NPE if assigned)
-    // ram.io.axi.arw.lock    := ...
-    // ram.io.axi.arw.cache   := ...
-    // ram.io.axi.arw.prot    := ...
-    // ram.io.axi.arw.qos     := ...
-    // ram.io.axi.arw.region  := ...
-    ram.io.axi.arw.write   := arbiter.io.output.arw.write
-    arbiter.io.output.arw.ready := ram.io.axi.arw.ready
+    val iAxi = cpu.io.iAxi
+    val dAxi = cpu.io.dAxi
 
-    ram.io.axi.w.valid     := arbiter.io.output.w.valid
-    ram.io.axi.w.data      := arbiter.io.output.w.data
-    ram.io.axi.w.strb      := arbiter.io.output.w.strb
-    ram.io.axi.w.last      := arbiter.io.output.w.last
-    arbiter.io.output.w.ready := ram.io.axi.w.ready
-    
-    arbiter.io.output.b.valid     := ram.io.axi.b.valid
-    arbiter.io.output.b.id        := ram.io.axi.b.id
-    arbiter.io.output.b.resp      := ram.io.axi.b.resp
-    ram.io.axi.b.ready           := arbiter.io.output.b.ready
+    def routeId(isData: Bool, id: UInt): UInt =
+      (isData.asBits ## id.asBits).asUInt
 
-    arbiter.io.output.r.valid     := ram.io.axi.r.valid
-    arbiter.io.output.r.data      := ram.io.axi.r.data
-    arbiter.io.output.r.id        := ram.io.axi.r.id
-    arbiter.io.output.r.resp      := ram.io.axi.r.resp
-    arbiter.io.output.r.last      := ram.io.axi.r.last
-    ram.io.axi.r.ready           := arbiter.io.output.r.ready
+    val writePending = RegInit(False)
+    val writeArwSent = RegInit(False)
+    val writeWSent = RegInit(False)
+    val writeRouteIsData = RegInit(False)
+    val writeAddr = Reg(UInt(64 bits)) init(0)
+    val writeId = Reg(UInt(16 bits)) init(0)
+    val writeLen = Reg(UInt(8 bits)) init(0)
+    val writeSize = Reg(UInt(3 bits)) init(0)
+    val writeBurst = Reg(Bits(2 bits)) init(0)
+    val writeData = Reg(Bits(64 bits)) init(0)
+    val writeStrb = Reg(Bits(8 bits)) init(0)
+    val writeLast = Reg(Bool()) init(False)
+
+    val iWriteReq = iAxi.arw.valid && iAxi.arw.write && iAxi.w.valid
+    val dWriteReq = dAxi.arw.valid && dAxi.arw.write && dAxi.w.valid
+    val acceptDataWrite = !writePending && dWriteReq
+    val acceptInstrWrite = !writePending && !dWriteReq && iWriteReq
+
+    val dReadReq = dAxi.arw.valid && !dAxi.arw.write
+    val iReadReq = iAxi.arw.valid && !iAxi.arw.write
+    val issueDataRead = !writePending && dReadReq
+    val issueInstrRead = !writePending && !dReadReq && iReadReq
+
+    iAxi.arw.ready := False
+    iAxi.w.ready := False
+    iAxi.b.valid := ram.io.axi.b.valid && !ram.io.axi.b.id.msb
+    iAxi.b.id := ram.io.axi.b.id(15 downto 0)
+    iAxi.b.resp := ram.io.axi.b.resp
+    iAxi.r.valid := ram.io.axi.r.valid && !ram.io.axi.r.id.msb
+    iAxi.r.data := ram.io.axi.r.data
+    iAxi.r.id := ram.io.axi.r.id(15 downto 0)
+    iAxi.r.resp := ram.io.axi.r.resp
+    iAxi.r.last := ram.io.axi.r.last
+
+    dAxi.arw.ready := False
+    dAxi.w.ready := False
+    dAxi.b.valid := ram.io.axi.b.valid && ram.io.axi.b.id.msb
+    dAxi.b.id := ram.io.axi.b.id(15 downto 0)
+    dAxi.b.resp := ram.io.axi.b.resp
+    dAxi.r.valid := ram.io.axi.r.valid && ram.io.axi.r.id.msb
+    dAxi.r.data := ram.io.axi.r.data
+    dAxi.r.id := ram.io.axi.r.id(15 downto 0)
+    dAxi.r.resp := ram.io.axi.r.resp
+    dAxi.r.last := ram.io.axi.r.last
+
+    ram.io.axi.arw.valid := False
+    ram.io.axi.arw.addr := 0
+    ram.io.axi.arw.id := 0
+    ram.io.axi.arw.len := 0
+    ram.io.axi.arw.size := 0
+    ram.io.axi.arw.burst := 0
+    ram.io.axi.arw.write := False
+
+    ram.io.axi.w.valid := False
+    ram.io.axi.w.data := 0
+    ram.io.axi.w.strb := 0
+    ram.io.axi.w.last := False
+
+    ram.io.axi.b.ready := Mux(ram.io.axi.b.id.msb, dAxi.b.ready, iAxi.b.ready)
+    ram.io.axi.r.ready := Mux(ram.io.axi.r.id.msb, dAxi.r.ready, iAxi.r.ready)
+
+    when(acceptDataWrite) {
+      dAxi.arw.ready := True
+      dAxi.w.ready := True
+      writePending := True
+      writeArwSent := False
+      writeWSent := False
+      writeRouteIsData := True
+      writeAddr := dAxi.arw.addr
+      writeId := dAxi.arw.id
+      writeLen := dAxi.arw.len
+      writeSize := dAxi.arw.size
+      writeBurst := dAxi.arw.burst
+      writeData := dAxi.w.data
+      writeStrb := dAxi.w.strb
+      writeLast := dAxi.w.last
+    } elsewhen(acceptInstrWrite) {
+      iAxi.arw.ready := True
+      iAxi.w.ready := True
+      writePending := True
+      writeArwSent := False
+      writeWSent := False
+      writeRouteIsData := False
+      writeAddr := iAxi.arw.addr
+      writeId := iAxi.arw.id
+      writeLen := iAxi.arw.len
+      writeSize := iAxi.arw.size
+      writeBurst := iAxi.arw.burst
+      writeData := iAxi.w.data
+      writeStrb := iAxi.w.strb
+      writeLast := iAxi.w.last
+    }
+
+    when(writePending) {
+      ram.io.axi.arw.valid := !writeArwSent
+      ram.io.axi.arw.addr := writeAddr.resized
+      ram.io.axi.arw.id := routeId(writeRouteIsData, writeId)
+      ram.io.axi.arw.len := writeLen
+      ram.io.axi.arw.size := writeSize
+      ram.io.axi.arw.burst := writeBurst
+      ram.io.axi.arw.write := True
+
+      ram.io.axi.w.valid := !writeWSent
+      ram.io.axi.w.data := writeData
+      ram.io.axi.w.strb := writeStrb
+      ram.io.axi.w.last := writeLast
+
+      when(ram.io.axi.arw.fire) {
+        writeArwSent := True
+      }
+      when(ram.io.axi.w.fire) {
+        writeWSent := True
+      }
+      when(ram.io.axi.b.fire) {
+        writePending := False
+        writeArwSent := False
+        writeWSent := False
+      }
+    } otherwise {
+      when(issueDataRead) {
+        ram.io.axi.arw.valid := True
+        ram.io.axi.arw.addr := dAxi.arw.addr.resized
+        ram.io.axi.arw.id := routeId(True, dAxi.arw.id)
+        ram.io.axi.arw.len := dAxi.arw.len
+        ram.io.axi.arw.size := dAxi.arw.size
+        ram.io.axi.arw.burst := dAxi.arw.burst
+        ram.io.axi.arw.write := False
+        dAxi.arw.ready := ram.io.axi.arw.ready
+      } elsewhen(issueInstrRead) {
+        ram.io.axi.arw.valid := True
+        ram.io.axi.arw.addr := iAxi.arw.addr.resized
+        ram.io.axi.arw.id := routeId(False, iAxi.arw.id)
+        ram.io.axi.arw.len := iAxi.arw.len
+        ram.io.axi.arw.size := iAxi.arw.size
+        ram.io.axi.arw.burst := iAxi.arw.burst
+        ram.io.axi.arw.write := False
+        iAxi.arw.ready := ram.io.axi.arw.ready
+      }
+    }
   }
 }
 

@@ -82,29 +82,34 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val amoMinuD = up(MicroCode) === uopAMOMINUD
     val amoMaxuW = up(MicroCode) === uopAMOMAXUW
     val amoMaxuD = up(MicroCode) === uopAMOMAXUD
+    val isCboZero = up(MicroCode) === uopCBOZERO
 
     val amoIsWord = amoSwapW || amoAddW || amoXorW || amoAndW || amoOrW || amoMinW || amoMaxW || amoMinuW || amoMaxuW
     val isAmo = amoIsWord || amoSwapD || amoAddD || amoXorD || amoAndD || amoOrD || amoMinD || amoMaxD || amoMinuD || amoMaxuD
 
     // Address Generation: RS1 + sign-extended immediate for normal loads/stores,
     // RS1 only for AMOs.
-    val aguEffectiveAddr = Mux(isAmo, up(RS1).asUInt, (up(RS1).asSInt + up(IMMED).asSInt).asUInt)
+    val rawAguAddr = Mux(isAmo, up(RS1).asUInt, (up(RS1).asSInt + up(IMMED).asSInt).asUInt)
+    val cboZeroBlockAddr = up(RS1).asUInt & U(BigInt("FFFFFFFFFFFFFFC0", 16), 64 bits)
+    val aguEffectiveAddr = Mux(isCboZero, cboZeroBlockAddr, rawAguAddr)
 
     // Extract funct3 from MicroCode to determine access size
     val isStoreBase = up(MicroCode).mux(
       uopSB -> True,
       uopSH -> True,
       uopSW -> True,
+      uopFSH -> True,
       uopFSW -> True,
+      uopFSD -> True,
       uopSD -> True,
       default -> False
     )
-    val isStore = (isStoreBase || isAmo).setName("LSU_isStore")
+    val isStore = (isStoreBase || isAmo || isCboZero).setName("LSU_isStore")
 
     // Load Logic
     val isLoadBase = up(MicroCode).mux(
       uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
-      uopLBU -> True, uopLHU -> True, uopLWU -> True, uopFLW -> True,
+      uopLBU -> True, uopLHU -> True, uopLWU -> True, uopFLH -> True, uopFLW -> True, uopFLD -> True,
       default -> False
     )
     val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
@@ -123,6 +128,9 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val amoStorePending = RegInit(False)
     val amoStoreData = Reg(Bits(64 bits)) init 0
     val amoWbData = Reg(Bits(64 bits)) init 0
+    val cboZeroActive = RegInit(False)
+    val cboZeroBeat = Reg(UInt(3 bits)) init 0
+    val cboZeroBase = Reg(UInt(64 bits)) init 0
 
     // Misalignment Check
     val waitAddr = Reg(UInt(64 bits)) init(0)
@@ -131,6 +139,9 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     when(waitingResponse || amoWaitingResponse || amoStorePending) {
       activeAddr := waitAddr
     }
+    when(cboZeroActive) {
+      activeAddr := cboZeroBase
+    }
     val effectiveAddr = activeAddr
 
     val misaligned = Bool()
@@ -138,8 +149,12 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       uopLH -> (activeAddr(0) =/= False),
       uopLHU -> (activeAddr(0) =/= False),
       uopSH -> (activeAddr(0) =/= False),
+      uopFLH -> (activeAddr(0) =/= False),
       uopFLW -> (activeAddr(1 downto 0) =/= 0),
+      uopFLD -> (activeAddr(2 downto 0) =/= 0),
+      uopFSH -> (activeAddr(0) =/= False),
       uopFSW -> (activeAddr(1 downto 0) =/= 0),
+      uopFSD -> (activeAddr(2 downto 0) =/= 0),
       uopLW -> (activeAddr(1 downto 0) =/= 0),
       uopLWU -> (activeAddr(1 downto 0) =/= 0),
       uopSW -> (activeAddr(1 downto 0) =/= 0),
@@ -183,11 +198,16 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       uopLBU -> B"00000001",
       uopLH -> B"00000011",
       uopLHU -> B"00000011",
+      uopFLH -> B"00000011",
       uopFLW -> B"00001111",
+      uopFLD -> B"11111111",
       uopLW -> B"00001111",
       uopLWU -> B"00001111",
       uopLD -> B"11111111",
+      uopFSH -> B"00000011",
       uopFSW -> B"00001111",
+      uopFSD -> B"11111111",
+      uopCBOZERO -> B"11111111",
       uopAMOSWAPW -> B"00001111",
       uopAMOADDW -> B"00001111",
       uopAMOXORW -> B"00001111",
@@ -247,28 +267,38 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     }
 
     val storeData = endianStoreData |<< (byteOffset << 3)
+    val cboZeroBeatOffset = UInt(64 bits)
+    cboZeroBeatOffset := U(0, 64 bits)
+    when(cboZeroActive) {
+      cboZeroBeatOffset := cboZeroBeat.resize(64) |<< 3
+    }
 
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val suppress = misaligned || illegalInsn || io.pmpFault || duplicateInWb
+    val cboZeroIssue = (isCboZero && aguPayloadValid && epochMatches && !suppress) || cboZeroActive
     // Firing logic
     val fireLoad = isLoadBase && aguPayloadValid && epochMatches && !waitingResponse
     val amoIssueLoad = isAmo && aguPayloadValid && epochMatches && !suppress && !amoWaitingResponse && !amoStorePending
     val amoIssueStore = isAmo && aguPayloadValid && epochMatches && !suppress && amoStorePending
-    val storeIssueFire = ((isStoreBase && aguPayloadValid && epochMatches && !suppress) || amoIssueStore) && io.dBus.cmd.ready
+    val cboZeroStoreFire = cboZeroIssue && io.dBus.cmd.ready
+    val storeIssueFire = ((isStoreBase && aguPayloadValid && epochMatches && !suppress) || amoIssueStore || cboZeroStoreFire) && io.dBus.cmd.ready
     val busAddr = UInt(64 bits)
     busAddr := activeAddr
     when(io.useTranslatedAddr) {
       busAddr := io.translatedAddr
     }
+    when(cboZeroIssue) {
+      busAddr := (io.useTranslatedAddr ? io.translatedAddr | activeAddr) + cboZeroBeatOffset
+    }
 
-    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && aguPayloadValid && epochMatches && !suppress) || amoIssueLoad || amoIssueStore
+    io.dBus.cmd.valid := ((isStoreBase || fireLoad) && aguPayloadValid && epochMatches && !suppress) || amoIssueLoad || amoIssueStore || cboZeroIssue
     io.dBus.cmd.payload.address := busAddr
-    io.dBus.cmd.payload.data := Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData)
-    io.dBus.cmd.payload.mask := writeMask
-    io.dBus.cmd.payload.id := Mux((isStoreBase || amoIssueStore), U(0, 16 bits), nextId)
-    io.dBus.cmd.payload.write := isStoreBase || amoIssueStore
+    io.dBus.cmd.payload.data := Mux(cboZeroIssue, B(0, 64 bits), Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData))
+    io.dBus.cmd.payload.mask := Mux(cboZeroIssue, B"11111111", writeMask)
+    io.dBus.cmd.payload.id := Mux((isStoreBase || amoIssueStore || cboZeroIssue), U(0, 16 bits), nextId)
+    io.dBus.cmd.payload.write := isStoreBase || amoIssueStore || cboZeroIssue
     io.storeCommit := storeIssueFire
     io.storeAddr := busAddr
     io.storeData := io.dBus.cmd.payload.data
@@ -278,6 +308,29 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // when the bus is temporarily not ready.
     val storeBlocked = isStoreBase && aguPayloadValid && epochMatches && !suppress && !io.dBus.cmd.ready
     haltWhen(storeBlocked)
+
+    when(isCboZero && aguPayloadValid && epochMatches && !suppress) {
+      when(io.dBus.cmd.ready) {
+        when(!cboZeroActive) {
+          cboZeroBase := aguEffectiveAddr
+          cboZeroBeat := U(1, 3 bits)
+          cboZeroActive := True
+          haltIt()
+        } otherwise {
+          when(cboZeroBeat === U(7, 3 bits)) {
+            cboZeroActive := False
+          } otherwise {
+            cboZeroBeat := cboZeroBeat + 1
+            haltIt()
+          }
+        }
+      } otherwise {
+        haltIt()
+      }
+    }
+    when(isCboZero && aguPayloadValid && (!epochMatches || suppress)) {
+      cboZeroActive := False
+    }
 
     // Stall Logic
     // IMPORTANT: When the response arrives, the pipeline advances at end of that cycle.
@@ -407,6 +460,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       waitingResponse := False
       amoWaitingResponse := False
       amoStorePending := False
+      cboZeroActive := False
     }
 
     // Load Data Processing - use LIVE data when response is arriving, latched data otherwise
@@ -425,7 +479,9 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
        uopLBU -> shiftedEndianLoadData(7 downto 0).resize(64),
        uopLH -> shiftedEndianLoadData(15 downto 0).asSInt.resize(64).asBits,
        uopLHU -> shiftedEndianLoadData(15 downto 0).resize(64),
+       uopFLH -> shiftedEndianLoadData(15 downto 0).resize(64),
        uopFLW -> shiftedEndianLoadData(31 downto 0).resize(64),
+       uopFLD -> shiftedEndianLoadData,
        uopLW -> shiftedEndianLoadData(31 downto 0).asSInt.resize(64).asBits,
        uopLWU -> shiftedEndianLoadData(31 downto 0).resize(64),
        uopLD -> shiftedEndianLoadData,
@@ -459,8 +515,13 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // MEM_WMASK and MEM_WDATA (for Stores)
     // Use shifted data/mask to match architectural expectation if address is unaligned?
     // Usually RVFI expects aligned accesses if possible, but for unaligned, it expects bus values.
+    val rvfiStoreData = Bits(64 bits)
+    rvfiStoreData := rawStoreData
+    when(isAmo) {
+      rvfiStoreData := amoStoreData
+    }
     down(MEM_WMASK) := Mux(aguPayloadValid && isStore && !suppress, accessSizeMask, B(0, 8 bits))
-    down(MEM_WDATA) := Mux(aguPayloadValid && isStore && !suppress, rawStoreData, B(0, 64 bits))
+    down(MEM_WDATA) := Mux(aguPayloadValid && isStore && !suppress, rvfiStoreData, B(0, 64 bits))
     
     // For Loads:
     // MEM_RMASK should be shifted (to match address lanes).

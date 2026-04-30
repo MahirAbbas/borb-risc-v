@@ -17,6 +17,10 @@ def normalize_riscv_march(march: str) -> str:
         "rv64imafcsuzicsr_zifencei": "rv64imafc_zicsr_zifencei",
         "rv64imafcsu_zifencei_zicsr": "rv64imafc_zicsr_zifencei",
         "rv64imafcsuzifencei_zicsr": "rv64imafc_zicsr_zifencei",
+        "rv64imafdcsu_zicsr_zifencei": "rv64imafdc_zicsr_zifencei",
+        "rv64imafdcsuzicsr_zifencei": "rv64imafdc_zicsr_zifencei",
+        "rv64imafdcsu_zifencei_zicsr": "rv64imafdc_zicsr_zifencei",
+        "rv64imafdcsuzifencei_zicsr": "rv64imafdc_zicsr_zifencei",
     }
     return aliases.get(normalized, normalized)
 
@@ -124,7 +128,7 @@ def main() -> int:
     ap.add_argument("--sim-make-dir", default="verif/riscof/borb/sim", help="Directory for simulator Makefile")
     ap.add_argument("--rebuild-sim", action="store_true", help="Rebuild borb-sim before running")
     ap.add_argument("--xlen", type=int, default=64, choices=[32, 64], help="XLEN/toolchain width")
-    ap.add_argument("--march", default="RV64IMAFCSUZicsr_Zifencei", help="ISA string passed to GCC")
+    ap.add_argument("--march", default="RV64IMAFDCSUZicsr_Zifencei", help="ISA string passed to GCC")
     ap.add_argument("--mabi", default="lp64", help="ABI string passed to GCC")
     ap.add_argument("--iterations", type=int, default=1, help="CoreMark iteration count")
     ap.add_argument("--cpu-hz", type=int, default=100_000_000, help="Clock frequency used for time conversion")

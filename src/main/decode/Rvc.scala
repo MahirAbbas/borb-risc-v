@@ -33,6 +33,8 @@ object RVC {
     val ldImm = B"0000" ## i(6 downto 5) ## i(12 downto 10) ## B"000"
     val swImm = lwImm
     val sdImm = ldImm
+    val zcbByteImm = B"0000000000" ## i(5) ## i(6)
+    val zcbHalfImm = B"0000000000" ## i(5) ## B"0"
 
     val lwspImm = B"0000" ## i(3 downto 2) ## i(12) ## i(6 downto 4) ## B"00"
     val ldspImm = B"000" ## i(4 downto 2) ## i(12) ## i(6 downto 5) ## B"000"
@@ -61,6 +63,21 @@ object RVC {
         if (xlen == 64) {
           ret.inst := ldImm ## rch ## B"011" ## rcl ## B"0000011"
         } else {
+          ret.illegal := True
+        }
+      }
+      is(B"5'b00100") { // Zcb load/store byte/halfword encodings
+        when(i(12 downto 10) === B"3'b000") { // C.LBU
+          ret.inst := zcbByteImm ## rch ## B"100" ## rcl ## B"0000011"
+        } elsewhen((i(12 downto 10) === B"3'b001") && i(6)) { // C.LH
+          ret.inst := zcbHalfImm ## rch ## B"001" ## rcl ## B"0000011"
+        } elsewhen((i(12 downto 10) === B"3'b001") && !i(6)) { // C.LHU
+          ret.inst := zcbHalfImm ## rch ## B"101" ## rcl ## B"0000011"
+        } elsewhen(i(12 downto 10) === B"3'b010") { // C.SB
+          ret.inst := zcbByteImm(11 downto 5) ## rcl ## rch ## B"000" ## zcbByteImm(4 downto 0) ## B"0100011"
+        } elsewhen((i(12 downto 10) === B"3'b011") && !i(6)) { // C.SH
+          ret.inst := zcbHalfImm(11 downto 5) ## rcl ## rch ## B"001" ## zcbHalfImm(4 downto 0) ## B"0100011"
+        } otherwise {
           ret.illegal := True
         }
       }
@@ -93,7 +110,11 @@ object RVC {
       is(B"5'b01011") { // C.ADDI16SP / C.LUI
         val addi16spImm = sext(i(12) ## i(4 downto 3) ## i(5) ## i(2) ## i(6) ## B"0000", 12)
         val luiImm = sext(i(12) ## i(6 downto 2) ## B"0000_0000_0000", 32)
-        when(i(11 downto 7) === x2) {
+        when((i(12) === False) && (i(6 downto 2) === 0) && (i(7) === True)) {
+          // Zcmop c.mop.{1,3,5,7,9,11,13,15}: current architectural behavior is NOP.
+          ret.inst := B"32'h00000013"
+          ret.illegal := False
+        } elsewhen(i(11 downto 7) === x2) {
           ret.inst := addi16spImm ## x2 ## B"000" ## x2 ## B"0010011"
           // C.ADDI16SP is illegal when nzimm is zero.
           ret.illegal := (i(12) === False) && (i(6 downto 2) === 0)
@@ -129,14 +150,34 @@ object RVC {
                 is(B"2'b11") { ret.inst := B"0000000" ## rcl ## rch ## B"111" ## rch ## B"0110011" } // AND
               }
             } otherwise {
-              if (xlen == 64) {
-                switch(funct2) {
-                  is(B"2'b00") { ret.inst := B"0100000" ## rcl ## rch ## B"000" ## rch ## B"0111011" } // SUBW
-                  is(B"2'b01") { ret.inst := B"0000000" ## rcl ## rch ## B"000" ## rch ## B"0111011" } // ADDW
-                  default { ret.illegal := True }
+              switch(i(6 downto 2)) {
+                is(B"5'b11000") { ret.inst := B"000011111111" ## rch ## B"111" ## rch ## B"0010011" } // C.ZEXT.B -> ANDI
+                is(B"5'b11001") { ret.inst := B"011000000100" ## rch ## B"001" ## rch ## B"0010011" } // C.SEXT.B
+                is(B"5'b11010") { ret.inst := B"0000100" ## x0 ## rch ## B"100" ## rch ## B"0111011" } // C.ZEXT.H
+                is(B"5'b11011") { ret.inst := B"011000000101" ## rch ## B"001" ## rch ## B"0010011" } // C.SEXT.H
+                is(B"5'b11100") {
+                  if (xlen == 64) {
+                    ret.inst := B"0000100" ## x0 ## rch ## B"000" ## rch ## B"0111011" // C.ZEXT.W -> ADD.UW rd,rd,x0
+                  } else {
+                    ret.illegal := True
+                  }
                 }
-              } else {
-                ret.illegal := True
+                is(B"5'b11101") { ret.inst := B"111111111111" ## rch ## B"100" ## rch ## B"0010011" } // C.NOT -> XORI -1
+                default {
+                  when(funct2 === B"2'b10") {
+                    ret.inst := B"0000001" ## rcl ## rch ## B"000" ## rch ## B"0110011" // C.MUL
+                  } otherwise {
+                    if (xlen == 64) {
+                      switch(funct2) {
+                        is(B"2'b00") { ret.inst := B"0100000" ## rcl ## rch ## B"000" ## rch ## B"0111011" } // SUBW
+                        is(B"2'b01") { ret.inst := B"0000000" ## rcl ## rch ## B"000" ## rch ## B"0111011" } // ADDW
+                        default { ret.illegal := True }
+                      }
+                    } else {
+                      ret.illegal := True
+                    }
+                  }
+                }
               }
             }
           }

@@ -322,4 +322,324 @@ object FpuDivSqrt {
 
     FpuFpResult(packed, flags)
   }
+
+  def divD(a: Bits, b: Bits, rm: Bits): FpuFpResult = {
+    val aSign = a(63)
+    val bSign = b(63)
+    val outSign = aSign ^ bSign
+    val aExp = a(62 downto 52).asUInt
+    val bExp = b(62 downto 52).asUInt
+    val aFrac = a(51 downto 0).asUInt
+    val bFrac = b(51 downto 0).asUInt
+
+    val aIsZero = (aExp === U(0, 11 bits)) && (aFrac === U(0, 52 bits))
+    val bIsZero = (bExp === U(0, 11 bits)) && (bFrac === U(0, 52 bits))
+    val aIsInf = (aExp === U(2047, 11 bits)) && (aFrac === U(0, 52 bits))
+    val bIsInf = (bExp === U(2047, 11 bits)) && (bFrac === U(0, 52 bits))
+    val aIsNaN = (aExp === U(2047, 11 bits)) && (aFrac =/= U(0, 52 bits))
+    val bIsNaN = (bExp === U(2047, 11 bits)) && (bFrac =/= U(0, 52 bits))
+    val aIsSNaN = aIsNaN && !a(51)
+    val bIsSNaN = bIsNaN && !b(51)
+    val anyNaN = aIsNaN || bIsNaN
+    val anySNaN = aIsSNaN || bIsSNaN
+    val invalidDiv = (aIsZero && bIsZero) || (aIsInf && bIsInf)
+
+    val aSigRaw53 = UInt(53 bits)
+    val bSigRaw53 = UInt(53 bits)
+    aSigRaw53 := ((((aExp === U(0, 11 bits)) ? U(0, 1 bits) | U(1, 1 bits)).asBits) ## aFrac.asBits).asUInt
+    bSigRaw53 := ((((bExp === U(0, 11 bits)) ? U(0, 1 bits) | U(1, 1 bits)).asBits) ## bFrac.asBits).asUInt
+
+    val aLeadIdx = UInt(6 bits)
+    val bLeadIdx = UInt(6 bits)
+    aLeadIdx := 0
+    bLeadIdx := 0
+    for (i <- 0 until 53) {
+      when(aSigRaw53(i)) { aLeadIdx := U(i, 6 bits) }
+      when(bSigRaw53(i)) { bLeadIdx := U(i, 6 bits) }
+    }
+
+    val aNormShift = UInt(6 bits)
+    val bNormShift = UInt(6 bits)
+    aNormShift := 0
+    bNormShift := 0
+    when((aExp === U(0, 11 bits)) && (aFrac =/= U(0, 52 bits))) {
+      aNormShift := (U(52, 6 bits) - aLeadIdx).resized
+    }
+    when((bExp === U(0, 11 bits)) && (bFrac =/= U(0, 52 bits))) {
+      bNormShift := (U(52, 6 bits) - bLeadIdx).resized
+    }
+
+    val aSig53 = UInt(53 bits)
+    val bSig53 = UInt(53 bits)
+    aSig53 := (aSigRaw53 |<< aNormShift).resized
+    bSig53 := (bSigRaw53 |<< bNormShift).resized
+
+    val aExpNormS = SInt(13 bits)
+    val bExpNormS = SInt(13 bits)
+    aExpNormS := 0
+    bExpNormS := 0
+    when((aExp =/= U(0, 11 bits)) && (aExp =/= U(2047, 11 bits))) {
+      aExpNormS := aExp.resize(13).asSInt - S(1023, 13 bits)
+    } elsewhen((aExp === U(0, 11 bits)) && (aFrac =/= U(0, 52 bits))) {
+      aExpNormS := S(-1022, 13 bits) - aNormShift.resize(13).asSInt
+    }
+    when((bExp =/= U(0, 11 bits)) && (bExp =/= U(2047, 11 bits))) {
+      bExpNormS := bExp.resize(13).asSInt - S(1023, 13 bits)
+    } elsewhen((bExp === U(0, 11 bits)) && (bFrac =/= U(0, 52 bits))) {
+      bExpNormS := S(-1022, 13 bits) - bNormShift.resize(13).asSInt
+    }
+
+    val normNum = UInt(54 bits)
+    normNum := aSig53.resize(54)
+    val roundExpPre = SInt(13 bits)
+    roundExpPre := (aExpNormS - bExpNormS + S(1023, 13 bits)).resize(13)
+    when((aSig53 =/= U(0, 53 bits)) && (bSig53 =/= U(0, 53 bits)) && (aSig53 < bSig53)) {
+      normNum := (aSig53.resize(54) |<< 1).resized
+      roundExpPre := (aExpNormS - bExpNormS + S(1022, 13 bits)).resize(13)
+    }
+
+    val divNumerator = UInt(112 bits)
+    divNumerator := (normNum.resize(112) |<< 58).resized
+    val divDenominator = bSig53.resize(112)
+    val divQuot = UInt(112 bits)
+    val divRem = UInt(112 bits)
+    divQuot := 0
+    divRem := 0
+    when(divDenominator =/= U(0, 112 bits)) {
+      divQuot := (divNumerator / divDenominator).resized
+      divRem := (divNumerator % divDenominator).resized
+    }
+
+    val roundSrcPreBase = divQuot(58 downto 3)
+    val roundSrcPre = UInt(56 bits)
+    roundSrcPre := roundSrcPreBase
+    roundSrcPre(0) := roundSrcPreBase(0) || divQuot(2 downto 0).orR || (divRem =/= U(0, 112 bits))
+
+    val roundSrc = UInt(56 bits)
+    roundSrc := roundSrcPre
+    val roundExp12 = UInt(12 bits)
+    roundExp12 := 0
+    when(roundExpPre <= S(0, 13 bits)) {
+      val subShift = UInt(7 bits)
+      subShift := (S(1, 13 bits) - roundExpPre).asUInt.resize(7)
+      when((S(1, 13 bits) - roundExpPre) >= S(56, 13 bits)) {
+        subShift := U(56, 7 bits)
+      }
+      roundSrc := FpuSoftFloatUtils.shiftRightJam56(roundSrcPre, subShift)
+      roundExp12 := U(0, 12 bits)
+    } elsewhen((roundExpPre === S(1, 13 bits)) && !roundSrcPre(55) && (roundSrcPre =/= U(0, 56 bits))) {
+      roundExp12 := U(0, 12 bits)
+    } otherwise {
+      roundExp12 := roundExpPre.asUInt.resize(12)
+    }
+
+    val roundSigMain = roundSrc(55 downto 3)
+    val roundRemNZ = roundSrc(2 downto 0).orR
+    val roundGtHalf = roundSrc(2) && (roundSrc(1) || roundSrc(0))
+    val roundEqHalf = roundSrc(2) && !roundSrc(1) && !roundSrc(0)
+    val roundCarryIn = FpuSoftFloatUtils.roundInc(rm, outSign, roundRemNZ, roundGtHalf, roundEqHalf, roundSigMain(0))
+    val roundedWide = roundSigMain.resize(54) + roundCarryIn.asUInt.resize(54)
+    val roundedCarry = roundedWide(53)
+
+    val packed = Bits(64 bits)
+    packed := 0
+    val flags = Bits(5 bits)
+    flags := 0
+
+    when(anySNaN || invalidDiv) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+      flags(4) := True
+    } elsewhen(anyNaN) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+    } elsewhen(aIsInf) {
+      packed := outSign.asBits ## B(2047, 11 bits) ## B(0, 52 bits)
+    } elsewhen(bIsInf) {
+      packed := outSign.asBits ## B(0, 63 bits)
+    } elsewhen(bIsZero) {
+      packed := outSign.asBits ## B(2047, 11 bits) ## B(0, 52 bits)
+      flags(3) := True
+    } elsewhen(aIsZero) {
+      packed := outSign.asBits ## B(0, 63 bits)
+    } elsewhen(roundSrc === U(0, 56 bits)) {
+      packed := outSign.asBits ## B(0, 63 bits)
+      when(roundRemNZ) { flags(0) := True }
+    } otherwise {
+      val finalExp = UInt(12 bits)
+      finalExp := roundExp12
+      val finalSig = UInt(53 bits)
+      finalSig := roundedWide(52 downto 0)
+      when(roundedCarry) {
+        finalSig := (roundedWide |>> 1).resize(53)
+        finalExp := roundExp12 + U(1, 12 bits)
+      }
+
+      when(finalExp >= U(2047, 12 bits)) {
+        val overflowToInf = Bool()
+        overflowToInf := False
+        when((rm === B"000") || (rm === B"100")) {
+          overflowToInf := True
+        } elsewhen((rm === B"011") && !outSign) {
+          overflowToInf := True
+        } elsewhen((rm === B"010") && outSign) {
+          overflowToInf := True
+        }
+        when(overflowToInf) {
+          packed := outSign.asBits ## B(2047, 11 bits) ## B(0, 52 bits)
+        } otherwise {
+          packed := outSign.asBits ## B(2046, 11 bits) ## B(BigInt("FFFFFFFFFFFFF", 16), 52 bits)
+        }
+        flags(2) := True
+        flags(0) := True
+      } otherwise {
+        val packedExp = UInt(11 bits)
+        packedExp := finalExp(10 downto 0)
+        when((finalExp === U(0, 12 bits)) && finalSig(52)) {
+          packedExp := U(1, 11 bits)
+        }
+        packed := outSign.asBits ## packedExp.asBits ## finalSig(51 downto 0).asBits
+        when(roundRemNZ) {
+          flags(0) := True
+          when((packedExp === U(0, 11 bits)) && !finalSig(52)) {
+            flags(1) := True
+          }
+        }
+      }
+    }
+
+    FpuFpResult(packed, flags)
+  }
+
+  def sqrtD(a: Bits, rm: Bits): FpuFpResult = {
+    val aSign = a(63)
+    val aExp = a(62 downto 52).asUInt
+    val aFrac = a(51 downto 0).asUInt
+
+    val aIsZero = (aExp === U(0, 11 bits)) && (aFrac === U(0, 52 bits))
+    val aIsInf = (aExp === U(2047, 11 bits)) && (aFrac === U(0, 52 bits))
+    val aIsNaN = (aExp === U(2047, 11 bits)) && (aFrac =/= U(0, 52 bits))
+    val aIsSNaN = aIsNaN && !a(51)
+    val aIsNegNonZero = aSign && !aIsZero
+    val invalidSqrt = aIsNegNonZero && !aIsNaN
+
+    val aSigRaw53 = UInt(53 bits)
+    aSigRaw53 := ((((aExp === U(0, 11 bits)) ? U(0, 1 bits) | U(1, 1 bits)).asBits) ## aFrac.asBits).asUInt
+    val aLeadIdx = UInt(6 bits)
+    aLeadIdx := 0
+    for (i <- 0 until 53) {
+      when(aSigRaw53(i)) {
+        aLeadIdx := U(i, 6 bits)
+      }
+    }
+    val aNormShift = UInt(6 bits)
+    aNormShift := 0
+    when((aExp === U(0, 11 bits)) && (aFrac =/= U(0, 52 bits))) {
+      aNormShift := (U(52, 6 bits) - aLeadIdx).resized
+    }
+
+    val aSig53 = UInt(53 bits)
+    aSig53 := (aSigRaw53 |<< aNormShift).resized
+    val aExpNormS = SInt(13 bits)
+    aExpNormS := 0
+    when((aExp =/= U(0, 11 bits)) && (aExp =/= U(2047, 11 bits))) {
+      aExpNormS := aExp.resize(13).asSInt - S(1023, 13 bits)
+    } elsewhen((aExp === U(0, 11 bits)) && (aFrac =/= U(0, 52 bits))) {
+      aExpNormS := S(-1022, 13 bits) - aNormShift.resize(13).asSInt
+    }
+
+    val sqrtRadSig = UInt(54 bits)
+    sqrtRadSig := aSig53.resize(54)
+    val sqrtExpHalfS = SInt(13 bits)
+    sqrtExpHalfS := (aExpNormS |>> 1).resized
+    when(aExpNormS(0)) {
+      sqrtRadSig := (aSig53.resize(54) |<< 1).resized
+      sqrtExpHalfS := ((aExpNormS - S(1, 13 bits)) |>> 1).resized
+    }
+
+    val sqrtRadWide = UInt(118 bits)
+    sqrtRadWide := (sqrtRadSig.resize(118) |<< 64).resized
+    val sqrtRoot59 = FpuSoftFloatUtils.intSqrtFloor(sqrtRadWide, 59)
+    val sqrtRootSq = (sqrtRoot59.resize(118) * sqrtRoot59.resize(118)).resized
+    val sqrtRem = sqrtRadWide - sqrtRootSq
+
+    val roundSrcPreBase = sqrtRoot59(58 downto 3)
+    val roundSrcPre = UInt(56 bits)
+    roundSrcPre := roundSrcPreBase
+    roundSrcPre(0) := roundSrcPreBase(0) || sqrtRoot59(2 downto 0).orR || (sqrtRem =/= U(0, 118 bits))
+
+    val roundSrc = UInt(56 bits)
+    roundSrc := roundSrcPre
+    val roundExpPre = (sqrtExpHalfS + S(1023, 13 bits)).resize(13)
+    val roundExp12 = UInt(12 bits)
+    roundExp12 := 0
+    when(roundExpPre <= S(0, 13 bits)) {
+      val subShift = UInt(7 bits)
+      subShift := (S(1, 13 bits) - roundExpPre).asUInt.resize(7)
+      when((S(1, 13 bits) - roundExpPre) >= S(56, 13 bits)) {
+        subShift := U(56, 7 bits)
+      }
+      roundSrc := FpuSoftFloatUtils.shiftRightJam56(roundSrcPre, subShift)
+      roundExp12 := U(0, 12 bits)
+    } elsewhen((roundExpPre === S(1, 13 bits)) && !roundSrcPre(55) && (roundSrcPre =/= U(0, 56 bits))) {
+      roundExp12 := U(0, 12 bits)
+    } otherwise {
+      roundExp12 := roundExpPre.asUInt.resize(12)
+    }
+
+    val roundSigMain = roundSrc(55 downto 3)
+    val roundRemNZ = roundSrc(2 downto 0).orR
+    val roundGtHalf = roundSrc(2) && (roundSrc(1) || roundSrc(0))
+    val roundEqHalf = roundSrc(2) && !roundSrc(1) && !roundSrc(0)
+    val roundCarryIn = FpuSoftFloatUtils.roundInc(rm, False, roundRemNZ, roundGtHalf, roundEqHalf, roundSigMain(0))
+    val roundedWide = roundSigMain.resize(54) + roundCarryIn.asUInt.resize(54)
+    val roundedCarry = roundedWide(53)
+
+    val packed = Bits(64 bits)
+    packed := 0
+    val flags = Bits(5 bits)
+    flags := 0
+
+    when(aIsSNaN || invalidSqrt) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+      flags(4) := True
+    } elsewhen(aIsNaN) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+    } elsewhen(aIsInf) {
+      packed := B(0, 1 bits) ## B(2047, 11 bits) ## B(0, 52 bits)
+    } elsewhen(aIsZero) {
+      packed := aSign.asBits ## B(0, 63 bits)
+    } elsewhen(roundSrc === U(0, 56 bits)) {
+      packed := B(0, 64 bits)
+      when(roundRemNZ) { flags(0) := True }
+    } otherwise {
+      val finalExp = UInt(12 bits)
+      finalExp := roundExp12
+      val finalSig = UInt(53 bits)
+      finalSig := roundedWide(52 downto 0)
+      when(roundedCarry) {
+        finalSig := (roundedWide |>> 1).resize(53)
+        finalExp := roundExp12 + U(1, 12 bits)
+      }
+
+      when(finalExp >= U(2047, 12 bits)) {
+        packed := B(0, 1 bits) ## B(2047, 11 bits) ## B(0, 52 bits)
+        flags(2) := True
+        flags(0) := True
+      } otherwise {
+        val packedExp = UInt(11 bits)
+        packedExp := finalExp(10 downto 0)
+        when((finalExp === U(0, 12 bits)) && finalSig(52)) {
+          packedExp := U(1, 11 bits)
+        }
+        packed := B(0, 1 bits) ## packedExp.asBits ## finalSig(51 downto 0).asBits
+        when(roundRemNZ) {
+          flags(0) := True
+          when((packedExp === U(0, 11 bits)) && !finalSig(52)) {
+            flags(1) := True
+          }
+        }
+      }
+    }
+
+    FpuFpResult(packed, flags)
+  }
 }

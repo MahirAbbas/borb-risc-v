@@ -34,6 +34,21 @@ object SrcPlugin extends AreaObject {
   val RS1, RS2 = Payload(Bits(64 bits))
   val IMMED = Payload(Bits(64 bits))
 
+  def resolveIntRead(readValid: Bool, readAddress: UInt, readData: Bits, bypassSources: Seq[IntBypassSource]): Bits = {
+    val resolved = Bits(64 bits)
+    resolved := readData
+    for (src <- bypassSources) {
+      when(
+        readValid &&
+        (readAddress =/= 0) &&
+        src.valid &&
+        (src.address === readAddress)
+      ) {
+        resolved := src.data
+      }
+    }
+    resolved
+  }
 }
 case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.empty) extends Area {
   val wasReset = Reg(Bool()) init False
@@ -62,7 +77,7 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
   val rs2Reader = (new RegFileRead())
 
   val regfileread = new stage.Area {
-    val regfile = new IntRegFile(dataWidth = 64)
+    val regfile = new IntRegFile(dataWidth = 64, readPorts = 4, writePorts = 2)
 
     rs1Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs1 && up(VALID)
     rs2Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs2 && up(VALID)
@@ -92,26 +107,10 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     RS2.assignDontCare()
     IMMED.assignDontCare()
 
-    def resolveInt(read: RegFileRead): Bits = {
-      val resolved = Bits(64 bits)
-      resolved := read.data
-      for (src <- bypassSources) {
-        when(
-          read.valid &&
-          (read.address =/= 0) &&
-          src.valid &&
-          (src.address === read.address)
-        ) {
-          resolved := src.data
-        }
-      }
-      resolved
-    }
-
     val rs1Data =
-      up(IssueSemantics.PROPS).readsIntRs1 ? resolveInt(rs1Reader) | B(0, 64 bits)
+      up(IssueSemantics.PROPS).readsIntRs1 ? SrcPlugin.resolveIntRead(rs1Reader.valid, rs1Reader.address, rs1Reader.data, bypassSources) | B(0, 64 bits)
     val rs2Data =
-      up(IssueSemantics.PROPS).readsIntRs2 ? resolveInt(rs2Reader) | B(0, 64 bits)
+      up(IssueSemantics.PROPS).readsIntRs2 ? SrcPlugin.resolveIntRead(rs2Reader.valid, rs2Reader.address, rs2Reader.data, bypassSources) | B(0, 64 bits)
 
     down(RS1) := rs1Data
     down(RS2) := rs2Data

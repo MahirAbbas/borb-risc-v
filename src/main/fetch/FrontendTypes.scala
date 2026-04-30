@@ -8,9 +8,8 @@ case class FrontendConfig(
   dataWidth: Int,
   epochWidth: Int = 16,
   withCompressed: Boolean = false,
-  experimentalFrontendEnable: Boolean = false,
-  enablePredictorTraining: Boolean = false,
-  enablePredictedRedirect: Boolean = false,
+  enablePredictorTraining: Boolean = true,
+  enablePredictedRedirect: Boolean = true,
   fetchBlockBytes: Int = 8,
   lineBytes: Int = 16,
   ftqDepth: Int = 16,
@@ -38,7 +37,7 @@ case class FrontendConfig(
   icacheWays: Int = 2,
   lookupLanes: Int = 2,
   maxOutstandingMisses: Int = 2,
-  bundleQueueDepth: Int = 4,
+  bundleQueueDepth: Int = 16,
   bundleSlots: Int = 2,
   maxBlocksPerCycle: Int = 2
 ) {
@@ -62,8 +61,8 @@ case class FrontendConfig(
   def indirectSetIndexWidth: Int = log2Up(indirectSets max 2)
   def requestTagWidth: Int = log2Up(maxOutstandingMisses max 2)
   def beatsPerLine: Int = lineBytes / beatBytes
-  def predictorTrainingEnabled: Boolean = experimentalFrontendEnable && enablePredictorTraining
-  def predictedRedirectEnabled: Boolean = experimentalFrontendEnable && enablePredictedRedirect
+  def predictorTrainingEnabled: Boolean = enablePredictorTraining
+  def predictedRedirectEnabled: Boolean = enablePredictedRedirect
   def loopPredictorActive: Boolean = predictorTrainingEnabled && loopPredictorEnable
 
   // Compatibility aliases while the rest of the core catches up.
@@ -240,6 +239,7 @@ case class ScalarFetchEntry(config: FrontendConfig) extends Bundle {
   val valid = Bool()
   val scalarSeq = UInt(32 bits)
   val bundleSeq = UInt(32 bits)
+  val slotCount = UInt(log2Up(config.bundleSlots + 1) bits)
   val epoch = UInt(config.epochWidth bits)
   val pc = UInt(config.addressWidth bits)
   val insn = Bits(32 bits)

@@ -1,5 +1,8 @@
 # AGENTS
 
+Be aggressive on performance upgrades.
+Use `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` for regression testing. It's better to waste cycles doing regression tests than wasting tokens on regression. 
+
 ## Tooling
 
 ### `run_riscof.sh`

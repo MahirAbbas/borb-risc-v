@@ -11,6 +11,8 @@ case class FrontendScalarAdapter(config: FrontendConfig) extends Component {
     val scalar = master(Stream(ScalarFetchEntry(config)))
     val consume = in Bool()
     val active = out Bool()
+    val slot1PreviewValid = out Bool()
+    val slot1PreviewInsn = out Bits(32 bits)
   }
 
   val activeValid = RegInit(False)
@@ -47,6 +49,7 @@ case class FrontendScalarAdapter(config: FrontendConfig) extends Component {
   io.scalar.payload.valid := activeValid && slot.valid && (activeBundle.epoch === io.currentEpoch)
   io.scalar.payload.scalarSeq := activeBundle.bundleMeta.scalarSeqBase + activeSlot.resized
   io.scalar.payload.bundleSeq := activeBundle.bundleSeq
+  io.scalar.payload.slotCount := activeBundle.slotCount
   io.scalar.payload.epoch := activeBundle.epoch
   io.scalar.payload.pc := slot.pc
   io.scalar.payload.insn := slot.insn
@@ -62,4 +65,10 @@ case class FrontendScalarAdapter(config: FrontendConfig) extends Component {
   io.scalar.payload.illegal := slot.illegal
   io.scalar.payload.fetchFault := slot.fetchFault
   io.active := activeValid && (activeBundle.epoch === io.currentEpoch)
+  io.slot1PreviewValid := activeValid &&
+    (activeBundle.epoch === io.currentEpoch) &&
+    (activeSlot === 0) &&
+    (activeBundle.slotCount > U(1, activeBundle.slotCount.getWidth bits)) &&
+    activeBundle.slots(1).valid
+  io.slot1PreviewInsn := activeBundle.slots(1).insn
 }

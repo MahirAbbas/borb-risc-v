@@ -4,6 +4,28 @@ import spinal.core._
 
 object FpuSoftFloatUtils {
   def canonicalNaN32: Bits = B(BigInt("7FC00000", 16), 32 bits)
+  def canonicalNaN64: Bits = B(BigInt("7FF8000000000000", 16), 64 bits)
+
+  private def shiftRightJamGeneric(value: UInt, dist: UInt, width: Int): UInt = {
+    val out = UInt(width bits)
+    out := value.resize(width)
+    when(dist >= U(width, dist.getWidth bits)) {
+      out := value.orR.asUInt.resize(width)
+    } otherwise {
+      for (i <- 0 until width) {
+        when(dist === U(i, dist.getWidth bits)) {
+          if (i == 0) {
+            out := value.resize(width)
+          } else {
+            val shifted = (value |>> i).resize(width)
+            val lost = value(i - 1 downto 0).orR
+            out := shifted | lost.asUInt.resize(width)
+          }
+        }
+      }
+    }
+    out
+  }
 
   def roundInc(rm: Bits, sign: Bool, remNZ: Bool, gtHalf: Bool, eqHalf: Bool, lsb: Bool): Bool = {
     val inc = Bool()
@@ -20,116 +42,44 @@ object FpuSoftFloatUtils {
   }
 
   def shiftRightJam27(value: UInt, dist: UInt): UInt = {
-    val out = UInt(27 bits)
-    out := value
-    when(dist >= U(27, dist.getWidth bits)) {
-      out := value.orR.asUInt.resize(27)
-    } otherwise {
-      for (i <- 0 until 27) {
-        when(dist === U(i, dist.getWidth bits)) {
-          if (i == 0) {
-            out := value
-          } else {
-            val shifted = (value |>> i).resized
-            val lost = value(i - 1 downto 0).orR
-            out := shifted | lost.asUInt.resize(27)
-          }
-        }
-      }
-    }
-    out
+    shiftRightJamGeneric(value, dist, 27)
   }
 
   def shiftRightJam50(value: UInt, dist: UInt): UInt = {
-    val out = UInt(50 bits)
-    out := value
-    when(dist >= U(50, dist.getWidth bits)) {
-      out := value.orR.asUInt.resize(50)
-    } otherwise {
-      for (i <- 0 until 50) {
-        when(dist === U(i, dist.getWidth bits)) {
-          if (i == 0) {
-            out := value
-          } else {
-            val shifted = (value |>> i).resized
-            val lost = value(i - 1 downto 0).orR
-            out := shifted | lost.asUInt.resize(50)
-          }
-        }
-      }
-    }
-    out
+    shiftRightJamGeneric(value, dist, 50)
   }
 
   def shiftRightJam52(value: UInt, dist: UInt): UInt = {
-    val out = UInt(52 bits)
-    out := value
-    when(dist >= U(52, dist.getWidth bits)) {
-      out := value.orR.asUInt.resize(52)
-    } otherwise {
-      for (i <- 0 until 52) {
-        when(dist === U(i, dist.getWidth bits)) {
-          if (i == 0) {
-            out := value
-          } else {
-            val shifted = (value |>> i).resized
-            val lost = value(i - 1 downto 0).orR
-            out := shifted | lost.asUInt.resize(52)
-          }
-        }
-      }
-    }
-    out
+    shiftRightJamGeneric(value, dist, 52)
   }
 
   def shiftRightJam53(value: UInt, dist: UInt): UInt = {
-    val out = UInt(53 bits)
-    out := value
-    when(dist >= U(53, dist.getWidth bits)) {
-      out := value.orR.asUInt.resize(53)
-    } otherwise {
-      for (i <- 0 until 53) {
-        when(dist === U(i, dist.getWidth bits)) {
-          if (i == 0) {
-            out := value
-          } else {
-            val shifted = (value |>> i).resized
-            val lost = value(i - 1 downto 0).orR
-            out := shifted | lost.asUInt.resize(53)
-          }
-        }
-      }
-    }
-    out
+    shiftRightJamGeneric(value, dist, 53)
   }
 
   def shiftRightJam56(value: UInt, dist: UInt): UInt = {
-    val out = UInt(56 bits)
-    out := value
-    when(dist >= U(56, dist.getWidth bits)) {
-      out := value.orR.asUInt.resize(56)
-    } otherwise {
-      for (i <- 0 until 56) {
-        when(dist === U(i, dist.getWidth bits)) {
-          if (i == 0) {
-            out := value
-          } else {
-            val shifted = (value |>> i).resized
-            val lost = value(i - 1 downto 0).orR
-            out := shifted | lost.asUInt.resize(56)
-          }
-        }
-      }
-    }
-    out
+    shiftRightJamGeneric(value, dist, 56)
+  }
+
+  def shiftRightJam108(value: UInt, dist: UInt): UInt = {
+    shiftRightJamGeneric(value, dist, 108)
+  }
+
+  def shiftRightJam109(value: UInt, dist: UInt): UInt = {
+    shiftRightJamGeneric(value, dist, 109)
+  }
+
+  def shiftRightJam110(value: UInt, dist: UInt): UInt = {
+    shiftRightJamGeneric(value, dist, 110)
   }
 
   def intSqrtFloor(rad: UInt, rootBits: Int): UInt = {
     var guess = U(0, rootBits bits)
+    val sqWidth = rootBits * 2
     for (i <- (rootBits - 1) downto 0) {
       val trial = guess | (U(1, rootBits bits) |<< i)
-      val trialSq = (trial.resize(64) * trial.resize(64)).resized
-      guess = Mux(trialSq <= rad.resize(64), trial, guess)
+      val trialSq = (trial.resize(sqWidth) * trial.resize(sqWidth)).resized
+      guess = Mux(trialSq <= rad.resize(sqWidth), trial, guess)
     }
     guess
   }

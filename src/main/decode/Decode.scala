@@ -29,6 +29,71 @@ object Decoder extends AreaObject {
   val RS3_ADDR = Payload(Bits(5 bits))
 
   val VALID = Payload(Bool())
+  val DECODE_ILLEGAL = Payload(Bool())
+
+  case class DecoderResult() extends Bundle {
+    val decodedInstruction = Bits(32 bits)
+    val isCompressed = Bool()
+    val legal = YESNO()
+    val microCode = common.MicroCode()
+    val rdAddr = Bits(5 bits)
+    val rs1Addr = Bits(5 bits)
+    val rs2Addr = Bits(5 bits)
+    val rs3Addr = Bits(5 bits)
+    val decodeIllegal = Bool()
+    val valid = Bool()
+  }
+
+  def decodeInstruction(instruction: Bits, withCompressed: Boolean = false, xlen: Int = 64): DecoderResult = {
+    import DecodeTable._
+
+    val all = mutable.LinkedHashSet[Masked]()
+    val payloads = Seq(
+      LEGAL -> 0,
+      MicroCode -> 8
+    )
+    val specs = payloads.map { case (payload, column) => (new DecodingSpec(payload), payload, column) }
+
+    assert(DecodeTable.X_table(0)._2.length > 8)
+    for ((instr, vals) <- DecodeTable.X_table) {
+      all += Masked(instr)
+      for ((spec, _, column) <- specs) {
+        spec.addNeeds(Masked(instr), Masked(vals(column)))
+      }
+    }
+    specs.foreach { case (spec, _, column) => spec.setDefault(Masked(nop(column))) }
+
+    val result = DecoderResult()
+    val decodeInst = Bits(32 bits)
+    decodeInst := instruction
+    val isCompressed = instruction(1 downto 0) =/= B"11"
+    val rvc = RVC(instruction(15 downto 0), xlen = xlen)
+
+    if(withCompressed) {
+      when(isCompressed) {
+        decodeInst := rvc.inst
+      }
+    }
+
+    val decodeIllegal = if(withCompressed) (isCompressed && rvc.illegal) else False
+    val supported = Symplify(decodeInst, all)
+    val legal = YESNO()
+    val microCode = common.MicroCode()
+    legal.assignFromBits(specs.find(_._2 == LEGAL).get._1.build(decodeInst, all).asBits)
+    microCode.assignFromBits(specs.find(_._2 == MicroCode).get._1.build(decodeInst, all).asBits)
+
+    result.decodedInstruction := decodeInst
+    result.isCompressed := (if(withCompressed) isCompressed && !rvc.illegal else False)
+    result.legal := legal
+    result.microCode := microCode
+    result.rdAddr := decodeInst(11 downto 7)
+    result.rs1Addr := decodeInst(19 downto 15)
+    result.rs2Addr := decodeInst(24 downto 20)
+    result.rs3Addr := decodeInst(31 downto 27)
+    result.decodeIllegal := decodeIllegal
+    result.valid := supported && !decodeIllegal
+    result
+  }
 }
 
 object ExecutionUnitEnum extends SpinalEnum {
@@ -101,7 +166,11 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
     } else {
       down(IS_COMPRESSED) := False
     }
-    VALID := stage.up.isValid && Symplify(decodeInst, all) && !decodeIllegal
+
+    val decodeSupported = Symplify(decodeInst, all)
+    val pcInRam = up(borb.fetch.PC.PC) >= U(BigInt("80000000", 16), 64 bits)
+    VALID := stage.up.isValid && decodeSupported && !decodeIllegal
+    down(DECODE_ILLEGAL) := stage.up.isValid && decodeIllegal && pcInRam
 
     for ((spec, signal, _) <- specs) {
       down(signal).assignFromBits(spec.build(decodeInst, all).asBits)

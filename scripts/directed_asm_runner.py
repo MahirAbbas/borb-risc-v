@@ -83,6 +83,7 @@ def main() -> int:
     ap.add_argument("--max-cycles", type=int, default=500000, help="Simulation cycle budget")
     ap.add_argument("--trace", action="store_true", help="Emit FST waveform")
     ap.add_argument("--trace-commit", action="store_true", help="Emit per-commit JSON trace")
+    ap.add_argument("--report-perf", action="store_true", help="Emit simulator perf counters to perf.json")
     ap.add_argument("--golden-signature", default="", help="Optional signature file to diff against")
     args = ap.parse_args()
 
@@ -129,6 +130,7 @@ def main() -> int:
     tohost_txt = out_dir / "tohost.txt"
     commit_trace = out_dir / "commit_trace.log"
     fst = out_dir / "wave.fst"
+    perf_report = out_dir / "perf.json"
 
     compile_cmd = [
         gcc,
@@ -184,6 +186,8 @@ def main() -> int:
         sim_cmd.extend(["--trace-commit", str(commit_trace)])
     if args.trace:
         sim_cmd.extend(["--fst", str(fst)])
+    if args.report_perf:
+        sim_cmd.extend(["--report-perf", str(perf_report)])
 
     sim_run = run_cmd(sim_cmd, capture=True)
     (out_dir / "sim.stdout.log").write_text(sim_run.stdout or "", encoding="utf-8")
@@ -210,6 +214,7 @@ def main() -> int:
         "dump": str(dump),
         "signature": str(signature),
         "commit_trace": str(commit_trace) if args.trace_commit else None,
+        "perf_report": str(perf_report) if args.report_perf else None,
         "wave": str(fst) if args.trace else None,
         "symbols": {
             "tohost": hex(tohost if tohost is not None else 0),

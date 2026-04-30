@@ -6,6 +6,7 @@ import spinal.lib.bus.amba4.axi._
 import spinal.lib.misc.pipeline._
 
 import borb.common.Common._
+import borb.common.LaneContracts
 import borb.fetch.PC
 import borb.frontend.Decoder.INSTRUCTION
 
@@ -15,6 +16,7 @@ object Fetch extends AreaObject {
   val FETCH_BUNDLE_SEQ = Payload(UInt(32 bits))
   val FETCH_FTQ_IDX = Payload(UInt(8 bits))
   val FETCH_SLOT_IDX = Payload(UInt(2 bits))
+  val FETCH_SLOT_COUNT = Payload(UInt(2 bits))
   val FETCH_BLOCK_PC = Payload(UInt(addressWidth bits))
   val FETCH_BYTE_OFFSET = Payload(UInt(4 bits))
   val FETCH_PREDICTED_VALID = Payload(Bool())
@@ -57,12 +59,17 @@ case class Fetch(
     val iAxi = Axi4Shared(axiConfig)
     val currentEpoch = UInt(cfg.epochWidth bits)
     val scalarConsume = Bool()
+    val scalarSkip = Bool()
     val scalarHold = Bool()
+    val scalarDeferRefill = Bool()
+    val suppressPrefetch = Bool()
+    val iAxiReqIsPrefetch = Bool()
     val pcAdvance = Bool()
     val pcStep = UInt(4 bits)
     val vmTranslateVirt = UInt(addressWidth bits)
     val vmTranslatePhys = UInt(addressWidth bits)
     val vmTranslateEnable = Bool()
+    val vmTranslateValid = Bool()
     val predictedJump = Flow(JumpCmd(addressWidth))
     val recover = Flow(FrontendRecoverUpdate(cfg))
     val branchResolve = Flow(BranchResolveUpdate(cfg))
@@ -120,6 +127,7 @@ case class Fetch(
   val acceptedTraversalValid = RegInit(False)
   val flushFrontend = io.recover.valid
   val invalidateIcache = io.recover.valid && io.recover.payload.invalidateIcache
+  val flushIcacheState = flushFrontend
 
   val control = FrontendControl(cfg)
   control.io.flush := flushFrontend
@@ -143,13 +151,16 @@ case class Fetch(
   traversal.io.traversal := predictor.io.traversal
 
   val l1i = FrontendL1I(cfg)
-  l1i.io.flush := flushFrontend
+  l1i.io.flush := flushIcacheState
   l1i.io.invalidate := invalidateIcache
   l1i.io.currentEpoch := io.currentEpoch
+  l1i.io.suppressPrefetch := io.suppressPrefetch
   l1i.io.lookupReq := traversal.io.lookupReqs
 
   io.vmTranslateVirt.allowOverride := l1i.io.missReq.lineAddr
-  val busBridge = FetchBusBridge(cfg, io.iAxi, flushFrontend, l1i.io.missReq, l1i.io.missRsp, io.vmTranslatePhys, io.vmTranslateEnable)
+  io.vmTranslateValid := l1i.io.missReq.valid
+  val busBridge = FetchBusBridge(cfg, io.iAxi, flushIcacheState, l1i.io.missReq, l1i.io.missRsp, io.vmTranslatePhys, io.vmTranslateEnable)
+  io.iAxiReqIsPrefetch := busBridge.issuingPrefetch
 
   val builder = FrontendBundleBuilder(cfg)
   builder.io.traversal := traversal.io.metadata
@@ -171,10 +182,18 @@ case class Fetch(
   when(flushFrontend || io.scalarHold || scalarBoundaryStale) {
     scalarBoundaryValid := False
   } otherwise {
+    when(io.scalarSkip) {
+      adapter.io.consume := True
+    }
     when(io.scalarConsume) {
       scalarBoundaryValid := False
+      when(io.scalarDeferRefill) {
+        adapter.io.consume := True
+      }
     }
     when((!scalarBoundaryValid || io.scalarConsume) &&
+      !io.scalarSkip &&
+      !io.scalarDeferRefill &&
       adapter.io.scalar.valid &&
       (adapter.io.scalar.payload.epoch === io.currentEpoch)) {
       scalarBoundaryValid := True
@@ -188,11 +207,14 @@ case class Fetch(
   cmdStage.down(Fetch.FETCH_BUNDLE_SEQ).allowOverride := 0
   cmdStage.down(FETCH_FTQ_IDX).allowOverride := 0
   cmdStage.down(FETCH_SLOT_IDX).allowOverride := 0
+  cmdStage.down(FETCH_SLOT_COUNT).allowOverride := 0
   cmdStage.down(FETCH_BLOCK_PC).allowOverride := 0
   cmdStage.down(FETCH_BYTE_OFFSET).allowOverride := 0
   cmdStage.down(FETCH_PREDICTED_VALID).allowOverride := False
   cmdStage.down(FETCH_PREDICTED_TAKEN).allowOverride := False
   cmdStage.down(FETCH_PREDICTED_TARGET).allowOverride := 0
+  cmdStage.down(LANE_ID).allowOverride := 0
+  cmdStage.down(LANE_MASK).allowOverride := B"00"
   // Stage 2 latches from cmdStage.down via the pipeline StageLink. Once the
   // frontend has bootstrapped, terminate the legacy seed path whenever the
   // scalar boundary is empty, and override the stage-2 PC via the link bypass.
@@ -205,17 +227,20 @@ case class Fetch(
     cmdStage.down(Fetch.FETCH_BUNDLE_SEQ).allowOverride := scalarBoundaryPayload.bundleSeq
     cmdStage.down(FETCH_FTQ_IDX).allowOverride := scalarBoundaryPayload.ftqIndex.resized
     cmdStage.down(FETCH_SLOT_IDX).allowOverride := scalarBoundaryPayload.slotIdx.resized
+    cmdStage.down(FETCH_SLOT_COUNT).allowOverride := scalarBoundaryPayload.slotCount.resized
     cmdStage.down(FETCH_BLOCK_PC).allowOverride := scalarBoundaryPayload.blockPc
     cmdStage.down(FETCH_BYTE_OFFSET).allowOverride := scalarBoundaryPayload.byteOffsetInBlock.resized
     cmdStage.down(FETCH_PREDICTED_VALID).allowOverride := scalarBoundaryPayload.predictedValid
     cmdStage.down(FETCH_PREDICTED_TAKEN).allowOverride := scalarBoundaryPayload.predictedTaken
     cmdStage.down(FETCH_PREDICTED_TARGET).allowOverride := scalarBoundaryPayload.predictedTarget
+    cmdStage.down(LANE_ID).allowOverride := scalarBoundaryPayload.slotIdx(0).asUInt
+    cmdStage.down(LANE_MASK).allowOverride := LaneContracts.laneMaskFromSlotCount(scalarBoundaryPayload.slotCount)
   }
 
-  // The scalar compatibility path must not let fetch get multiple bundles
-  // ahead of what the adapter can drain. Otherwise control can walk past a
-  // redirect target while the scalar boundary is still replaying/killing older
-  // slots, which reintroduces wrong-path compressed branches.
+  // The scalar compatibility path must not let fetch get ahead of the adapter.
+  // Otherwise an execute-stage redirect can invalidate queued same-path bundles
+  // while an older scalar boundary is still being killed, leaving no current
+  // epoch instruction to drain the pipeline.
   val scalarCompatibilityBusy = adapter.io.active || scalarBoundaryValid || (queue.io.occupancy =/= 0)
   queue.io.push.valid := builder.io.bundle.valid && !scalarCompatibilityBusy && !flushFrontend
   queue.io.push.payload := builder.io.bundle.payload
@@ -249,7 +274,11 @@ case class Fetch(
   }
   val bundleSequentialNextPc = UInt(cfg.addressWidth bits)
   bundleSequentialNextPc := builder.io.bundle.payload.startPc + consumedBytes.resized
-  control.io.bundleNextPc := builder.io.bundle.payload.bundleMeta.nextStartPc
+  if(cfg.predictedRedirectEnabled) {
+    control.io.bundleNextPc := builder.io.bundle.payload.bundleMeta.nextStartPc
+  } else {
+    control.io.bundleNextPc := bundleSequentialNextPc
+  }
 
   io.pcAdvance := bundleAccepted
   io.pcStep := consumedBytes
@@ -280,7 +309,7 @@ case class Fetch(
   perfRspAccepted := l1i.io.missRsp.valid
   perfNeedCurrentReq := control.io.activeValid && !l1i.io.lookupRsp(0).hit
   perfNeedNextReq := (if(cfg.lookupLanes > 1) control.io.activeValid && traversal.io.metadata.blocks(1).valid && !l1i.io.lookupRsp(1).hit else False)
-  perfPrefetchReq := False
+  perfPrefetchReq := l1i.io.prefetchReqIssued
   perfWaitCurBeat := control.io.activeValid && !builder.io.bundle.valid
   perfWaitNextBeat := control.io.activeValid && builder.io.bundle.valid && (builder.io.bundle.payload.slotCount === U(1, builder.io.bundle.payload.slotCount.getWidth bits))
   perfTakeInsn := bundleAccepted
@@ -303,7 +332,7 @@ case class Fetch(
   perfPredictedRedirect := io.predictedJump.valid
   perfMissCurrentBlock := l1i.io.lookupReq(0).valid && !l1i.io.lookupRsp(0).hit
   perfMissNextBlock := (if(cfg.lookupLanes > 1) traversal.io.lookupReqs(1).valid && !l1i.io.lookupRsp(1).hit else False)
-  perfMissPrefetch := False
+  perfMissPrefetch := l1i.io.prefetchReqIssued
   perfReqBlockedOutstanding := l1i.io.reqBlockedOutstanding
   perfPacketQueueFull := builder.io.bundle.valid && !queue.io.push.ready
   perfStraddlePacket := False

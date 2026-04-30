@@ -452,32 +452,40 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
 
     if(config.loopPredictorActive) when(update.isConditional && (update.actualTarget < update.fallthrough)) {
       val loopIdx = btbIndex(update.blockPc, config.loopPredictorEntries)
+      val loopEntryNext = LoopEntry()
+      loopEntryNext.valid := loopTable(loopIdx).valid
+      loopEntryNext.tag := loopTable(loopIdx).tag
+      loopEntryNext.tripCount := loopTable(loopIdx).tripCount
+      loopEntryNext.iterCount := loopTable(loopIdx).iterCount
+      loopEntryNext.confidence := loopTable(loopIdx).confidence
+
       when(!loopTable(loopIdx).valid || (loopTable(loopIdx).tag =/= update.blockPc)) {
-        loopTable(loopIdx).valid := True
-        loopTable(loopIdx).tag := update.blockPc
-        loopTable(loopIdx).target := update.actualTarget
-        loopTable(loopIdx).fallthrough := update.fallthrough
-        loopTable(loopIdx).tripCount := U(0, 8 bits)
-        loopTable(loopIdx).iterCount := U(0, 8 bits)
-        loopTable(loopIdx).confidence := U(0, 2 bits)
+        loopEntryNext.valid := True
+        loopEntryNext.tag := update.blockPc
+        loopEntryNext.tripCount := U(0, 8 bits)
+        loopEntryNext.iterCount := U(0, 8 bits)
+        loopEntryNext.confidence := U(0, 2 bits)
       }
-      loopTable(loopIdx).target := update.actualTarget
-      loopTable(loopIdx).fallthrough := update.fallthrough
+
+      loopEntryNext.target := update.actualTarget
+      loopEntryNext.fallthrough := update.fallthrough
       when(update.actualTaken) {
         when(loopTable(loopIdx).iterCount =/= U(255, 8 bits)) {
-          loopTable(loopIdx).iterCount := loopTable(loopIdx).iterCount + 1
+          loopEntryNext.iterCount := loopTable(loopIdx).iterCount + 1
         }
       } otherwise {
         when(loopTable(loopIdx).iterCount =/= 0) {
           when(loopTable(loopIdx).tripCount === loopTable(loopIdx).iterCount) {
-            loopTable(loopIdx).confidence := satInc(loopTable(loopIdx).confidence)
+            loopEntryNext.confidence := satInc(loopTable(loopIdx).confidence)
           } otherwise {
-            loopTable(loopIdx).tripCount := loopTable(loopIdx).iterCount
-            loopTable(loopIdx).confidence := U(1, 2 bits)
+            loopEntryNext.tripCount := loopTable(loopIdx).iterCount
+            loopEntryNext.confidence := U(1, 2 bits)
           }
         }
-        loopTable(loopIdx).iterCount := U(0, 8 bits)
+        loopEntryNext.iterCount := U(0, 8 bits)
       }
+
+      loopTable(loopIdx) := loopEntryNext
     }
 
     when(update.mispredict) {

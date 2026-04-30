@@ -232,4 +232,208 @@ object FpuAddSub {
 
     FpuFpResult(packed, flags)
   }
+
+  def addSubD(a: Bits, b: Bits, rm: Bits, isSub: Bool): FpuFpResult = {
+    val bEff = Bits(64 bits)
+    bEff := b
+    when(isSub) {
+      bEff := (!b(63)).asBits ## b(62 downto 0)
+    }
+
+    val aSign = a(63)
+    val bSign = bEff(63)
+    val aExp = a(62 downto 52).asUInt
+    val bExp = bEff(62 downto 52).asUInt
+    val aFrac = a(51 downto 0).asUInt
+    val bFrac = bEff(51 downto 0).asUInt
+    val aIsZero = (aExp === U(0, 11 bits)) && (aFrac === U(0, 52 bits))
+    val bIsZero = (bExp === U(0, 11 bits)) && (bFrac === U(0, 52 bits))
+    val aIsInf = (aExp === U(2047, 11 bits)) && (aFrac === U(0, 52 bits))
+    val bIsInf = (bExp === U(2047, 11 bits)) && (bFrac === U(0, 52 bits))
+    val aIsNaN = (aExp === U(2047, 11 bits)) && (aFrac =/= U(0, 52 bits))
+    val bIsNaN = (bExp === U(2047, 11 bits)) && (bFrac =/= U(0, 52 bits))
+    val aIsSNaN = aIsNaN && !a(51)
+    val bIsSNaN = bIsNaN && !bEff(51)
+    val anyNaN = aIsNaN || bIsNaN
+    val anySNaN = aIsSNaN || bIsSNaN
+    val invalidInf = aIsInf && bIsInf && (aSign =/= bSign)
+
+    val aExpAdj = UInt(11 bits)
+    val bExpAdj = UInt(11 bits)
+    aExpAdj := aIsZero ? U(0, 11 bits) | ((aExp === U(0, 11 bits)) ? U(1, 11 bits) | aExp)
+    bExpAdj := bIsZero ? U(0, 11 bits) | ((bExp === U(0, 11 bits)) ? U(1, 11 bits) | bExp)
+    val aSig53 = UInt(53 bits)
+    val bSig53 = UInt(53 bits)
+    aSig53 := ((((aExp === U(0, 11 bits)) ? U(0, 1 bits) | U(1, 1 bits)).asBits) ## aFrac.asBits).asUInt
+    bSig53 := ((((bExp === U(0, 11 bits)) ? U(0, 1 bits) | U(1, 1 bits)).asBits) ## bFrac.asBits).asUInt
+    val aSig56 = UInt(56 bits)
+    val bSig56 = UInt(56 bits)
+    aSig56 := (aSig53.resize(56) |<< 3).resized
+    bSig56 := (bSig53.resize(56) |<< 3).resized
+
+    val swapMag = Bool()
+    swapMag := False
+    when(aExpAdj < bExpAdj) {
+      swapMag := True
+    } elsewhen((aExpAdj === bExpAdj) && (aSig56 < bSig56)) {
+      swapMag := True
+    }
+
+    val bigSign = Bool()
+    val smlSign = Bool()
+    val bigExpAdj = UInt(11 bits)
+    val smlExpAdj = UInt(11 bits)
+    val bigSig56 = UInt(56 bits)
+    val smlSig56 = UInt(56 bits)
+    bigSign := aSign
+    smlSign := bSign
+    bigExpAdj := aExpAdj
+    smlExpAdj := bExpAdj
+    bigSig56 := aSig56
+    smlSig56 := bSig56
+    when(swapMag) {
+      bigSign := bSign
+      smlSign := aSign
+      bigExpAdj := bExpAdj
+      smlExpAdj := aExpAdj
+      bigSig56 := bSig56
+      smlSig56 := aSig56
+    }
+
+    val expDiff = (bigExpAdj - smlExpAdj).resized
+    val smlAligned = FpuSoftFloatUtils.shiftRightJam56(smlSig56, expDiff)
+    val sameSign = bigSign === smlSign
+
+    val sumWide = UInt(57 bits)
+    sumWide := bigSig56.resize(57) + smlAligned.resize(57)
+    val diff56 = UInt(56 bits)
+    diff56 := (bigSig56 - smlAligned).resized
+    val exactZero = !sameSign && (bigSig56 === smlAligned)
+
+    val preNormSig = UInt(56 bits)
+    val preNormExp = UInt(11 bits)
+    val outSign = Bool()
+    preNormSig := 0
+    preNormExp := bigExpAdj
+    outSign := bigSign
+    when(sameSign) {
+      when(sumWide(56)) {
+        preNormSig := sumWide(56 downto 1) | sumWide(0).asUInt.resize(56)
+        preNormExp := bigExpAdj + U(1, 11 bits)
+      } otherwise {
+        preNormSig := sumWide(55 downto 0)
+      }
+    } otherwise {
+      preNormSig := diff56
+      when(exactZero) {
+        outSign := False
+        preNormExp := 0
+      }
+    }
+
+    val leadIdx = UInt(6 bits)
+    leadIdx := 0
+    for (i <- 0 until 56) {
+      when(preNormSig(i)) {
+        leadIdx := U(i, 6 bits)
+      }
+    }
+
+    val normSig = UInt(56 bits)
+    val normExp = UInt(11 bits)
+    normSig := preNormSig
+    normExp := preNormExp
+    when(!sameSign && !exactZero && (preNormSig =/= U(0, 56 bits))) {
+      when(preNormExp > (U(55, 11 bits) - leadIdx.resize(11))) {
+        val leadShift = (U(55, 11 bits) - leadIdx.resize(11)).resized
+        normSig := (preNormSig |<< leadShift.resize(6)).resized
+        normExp := preNormExp - leadShift
+      } otherwise {
+        val toSub = (preNormExp - U(1, 11 bits)).resized
+        normSig := (preNormSig |<< toSub.resize(6)).resized
+        normExp := U(1, 11 bits)
+      }
+    }
+
+    val roundSrc = UInt(56 bits)
+    val roundExp = UInt(11 bits)
+    roundSrc := normSig
+    roundExp := normExp
+    when((normExp === U(1, 11 bits)) && !normSig(55) && (normSig =/= U(0, 56 bits))) {
+      roundExp := 0
+    }
+
+    val roundSigMain = roundSrc(55 downto 3)
+    val roundRemNZ = roundSrc(2 downto 0).orR
+    val roundGtHalf = roundSrc(2) && (roundSrc(1) || roundSrc(0))
+    val roundEqHalf = roundSrc(2) && !roundSrc(1) && !roundSrc(0)
+    val roundCarryIn = FpuSoftFloatUtils.roundInc(rm, outSign, roundRemNZ, roundGtHalf, roundEqHalf, roundSigMain(0))
+    val roundedWide = roundSigMain.resize(54) + roundCarryIn.asUInt.resize(54)
+    val roundedCarry = roundedWide(53)
+
+    val packed = Bits(64 bits)
+    packed := 0
+    val flags = Bits(5 bits)
+    flags := 0
+
+    when(anySNaN || invalidInf) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+      flags(4) := True
+    } elsewhen(anyNaN) {
+      packed := FpuSoftFloatUtils.canonicalNaN64
+    } elsewhen(aIsInf || bIsInf) {
+      packed := outSign.asBits ## B(2047, 11 bits) ## B(0, 52 bits)
+    } elsewhen(exactZero) {
+      val zeroSign = rm === B"010"
+      packed := zeroSign.asBits ## B(0, 63 bits)
+    } elsewhen(roundSrc === U(0, 56 bits)) {
+      packed := outSign.asBits ## B(0, 63 bits)
+      when(roundRemNZ) {
+        flags(0) := True
+      }
+    } otherwise {
+      val finalExp = UInt(12 bits)
+      finalExp := roundExp.resize(12)
+      val finalSig = UInt(53 bits)
+      finalSig := roundedWide(52 downto 0)
+      when(roundedCarry) {
+        finalSig := (roundedWide |>> 1).resize(53)
+        finalExp := roundExp.resize(12) + U(1, 12 bits)
+      }
+
+      when(finalExp >= U(2047, 12 bits)) {
+        val overflowToInf = Bool()
+        overflowToInf := False
+        when((rm === B"000") || (rm === B"100")) {
+          overflowToInf := True
+        } elsewhen((rm === B"011") && !outSign) {
+          overflowToInf := True
+        } elsewhen((rm === B"010") && outSign) {
+          overflowToInf := True
+        }
+        when(overflowToInf) {
+          packed := outSign.asBits ## B(2047, 11 bits) ## B(0, 52 bits)
+        } otherwise {
+          packed := outSign.asBits ## B(2046, 11 bits) ## B(BigInt("FFFFFFFFFFFFF", 16), 52 bits)
+        }
+        flags(2) := True
+        flags(0) := True
+      } otherwise {
+        val packedExp = UInt(11 bits)
+        packedExp := finalExp(10 downto 0)
+        when((finalExp === U(0, 12 bits)) && finalSig(52)) {
+          packedExp := U(1, 11 bits)
+        }
+        packed := outSign.asBits ## packedExp.asBits ## finalSig(51 downto 0).asBits
+        when(roundRemNZ) {
+          flags(0) := True
+          when((packedExp === U(0, 11 bits)) && !finalSig(52)) {
+            flags(1) := True
+          }
+        }
+      }
+    }
+
+    FpuFpResult(packed, flags)
+  }
 }
