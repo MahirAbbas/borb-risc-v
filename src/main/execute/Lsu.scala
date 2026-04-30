@@ -46,7 +46,7 @@ object Lsu extends AreaObject {
   val MEM_RDATA = Payload(Bits(64 bits)).setName("LSU_MEM_RDATA")
 }
 
-case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutstanding: Bool = False) extends Area {
+case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutstanding: Bool = False, killCboZero: Bool = False) extends Area {
   import Lsu._
   import borb.dispatch.Dispatch._
 
@@ -131,6 +131,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val cboZeroActive = RegInit(False)
     val cboZeroBeat = Reg(UInt(3 bits)) init 0
     val cboZeroBase = Reg(UInt(64 bits)) init 0
+    val cboZeroBusBase = Reg(UInt(64 bits)) init 0
 
     // Misalignment Check
     val waitAddr = Reg(UInt(64 bits)) init(0)
@@ -277,7 +278,8 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
     val suppress = misaligned || illegalInsn || io.pmpFault || duplicateInWb
-    val cboZeroIssue = (isCboZero && aguPayloadValid && epochMatches && !suppress) || cboZeroActive
+    val cboZeroStart = isCboZero && aguPayloadValid && epochMatches && !suppress && !cboZeroActive
+    val cboZeroIssue = cboZeroStart || cboZeroActive
     // Firing logic
     val fireLoad = isLoadBase && aguPayloadValid && epochMatches && !waitingResponse
     val amoIssueLoad = isAmo && aguPayloadValid && epochMatches && !suppress && !amoWaitingResponse && !amoStorePending
@@ -290,7 +292,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       busAddr := io.translatedAddr
     }
     when(cboZeroIssue) {
-      busAddr := (io.useTranslatedAddr ? io.translatedAddr | activeAddr) + cboZeroBeatOffset
+      busAddr := Mux(cboZeroActive, cboZeroBusBase, io.useTranslatedAddr ? io.translatedAddr | activeAddr) + cboZeroBeatOffset
     }
 
     io.dBus.cmd.valid := ((isStoreBase || fireLoad) && aguPayloadValid && epochMatches && !suppress) || amoIssueLoad || amoIssueStore || cboZeroIssue
@@ -309,10 +311,11 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val storeBlocked = isStoreBase && aguPayloadValid && epochMatches && !suppress && !io.dBus.cmd.ready
     haltWhen(storeBlocked)
 
-    when(isCboZero && aguPayloadValid && epochMatches && !suppress) {
+    when(cboZeroIssue) {
       when(io.dBus.cmd.ready) {
         when(!cboZeroActive) {
           cboZeroBase := aguEffectiveAddr
+          cboZeroBusBase := io.useTranslatedAddr ? io.translatedAddr | aguEffectiveAddr
           cboZeroBeat := U(1, 3 bits)
           cboZeroActive := True
           haltIt()
@@ -328,7 +331,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
         haltIt()
       }
     }
-    when(isCboZero && aguPayloadValid && (!epochMatches || suppress)) {
+    when(isCboZero && aguPayloadValid && !cboZeroActive && (!epochMatches || suppress)) {
       cboZeroActive := False
     }
 
@@ -460,6 +463,8 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       waitingResponse := False
       amoWaitingResponse := False
       amoStorePending := False
+    }
+    when(killCboZero) {
       cboZeroActive := False
     }
 

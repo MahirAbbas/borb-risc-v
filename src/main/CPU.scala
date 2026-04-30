@@ -5,7 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
 import borb.fetch.FrontendRedirectReason
-import borb.backend.{FpBackend, IntegerBackend, TrapCsrBackend}
+import borb.backend.{BackendPipe, FpBackend, IntegerBackend, PipelineSlot, TrapCsrBackend}
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
@@ -224,45 +224,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // aliasing under branch-heavy tests.
     val currentEpoch = Reg(UInt(16 bits)) init 0
 
-    case class Lane1StageData() extends Bundle {
-      val valid = Bool()
-      val epoch = UInt(16 bits)
-      val fetchSeq = UInt(32 bits)
-      val olderSeq = UInt(32 bits)
-      val bundleSeq = UInt(32 bits)
-      val slotIdx = UInt(config.frontendConfig.bundleSlotIdxWidth bits)
-      val slotCount = UInt(log2Up(config.frontendConfig.bundleSlots + 1) bits)
-      val ftqIdx = UInt(config.frontendConfig.ftqIndexWidth bits)
-      val pc = UInt(64 bits)
-      val blockPc = UInt(64 bits)
-      val byteOffset = UInt(config.frontendConfig.fetchBlockOffsetWidth bits)
-      val predictedValid = Bool()
-      val predictedTaken = Bool()
-      val predictedTarget = UInt(64 bits)
-      val decodedInstruction = Bits(32 bits)
-      val isCompressed = Bool()
-      val legal = borb.frontend.YESNO()
-      val microCode = borb.common.MicroCode()
-      val rdAddr = Bits(5 bits)
-      val rs1Addr = Bits(5 bits)
-      val rs2Addr = Bits(5 bits)
-      val rs3Addr = Bits(5 bits)
-      val issueProps = IssuePropertyBundle()
-      val waitForOlderCommit = Bool()
-      val rs1 = Bits(64 bits)
-      val rs2 = Bits(64 bits)
-      val immed = Bits(64 bits)
-      val sendToAlu = Bool()
-      val sendToBranch = Bool()
-      val branchTaken = Bool()
-      val branchTarget = UInt(64 bits)
-      val branchIsBranch = Bool()
-      val branchIsJump = Bool()
-      val fallthrough = UInt(64 bits)
-      val result = RegFileWrite()
-      val commit = Bool()
-    }
-
     val pc = new PC(
       pipeline.ctrl(0),
       addressWidth = 64,
@@ -314,15 +275,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val intalu = new IntAlu(pipeline.ctrl(6))
     val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
     val lsuKillOutstanding = RegInit(False)
-    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch, lsuKillOutstanding)
+    val lsuKillCboZero = Bool()
+    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch, lsuKillOutstanding, lsuKillCboZero)
 
     val lane1PairPending = RegInit(False)
     val lane1PairOlderSeq = Reg(UInt(32 bits)) init(0)
     val lane1PairEpoch = Reg(UInt(16 bits)) init(0)
-    val lane1s4 = Reg(Lane1StageData()) init(Lane1StageData().getZero)
-    val lane1s5 = Reg(Lane1StageData()) init(Lane1StageData().getZero)
-    val lane1s6 = Reg(Lane1StageData()) init(Lane1StageData().getZero)
-    val lane1s7 = Reg(Lane1StageData()) init(Lane1StageData().getZero)
+    val lane1s4 = Reg(PipelineSlot(config)) init(PipelineSlot(config).getZero)
+    val lane1s5 = Reg(PipelineSlot(config)) init(PipelineSlot(config).getZero)
+    val lane1s6 = Reg(PipelineSlot(config)) init(PipelineSlot(config).getZero)
+    val lane1s7 = Reg(PipelineSlot(config)) init(PipelineSlot(config).getZero)
     val lastCommittedSeqValid = Reg(Bits(2 bits)) init(0)
     val lastCommittedSeq0 = Reg(UInt(32 bits)) init(0)
     val lastCommittedSeq1 = Reg(UInt(32 bits)) init(0)
@@ -613,7 +575,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       !lane1SameCycleWaw
     val lane1PairRejected = lane1PairDecisionCycle && !lane1PairAccepted
 
-    def copyLane1Header(dst: Lane1StageData, src: Lane1StageData): Unit = {
+    def copyLane1Header(dst: PipelineSlot, src: PipelineSlot): Unit = {
       dst.valid := src.valid
       dst.epoch := src.epoch
       dst.fetchSeq := src.fetchSeq
@@ -638,11 +600,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       dst.rs3Addr := src.rs3Addr
       dst.issueProps := src.issueProps
       dst.waitForOlderCommit := src.waitForOlderCommit
+      dst.selectedPipe := src.selectedPipe
       dst.sendToAlu := src.sendToAlu
       dst.sendToBranch := src.sendToBranch
     }
 
-    val lane1IssueCapture = Lane1StageData()
+    val lane1IssueCapture = PipelineSlot(config)
     lane1IssueCapture.assignDontCare()
     lane1IssueCapture.valid := lane1PairAccepted
     lane1IssueCapture.epoch := lane1Candidate.epoch
@@ -670,6 +633,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lane1IssueCapture.waitForOlderCommit := lane1OlderProps.isLoad || lane1OlderProps.isStore
     lane1IssueCapture.sendToAlu := lane1IssueProps.fuMask(0)
     lane1IssueCapture.sendToBranch := lane1IssueProps.fuMask(1)
+    lane1IssueCapture.selectedPipe := Mux(
+      lane1IssueProps.fuMask(1),
+      BackendPipe.Branch,
+      Mux(lane1IssueProps.fuMask(0), BackendPipe.Alu1, BackendPipe.None)
+    )
 
     srcPlugin.regfileread.regfile.io.reads(2).address := lane1s4.rs1Addr.asUInt
     srcPlugin.regfileread.regfile.io.reads(2).valid := lane1s4.valid && lane1s4.issueProps.readsIntRs1
@@ -892,6 +860,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       wbStageValidForRedirect &&
       LaneContracts.isYounger(wbBundleSeq, wbSlotIdx, redirectCommitBundleSeq, redirectCommitSlotIdx)
     lsuKillOutstanding := redirectPipeline || redirectCommitPending
+    lsuKillCboZero := redirectPipeline
     when(
       pipeline.ctrl(6).up.isValid &&
       pipeline.ctrl(6).up(Decoder.VALID) &&
@@ -1075,7 +1044,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(7).up(TRAP).allowOverride := False
     }
 
-    val lane1s5Next = Lane1StageData()
+    val lane1s5Next = PipelineSlot(config)
     copyLane1Header(lane1s5Next, lane1s4)
     lane1s5Next.rs1 := lane1s4.issueProps.readsIntRs1 ? lane1Rs1Resolved | B(0, 64 bits)
     lane1s5Next.rs2 := lane1s4.issueProps.readsIntRs2 ? lane1Rs2Resolved | B(0, 64 bits)
@@ -1090,7 +1059,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lane1s5Next.result.data := 0
     lane1s5Next.commit := False
 
-    val lane1s6Next = Lane1StageData()
+    val lane1s6Next = PipelineSlot(config)
     copyLane1Header(lane1s6Next, lane1s5)
     lane1s6Next.rs1 := lane1s5.rs1
     lane1s6Next.rs2 := lane1s5.rs2
@@ -1110,7 +1079,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     lane1s6Next.commit := False
 
-    val lane1s7Next = Lane1StageData()
+    val lane1s7Next = PipelineSlot(config)
     copyLane1Header(lane1s7Next, lane1s6)
     lane1s7Next.rs1 := lane1s6.rs1
     lane1s7Next.rs2 := lane1s6.rs2

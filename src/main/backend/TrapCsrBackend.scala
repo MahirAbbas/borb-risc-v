@@ -95,9 +95,11 @@ case class TrapCsrBackend(
     val csrMideleg = Reg(Bits(64 bits)) init 0
     val csrMip = Reg(Bits(64 bits)) init 0
     val csrMcounteren = Reg(Bits(64 bits)) init 0
+    val csrMenvcfg = Reg(Bits(64 bits)) init 0
     val csrSie = Reg(Bits(64 bits)) init 0
     val csrSip = Reg(Bits(64 bits)) init 0
     val csrScounteren = Reg(Bits(64 bits)) init 0
+    val csrSenvcfg = Reg(Bits(64 bits)) init 0
     val csrStimecmp = Reg(UInt(64 bits)) init U(BigInt("FFFFFFFFFFFFFFFF", 16), 64 bits)
     val csrStvec = Reg(Bits(64 bits)) init 0
     val csrSscratch = Reg(Bits(64 bits)) init 0
@@ -186,6 +188,10 @@ case class TrapCsrBackend(
         }
       }
       out
+    }
+
+    def sanitizeEnvcfg(data: Bits): Bits = {
+      data & B(BigInt("80000000000000F1", 16), 64 bits)
     }
 
     case class VmShadowLookup() extends Bundle {
@@ -422,6 +428,7 @@ case class TrapCsrBackend(
         is(U"12'h104") { out := csrSie }
         is(U"12'h106") { out := csrScounteren }
         is(U"12'h105") { out := trapVectorDirect(csrStvec) }
+        is(U"12'h10A") { out := csrSenvcfg }
         is(U"12'h140") { out := csrSscratch }
         is(U"12'h141") { out := sepcMasked(csrSepc) }
         is(U"12'h142") { out := csrScause }
@@ -433,6 +440,7 @@ case class TrapCsrBackend(
         is(U"12'h303") { out := csrMideleg }
         is(U"12'h304") { out := csrMie }
         is(U"12'h305") { out := trapVectorDirect(csrMtvec) }
+        is(U"12'h30A") { out := csrMenvcfg }
         is(U"12'h340") { out := csrMscratch }
         is(U"12'h341") { out := mepcMasked(csrMepc) }
         is(U"12'h342") { out := csrMcause }
@@ -587,8 +595,8 @@ case class TrapCsrBackend(
       val ok = Bool()
       ok := False
       switch(addr) {
-        is(U"12'h100", U"12'h104", U"12'h105", U"12'h106", U"12'h140", U"12'h141", U"12'h142", U"12'h143", U"12'h144", U"12'h14D") { ok := True }
-        is(U"12'h300", U"12'h301", U"12'h302", U"12'h303", U"12'h304", U"12'h305", U"12'h306", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
+        is(U"12'h100", U"12'h104", U"12'h105", U"12'h106", U"12'h10A", U"12'h140", U"12'h141", U"12'h142", U"12'h143", U"12'h144", U"12'h14D") { ok := True }
+        is(U"12'h300", U"12'h301", U"12'h302", U"12'h303", U"12'h304", U"12'h305", U"12'h306", U"12'h30A", U"12'h340", U"12'h341", U"12'h342", U"12'h343", U"12'h344") { ok := True }
         is(U"12'h001", U"12'h002", U"12'h003", U"12'h008", U"12'h009", U"12'h00A", U"12'h00F", U"12'h180") { ok := True }
         is(U"12'hC20", U"12'hC21", U"12'hC22") { ok := True }
         is(U"12'h3A0", U"12'h3A2", U"12'h3A4", U"12'h3A6", U"12'h3A8", U"12'h3AA", U"12'h3AC", U"12'h3AE") { ok := True }
@@ -692,6 +700,7 @@ case class TrapCsrBackend(
         is(U"12'h104") { csrSie := csrWriteData }
         is(U"12'h105") { csrStvec := trapVectorDirect(csrWriteData) }
         is(U"12'h106") { csrScounteren := csrWriteData(31 downto 0).resize(64) }
+        is(U"12'h10A") { csrSenvcfg := sanitizeEnvcfg(csrWriteData) }
         is(U"12'h140") { csrSscratch := csrWriteData }
         is(U"12'h141") { csrSepc := csrWriteData }
         is(U"12'h142") { csrScause := csrWriteData }
@@ -711,6 +720,7 @@ case class TrapCsrBackend(
         is(U"12'h303") { csrMideleg := csrWriteData }
         is(U"12'h304") { csrMie := csrWriteData }
         is(U"12'h305") { csrMtvec := trapVectorDirect(csrWriteData) }
+        is(U"12'h30A") { csrMenvcfg := sanitizeEnvcfg(csrWriteData) }
         is(U"12'h340") { csrMscratch := csrWriteData }
         is(U"12'h341") { csrMepc := csrWriteData }
         is(U"12'h342") { csrMcause := csrWriteData }

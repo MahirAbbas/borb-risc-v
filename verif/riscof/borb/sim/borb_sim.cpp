@@ -365,6 +365,10 @@ int main(int argc, char** argv) {
     }
   };
 
+  auto is_cbo_zero = [](uint32_t insn) -> bool {
+    return (insn & 0xfff07fffU) == 0x0040200fU;
+  };
+
   if (!opt.bin_path.empty()) {
     // Legacy path: load flat binary at address 0.
     auto bin = read_file(opt.bin_path);
@@ -789,7 +793,12 @@ int main(int argc, char** argv) {
       const uint64_t mem_addr = top->io_dbg_memAddr;
       const uint8_t mem_wmask = static_cast<uint8_t>(top->io_dbg_memWmask);
       const uint64_t mem_wdata = top->io_dbg_memWdata;
-      if (mem_wmask != 0) {
+      if (is_cbo_zero(static_cast<uint32_t>(top->io_dbg_commitInsn))) {
+        const uint64_t block_base = mem_addr & ~0x3fULL;
+        for (int i = 0; i < 64; ++i) {
+          write_byte(block_base + static_cast<uint64_t>(i), 0);
+        }
+      } else if (mem_wmask != 0) {
         for (int i = 0; i < 8; ++i) {
           if ((mem_wmask >> i) & 0x1) {
             write_byte(mem_addr + i, static_cast<uint8_t>((mem_wdata >> (8 * i)) & 0xFF));

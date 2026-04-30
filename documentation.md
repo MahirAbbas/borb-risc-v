@@ -59,7 +59,7 @@ Performance checks:
 
 ## Current status notes
 
-- The active roadmap is `agent/plan2.md`. It supersedes the older RV64GC-only widening plan and separates claimable features, implemented-but-unclaimed features, and deferred backlog.
+- The active roadmap is `agent/plan3.md`. It supersedes the older RV64GC-only widening plan and separates claimable features, implemented-but-unclaimed features, and deferred backlog.
 - Hard gates for every milestone are full RISCOF and CoreMark:
   - `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim`
   - `./run_coremark.sh`
@@ -80,6 +80,7 @@ Performance checks:
 - `Zicntr` and `Zihpm` are now claimable: `cycle/time/instret/hpmcounter3-31` user shadows are exposed, `mcounteren/scounteren` gate lower-privilege reads, machine counters are writable via CSR-local offsets, and `mhpmevent3-31` preserve selector state for software probes. `time` is implemented as a local monotonic cycle-backed counter.
 - `verif/directed/asm/rv64_zicntr_zihpm_counteren_smoke.S` covers machine counter writes, `mhpmevent3`, counter-enable CSRs, and disabled U-mode counter traps.
 - `Zicbom`, `Zicbop`, and `Zicboz` are implemented. `cbo.clean`, `cbo.flush`, and `cbo.inval` are legal serializing architectural no-ops; `prefetch.i/r/w` remain legal through the existing OP-IMM/x0 hint path; `cbo.zero` aligns the base to a 64-byte block and emits eight 64-bit zero stores through the LSU. PMP/access-fault classification treats `cbo.zero` as a 64-byte store.
+- `menvcfg` and `senvcfg` have local WARL storage for the implemented environment configuration bits used by cache-block operation tests, including `CBIE`, `CBCFE`, and `CBZE`.
 - `verif/directed/asm/rv64_zicbo_memory_model_smoke.S` covers cache-block no-op behavior, prefetch hints, full 64-byte `cbo.zero` clearing from an unaligned base, aligned AMO behavior, and a misaligned load trap path.
 - `Zic64b`, `Ziccif`, `Ziccrse`, `Ziccamoa`, `Zicclsm`, and `Za64rs` are documented as memory-side profile assumptions for the current single-core memory model. They are intentionally not declared in `borb_isa.yaml` because the installed riscv-config 3.18.3 validator rejects those extension names.
 - The `Ss1p13` supervisor CSR floor is now locally defensible for the milestone scope: `stvec`/`mtvec` are direct-mode WARL CSRs, `stval` is writable and receives informative trap values, `scounteren` is writable from S-mode, and `sstatus.UXL` is hardwired to RV64. `verif/directed/asm/rv64_ss1p13_supervisor_csr_smoke.S` covers those behaviors through delegated S-mode traps.
@@ -94,7 +95,7 @@ Performance checks:
 - The data side now has a single-core L1D floor in `src/main/execute/DCache.scala`: 32 KiB, 4-way, 64-byte lines, write-back, write-allocate, dirty victim writeback, line refill, local load-hit response, and store-hit dirty-line updates behind the existing LSU `DataBus`.
 - The L1D currently keeps bounded one-miss-at-a-time refill/writeback concurrency to preserve the in-order LSU contract and the existing single-beat SoC RAM/AXI behavior. This is an application-core-style data-cache floor, not a multi-miss non-blocking cache yet.
 - `verif/directed/asm/rv64_l1d_writeback_smoke.S` covers 4-way conflict filling, dirty eviction, writeback, refill, and reload visibility. `verif/directed/asm/rv64_zicbo_memory_model_smoke.S` remains the broader memory/cache-block smoke.
-- The simulator's dumpable RAM mirror now receives computed AMO store data from the LSU debug/RVFI payload, which keeps RISCOF signatures accurate when dirty cached signature lines have not yet been written back to backing RAM.
+- The simulator's dumpable RAM mirror now receives computed AMO store data from the LSU debug/RVFI payload, and committed `cbo.zero` instructions zero the full architectural 64-byte block in the mirror. This keeps RISCOF signatures accurate when dirty cached signature lines have not yet been written back to backing RAM.
 - The instruction side now has a 32 KiB L1I floor through `FrontendConfig`: 2 banks, 64 sets, 4 ways, and 64-byte lines. `FrontendBundleBuilder` selects any fetch block within the larger line correctly; this fixed the original two-block assumption that broke VM tests after the line-size increase.
 - The scalar frontend now uses the Milestone 20 predictor sizing floor: FTQ depth 32, request queue depth 16, RAS depth 48, 512-entry gshare with 48-bit history, 32-entry loop predictor, 16-entry nano-BTB, 128-entry 4-way FTB, and 64-entry 4-way indirect predictor. Predictor training remains enabled.
 - Speculative frontend predicted redirects are currently disabled in the default supported config, and outstanding fetch misses are held at the proven 2-entry depth. The attempted predicted-redirect plus 4-outstanding-miss configuration exposed stale-epoch branch/PMP/VM stalls under full RISCOF, so that performance work is deferred until the redirect/refill interaction is hardened.
@@ -142,7 +143,8 @@ Performance checks:
 - Historical frontend-on/off comparisons still exist in `docs/PERFORMANCE_HISTORY.md`, but borb no longer maintains a supported frontend-disabled mode and the old `scripts/frontend_perf_ab.py` / `scripts/frontend_branch_ab.py` wrappers are now intentionally obsolete.
 - The repo still includes a branch-heavy perf microbenchmark at `verif/directed/asm/frontend_branch_stress.S`. On the current supported conservative frontend it requires a `3,000,000` cycle cap and runs in `1,500,169` cycles with `6.000004` CPI, `0.166667` IPC, `0` predicted redirects, `100,006` flushes, and `1,500,154` successful cross-bank dual fetches. The older speculative-redirect result was faster but is not the supported default because it failed full RISCOF.
 - `scripts/directed_asm_runner.py` can now emit simulator perf counters with `--report-perf`, which makes directed assembly useful for both bug isolation and lightweight performance A/B checks.
-- Backend contracts are now lane-aware even with width-off scalar execution: fetch preserves bundle slot count, pipeline stages carry `LANE_ID`/`LANE_MASK`, and redirect squash priority uses bundle-sequence plus slot index so future multi-lane kill ordering is deterministic.
+- Backend contracts are now lane-aware even with width-off scalar execution: fetch preserves bundle slot count, pipeline stages carry `LANE_ID`/`LANE_MASK`, redirect squash priority uses bundle-sequence plus slot index, and shared backend packet types (`BackendPipe`, `PipelineSlot`, `RetirePacket`) define the lane-native payload/retire boundary for the Plan 3 widening work.
+- Milestone 30 adds the first Plan 3 lane-native backend skeleton: `PipelineSlot(config)` replaces the bespoke lane-1 stage bundle, `BackendPipe` records selected pipe ownership, and `RetirePacket(config)` defines the future ordered-retire handoff. Lane 0 still uses the existing scalar `StageCtrlPipeline`; the restricted lane-1 path is now hosted on the shared payload shape.
 - The core now has an asymmetric in-order 2-wide issue step: lane 0 remains the full scalar path, and lane 1 can pair restricted integer ALU work plus conditional branches when the bundle passes deterministic static and dynamic hazard screens.
 - Fetch now supports slot-1 preview plus scalar skip/defer controls so same-bundle pairing can be decided without breaking the existing scalarized frontend contracts.
 - The integer backend now exposes shared decode/ALU/branch helpers and widened integer register-file ports so lane 1 reuses the same semantics as lane 0 rather than implementing a divergent second path.
@@ -152,10 +154,11 @@ Performance checks:
 - The full active RISCOF gate stayed green after asymmetric issue bring-up, including recovery from an early FP regression where over-broad slot-1 deferral initially timed out `fadd_b12-01.S`.
 - A checked-in Dhrystone harness does not currently exist under `verif/benchmarks/`, so CoreMark plus directed integer-heavy perf runs are the current measured performance sources until that benchmark prerequisite is added.
 - Final validation after Milestone 29 is green: `./run_coremark.sh --profile` exits with tohost `0x1`, and `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` passes `1538/1538` with zero generated failure reports.
+- Final validation after Milestone 30 is green: `./run_directed.sh verif/directed/asm/dual_issue_integer_smoke.S --march rv64gc_zicsr_zifencei` passes, `./run_coremark.sh --profile` exits with tohost `0x1` at `323,354` cycles / `3.0925858347198427 CoreMark/MHz`, and `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` passes `1540/1540` with zero generated failure reports.
 - `riscv-formal` work exists in the repo, but it is intentionally ignored by the current execution plan.
 - Tenstorrent smoke tooling exists in the repo, but it is intentionally ignored by the current execution plan.
 - RISCOF is the active architectural gate right now; directed tests are mainly for fast isolation when a focused repro is useful.
-- Milestone tracking and implementation notes live in `agent/plan2.md`.
+- Milestone tracking and implementation notes live in `agent/plan3.md`.
 
 ## Troubleshooting
 
