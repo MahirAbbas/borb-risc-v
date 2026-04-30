@@ -54,7 +54,7 @@ Hard gates after every milestone:
   - Build the central `ISS` stage with pipe reservation but initially only enable current-safe pairings.
   - Acceptance: full RISCOF green; CoreMark no functional regression; redirect/epoch tests pass.
 
-- **M32: General Integer/Branch 2-Wide**
+- [x] **M32: General Integer/Branch 2-Wide**
   - Enable `ALU0`, `ALU1`, and dedicated `Branch` pipe issue from either slot.
   - Allow ALU+ALU, ALU+branch, branch+ALU, and branch+branch when ordering and redirect rules are safe.
   - Add lane0-to-lane1 same-cycle bypass only for results available in the same cycle; otherwise reject the pair.
@@ -135,6 +135,7 @@ Hard gates after every milestone:
 - M30 bug fix: Full RISCOF then exposed `cbo.zero-01.S` only clearing one doubleword in the dumped signature. The LSU `cbo.zero` sequencer now latches its bus base and is not cancelled by redirect commit draining after launch, and the RISCOF simulator mirror recognizes committed `cbo.zero` instructions so the dumpable RAM signature reflects the architectural 64-byte zeroed block.
 - M31: Added the central issue-stage pipe reservation contract. `BackendPipe.select(...)` classifies lane-0 and lane-1 instructions into the Plan 3 pipe set, `BackendIssue.SELECTED_PIPE` now travels downstream from dispatch for lane 0, and lane 1 uses the same selector with ALU1 preference. This keeps the current safe pairings unchanged while establishing shared pipe ownership payloads.
 - M31: Physically retimed the scalar lane-0 backend so fetch remains `IF0/IF1/IF2` at stages 0/1/2, decode begins at `DE0` stage 3, two registered decode/issue transit stages occupy stages 4/5, dispatch/central issue moves to stage 6, source read moves to stage 7, execute moves to stage 8, and writeback/retire moves to stage 9. The debug plugin and RISCOF simulator probes were retargeted to the new execute/writeback stage names.
+- M32: The conservative integer/branch two-wide path now has focused contract coverage in `verif/directed/asm/dual_issue_m32_integer_branch_smoke.S`. The directed test covers ALU+ALU, ALU+branch, branch+ALU, branch+branch, same-cycle RAW rejection, same-cycle WAW ordering, lane-0 redirect squash of lane 1, and lane-1 branch redirect behavior. The RTL remains intentionally restricted to current-safe integer ALU and conditional-branch pairings.
 
 ## Verification Checklist
 
@@ -149,5 +150,9 @@ Hard gates after every milestone:
   - [x] `sbt compile`
   - [x] `sbt "runMain borb.SoC"`
   - [x] `./run_directed.sh verif/directed/asm/dual_issue_integer_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
+  - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
+  - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
+- M32:
+  - [x] `./run_directed.sh verif/directed/asm/dual_issue_m32_integer_branch_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
   - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
   - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
