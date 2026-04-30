@@ -133,6 +133,7 @@ Hard gates after every milestone:
 - M30: Added shared lane-native backend types in `src/main/backend/BackendTypes.scala`: `BackendPipe`, `PipelineSlot`, and `RetirePacket`. Re-hosted the existing restricted lane-1 side path in `CPU.scala` on `PipelineSlot(config)` while preserving current pairing restrictions and behavior. This is an incremental skeleton only; lane 0 still travels through the existing scalar `StageCtrlPipeline`.
 - M30 bug fix: Full RISCOF exposed `pmpzicbo_prefetch.S` trapping on `csrs menvcfg,t0` because the environment configuration CSRs were not in the CSR whitelist. Added WARL `menvcfg`/`senvcfg` storage for the cache-block environment bits and confirmed the focused RISCOF repro passes.
 - M30 bug fix: Full RISCOF then exposed `cbo.zero-01.S` only clearing one doubleword in the dumped signature. The LSU `cbo.zero` sequencer now latches its bus base and is not cancelled by redirect commit draining after launch, and the RISCOF simulator mirror recognizes committed `cbo.zero` instructions so the dumpable RAM signature reflects the architectural 64-byte zeroed block.
+- M31 in progress: Added the first central issue-stage pipe reservation contract. `BackendPipe.select(...)` classifies lane-0 and lane-1 instructions into the Plan 3 pipe set, `BackendIssue.SELECTED_PIPE` now travels downstream from dispatch for lane 0, and lane 1 uses the same selector with ALU1 preference. This keeps the current safe pairings unchanged while establishing the shared pipe ownership payload for the later physical retiming.
 
 ## Verification Checklist
 
@@ -141,5 +142,9 @@ Hard gates after every milestone:
   - [x] focused `./run_riscof.sh --skip-validate --fast-sim --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --tests pmpzicbo_prefetch.S`
   - [x] focused `./run_riscof.sh --skip-validate --fast-sim --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --tests cbo.zero-01.S`
   - [x] `./run_directed.sh verif/directed/asm/dual_issue_integer_smoke.S --march rv64gc_zicsr_zifencei`
+  - [x] `./run_coremark.sh --profile` (`323,354` cycles, tohost `0x1`)
+  - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
+- M31:
+  - [x] `sbt compile`
   - [x] `./run_coremark.sh --profile` (`323,354` cycles, tohost `0x1`)
   - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)

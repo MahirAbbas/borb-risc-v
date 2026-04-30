@@ -10,6 +10,7 @@ import borb.frontend.Decoder._
 import borb.frontend.Decoder
 import borb.execute.WriteBack
 import borb.dispatch.IssueSemantics
+import borb.backend.{BackendIssue, BackendPipe}
 // import borb.frontend.AluOp
 import spinal.core.sim._
 import scala.collection.immutable.LazyList.cons
@@ -130,9 +131,11 @@ case class Dispatch(
   val logic = new dispatchNode.Area {
     import borb.common.Common._
     val issueProps = IssueSemantics.classify(up(Decoder.MicroCode))
+    val selectedPipe = BackendPipe.select(up(Decoder.MicroCode), issueProps)
 
     down(LANE_SEL) := False
     down(IssueSemantics.PROPS) := issueProps
+    down(BackendIssue.SELECTED_PIPE) := Mux(up(Decoder.VALID), selectedPipe, BackendPipe.None)
 
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)

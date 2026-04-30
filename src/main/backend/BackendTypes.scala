@@ -1,8 +1,11 @@
 package borb.backend
 
 import spinal.core._
+import spinal.lib.misc.pipeline._
 import borb.core.CpuConfig
 import borb.dispatch.{IssuePropertyBundle, RegFileWrite}
+import borb.common.MicroCode
+import borb.common.MicroCode._
 
 case class IntResultIntent(epochWidth: Int = 16) extends Bundle {
   val valid = Bool()
@@ -34,6 +37,51 @@ case class TrapRedirectOutcome() extends Bundle {
 
 object BackendPipe extends SpinalEnum {
   val None, Alu0, Alu1, Branch, MulDiv, LoadStore, Falu, Fmac, CsrTrap, Vector = newElement()
+
+  private def oneOf(value: MicroCode.C, options: MicroCode.E*): Bool = {
+    if(options.isEmpty) False else options.map(value === _).reduce(_ || _)
+  }
+
+  def select(microCode: MicroCode.C, props: IssuePropertyBundle, preferAlu1: Bool = False): BackendPipe.C = {
+    val pipe = BackendPipe()
+    pipe := BackendPipe.None
+
+    when(props.isLoad || props.isStore) {
+      pipe := BackendPipe.LoadStore
+    } elsewhen(props.isControlFlow) {
+      pipe := BackendPipe.Branch
+    } elsewhen(oneOf(
+      microCode,
+      uopMUL, uopMULH, uopMULHSU, uopMULHU, uopDIV, uopDIVU, uopREM, uopREMU,
+      uopMULW, uopDIVW, uopDIVUW, uopREMW, uopREMUW
+    )) {
+      pipe := BackendPipe.MulDiv
+    } elsewhen(oneOf(
+      microCode,
+      uopCSRRW, uopCSRRS, uopCSRRC, uopCSRRWI, uopCSRRSI, uopCSRRCI,
+      uopFENCE, uopFENCE_I, uopECALL, uopEBREAK, uopSRET, uopMRET, uopSFENCEVMA
+    )) {
+      pipe := BackendPipe.CsrTrap
+    } elsewhen(oneOf(
+      microCode,
+      uopVSETVLI, uopVSETIVLI, uopVSETVL, uopVMVVI, uopVADDVI, uopVADDVV, uopVMVXS,
+      uopVLE32, uopVSE32, uopVSLIDEUPVI, uopVSLIDEDOWNVI, uopVRGATHERVI, uopVREDSUMVS,
+      uopVFADDVV, uopVFSUBVV, uopVFWCVTFFV, uopVFNCVTFFW,
+      uopVANDNVV, uopVBREV8V, uopVREV8V, uopVCLZV, uopVCPOPV, uopVRORVI
+    )) {
+      pipe := BackendPipe.Vector
+    } elsewhen(props.readsFpRs1 || props.readsFpRs2 || props.readsFpRs3 || props.writesFpRd) {
+      pipe := Mux(oneOf(microCode, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS, uopFMADDD, uopFMSUBD, uopFNMSUBD, uopFNMADDD), BackendPipe.Fmac, BackendPipe.Falu)
+    } elsewhen(props.fuMask(0)) {
+      pipe := Mux(preferAlu1, BackendPipe.Alu1, BackendPipe.Alu0)
+    }
+
+    pipe
+  }
+}
+
+object BackendIssue extends AreaObject {
+  val SELECTED_PIPE = Payload(BackendPipe()).setName("BACKEND_SELECTED_PIPE")
 }
 
 case class PipelineSlot(config: CpuConfig) extends Bundle {

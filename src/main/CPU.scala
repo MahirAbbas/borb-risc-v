@@ -5,7 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
 import borb.fetch.FrontendRedirectReason
-import borb.backend.{BackendPipe, FpBackend, IntegerBackend, PipelineSlot, TrapCsrBackend}
+import borb.backend.{BackendIssue, BackendPipe, FpBackend, IntegerBackend, PipelineSlot, TrapCsrBackend}
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
@@ -188,6 +188,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     pipeline.ctrls.filter(_._1 >= 5).foreach {
       case (_, ctrl) => ctrl.up(IssueSemantics.PROPS).setAsReg().init(IssuePropertyBundle().getZero)
+    }
+    pipeline.ctrls.filter(_._1 >= 5).foreach {
+      case (_, ctrl) => ctrl.up(BackendIssue.SELECTED_PIPE).setAsReg().init(BackendPipe.None)
     }
     // Keep dispatch lane routing instruction-local once an instruction leaves
     // dispatch. Otherwise a stalled backend instruction can observe a newer
@@ -633,11 +636,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lane1IssueCapture.waitForOlderCommit := lane1OlderProps.isLoad || lane1OlderProps.isStore
     lane1IssueCapture.sendToAlu := lane1IssueProps.fuMask(0)
     lane1IssueCapture.sendToBranch := lane1IssueProps.fuMask(1)
-    lane1IssueCapture.selectedPipe := Mux(
-      lane1IssueProps.fuMask(1),
-      BackendPipe.Branch,
-      Mux(lane1IssueProps.fuMask(0), BackendPipe.Alu1, BackendPipe.None)
-    )
+    lane1IssueCapture.selectedPipe := BackendPipe.select(lane1Decoded.microCode, lane1IssueProps, preferAlu1 = True)
 
     srcPlugin.regfileread.regfile.io.reads(2).address := lane1s4.rs1Addr.asUInt
     srcPlugin.regfileread.regfile.io.reads(2).valid := lane1s4.valid && lane1s4.issueProps.readsIntRs1
