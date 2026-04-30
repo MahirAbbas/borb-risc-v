@@ -90,10 +90,10 @@ case class DebugPlugin(
     trapRedirect: TrapRedirectOutcome,
     redirectProbe: RedirectDebugProbe
 ) extends Area {
-  val s4Stage = pipeline.ctrl(4)
-  val s5Stage = pipeline.ctrl(5)
-  val s6Stage = pipeline.ctrl(6)
-  val wbStage = pipeline.ctrl(7)
+  val s4Stage = pipeline.ctrl(6)
+  val s5Stage = pipeline.ctrl(7)
+  val s6Stage = pipeline.ctrl(8)
+  val wbStage = pipeline.ctrl(9)
   val io = new Bundle {
     val dbg = out(DebugArea())
   }
@@ -152,7 +152,7 @@ case class DebugPlugin(
   // Wire up PC signals from other stages for debug visibility
   io.dbg.f_pc := pipeline.ctrl(2)(PC.PC) // Fetch Rsp
   io.dbg.d_pc := pipeline.ctrl(3)(PC.PC) // Decode
-  io.dbg.x_pc := pipeline.ctrl(6)(PC.PC) // Execute
+  io.dbg.x_pc := pipeline.ctrl(8)(PC.PC) // Execute
   io.dbg.s4_valid := s4Stage.up.isValid
   io.dbg.s4_fire := s4Stage.up.isFiring
   io.dbg.s4_seq := s4Stage.up(borb.fetch.Fetch.FETCH_SEQ)

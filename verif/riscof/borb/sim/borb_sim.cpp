@@ -526,10 +526,10 @@ int main(int argc, char** argv) {
 
     const uint32_t current_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_currentEpoch);
     const uint32_t s5_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_5_up_Common_SPEC_EPOCH);
-    const uint32_t s6_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_SPEC_EPOCH);
-    const uint32_t s7_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_SPEC_EPOCH);
-    const bool wb_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID;
-    const bool wb_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL;
+    const uint32_t s6_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Common_SPEC_EPOCH);
+    const uint32_t s7_epoch = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Common_SPEC_EPOCH);
+    const bool wb_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Decoder_VALID;
+    const bool wb_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Common_LANE_SEL;
     const bool stale_wb = wb_valid && wb_lane && (s7_epoch != current_epoch) && !top->io_dbg_commitPulse;
 
     RecentCycle sample;
@@ -557,14 +557,14 @@ int main(int argc, char** argv) {
     sample.x_pc = static_cast<uint64_t>(top->io_dbg_x_pc);
     sample.wb_pc = static_cast<uint64_t>(top->io_dbg_wb_pc);
     sample.s3_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION);
-    sample.x_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION);
-    sample.wb_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION);
+    sample.x_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_DECODED_INSTRUCTION);
+    sample.wb_insn = static_cast<uint32_t>(rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Decoder_DECODED_INSTRUCTION);
     sample.s2_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_up_valid;
     sample.s2_ready = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_2_down_isReady;
     sample.s3_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_valid;
     sample.s3_ready = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_isReady;
-    sample.x_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_VALID;
-    sample.x_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL;
+    sample.x_valid = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_VALID;
+    sample.x_lane = rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Common_LANE_SEL;
     sample.wb_valid = wb_valid;
     sample.wb_lane = wb_lane;
     sample.fetch_ctl_active = rootp->SoC__DOT__area_cpu__DOT__coreArea_fetch_control_io_activeValid;
@@ -595,12 +595,12 @@ int main(int argc, char** argv) {
           << " tval=0x" << (uint64_t)top->io_dbg_liveTrapTval
           << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
           << " wb_pc=0x" << (uint64_t)top->io_dbg_wb_pc
-          << " x_rs1_addr=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS1_ADDR
-          << " x_rs2_addr=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_RS2_ADDR
-          << " x_send_agu=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Dispatch_SENDTOAGU
-          << " x_rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS1
-          << " x_rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_RS2
-          << " x_imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_SrcPlugin_IMMED
+          << " x_rs1_addr=" << std::dec << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_RS1_ADDR
+          << " x_rs2_addr=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_RS2_ADDR
+          << " x_send_agu=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Dispatch_SENDTOAGU
+          << " x_rs1=0x" << std::hex << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_SrcPlugin_RS1
+          << " x_rs2=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_SrcPlugin_RS2
+          << " x_imm=0x" << (uint64_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_SrcPlugin_IMMED
           << " order=" << std::dec << top->io_dbg_commitOrder
           << std::endl;
     }
@@ -613,7 +613,7 @@ int main(int argc, char** argv) {
           << " mret=" << (int)top->io_dbg_redirectMret
           << " pc_jump=" << (int)top->io_dbg_redirectPcJumpValid
           << " pc_exc=" << (int)top->io_dbg_redirectPcExceptionValid
-          << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_valid
+          << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_valid
           << " mret_fire=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_trapLogic_redirect_mretFire
           << " cause=0x" << std::hex << (uint64_t)top->io_dbg_liveTrapCause
           << " tval=0x" << (uint64_t)top->io_dbg_liveTrapTval
@@ -645,7 +645,7 @@ int main(int argc, char** argv) {
       std::cerr
           << "STALEWB: cyc=" << cycles
           << " wb_pc=0x" << std::hex << (uint64_t)top->io_dbg_wb_pc
-          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
+          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Decoder_DECODED_INSTRUCTION
           << " wb_seq=0x" << (uint32_t)top->io_dbg_s7_seq
           << " wb_epoch=" << std::dec << s7_epoch
           << " cur_epoch=" << current_epoch
@@ -653,7 +653,7 @@ int main(int argc, char** argv) {
           << " redir_pending=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitPending
           << " redir_seq=0x" << std::hex << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_redirectCommitSeq
           << " x_pc=0x" << (uint64_t)top->io_dbg_x_pc
-          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
+          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_DECODED_INSTRUCTION
           << " s6_seq=0x" << (uint32_t)top->io_dbg_s6_seq
           << " mem_wmask=0x" << (uint32_t)top->io_dbg_memWmask
           << " mem_addr=0x" << (uint64_t)top->io_dbg_memAddr
@@ -711,13 +711,13 @@ int main(int argc, char** argv) {
           << " s3_epoch=" << rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH
           << " s3_dec_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_VALID
           << " s3_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
-          << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_VALID
-          << " x_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Common_LANE_SEL
-          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_6_up_Decoder_DECODED_INSTRUCTION
-          << " wb_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_VALID
-          << " wb_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_LANE_SEL
-          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Decoder_DECODED_INSTRUCTION
-          << " wb_commit=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_7_up_Common_COMMIT
+          << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_VALID
+          << " x_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Common_LANE_SEL
+          << " x_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_DECODED_INSTRUCTION
+          << " wb_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Decoder_VALID
+          << " wb_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Common_LANE_SEL
+          << " wb_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Decoder_DECODED_INSTRUCTION
+          << " wb_commit=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_9_up_Common_COMMIT
           << " cur_epoch=" << std::dec << current_epoch
           << " s5_epoch=" << s5_epoch
           << " s6_epoch=" << s6_epoch

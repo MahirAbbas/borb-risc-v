@@ -84,17 +84,17 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     // Defaults for Execution Stages: LANE_SEL is False if not propagated (Bubble)
     import borb.common.Common._
-    pipeline.ctrls.filter(_._1 >= 5).foreach { 
+    pipeline.ctrls.filter(_._1 >= 7).foreach { 
       case (id, ctrl) => ctrl.up(LANE_SEL).setAsReg().init(False)
 
     }
-    pipeline.ctrls.filter(e => e._1 >= 5 && e._1 < 7).foreach { 
+    pipeline.ctrls.filter(e => e._1 >= 7 && e._1 < 9).foreach { 
       case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
+    pipeline.ctrls.filter(_._1 >= 9).foreach {
       case (_, ctrl) => ctrl.up(SELF_REDIRECT).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
+    pipeline.ctrls.filter(_._1 >= 9).foreach {
       case (_, ctrl) => ctrl.up(TRAP).setAsReg().init(False)
     }
     val resetPcValue = BigInt("80000000", 16)
@@ -186,40 +186,40 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.DECODE_ILLEGAL).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 5).foreach {
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(IssueSemantics.PROPS).setAsReg().init(IssuePropertyBundle().getZero)
     }
-    pipeline.ctrls.filter(_._1 >= 5).foreach {
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(BackendIssue.SELECTED_PIPE).setAsReg().init(BackendPipe.None)
     }
     // Keep dispatch lane routing instruction-local once an instruction leaves
     // dispatch. Otherwise a stalled backend instruction can observe a newer
     // execution-unit selection and execute through the wrong side-effect path.
-    pipeline.ctrls.filter(_._1 >= 5).foreach {
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOALU).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 5).foreach {
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOBRANCH).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 5).foreach {
+    pipeline.ctrls.filter(_._1 >= 7).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOAGU).setAsReg().init(False)
     }
     // Keep resolved operands instruction-local once they leave the source
     // stage. Otherwise a held execute-stage instruction can observe a newer
     // regfile/bypass value and re-execute with different operands.
-    pipeline.ctrls.filter(_._1 >= 6).foreach {
+    pipeline.ctrls.filter(_._1 >= 8).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS1).setAsReg().init(0)
     }
-    pipeline.ctrls.filter(_._1 >= 6).foreach {
+    pipeline.ctrls.filter(_._1 >= 8).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS2).setAsReg().init(0)
     }
-    pipeline.ctrls.filter(_._1 >= 6).foreach {
+    pipeline.ctrls.filter(_._1 >= 8).foreach {
       case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.IMMED).setAsReg().init(0)
     }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
+    pipeline.ctrls.filter(_._1 >= 9).foreach {
       case (_, ctrl) => ctrl.up(borb.execute.Branch.BRANCH_TAKEN).setAsReg().init(False)
     }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
+    pipeline.ctrls.filter(_._1 >= 9).foreach {
       case (_, ctrl) => ctrl.up(borb.execute.Branch.BRANCH_TARGET).setAsReg().init(0)
     }
 
@@ -265,21 +265,21 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     val decode = new Decoder(pipeline.ctrl(3), withCompressed = config.cExtensionEnabled, xlen = config.xlen)
 
-    val execStage = pipeline.ctrl(6)
-    val integerBackend = IntegerBackend(pipeline.ctrl(6), pipeline.ctrl(7))
-    val hazardRange = Array(4, 5, 6, 7).map(e => pipeline.ctrl(e)).toSeq
+    val execStage = pipeline.ctrl(8)
+    val integerBackend = IntegerBackend(pipeline.ctrl(8), pipeline.ctrl(9))
+    val hazardRange = Array(6, 7, 8, 9).map(e => pipeline.ctrl(e)).toSeq
     val dispatcher = new Dispatch(
-      pipeline.ctrl(4),
+      pipeline.ctrl(6),
       hazardRange,
       pipeline,
       intBypassReady = Seq(False, integerBackend.exeBypassReady, integerBackend.wbIntBypass.valid)
     )
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(5), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
-    val intalu = new IntAlu(pipeline.ctrl(6))
-    val branch = new borb.execute.Branch(pipeline.ctrl(6), pc, withCompressed = config.cExtensionEnabled)
+    val srcPlugin = new SrcPlugin(pipeline.ctrl(7), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
+    val intalu = new IntAlu(pipeline.ctrl(8))
+    val branch = new borb.execute.Branch(pipeline.ctrl(8), pc, withCompressed = config.cExtensionEnabled)
     val lsuKillOutstanding = RegInit(False)
     val lsuKillCboZero = Bool()
-    val lsu = new borb.execute.Lsu(pipeline.ctrl(6), pipeline.ctrl(7), currentEpoch, lsuKillOutstanding, lsuKillCboZero)
+    val lsu = new borb.execute.Lsu(pipeline.ctrl(8), pipeline.ctrl(9), currentEpoch, lsuKillOutstanding, lsuKillCboZero)
 
     val lane1PairPending = RegInit(False)
     val lane1PairOlderSeq = Reg(UInt(32 bits)) init(0)
@@ -341,18 +341,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       (!lane0BoundaryProps.isControlFlow || lane0BoundaryIsConditionalBranch)
 
     def seqRecentlyCommitted(seq: UInt): Bool = {
-      (pipeline.ctrl(7).up(COMMIT) && (pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ) === seq)) ||
+      (pipeline.ctrl(9).up(COMMIT) && (pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ) === seq)) ||
       (lastCommittedSeqValid(0) && (lastCommittedSeq0 === seq)) ||
       (lastCommittedSeqValid(1) && (lastCommittedSeq1 === seq))
     }
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
 
-    val perfCounters = if (config.perfCountersEnabled) Some(new borb.core.PerfCountersPlugin(pipeline.ctrl(7))) else None
+    val perfCounters = if (config.perfCountersEnabled) Some(new borb.core.PerfCountersPlugin(pipeline.ctrl(9))) else None
     val perfCounterOutputs = perfCounters.map(_.counters).getOrElse(borb.core.PerfCountersBundle().getZero)
     io.perf := perfCounterOutputs
 
-    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(7), config, currentEpoch, pc, fetch, branch, lsu, perfCounterOutputs)
+    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(9), config, currentEpoch, pc, fetch, branch, lsu, perfCounterOutputs)
     val fpBackend = FpBackend(execStage, lsu, currentEpoch, trapLogic.frm)
     val vectorEngine = DormantSharedVectorEngine(config.vectorConfig.copy(xlen = config.xlen, addressWidth = config.physicalAddrWidth))
 
@@ -467,10 +467,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val relaxIntProducerHazards = True
     val relaxControlFlowSerialization = True
 
-    val dispatchCtrl = pipeline.ctrl(4)
-    val srcCtrl = pipeline.ctrl(5)
-    val exeCtrl = pipeline.ctrl(6)
-    val wbCtrl = pipeline.ctrl(7)
+    val dispatchCtrl = pipeline.ctrl(6)
+    val srcCtrl = pipeline.ctrl(7)
+    val exeCtrl = pipeline.ctrl(8)
+    val wbCtrl = pipeline.ctrl(9)
     val srcEpochMatches = srcCtrl.up(SPEC_EPOCH) === currentEpoch
     val exeEpochMatchesForHazard = exeCtrl.up(SPEC_EPOCH) === currentEpoch
     val srcHasControlFlow = srcCtrl.up.isValid &&
@@ -485,7 +485,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       exeCtrl(IssueSemantics.PROPS).isControlFlow
     val controlHazardBusy = srcHasControlFlow || exeHasControlFlow
     when(!relaxControlFlowSerialization) {
-      Array(3, 4).map(pipeline.ctrl(_)).foreach { ctrl =>
+      Array(3, 4, 5, 6).map(pipeline.ctrl(_)).foreach { ctrl =>
         ctrl.haltWhen(controlHazardBusy)
       }
       srcCtrl.haltWhen(exeHasControlFlow)
@@ -494,12 +494,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       srcCtrl.up(LANE_SEL).allowOverride := False
     }
     when(
-      pipeline.ctrl(7).up.isValid &&
-      (pipeline.ctrl(7).up(SPEC_EPOCH) =/= currentEpoch) &&
-      !pipeline.ctrl(7).up(SELF_REDIRECT)
+      pipeline.ctrl(9).up.isValid &&
+      (pipeline.ctrl(9).up(SPEC_EPOCH) =/= currentEpoch) &&
+      !pipeline.ctrl(9).up(SELF_REDIRECT)
     ) {
-      pipeline.ctrl(7).up(LANE_SEL).allowOverride := False
-      pipeline.ctrl(7).up(COMMIT).allowOverride := False
+      pipeline.ctrl(9).up(LANE_SEL).allowOverride := False
+      pipeline.ctrl(9).up(COMMIT).allowOverride := False
     }
 
     val exeIntProducer = exeCtrl.up.isValid &&
@@ -707,17 +707,17 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // - All instructions with old epoch are flushed (their SPEC_EPOCH != currentEpoch)
     
     // Flush Logic - fires when a non-stale branch/jump redirects.
-    val execEpochMatches = pipeline.ctrl(6)(SPEC_EPOCH) === currentEpoch
-    val execStageValid = pipeline.ctrl(6).up.isValid
+    val execEpochMatches = pipeline.ctrl(8)(SPEC_EPOCH) === currentEpoch
+    val execStageValid = pipeline.ctrl(8).up.isValid
     val fenceiRedirect = execStageValid &&
-      pipeline.ctrl(6).up.isFiring &&
+      pipeline.ctrl(8).up.isFiring &&
       execEpochMatches &&
-      pipeline.ctrl(6)(Decoder.VALID) &&
-      pipeline.ctrl(6)(borb.common.Common.LANE_SEL) &&
-      (pipeline.ctrl(6)(Decoder.MicroCode) === uopFENCE_I)
-    val predictedValid = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
-    val predictedTaken = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
-    val predictedTarget = pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
+      pipeline.ctrl(8)(Decoder.VALID) &&
+      pipeline.ctrl(8)(borb.common.Common.LANE_SEL) &&
+      (pipeline.ctrl(8)(Decoder.MicroCode) === uopFENCE_I)
+    val predictedValid = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
+    val predictedTaken = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
+    val predictedTarget = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
     val frontendPredictedRedirectsEnabled = config.frontendConfig.predictedRedirectEnabled
     val frontendPredictorTrainingEnabled = config.frontendConfig.predictorTrainingEnabled
     val actualTaken = branch.actualTaken
@@ -734,8 +734,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val trapRedirect = execStageValid && trapLogic.redirect.trapFire && execEpochMatches
     val mretRedirect = execStageValid && trapLogic.redirect.mretFire && execEpochMatches
     val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
-    pipeline.ctrl(6).down(SELF_REDIRECT) := branchRedirect || trapRedirect || mretRedirect || fenceiRedirect
-    val fenceiTarget = pipeline.ctrl(6)(borb.fetch.PC.PC) + U(4, 64 bits)
+    pipeline.ctrl(8).down(SELF_REDIRECT) := branchRedirect || trapRedirect || mretRedirect || fenceiRedirect
+    val fenceiTarget = pipeline.ctrl(8)(borb.fetch.PC.PC) + U(4, 64 bits)
     val redirectEpochValue = (currentEpoch + 1).resized
 
     pc.redirect.valid.allowOverride := branchRedirect || lane1BranchRedirect || mretRedirect || fenceiRedirect
@@ -787,18 +787,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     def stageLogicallyLive(idx: Int): Bool = {
       val ctrl = pipeline.ctrl(idx)
-      val stageLaneLive = if(idx < 5) True else ctrl.up(LANE_SEL)
+      val stageLaneLive = if(idx < 7) True else ctrl.up(LANE_SEL)
       ctrl.up.isValid && stageDecodedValid(idx) && stageLaneLive
     }
-    val wbStageValidForRedirect = stageLogicallyLive(7)
+    val wbStageValidForRedirect = stageLogicallyLive(9)
     val redirectingBundleSeq = UInt(32 bits)
-    redirectingBundleSeq := Mux(lane1BranchRedirect, lane1s6.bundleSeq, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ))
+    redirectingBundleSeq := Mux(lane1BranchRedirect, lane1s6.bundleSeq, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ))
     val redirectingSlotIdx = UInt(2 bits)
-    redirectingSlotIdx := Mux(lane1BranchRedirect, lane1s6.slotIdx, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SLOT_IDX))
+    redirectingSlotIdx := Mux(lane1BranchRedirect, lane1s6.slotIdx, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX))
     val redirectingSeq = UInt(32 bits)
-    redirectingSeq := Mux(lane1BranchRedirect, lane1s6.fetchSeq, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SEQ))
-    val wbBundleSeq = pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    val wbSlotIdx = pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SLOT_IDX)
+    redirectingSeq := Mux(lane1BranchRedirect, lane1s6.fetchSeq, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SEQ))
+    val wbBundleSeq = pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
+    val wbSlotIdx = pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SLOT_IDX)
     val redirectRspBubbleCounter = Reg(UInt(2 bits)) init(0)
     val redirectCommitPending = RegInit(False)
     val redirectCommitSeq = Reg(UInt(32 bits)) init(0)
@@ -810,8 +810,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       pipeline.ctrl(2).up.valid.allowOverride := False
     }
     val wbYoungerThanRedirect = wbStageValidForRedirect &&
-      pipeline.ctrl(6).up.isValid &&
-      pipeline.ctrl(6).up(Decoder.VALID) &&
+      pipeline.ctrl(8).up.isValid &&
+      pipeline.ctrl(8).up(Decoder.VALID) &&
       LaneContracts.isYounger(wbBundleSeq, wbSlotIdx, redirectingBundleSeq, redirectingSlotIdx)
     def stageIsRedirectOrigin(idx: Int): Bool = {
       val ctrl = pipeline.ctrl(idx)
@@ -824,7 +824,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         redirectCommitSlotIdx
       )
     }
-    val youngerThanPendingRedirect = Array(3, 4, 5, 6, 7).map { idx =>
+    val youngerThanPendingRedirect = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
       val ctrl = pipeline.ctrl(idx)
       stageLogicallyLive(idx) &&
       !stageIsRedirectOrigin(idx) &&
@@ -835,7 +835,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
         redirectCommitSlotIdx
       )
     }.reduce(_ || _)
-    val staleEpochBehindRedirect = Array(3, 4, 5, 6, 7).map { idx =>
+    val staleEpochBehindRedirect = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
       val ctrl = pipeline.ctrl(idx)
       stageLogicallyLive(idx) &&
       !stageIsRedirectOrigin(idx) &&
@@ -861,12 +861,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lsuKillOutstanding := redirectPipeline || redirectCommitPending
     lsuKillCboZero := redirectPipeline
     when(
-      pipeline.ctrl(6).up.isValid &&
-      pipeline.ctrl(6).up(Decoder.VALID) &&
+      pipeline.ctrl(8).up.isValid &&
+      pipeline.ctrl(8).up(Decoder.VALID) &&
       redirectCommitPending &&
-      (pipeline.ctrl(6).up(SPEC_EPOCH) =/= currentEpoch)
+      (pipeline.ctrl(8).up(SPEC_EPOCH) =/= currentEpoch)
     ) {
-      pipeline.ctrl(6).up(LANE_SEL).allowOverride := False
+      pipeline.ctrl(8).up(LANE_SEL).allowOverride := False
     }
     // A taken redirect discovered in execute can coincide with a wrong-path
     // younger instruction already sitting in writeback. Squash that commit in
@@ -878,11 +878,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // observed. Track the redirecting sequence so only younger instructions
     // are flushed; older lagging instructions must still be allowed to retire.
     val redirectExecuteBubble = redirectCommitPending &&
-      pipeline.ctrl(6).up.isValid &&
-      pipeline.ctrl(6).up(Decoder.VALID) &&
+      pipeline.ctrl(8).up.isValid &&
+      pipeline.ctrl(8).up(Decoder.VALID) &&
       LaneContracts.isYounger(
-        pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ),
-        pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SLOT_IDX),
+        pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ),
+        pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX),
         redirectCommitBundleSeq,
         redirectCommitSlotIdx
       )
@@ -890,21 +890,21 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.currentEpoch := currentEpoch
     val branchBlockPc = UInt(64 bits)
-    branchBlockPc := pipeline.ctrl(6).up(borb.fetch.PC.PC)
+    branchBlockPc := pipeline.ctrl(8).up(borb.fetch.PC.PC)
     if(config.frontendConfig.fetchBlockBytes > 1) {
       branchBlockPc(log2Up(config.frontendConfig.fetchBlockBytes) - 1 downto 0) := 0
     }
     val takenByteOffset = UInt(log2Up(config.frontendConfig.fetchBlockBytes max 2) bits)
-    takenByteOffset := pipeline.ctrl(6).up(borb.fetch.PC.PC)(log2Up(config.frontendConfig.fetchBlockBytes max 2) - 1 downto 0)
+    takenByteOffset := pipeline.ctrl(8).up(borb.fetch.PC.PC)(log2Up(config.frontendConfig.fetchBlockBytes max 2) - 1 downto 0)
     val isCall = branch.actualIsJump &&
       (
-        (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJAL && ((pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00101"))) ||
-        (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR && ((pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00101")))
+        (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJAL && ((pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00101"))) ||
+        (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR && ((pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00101")))
       )
-    val isReturn = (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR) &&
-      (pipeline.ctrl(6).up(Decoder.RD_ADDR) === B"00000") &&
-      ((pipeline.ctrl(6).up(Decoder.RS1_ADDR) === B"00001") || (pipeline.ctrl(6).up(Decoder.RS1_ADDR) === B"00101"))
-    val isIndirect = (pipeline.ctrl(6).up(Decoder.MicroCode) === uopJALR) && !isReturn
+    val isReturn = (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR) &&
+      (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00000") &&
+      ((pipeline.ctrl(8).up(Decoder.RS1_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RS1_ADDR) === B"00101"))
+    val isIndirect = (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR) && !isReturn
     fetch.io.recover.valid := redirectPipeline
     fetch.io.recover.payload.redirectTarget := Mux(
       trapRedirect,
@@ -933,21 +933,21 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     fetch.io.recover.payload.epoch := redirectEpochValue
     fetch.io.recover.payload.invalidateIcache := fenceiRedirect
-    fetch.io.recover.payload.recovery.valid := Mux(lane1BranchRedirect, lane1s6.valid, pipeline.ctrl(6).up.isValid)
-    fetch.io.recover.payload.recovery.ftqIndex := Mux(lane1BranchRedirect, lane1s6.ftqIdx, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized)
-    fetch.io.recover.payload.recovery.bundleSeq := Mux(lane1BranchRedirect, lane1s6.bundleSeq, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ))
-    fetch.io.recover.payload.recovery.slotIdx := Mux(lane1BranchRedirect, lane1s6.slotIdx, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized)
-    fetch.io.recover.payload.recovery.blockPc := Mux(lane1BranchRedirect, lane1s6.blockPc, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BLOCK_PC))
-    fetch.io.recover.payload.recovery.byteOffsetInBlock := Mux(lane1BranchRedirect, lane1s6.byteOffset, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized)
+    fetch.io.recover.payload.recovery.valid := Mux(lane1BranchRedirect, lane1s6.valid, pipeline.ctrl(8).up.isValid)
+    fetch.io.recover.payload.recovery.ftqIndex := Mux(lane1BranchRedirect, lane1s6.ftqIdx, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized)
+    fetch.io.recover.payload.recovery.bundleSeq := Mux(lane1BranchRedirect, lane1s6.bundleSeq, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ))
+    fetch.io.recover.payload.recovery.slotIdx := Mux(lane1BranchRedirect, lane1s6.slotIdx, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized)
+    fetch.io.recover.payload.recovery.blockPc := Mux(lane1BranchRedirect, lane1s6.blockPc, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC))
+    fetch.io.recover.payload.recovery.byteOffsetInBlock := Mux(lane1BranchRedirect, lane1s6.byteOffset, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized)
 
     fetch.io.branchResolve.valid := (branch.branchResolved && execEpochMatches) || (!branch.branchResolved && lane1BranchResolved && lane1ExecEpochMatches)
     fetch.io.branchResolve.payload.epoch := currentEpoch
-    fetch.io.branchResolve.payload.ftqIndex := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized, lane1s6.ftqIdx)
-    fetch.io.branchResolve.payload.bundleSeq := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ), lane1s6.bundleSeq)
-    fetch.io.branchResolve.payload.slotIdx := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized, lane1s6.slotIdx)
-    fetch.io.branchResolve.payload.pc := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.PC.PC), lane1s6.pc)
-    fetch.io.branchResolve.payload.blockPc := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BLOCK_PC), lane1s6.blockPc)
-    fetch.io.branchResolve.payload.byteOffsetInBlock := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized, lane1s6.byteOffset)
+    fetch.io.branchResolve.payload.ftqIndex := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized, lane1s6.ftqIdx)
+    fetch.io.branchResolve.payload.bundleSeq := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ), lane1s6.bundleSeq)
+    fetch.io.branchResolve.payload.slotIdx := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized, lane1s6.slotIdx)
+    fetch.io.branchResolve.payload.pc := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.PC.PC), lane1s6.pc)
+    fetch.io.branchResolve.payload.blockPc := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC), lane1s6.blockPc)
+    fetch.io.branchResolve.payload.byteOffsetInBlock := Mux(branch.branchResolved && execEpochMatches, pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized, lane1s6.byteOffset)
     fetch.io.branchResolve.payload.fallthrough := Mux(branch.branchResolved && execEpochMatches, branch.fallthroughPc, lane1s6.fallthrough)
     fetch.io.branchResolve.payload.actualTaken := Mux(branch.branchResolved && execEpochMatches, actualTaken, lane1s6.branchTaken)
     fetch.io.branchResolve.payload.actualTarget := Mux(branch.branchResolved && execEpochMatches, actualTarget, lane1s6.branchTarget)
@@ -963,11 +963,11 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     fetch.io.indirectResolve.valid := branch.branchResolved && execEpochMatches && isIndirect && actualTaken
     fetch.io.indirectResolve.payload.epoch := currentEpoch
-    fetch.io.indirectResolve.payload.ftqIndex := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
-    fetch.io.indirectResolve.payload.bundleSeq := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    fetch.io.indirectResolve.payload.slotIdx := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
-    fetch.io.indirectResolve.payload.blockPc := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
-    fetch.io.indirectResolve.payload.byteOffsetInBlock := pipeline.ctrl(6).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
+    fetch.io.indirectResolve.payload.ftqIndex := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
+    fetch.io.indirectResolve.payload.bundleSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
+    fetch.io.indirectResolve.payload.slotIdx := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
+    fetch.io.indirectResolve.payload.blockPc := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
+    fetch.io.indirectResolve.payload.byteOffsetInBlock := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
     fetch.io.indirectResolve.payload.target := actualTarget
     fetch.io.indirectResolve.payload.history := 0
     val lane1LeadConsume = pipeline.ctrl(2).down.isFiring &&
@@ -1006,7 +1006,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     when(stage2Kill) {
       pipeline.ctrl(2).up.valid.allowOverride := False
     }
-    Array(3, 4, 5).map(pipeline.ctrl(_)).foreach { ctrl =>
+    Array(3, 4, 5, 6, 7).map(pipeline.ctrl(_)).foreach { ctrl =>
       val stageDecodedValid = if(ctrl == pipeline.ctrl(3)) ctrl(Decoder.VALID) else ctrl.up(Decoder.VALID)
       val stageOldEpoch = ctrl.up.isValid && (ctrl.up(SPEC_EPOCH) =/= currentEpoch)
       val stageKill = redirectPipeline || redirectRspPending || redirectCommitPending || stageOldEpoch
@@ -1014,33 +1014,33 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       when(stageKill) {
         ctrl.up.valid.allowOverride := False
         stageDecodedValid.allowOverride := False
-        if(ctrl == pipeline.ctrl(5)) {
+        if(ctrl == pipeline.ctrl(7)) {
           ctrl.up(LANE_SEL).allowOverride := False
         }
       }
     }
-    val executeOldEpoch = pipeline.ctrl(6).up.isValid &&
-      pipeline.ctrl(6).up(Decoder.VALID) &&
-      (pipeline.ctrl(6).up(SPEC_EPOCH) =/= currentEpoch)
-    val wbOldEpoch = pipeline.ctrl(7).up.isValid &&
-      pipeline.ctrl(7).up(Decoder.VALID) &&
-      (pipeline.ctrl(7).up(SPEC_EPOCH) =/= currentEpoch) &&
-      !pipeline.ctrl(7).up(SELF_REDIRECT)
+    val executeOldEpoch = pipeline.ctrl(8).up.isValid &&
+      pipeline.ctrl(8).up(Decoder.VALID) &&
+      (pipeline.ctrl(8).up(SPEC_EPOCH) =/= currentEpoch)
+    val wbOldEpoch = pipeline.ctrl(9).up.isValid &&
+      pipeline.ctrl(9).up(Decoder.VALID) &&
+      (pipeline.ctrl(9).up(SPEC_EPOCH) =/= currentEpoch) &&
+      !pipeline.ctrl(9).up(SELF_REDIRECT)
     val executeKill = redirectExecuteBubble || executeOldEpoch
     val wbKill = (redirectPipeline && wbYoungerThanRedirect) || wbYoungerThanPendingRedirect || wbOldEpoch
-    pipeline.ctrl(6).throwWhen(executeKill)
-    pipeline.ctrl(7).throwWhen(wbKill)
+    pipeline.ctrl(8).throwWhen(executeKill)
+    pipeline.ctrl(9).throwWhen(wbKill)
     when(executeKill) {
-      pipeline.ctrl(6).up.valid.allowOverride := False
-      pipeline.ctrl(6).up(Decoder.VALID).allowOverride := False
-      pipeline.ctrl(6).up(LANE_SEL).allowOverride := False
+      pipeline.ctrl(8).up.valid.allowOverride := False
+      pipeline.ctrl(8).up(Decoder.VALID).allowOverride := False
+      pipeline.ctrl(8).up(LANE_SEL).allowOverride := False
     }
     when(wbKill) {
-      pipeline.ctrl(7).up.valid.allowOverride := False
-      pipeline.ctrl(7).up(Decoder.VALID).allowOverride := False
-      pipeline.ctrl(7).up(LANE_SEL).allowOverride := False
-      pipeline.ctrl(7).up(COMMIT).allowOverride := False
-      pipeline.ctrl(7).up(TRAP).allowOverride := False
+      pipeline.ctrl(9).up.valid.allowOverride := False
+      pipeline.ctrl(9).up(Decoder.VALID).allowOverride := False
+      pipeline.ctrl(9).up(LANE_SEL).allowOverride := False
+      pipeline.ctrl(9).up(COMMIT).allowOverride := False
+      pipeline.ctrl(9).up(TRAP).allowOverride := False
     }
 
     val lane1s5Next = PipelineSlot(config)
@@ -1152,7 +1152,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     srcPlugin.regfileread.regfile.io.writes(1).address := lane1s7.result.address
     srcPlugin.regfileread.regfile.io.writes(1).data := lane1s7.result.data
 
-    val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(7))
+    val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(9))
     io.rvfi := rvfiPlugin.io.rvfi
 
     val redirectProbe = borb.RedirectDebugProbe()
@@ -1179,23 +1179,23 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Once a sequence has committed, any lingering older-stage copy of that
     // same instruction is stale and must be killed before it can refire side
     // effects or traps. This keeps backend ownership of a sequence exclusive.
-    when(pipeline.ctrl(7).up(COMMIT) && lane1s7.commit) {
+    when(pipeline.ctrl(9).up(COMMIT) && lane1s7.commit) {
       lastCommittedSeqValid := B"11"
-      lastCommittedSeq0 := pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ)
+      lastCommittedSeq0 := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ)
       lastCommittedSeq1 := lane1s7.fetchSeq
-    } elsewhen(pipeline.ctrl(7).up(COMMIT)) {
+    } elsewhen(pipeline.ctrl(9).up(COMMIT)) {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq1 := lastCommittedSeq0
-      lastCommittedSeq0 := pipeline.ctrl(7).up(borb.fetch.Fetch.FETCH_SEQ)
+      lastCommittedSeq0 := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ)
     } elsewhen(lane1s7.commit) {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq1 := lastCommittedSeq0
       lastCommittedSeq0 := lane1s7.fetchSeq
     }
-    Array(4, 5, 6, 7).foreach { idx =>
+    Array(4, 5, 6, 7, 8, 9).foreach { idx =>
       val ctrl = pipeline.ctrl(idx)
       val decodedValid = ctrl.up(VALID)
-      val duplicateLiveSeq = Array.range(idx + 1, 8).map { laterIdx =>
+      val duplicateLiveSeq = Array.range(idx + 1, 10).map { laterIdx =>
         val laterCtrl = pipeline.ctrl(laterIdx)
         stageLogicallyLive(idx) &&
         stageLogicallyLive(laterIdx) &&
@@ -1214,10 +1214,10 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       when(duplicateSeqKill) {
         ctrl.up.valid.allowOverride := False
         ctrl.up(Decoder.VALID).allowOverride := False
-        if(idx >= 5) {
+        if(idx >= 7) {
           ctrl.up(LANE_SEL).allowOverride := False
         }
-        if(idx >= 7) {
+        if(idx >= 9) {
           ctrl.up(COMMIT).allowOverride := False
           ctrl.up(TRAP).allowOverride := False
         }
@@ -1228,16 +1228,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val fetchStall = !fetch.beatValid
     val memStall = lsu.logic.waitingResponse
     val lsuReplayOrWait = lsu.logic.waitingResponse || lsu.logic.amoWaitingResponse || lsu.logic.amoStorePending || lsu.logic.cboZeroActive
-    val srcCtrlPerf = pipeline.ctrl(5)
-    val committedThisCycle = pipeline.ctrl(7).up(COMMIT) || lane1s7.commit
-    val writeCtrl = pipeline.ctrl(7)
+    val srcCtrlPerf = pipeline.ctrl(7)
+    val committedThisCycle = pipeline.ctrl(9).up(COMMIT) || lane1s7.commit
+    val writeCtrl = pipeline.ctrl(9)
     val dispatchValid = dispatchCtrl.up.isValid && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
     val srcValid = srcCtrlPerf.up.isValid && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
-    val execValid = pipeline.ctrl(6).up.isValid && pipeline.ctrl(6)(VALID) && pipeline.ctrl(6)(LANE_SEL)
+    val execValid = pipeline.ctrl(8).up.isValid && pipeline.ctrl(8)(VALID) && pipeline.ctrl(8)(LANE_SEL)
     val writeValid = writeCtrl.up.isValid && writeCtrl(VALID) && writeCtrl(LANE_SEL)
     val dispatchFire = dispatchCtrl.up.isFiring && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
     val srcFire = srcCtrlPerf.up.isFiring && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
-    val execFire = pipeline.ctrl(6).up.isFiring && pipeline.ctrl(6)(VALID) && pipeline.ctrl(6)(LANE_SEL)
+    val execFire = pipeline.ctrl(8).up.isFiring && pipeline.ctrl(8)(VALID) && pipeline.ctrl(8)(LANE_SEL)
     val writeFire = writeCtrl.up.isFiring && writeCtrl(VALID) && writeCtrl(LANE_SEL)
     val backendOccCount = UInt(3 bits)
     backendOccCount := dispatchValid.asUInt.resize(3) +
@@ -1245,7 +1245,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       execValid.asUInt.resize(3) +
       writeValid.asUInt.resize(3)
     val writebackStall = writeValid && !committedThisCycle
-    val mulDivBusy = execValid && pipeline.ctrl(6)(MicroCode).mux(
+    val mulDivBusy = execValid && pipeline.ctrl(8)(MicroCode).mux(
       uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True,
       uopDIV -> True, uopDIVU -> True, uopREM -> True, uopREMU -> True,
       uopMULW -> True, uopDIVW -> True, uopDIVUW -> True, uopREMW -> True, uopREMUW -> True,
@@ -1256,7 +1256,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val dispatchToSrcStall = dispatchValid && !srcValid && !hazardStall && !fetchStall
     val srcToExecStall = srcValid && !execValid && !hazardStall && !fetchStall && !controlHazardBusy
     val execToWriteStall = execValid && !writeValid && !lsuReplayOrWait
-    val backendActive = Array(3, 4, 5, 6, 7).map { idx =>
+    val backendActive = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
       val ctrl = pipeline.ctrl(idx)
       ctrl.up.isValid && ctrl(VALID)
     }.reduce(_ || _)
@@ -1336,12 +1336,12 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       counters.pipelineFlush := flushPipeline
     }
 
-    val write = pipeline.ctrl(7)
-    //val dispCtrl = pipeline.ctrl(4)
+    val write = pipeline.ctrl(9)
+    //val dispCtrl = pipeline.ctrl(6)
 
     import borb.execute.WriteBack
     val writeback = new WriteBack(
-      pipeline.ctrl(7),
+      pipeline.ctrl(9),
       srcPlugin.regfileread.regfile.io.writes(0),
       currentEpoch,
       redirectCommitBubble,
