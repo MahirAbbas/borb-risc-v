@@ -82,11 +82,13 @@ Hard gates after every milestone:
   - Added `verif/directed/asm/dual_issue_m35_fp_integer_smoke.S` for FALU+integer and FMAC+integer pairing with architectural FP result checks.
   - Validation: `sbt compile`, `sbt "runMain borb.SoC"`, the M35 FP+integer directed smoke, a focused RV64F/RV64D RISCOF subset (`7/7` selected tests), CoreMark (`337,458` cycles / `2.9633317331341975 CoreMark/MHz`), and full RISCOF (`1540/1540`, zero reports) passed.
 
-- **M36: Scalar RVA23S64 Claim Closure**
+- [x] **M36: Scalar RVA23S64 Claim Closure**
   - Re-audit the scalar/profile surface after pipeline changes: declared YAML, implemented-but-unclaimed features, and validator-limited features.
   - Keep current declared surface unless implementation evidence changes: `RV64IMAFDCSUZicbom_Zicbop_Zicboz_Zicond_Zicntr_Zicsr_Zifencei_Zihintpause_Zihpm_Zimop_Zfa_Zfh_Zca_Zcb_Zcmop_Zba_Zbb_Zbs_Svnapot`.
   - Keep `Zawrs`, `Sstc`, `Sscofpmf`, `Zic64b`, `Ziccif`, `Ziccrse`, `Ziccamoa`, `Zicclsm`, `Za64rs`, and `Svpbmt` documented as implemented/assumed/unclaimed unless local tooling supports clean declaration.
   - Acceptance: full active RISCOF pass count remains green; docs distinguish claimable vs unclaimed accurately.
+  - Audited `verif/riscof/borb/borb_isa.yaml`, `documentation.md`, and the RISCOF filtering/reference-extension path after the M30-M35 backend work. No claim-surface change is warranted: the canonical declaration remains the validator-supported scalar/profile-support surface, and full base `V`, vector profile support, `Zvbb`, `Zvkt`, `Zawrs`, `Sstc`, `Sscofpmf`, `Zic64b`, `Ziccif`, `Ziccrse`, `Ziccamoa`, `Zicclsm`, `Za64rs`, and `Svpbmt` remain intentionally undeclared.
+  - Documentation now records the post-M35 claim closure explicitly: declared features are claimable through the active RISCOF flow, implemented-but-unclaimed features are separated by validator or coverage limits, and the vector slices remain directed-tested implementation evidence only.
 
 - **M37: Vector Shared-Engine Reconciliation**
   - Keep vector issue serializing from scalar issue until scalar 2-wide is stable.
