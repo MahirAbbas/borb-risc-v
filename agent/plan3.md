@@ -72,11 +72,15 @@ Hard gates after every milestone:
   - Make AMO, `cbo.zero`, PMP faults, misalignment, store visibility, and signature mirroring lane-aware.
   - Acceptance: L1D writeback smoke, cache-block smoke, AMO subset, PMP memory tests, and full RISCOF pass.
 
-- **M35: FP Pipe Split**
+- [x] **M35: FP Pipe Split**
   - Replace combinational scalar FP integration with issue into `FALU` and `FMAC`.
   - Use initial fixed latencies: move/classify/compare 1-2, add/convert/minmax 3, mul 4, FMA 5, div/sqrt iterative serialized.
   - Scoreboard FP registers until completion; commit FP state only through ordered retire.
   - Acceptance: RV64F/RV64D focused RISCOF subsets pass; FP+integer pairing tests pass; CoreMark remains green.
+  - Implemented the first pipe-ownership split without changing the current fixed-latency FP datapath: `BackendPipe.select(...)` sends `FMUL.{S,D}` and fused multiply-add/subtract ops to `FMAC`, while add/sub, convert, move, classify, sign, min/max, compare, round, div, and sqrt remain on `FALU` for the active scalar backend.
+  - Lane 1 now waits for an older lane-0 FP instruction to retire before committing paired younger integer work, preserving the current ordered-retire FP state contract while allowing safe FP+integer issue coverage.
+  - Added `verif/directed/asm/dual_issue_m35_fp_integer_smoke.S` for FALU+integer and FMAC+integer pairing with architectural FP result checks.
+  - Validation: `sbt compile`, `sbt "runMain borb.SoC"`, the M35 FP+integer directed smoke, a focused RV64F/RV64D RISCOF subset (`7/7` selected tests), CoreMark (`337,458` cycles / `2.9633317331341975 CoreMark/MHz`), and full RISCOF (`1540/1540`, zero reports) passed.
 
 - **M36: Scalar RVA23S64 Claim Closure**
   - Re-audit the scalar/profile surface after pipeline changes: declared YAML, implemented-but-unclaimed features, and validator-limited features.

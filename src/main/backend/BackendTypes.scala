@@ -71,7 +71,11 @@ object BackendPipe extends SpinalEnum {
     )) {
       pipe := BackendPipe.Vector
     } elsewhen(props.readsFpRs1 || props.readsFpRs2 || props.readsFpRs3 || props.writesFpRd) {
-      pipe := Mux(oneOf(microCode, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS, uopFMADDD, uopFMSUBD, uopFNMSUBD, uopFNMADDD), BackendPipe.Fmac, BackendPipe.Falu)
+      pipe := Mux(
+        oneOf(microCode, uopFMULS, uopFMULD, uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS, uopFMADDD, uopFMSUBD, uopFNMSUBD, uopFNMADDD),
+        BackendPipe.Fmac,
+        BackendPipe.Falu
+      )
     } elsewhen(props.fuMask(0)) {
       pipe := Mux(preferAlu1, BackendPipe.Alu1, BackendPipe.Alu0)
     }

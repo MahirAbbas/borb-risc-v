@@ -564,6 +564,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       (lane1Decoded.rdAddr === dispatchCtrl(Decoder.RD_ADDR))
     val lane1YoungerMemory = lane1IssueProps.isLoad || lane1IssueProps.isStore
     val lane1OlderMemory = lane1OlderProps.isLoad || lane1OlderProps.isStore
+    val lane1OlderFp =
+      lane1OlderProps.readsFpRs1 || lane1OlderProps.readsFpRs2 || lane1OlderProps.readsFpRs3 || lane1OlderProps.writesFpRd
     val lane1PairAccepted = lane1PairDecisionCycle &&
       lane1CandidateValid &&
       lane1Decoded.valid &&
@@ -634,7 +636,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     lane1IssueCapture.rs2Addr := lane1Decoded.rs2Addr
     lane1IssueCapture.rs3Addr := lane1Decoded.rs3Addr
     lane1IssueCapture.issueProps := lane1IssueProps
-    lane1IssueCapture.waitForOlderCommit := lane1OlderMemory
+    lane1IssueCapture.waitForOlderCommit := lane1OlderMemory || lane1OlderFp
     lane1IssueCapture.sendToAlu := lane1IssueProps.fuMask(0)
     lane1IssueCapture.sendToBranch := lane1IssueProps.fuMask(1)
     lane1IssueCapture.selectedPipe := BackendPipe.select(lane1Decoded.microCode, lane1IssueProps, preferAlu1 = True)

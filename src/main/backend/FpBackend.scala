@@ -68,6 +68,8 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val stagePayloadValid = up.isValid && up(Decoder.VALID) && up(LANE_SEL)
     val aguFire = stagePayloadValid && up(Dispatch.SENDTOAGU)
     val aluFire = stagePayloadValid && up(Dispatch.SENDTOALU)
+    val faluFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Falu)
+    val fmacFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Fmac)
 
     val isFlhOp = microCode === uopFLH
     val isFlwOp = microCode === uopFLW
@@ -219,41 +221,41 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       down(WriteBack.RESULT).valid.allowOverride := False
     }
 
-    val fcvtFToIntFire = aluFire && (isFcvtWsOp || isFcvtWuSOp || isFcvtLsOp || isFcvtLuSOp)
-    val fcvtSToFpFire = aluFire && (isFcvtSwOp || isFcvtSwuOp || isFcvtSlOp || isFcvtSluOp)
-    val fcvtDToIntFire = aluFire && (isFcvtWdOp || isFcvtWuDOp || isFcvtLdOp || isFcvtLuDOp)
-    val fcvtmodWdFire = aluFire && isFcvtmodWdOp
-    val fcvtDToFpFire = aluFire && (isFcvtDwOp || isFcvtDwuOp || isFcvtDlOp || isFcvtDluOp)
-    val fcvtDToSFire = aluFire && isFcvtSdOp
-    val fcvtSToDFire = aluFire && isFcvtDsOp
-    val fcvtHToIntFire = aluFire && (isFcvtLhOp || isFcvtLuHOp)
-    val fcvtIntToHFire = aluFire && (isFcvtHlOp || isFcvtHluOp)
-    val fmvXWFire = aluFire && isFmvXWOp
-    val fmvWXFire = aluFire && isFmvWXOp
-    val fmvXDFire = aluFire && isFmvXDOp
-    val fmvDXFire = aluFire && isFmvDXOp
-    val faddsubSFire = aluFire && (isFaddSOp || isFsubSOp)
-    val fmulSFire = aluFire && isFmulSOp
-    val fdivSFire = aluFire && isFdivSOp
-    val fsqrtSFire = aluFire && isFsqrtSOp
-    val faddsubDFire = aluFire && (isFaddDOp || isFsubDOp)
-    val fmulDFire = aluFire && isFmulDOp
-    val fdivDFire = aluFire && isFdivDOp
-    val fsqrtDFire = aluFire && isFsqrtDOp
-    val fmaSFire = aluFire && (isFmaddSOp || isFmsubSOp || isFnmsubSOp || isFnmaddSOp)
-    val fmaDFire = aluFire && (isFmaddDOp || isFmsubDOp || isFnmsubDOp || isFnmaddDOp)
-    val fclassSFire = aluFire && isFclassSOp
-    val fclassDFire = aluFire && isFclassDOp
-    val fsgnjSFire = aluFire && (isFsgnjSOp || isFsgnjnSOp || isFsgnjxSOp)
-    val fsgnjDFire = aluFire && (isFsgnjDOp || isFsgnjnDOp || isFsgnjxDOp)
-    val fminmaxSFire = aluFire && (isFminSOp || isFmaxSOp || isFminmSOp || isFmaxmSOp)
-    val fminmaxDFire = aluFire && (isFminDOp || isFmaxDOp || isFminmDOp || isFmaxmDOp)
-    val fcmpSFire = aluFire && (isFleSOp || isFltSOp || isFeqSOp || isFleqSOp || isFltqSOp)
-    val fcmpDFire = aluFire && (isFleDOp || isFltDOp || isFeqDOp || isFleqDOp || isFltqDOp)
-    val fliSFire = aluFire && isFliSOp
-    val fliDFire = aluFire && isFliDOp
-    val froundSFire = aluFire && (isFroundSOp || isFroundnxSOp)
-    val froundDFire = aluFire && (isFroundDOp || isFroundnxDOp)
+    val fcvtFToIntFire = faluFire && (isFcvtWsOp || isFcvtWuSOp || isFcvtLsOp || isFcvtLuSOp)
+    val fcvtSToFpFire = faluFire && (isFcvtSwOp || isFcvtSwuOp || isFcvtSlOp || isFcvtSluOp)
+    val fcvtDToIntFire = faluFire && (isFcvtWdOp || isFcvtWuDOp || isFcvtLdOp || isFcvtLuDOp)
+    val fcvtmodWdFire = faluFire && isFcvtmodWdOp
+    val fcvtDToFpFire = faluFire && (isFcvtDwOp || isFcvtDwuOp || isFcvtDlOp || isFcvtDluOp)
+    val fcvtDToSFire = faluFire && isFcvtSdOp
+    val fcvtSToDFire = faluFire && isFcvtDsOp
+    val fcvtHToIntFire = faluFire && (isFcvtLhOp || isFcvtLuHOp)
+    val fcvtIntToHFire = faluFire && (isFcvtHlOp || isFcvtHluOp)
+    val fmvXWFire = faluFire && isFmvXWOp
+    val fmvWXFire = faluFire && isFmvWXOp
+    val fmvXDFire = faluFire && isFmvXDOp
+    val fmvDXFire = faluFire && isFmvDXOp
+    val faddsubSFire = faluFire && (isFaddSOp || isFsubSOp)
+    val fmulSFire = fmacFire && isFmulSOp
+    val fdivSFire = faluFire && isFdivSOp
+    val fsqrtSFire = faluFire && isFsqrtSOp
+    val faddsubDFire = faluFire && (isFaddDOp || isFsubDOp)
+    val fmulDFire = fmacFire && isFmulDOp
+    val fdivDFire = faluFire && isFdivDOp
+    val fsqrtDFire = faluFire && isFsqrtDOp
+    val fmaSFire = fmacFire && (isFmaddSOp || isFmsubSOp || isFnmsubSOp || isFnmaddSOp)
+    val fmaDFire = fmacFire && (isFmaddDOp || isFmsubDOp || isFnmsubDOp || isFnmaddDOp)
+    val fclassSFire = faluFire && isFclassSOp
+    val fclassDFire = faluFire && isFclassDOp
+    val fsgnjSFire = faluFire && (isFsgnjSOp || isFsgnjnSOp || isFsgnjxSOp)
+    val fsgnjDFire = faluFire && (isFsgnjDOp || isFsgnjnDOp || isFsgnjxDOp)
+    val fminmaxSFire = faluFire && (isFminSOp || isFmaxSOp || isFminmSOp || isFmaxmSOp)
+    val fminmaxDFire = faluFire && (isFminDOp || isFmaxDOp || isFminmDOp || isFmaxmDOp)
+    val fcmpSFire = faluFire && (isFleSOp || isFltSOp || isFeqSOp || isFleqSOp || isFltqSOp)
+    val fcmpDFire = faluFire && (isFleDOp || isFltDOp || isFeqDOp || isFleqDOp || isFltqDOp)
+    val fliSFire = faluFire && isFliSOp
+    val fliDFire = faluFire && isFliDOp
+    val froundSFire = faluFire && (isFroundSOp || isFroundnxSOp)
+    val froundDFire = faluFire && (isFroundDOp || isFroundnxDOp)
 
     val fcvtRmRaw = Mux(insn(14 downto 12) === B"111", frm, insn(14 downto 12))
     val fcvtRm = Bits(3 bits)
