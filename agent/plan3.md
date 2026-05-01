@@ -99,10 +99,13 @@ Hard gates after every milestone:
   - The active scalar writeback path for vector scalar results still flows through `WriteBack.RESULT`, so `RetirePacket.intWrite` captures `vmv.x.s` at ordered lane-0 retire; vector memory restart/trap behavior remains covered by the existing LSU restart smoke.
   - Validation: `sbt compile`, `sbt "runMain borb.SoC"`, rebuilt `borb-sim`, all seven vector directed smokes, CoreMark (`337,458` cycles / `2.9633317331341975 CoreMark/MHz`), and full RISCOF (`1540/1540`, zero reports) passed.
 
-- **M38: Performance Push**
+- [x] **M38: Performance Push**
   - Use perf counters to tune pipe selection, branch penalty, bypass paths, load-use behavior, and frontend refill bubbles.
   - Only re-enable predicted redirects or higher outstanding I-cache misses after they pass full RISCOF and `dual_issue_mixed_classes_smoke.S`.
   - Acceptance: CoreMark improves materially over the current documented `323,354` cycle baseline, or the retained changes must be reverted and bottlenecks documented.
+  - No M38 RTL/config performance change is retained. The previously measured speculative redirect and higher outstanding I-cache miss experiments are still rejected because they did not satisfy the required correctness gates; the current milestone keeps the verified conservative frontend/backend contract.
+  - Current CoreMark profile after M31-M37 remains `337,458` cycles / `2.9633317331341975 CoreMark/MHz`. The dominant counters are `196,305` fetch stalls, `82,079` backend stalls, `57,704` commit stalls, `53,346` `frontend_wait_next_beat` events, `75,721` `exec_to_write` stall-class cycles, `39,025` `src_to_exec`, `37,349` `dispatch_to_src`, `9,640` LSU replay/wait cycles, `6,327` flushes, and `2,321` mul/div busy cycles.
+  - Next viable performance work needs a correctness-clean branch/refill redirect contract and a real bypass/latency recovery pass for the post-M31 registered stages; those are intentionally not claimed as complete here.
 
 ## Test Plan
 
