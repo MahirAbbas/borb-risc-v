@@ -90,11 +90,14 @@ Hard gates after every milestone:
   - Audited `verif/riscof/borb/borb_isa.yaml`, `documentation.md`, and the RISCOF filtering/reference-extension path after the M30-M35 backend work. No claim-surface change is warranted: the canonical declaration remains the validator-supported scalar/profile-support surface, and full base `V`, vector profile support, `Zvbb`, `Zvkt`, `Zawrs`, `Sstc`, `Sscofpmf`, `Zic64b`, `Ziccif`, `Ziccrse`, `Ziccamoa`, `Zicclsm`, `Za64rs`, and `Svpbmt` remain intentionally undeclared.
   - Documentation now records the post-M35 claim closure explicitly: declared features are claimable through the active RISCOF flow, implemented-but-unclaimed features are separated by validator or coverage limits, and the vector slices remain directed-tested implementation evidence only.
 
-- **M37: Vector Shared-Engine Reconciliation**
+- [x] **M37: Vector Shared-Engine Reconciliation**
   - Keep vector issue serializing from scalar issue until scalar 2-wide is stable.
   - Route vector commands through the completion/retire queue so vector scalar writeback, vector memory traps, `vstart`, and `mstatus.VS` remain precise.
   - Do not claim full base `V`, vector profile, `Zvbb`, or `Zvkt` until coverage and timing contracts exist.
   - Acceptance: existing vector state/integer/LSU/permute/FP/Zvbb smokes pass plus full scalar gates.
+  - Vector issue remains scalar-serializing through `IssueSemantics`, and the shared vector-engine handoff now requires the central issue-selected `BackendPipe.Vector` pipe in addition to decoded vector micro-ops. This keeps the vector engine behind the same lane-native pipe ownership used by the rest of the Plan 3 backend.
+  - The active scalar writeback path for vector scalar results still flows through `WriteBack.RESULT`, so `RetirePacket.intWrite` captures `vmv.x.s` at ordered lane-0 retire; vector memory restart/trap behavior remains covered by the existing LSU restart smoke.
+  - Validation: `sbt compile`, `sbt "runMain borb.SoC"`, rebuilt `borb-sim`, all seven vector directed smokes, CoreMark (`337,458` cycles / `2.9633317331341975 CoreMark/MHz`), and full RISCOF (`1540/1540`, zero reports) passed.
 
 - **M38: Performance Push**
   - Use perf counters to tune pipe selection, branch penalty, bypass paths, load-use behavior, and frontend refill bubbles.

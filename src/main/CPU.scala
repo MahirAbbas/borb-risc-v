@@ -391,6 +391,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       (execStage.up(PC.PC) >= resetPcValue) &&
       execStage.up(Decoder.VALID) &&
       execStage.up(LANE_SEL) &&
+      (execStage.up(BackendIssue.SELECTED_PIPE) === BackendPipe.Vector) &&
       vectorDecodedOp
     val vectorMemoryExec = (vectorExecMicroCode === uopVLE32) || (vectorExecMicroCode === uopVSE32)
     val vectorMemoryActive = RegInit(False)
