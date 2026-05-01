@@ -5,7 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
 import borb.fetch.FrontendRedirectReason
-import borb.backend.{BackendIssue, BackendPipe, FpBackend, IntegerBackend, PipelineSlot, TrapCsrBackend}
+import borb.backend.{BackendIssue, BackendPipe, FpBackend, IntegerBackend, PipelineSlot, RetirePacket, TrapCsrBackend}
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
@@ -1148,9 +1148,80 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lane1s4 := lane1IssueCapture
     }
 
-    srcPlugin.regfileread.regfile.io.writes(1).valid := lane1s7.result.valid && lane1s7.commit
-    srcPlugin.regfileread.regfile.io.writes(1).address := lane1s7.result.address
-    srcPlugin.regfileread.regfile.io.writes(1).data := lane1s7.result.data
+    val lane0Retire = RetirePacket(config)
+    lane0Retire.valid := pipeline.ctrl(9).up(COMMIT)
+    lane0Retire.slot.valid := lane0Retire.valid
+    lane0Retire.slot.epoch := pipeline.ctrl(9).up(SPEC_EPOCH)
+    lane0Retire.slot.fetchSeq := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ)
+    lane0Retire.slot.olderSeq := 0
+    lane0Retire.slot.bundleSeq := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
+    lane0Retire.slot.slotIdx := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
+    lane0Retire.slot.slotCount := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SLOT_COUNT).resized
+    lane0Retire.slot.ftqIdx := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
+    lane0Retire.slot.pc := pipeline.ctrl(9).up(borb.fetch.PC.PC)
+    lane0Retire.slot.blockPc := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
+    lane0Retire.slot.byteOffset := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
+    lane0Retire.slot.predictedValid := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
+    lane0Retire.slot.predictedTaken := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
+    lane0Retire.slot.predictedTarget := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
+    lane0Retire.slot.decodedInstruction := pipeline.ctrl(9).up(Decoder.DECODED_INSTRUCTION)
+    lane0Retire.slot.isCompressed := pipeline.ctrl(9).up(Decoder.IS_COMPRESSED)
+    lane0Retire.slot.legal := pipeline.ctrl(9).up(Decoder.LEGAL)
+    lane0Retire.slot.microCode := pipeline.ctrl(9).up(Decoder.MicroCode)
+    lane0Retire.slot.rdAddr := pipeline.ctrl(9).up(Decoder.RD_ADDR)
+    lane0Retire.slot.rs1Addr := pipeline.ctrl(9).up(Decoder.RS1_ADDR)
+    lane0Retire.slot.rs2Addr := pipeline.ctrl(9).up(Decoder.RS2_ADDR)
+    lane0Retire.slot.rs3Addr := pipeline.ctrl(9).up(Decoder.RS3_ADDR)
+    lane0Retire.slot.issueProps := pipeline.ctrl(9).up(IssueSemantics.PROPS)
+    lane0Retire.slot.waitForOlderCommit := False
+    lane0Retire.slot.selectedPipe := pipeline.ctrl(9).up(BackendIssue.SELECTED_PIPE)
+    lane0Retire.slot.rs1 := 0
+    lane0Retire.slot.rs2 := 0
+    lane0Retire.slot.immed := 0
+    lane0Retire.slot.sendToAlu := False
+    lane0Retire.slot.sendToBranch := False
+    lane0Retire.slot.branchTaken := False
+    lane0Retire.slot.branchTarget := 0
+    lane0Retire.slot.branchIsBranch := False
+    lane0Retire.slot.branchIsJump := False
+    lane0Retire.slot.fallthrough := 0
+    lane0Retire.slot.result.valid := pipeline.ctrl(9).up(WriteBack.RESULT).valid
+    lane0Retire.slot.result.address := pipeline.ctrl(9).up(WriteBack.RESULT).address
+    lane0Retire.slot.result.data := pipeline.ctrl(9).up(WriteBack.RESULT).data
+    lane0Retire.slot.trap := trapLogic.redirect
+    lane0Retire.slot.commit := lane0Retire.valid
+    lane0Retire.intWrite.valid := lane0Retire.valid && pipeline.ctrl(9).up(WriteBack.RESULT).valid
+    lane0Retire.intWrite.address := pipeline.ctrl(9).up(WriteBack.RESULT).address
+    lane0Retire.intWrite.data := pipeline.ctrl(9).up(WriteBack.RESULT).data
+    lane0Retire.fpWrite.valid := lane0Retire.valid && fpBackend.fpWrite.valid
+    lane0Retire.fpWrite.address := fpBackend.fpWrite.address
+    lane0Retire.fpWrite.data := fpBackend.fpWrite.data
+    lane0Retire.fpFlags.valid := lane0Retire.valid && fpBackend.fpFlags.valid
+    lane0Retire.fpFlags.bits := fpBackend.fpFlags.bits
+    lane0Retire.storeCommit := lane0Retire.valid && pipeline.ctrl(9).up(IssueSemantics.PROPS).isStore
+    lane0Retire.trap := trapLogic.redirect
+
+    val lane1Retire = RetirePacket(config)
+    lane1Retire.valid := lane1s7.commit
+    lane1Retire.slot := lane1s7
+    lane1Retire.intWrite.valid := lane1Retire.valid && lane1s7.result.valid
+    lane1Retire.intWrite.address := lane1s7.result.address
+    lane1Retire.intWrite.data := lane1s7.result.data
+    lane1Retire.fpWrite.valid := False
+    lane1Retire.fpWrite.address := 0
+    lane1Retire.fpWrite.data := 0
+    lane1Retire.fpFlags.valid := False
+    lane1Retire.fpFlags.bits := 0
+    lane1Retire.storeCommit := False
+    lane1Retire.trap := lane1s7.trap
+
+    val retirePackets = Vec(RetirePacket(config), 2)
+    retirePackets(0) := lane0Retire
+    retirePackets(1) := lane1Retire
+
+    srcPlugin.regfileread.regfile.io.writes(1).valid := retirePackets(1).intWrite.valid
+    srcPlugin.regfileread.regfile.io.writes(1).address := retirePackets(1).intWrite.address
+    srcPlugin.regfileread.regfile.io.writes(1).data := retirePackets(1).intWrite.data
 
     val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(9))
     io.rvfi := rvfiPlugin.io.rvfi
@@ -1179,18 +1250,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Once a sequence has committed, any lingering older-stage copy of that
     // same instruction is stale and must be killed before it can refire side
     // effects or traps. This keeps backend ownership of a sequence exclusive.
-    when(pipeline.ctrl(9).up(COMMIT) && lane1s7.commit) {
+    when(retirePackets(0).valid && retirePackets(1).valid) {
       lastCommittedSeqValid := B"11"
-      lastCommittedSeq0 := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ)
-      lastCommittedSeq1 := lane1s7.fetchSeq
-    } elsewhen(pipeline.ctrl(9).up(COMMIT)) {
-      lastCommittedSeqValid := B"11"
-      lastCommittedSeq1 := lastCommittedSeq0
-      lastCommittedSeq0 := pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ)
-    } elsewhen(lane1s7.commit) {
+      lastCommittedSeq0 := retirePackets(0).slot.fetchSeq
+      lastCommittedSeq1 := retirePackets(1).slot.fetchSeq
+    } elsewhen(retirePackets(0).valid) {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq1 := lastCommittedSeq0
-      lastCommittedSeq0 := lane1s7.fetchSeq
+      lastCommittedSeq0 := retirePackets(0).slot.fetchSeq
+    } elsewhen(retirePackets(1).valid) {
+      lastCommittedSeqValid := B"11"
+      lastCommittedSeq1 := lastCommittedSeq0
+      lastCommittedSeq0 := retirePackets(1).slot.fetchSeq
     }
     Array(4, 5, 6, 7, 8, 9).foreach { idx =>
       val ctrl = pipeline.ctrl(idx)
@@ -1229,7 +1300,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val memStall = lsu.logic.waitingResponse
     val lsuReplayOrWait = lsu.logic.waitingResponse || lsu.logic.amoWaitingResponse || lsu.logic.amoStorePending || lsu.logic.cboZeroActive
     val srcCtrlPerf = pipeline.ctrl(7)
-    val committedThisCycle = pipeline.ctrl(9).up(COMMIT) || lane1s7.commit
+    val committedThisCycle = retirePackets(0).valid || retirePackets(1).valid
     val writeCtrl = pipeline.ctrl(9)
     val dispatchValid = dispatchCtrl.up.isValid && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
     val srcValid = srcCtrlPerf.up.isValid && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)

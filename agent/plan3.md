@@ -60,7 +60,7 @@ Hard gates after every milestone:
   - Add lane0-to-lane1 same-cycle bypass only for results available in the same cycle; otherwise reject the pair.
   - Acceptance: directed tests for WAW, RAW rejection, lane0 redirect killing lane1, lane1 branch redirect, and dual integer writeback pass.
 
-- **M33: Completion/Retire Queue and Dual Commit**
+- [x] **M33: Completion/Retire Queue and Dual Commit**
   - Add a small in-order completion/retire queue sized for at least the longest non-div FP latency plus frontend skid.
   - Retire up to two completed instructions per cycle in order.
   - Convert integer RF writeback, FP writeback, `fflags`, store commit, RVFI/debug/perf, and trap reporting to ordered dual-retire semantics.
@@ -136,6 +136,8 @@ Hard gates after every milestone:
 - M31: Added the central issue-stage pipe reservation contract. `BackendPipe.select(...)` classifies lane-0 and lane-1 instructions into the Plan 3 pipe set, `BackendIssue.SELECTED_PIPE` now travels downstream from dispatch for lane 0, and lane 1 uses the same selector with ALU1 preference. This keeps the current safe pairings unchanged while establishing shared pipe ownership payloads.
 - M31: Physically retimed the scalar lane-0 backend so fetch remains `IF0/IF1/IF2` at stages 0/1/2, decode begins at `DE0` stage 3, two registered decode/issue transit stages occupy stages 4/5, dispatch/central issue moves to stage 6, source read moves to stage 7, execute moves to stage 8, and writeback/retire moves to stage 9. The debug plugin and RISCOF simulator probes were retargeted to the new execute/writeback stage names.
 - M32: The conservative integer/branch two-wide path now has focused contract coverage in `verif/directed/asm/dual_issue_m32_integer_branch_smoke.S`. The directed test covers ALU+ALU, ALU+branch, branch+ALU, branch+branch, same-cycle RAW rejection, same-cycle WAW ordering, lane-0 redirect squash of lane 1, and lane-1 branch redirect behavior. The RTL remains intentionally restricted to current-safe integer ALU and conditional-branch pairings.
+- M33: Added an explicit two-lane ordered retire-packet boundary. Lane 0 now mirrors writeback-stage commit metadata, integer write intent, FP write/flag intent, store intent, and trap outcome into `RetirePacket`; lane 1 emits the same packet shape for its restricted integer/branch path. Duplicate-retire tracking, lane-1 RF writeback, and commit-cycle accounting now consume the ordered retire packets. `RetireQueue.Depth` records the planned eight-entry completion queue sizing for upcoming variable-latency pipe migration while the current fixed-latency scalar path stays functionally unchanged.
+- M33: Added `verif/directed/asm/dual_retire_m33_precise_trap_smoke.S`, which checks deterministic same-cycle dual integer retire before an `ecall` and verifies the precise trap path does not commit fall-through side effects.
 
 ## Verification Checklist
 
@@ -154,5 +156,12 @@ Hard gates after every milestone:
   - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
 - M32:
   - [x] `./run_directed.sh verif/directed/asm/dual_issue_m32_integer_branch_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
+  - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
+  - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
+- M33:
+  - [x] `sbt compile`
+  - [x] `sbt "runMain borb.SoC"`
+  - [x] `make -C verif/riscof/borb/sim clean all`
+  - [x] `./run_directed.sh verif/directed/asm/dual_retire_m33_precise_trap_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
   - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
   - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)

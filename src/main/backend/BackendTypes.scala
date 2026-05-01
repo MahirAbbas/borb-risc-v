@@ -84,6 +84,13 @@ object BackendIssue extends AreaObject {
   val SELECTED_PIPE = Payload(BackendPipe()).setName("BACKEND_SELECTED_PIPE")
 }
 
+object RetireQueue {
+  // Enough room for the planned fixed-latency FP pipes plus several frontend
+  // skid entries while the scalar path is still being migrated lane by lane.
+  val Depth = 8
+  val Width = 2
+}
+
 case class PipelineSlot(config: CpuConfig) extends Bundle {
   val valid = Bool()
   val epoch = UInt(16 bits)
