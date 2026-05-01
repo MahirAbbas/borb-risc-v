@@ -66,7 +66,7 @@ Hard gates after every milestone:
   - Convert integer RF writeback, FP writeback, `fflags`, store commit, RVFI/debug/perf, and trap reporting to ordered dual-retire semantics.
   - Acceptance: precise-trap directed tests pass; same-cycle dual retire updates architectural state deterministically; full RISCOF remains green.
 
-- **M34: Memory Pipe Integration**
+- [x] **M34: Memory Pipe Integration**
   - Keep one `Load/Store` pipe and one D-cache command per cycle.
   - Allow memory+non-memory pairing, but reject memory+memory.
   - Make AMO, `cbo.zero`, PMP faults, misalignment, store visibility, and signature mirroring lane-aware.
@@ -138,6 +138,7 @@ Hard gates after every milestone:
 - M32: The conservative integer/branch two-wide path now has focused contract coverage in `verif/directed/asm/dual_issue_m32_integer_branch_smoke.S`. The directed test covers ALU+ALU, ALU+branch, branch+ALU, branch+branch, same-cycle RAW rejection, same-cycle WAW ordering, lane-0 redirect squash of lane 1, and lane-1 branch redirect behavior. The RTL remains intentionally restricted to current-safe integer ALU and conditional-branch pairings.
 - M33: Added an explicit two-lane ordered retire-packet boundary. Lane 0 now mirrors writeback-stage commit metadata, integer write intent, FP write/flag intent, store intent, and trap outcome into `RetirePacket`; lane 1 emits the same packet shape for its restricted integer/branch path. Duplicate-retire tracking, lane-1 RF writeback, and commit-cycle accounting now consume the ordered retire packets. `RetireQueue.Depth` records the planned eight-entry completion queue sizing for upcoming variable-latency pipe migration while the current fixed-latency scalar path stays functionally unchanged.
 - M33: Added `verif/directed/asm/dual_retire_m33_precise_trap_smoke.S`, which checks deterministic same-cycle dual integer retire before an `ecall` and verifies the precise trap path does not commit fall-through side effects.
+- M34: Made the memory pairing contract explicit in the lane-1 issue screen. Older lane-0 memory operations can pair with younger non-memory work, but the younger packet records `waitForOlderCommit` and cannot advance until the memory instruction has retired; younger memory remains rejected so the single LSU owns all load/store/AMO/cache-block side effects. Added `verif/directed/asm/dual_issue_m34_memory_pairing_smoke.S` to cover load+ALU, store+ALU, memory+memory scalarization, AMO+ALU ordering, and older misaligned-load trap squashing of a younger paired ALU write.
 
 ## Verification Checklist
 
@@ -163,5 +164,15 @@ Hard gates after every milestone:
   - [x] `sbt "runMain borb.SoC"`
   - [x] `make -C verif/riscof/borb/sim clean all`
   - [x] `./run_directed.sh verif/directed/asm/dual_retire_m33_precise_trap_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
+  - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
+  - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
+- M34:
+  - [x] `sbt compile`
+  - [x] `sbt "runMain borb.SoC"`
+  - [x] `make -C verif/riscof/borb/sim clean all`
+  - [x] `./run_directed.sh verif/directed/asm/dual_issue_m34_memory_pairing_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
+  - [x] `./run_directed.sh verif/directed/asm/rv64_zicbo_memory_model_smoke.S --march rv64gc_zicsr_zifencei_zicbom_zicbop_zicboz` (tohost `0x1`)
+  - [x] `./run_directed.sh verif/directed/asm/rv64_l1d_writeback_smoke.S --march rv64gc_zicsr_zifencei` (tohost `0x1`)
+  - [x] focused AMO RISCOF subset (`8/8`, zero generated failure reports)
   - [x] `./run_coremark.sh --profile` (`337,458` cycles, tohost `0x1`)
   - [x] `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` (`1540/1540`, zero generated failure reports)
