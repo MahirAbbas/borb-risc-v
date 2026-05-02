@@ -121,16 +121,16 @@ Acceptance:
 
 ### M8: Delete Obsolete Side-Path Code And Reduce LOC
 
-- Remove compatibility shims introduced during conversion.
-- Delete unused lane-1 bundles, copy helpers, duplicated result plumbing, and stale comments.
-- Keep the implementation smaller and more regular than before the refactor.
-- Prefer keyed payload access over custom side bundles whenever equivalent.
+- [x] Remove compatibility shims introduced during conversion.
+- [x] Delete unused lane-1 bundles, copy helpers, duplicated result plumbing, and stale comments.
+- [x] Keep the implementation smaller and more regular than before the refactor.
+- [x] Prefer keyed payload access over custom side bundles whenever equivalent.
 
 Acceptance:
-- Net line count in touched lane/backend/dispatch code decreases.
-- No remaining primary execution path depends on bespoke lane-1 stage registers.
-- `rg "lane1s[0-9]|copyLane1Header"` returns no active implementation hits.
-- `sbt compile` passes.
+- [x] Net line count in touched lane/backend/dispatch code decreases.
+- [x] No remaining primary execution path depends on bespoke lane-1 stage registers.
+- [x] `rg "lane1s[0-9]|copyLane1Header"` returns no active implementation hits.
+- [x] `sbt compile` passes.
 
 ### M9: Documentation And Final Validation
 
@@ -208,3 +208,5 @@ Debug-only:
 - 2026-05-02: M6 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.
 - 2026-05-02: M7 replaced the four named `lane1s*` stage registers with a single `lane1Pipe` vector and named aliases for decode/source/execute/writeback slots. The obsolete `copyLane1Header` helper is gone; stage-local source, branch, result, and commit fields are assigned explicitly once to satisfy Spinal's no-overlap elaboration checks. Ordered retire remains `Vec(RetirePacket(config), 2)` with lane 0 at index 0 and lane 1 at index 1.
 - 2026-05-02: M7 validation passed with `sbt "runMain borb.SoC"`, `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`, and `./run_coremark.sh --profile` passing with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
+- 2026-05-02: M8 removed stale lane-1 side-path bookkeeping (`lane1PairEpoch`, `lane1PairRejected`) and confirmed `rg "lane1s[0-9]|copyLane1Header"` has no active `src/main` implementation hits.
+- 2026-05-02: M8 validation passed with `sbt compile`. The M8 implementation cleanup diff in touched lane/backend/dispatch code is `src/main/CPU.scala | 4 ----`.

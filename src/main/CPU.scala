@@ -283,7 +283,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     val lane1PairPending = RegInit(False)
     val lane1PairOlderSeq = Reg(UInt(32 bits)) init(0)
-    val lane1PairEpoch = Reg(UInt(16 bits)) init(0)
     val lane1Pipe = Vec.fill(4)(Reg(PipelineSlot(config)) init(PipelineSlot(config).getZero))
     val lane1DecodeSlot = lane1Pipe(0)
     val lane1SrcSlot = lane1Pipe(1)
@@ -630,8 +629,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       !laneIssueMatrixYoungerBusy &&
       !laneIssueMatrixSameCycleRaw &&
       !laneIssueMatrixSameCycleWaw
-    val lane1PairRejected = lane1PairDecisionCycle && !lane1PairAccepted
-
     def initLaneSlotFrom(dst: PipelineSlot, src: PipelineSlot): Unit = {
       dst.valid := src.valid
       dst.epoch := src.epoch
@@ -1145,7 +1142,6 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     } elsewhen(lane1LeadConsume) {
       lane1PairPending := True
       lane1PairOlderSeq := fetch.scalarBoundaryPayload.scalarSeq
-      lane1PairEpoch := fetch.scalarBoundaryPayload.epoch
     }
 
     val lane1StageKill = redirectPipeline || redirectRspPending || redirectCommitPending
