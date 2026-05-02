@@ -22,7 +22,7 @@ import borb.core.CpuConfig
 import borb.vector.{DormantSharedVectorEngine, VectorDecode, VectorExceptionCause, VectorMemOp}
 import spinal.lib.misc.plugin.PluginHost
 import borb.common.MicroCode._
-import borb.common.LaneContracts
+import borb.common.{LaneContracts, LaneId}
 
 object CPU {
   def main(args: Array[String]) {
@@ -303,27 +303,18 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val lane0BoundaryProps = IssueSemantics.classify(lane0BoundaryDecoded.microCode)
     val lane1PreviewDecoded = Decoder.decodeInstruction(fetch.adapter.io.slot1PreviewInsn, withCompressed = config.cExtensionEnabled, xlen = config.xlen)
     val lane1PreviewProps = IssueSemantics.classify(lane1PreviewDecoded.microCode)
-    val lane1IsConditionalBranch =
-      (lane1Decoded.microCode === uopBEQ) ||
-      (lane1Decoded.microCode === uopBNE) ||
-      (lane1Decoded.microCode === uopBLT) ||
-      (lane1Decoded.microCode === uopBGE) ||
-      (lane1Decoded.microCode === uopBLTU) ||
-      (lane1Decoded.microCode === uopBGEU)
-    val lane1PreviewIsConditionalBranch =
-      (lane1PreviewDecoded.microCode === uopBEQ) ||
-      (lane1PreviewDecoded.microCode === uopBNE) ||
-      (lane1PreviewDecoded.microCode === uopBLT) ||
-      (lane1PreviewDecoded.microCode === uopBGE) ||
-      (lane1PreviewDecoded.microCode === uopBLTU) ||
-      (lane1PreviewDecoded.microCode === uopBGEU)
-    val lane0BoundaryIsConditionalBranch =
-      (lane0BoundaryDecoded.microCode === uopBEQ) ||
-      (lane0BoundaryDecoded.microCode === uopBNE) ||
-      (lane0BoundaryDecoded.microCode === uopBLT) ||
-      (lane0BoundaryDecoded.microCode === uopBGE) ||
-      (lane0BoundaryDecoded.microCode === uopBLTU) ||
-      (lane0BoundaryDecoded.microCode === uopBGEU)
+    def isConditionalBranch(microCode: borb.common.MicroCode.C): Bool = {
+      (microCode === uopBEQ) ||
+      (microCode === uopBNE) ||
+      (microCode === uopBLT) ||
+      (microCode === uopBGE) ||
+      (microCode === uopBLTU) ||
+      (microCode === uopBGEU)
+    }
+
+    val lane1IsConditionalBranch = isConditionalBranch(lane1Decoded.microCode)
+    val lane1PreviewIsConditionalBranch = isConditionalBranch(lane1PreviewDecoded.microCode)
+    val lane0BoundaryIsConditionalBranch = isConditionalBranch(lane0BoundaryDecoded.microCode)
     val lane1BoundaryStaticRaw =
       lane0BoundaryProps.writesIntRd &&
       (lane0BoundaryDecoded.rdAddr =/= 0) &&
@@ -344,6 +335,47 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       (pipeline.ctrl(9).up(COMMIT) && (pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SEQ) === seq)) ||
       (lastCommittedSeqValid(0) && (lastCommittedSeq0 === seq)) ||
       (lastCommittedSeqValid(1) && (lastCommittedSeq1 === seq))
+    }
+
+    def buildLaneIssueSlot(
+        laneId: Int,
+        valid: Bool,
+        entry: ScalarFetchEntry,
+        olderSeq: UInt,
+        decoded: Decoder.DecoderResult,
+        issueProps: IssuePropertyBundle,
+        waitForOlderCommit: Bool
+    ): PipelineSlot = {
+      val slot = PipelineSlot(config)
+      slot.assignDontCare()
+      slot.valid := valid
+      slot.epoch := entry.epoch
+      slot.fetchSeq := entry.scalarSeq
+      slot.olderSeq := olderSeq
+      slot.bundleSeq := entry.bundleSeq
+      slot.slotIdx := entry.slotIdx.resized
+      slot.slotCount := entry.slotCount.resized
+      slot.ftqIdx := entry.ftqIndex.resized
+      slot.pc := entry.pc
+      slot.blockPc := entry.blockPc
+      slot.byteOffset := entry.byteOffsetInBlock.resized
+      slot.predictedValid := entry.predictedValid
+      slot.predictedTaken := entry.predictedTaken
+      slot.predictedTarget := entry.predictedTarget
+      slot.decodedInstruction := decoded.decodedInstruction
+      slot.isCompressed := decoded.isCompressed
+      slot.legal := decoded.legal
+      slot.microCode := decoded.microCode
+      slot.rdAddr := decoded.rdAddr
+      slot.rs1Addr := decoded.rs1Addr
+      slot.rs2Addr := decoded.rs2Addr
+      slot.rs3Addr := decoded.rs3Addr
+      slot.issueProps := issueProps
+      slot.waitForOlderCommit := waitForOlderCommit
+      slot.sendToAlu := issueProps.fuMask(0)
+      slot.sendToBranch := issueProps.fuMask(1)
+      slot.selectedPipe := BackendPipe.select(decoded.microCode, issueProps, preferAlu1 = if(laneId == LaneId.Lane1) True else False)
+      slot
     }
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
@@ -537,13 +569,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lane1OlderStageValid &&
       (dispatchCtrl.up(borb.fetch.Fetch.FETCH_SEQ) === lane1PairOlderSeq)
     val lane1OlderProps = dispatchCtrl(IssueSemantics.PROPS)
-    val lane1OlderIsConditionalBranch =
-      (dispatchCtrl(Decoder.MicroCode) === uopBEQ) ||
-      (dispatchCtrl(Decoder.MicroCode) === uopBNE) ||
-      (dispatchCtrl(Decoder.MicroCode) === uopBLT) ||
-      (dispatchCtrl(Decoder.MicroCode) === uopBGE) ||
-      (dispatchCtrl(Decoder.MicroCode) === uopBLTU) ||
-      (dispatchCtrl(Decoder.MicroCode) === uopBGEU)
+    val lane1OlderIsConditionalBranch = isConditionalBranch(dispatchCtrl(Decoder.MicroCode))
     val lane1OlderPairable =
       !lane1OlderProps.pairBarrier &&
       (!lane1OlderProps.isControlFlow || lane1OlderIsConditionalBranch)
@@ -613,34 +639,15 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
 
     val lane1IssueCapture = PipelineSlot(config)
-    lane1IssueCapture.assignDontCare()
-    lane1IssueCapture.valid := lane1PairAccepted
-    lane1IssueCapture.epoch := lane1Candidate.epoch
-    lane1IssueCapture.fetchSeq := lane1Candidate.scalarSeq
-    lane1IssueCapture.olderSeq := lane1PairOlderSeq
-    lane1IssueCapture.bundleSeq := lane1Candidate.bundleSeq
-    lane1IssueCapture.slotIdx := lane1Candidate.slotIdx.resized
-    lane1IssueCapture.slotCount := lane1Candidate.slotCount.resized
-    lane1IssueCapture.ftqIdx := lane1Candidate.ftqIndex.resized
-    lane1IssueCapture.pc := lane1Candidate.pc
-    lane1IssueCapture.blockPc := lane1Candidate.blockPc
-    lane1IssueCapture.byteOffset := lane1Candidate.byteOffsetInBlock.resized
-    lane1IssueCapture.predictedValid := lane1Candidate.predictedValid
-    lane1IssueCapture.predictedTaken := lane1Candidate.predictedTaken
-    lane1IssueCapture.predictedTarget := lane1Candidate.predictedTarget
-    lane1IssueCapture.decodedInstruction := lane1Decoded.decodedInstruction
-    lane1IssueCapture.isCompressed := lane1Decoded.isCompressed
-    lane1IssueCapture.legal := lane1Decoded.legal
-    lane1IssueCapture.microCode := lane1Decoded.microCode
-    lane1IssueCapture.rdAddr := lane1Decoded.rdAddr
-    lane1IssueCapture.rs1Addr := lane1Decoded.rs1Addr
-    lane1IssueCapture.rs2Addr := lane1Decoded.rs2Addr
-    lane1IssueCapture.rs3Addr := lane1Decoded.rs3Addr
-    lane1IssueCapture.issueProps := lane1IssueProps
-    lane1IssueCapture.waitForOlderCommit := lane1OlderMemory || lane1OlderFp
-    lane1IssueCapture.sendToAlu := lane1IssueProps.fuMask(0)
-    lane1IssueCapture.sendToBranch := lane1IssueProps.fuMask(1)
-    lane1IssueCapture.selectedPipe := BackendPipe.select(lane1Decoded.microCode, lane1IssueProps, preferAlu1 = True)
+    lane1IssueCapture := buildLaneIssueSlot(
+      LaneId.Lane1,
+      lane1PairAccepted,
+      lane1Candidate,
+      lane1PairOlderSeq,
+      lane1Decoded,
+      lane1IssueProps,
+      lane1OlderMemory || lane1OlderFp
+    )
 
     srcPlugin.regfileread.regfile.io.reads(2).address := lane1s4.rs1Addr.asUInt
     srcPlugin.regfileread.regfile.io.reads(2).valid := lane1s4.valid && lane1s4.issueProps.readsIntRs1

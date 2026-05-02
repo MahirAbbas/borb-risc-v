@@ -66,17 +66,17 @@ Acceptance:
 
 ### M4: Convert Decode And Issue To Lane-Keyed Structure
 
-- Convert lane-local decode and issue metadata to keyed payloads.
-- Replace manual lane-1 decode preview/capture fields where possible.
-- Keep lane-1 policy unchanged:
+- [x] Convert lane-local decode and issue metadata to keyed payloads.
+- [x] Replace manual lane-1 decode preview/capture fields where possible.
+- [x] Keep lane-1 policy unchanged:
   - integer ALU and conditional branch only,
   - no memory/AMO/FP/CSR/vector/serializing/jump pairing.
-- Keep `BackendPipe.select(..., preferAlu1 = laneId == 1)` behavior.
+- [x] Keep `BackendPipe.select(..., preferAlu1 = laneId == 1)` behavior.
 
 Acceptance:
-- `sbt compile` passes.
-- Frozen ACT4 subset passes.
-- Code no longer duplicates decode/issue field capture for lane 1 except where required for fetch preview.
+- [x] `sbt compile` passes.
+- [x] Frozen ACT4 subset passes.
+- [x] Code no longer duplicates decode/issue field capture for lane 1 except where required for fetch preview.
 
 ### M5: Centralize Lane-Aware Hazard And Pairing Logic
 
@@ -200,3 +200,5 @@ Debug-only:
 - 2026-05-02: M2 validation passed: `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` ran from `verif/act4/work/run-scopes/2485ff50a4ca/.../elfs` and passed `51/51`; `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --skip-build --run-only --sim-jobs 10 --sim-threads 1` reran the same scoped selection and passed `51/51`.
 - 2026-05-02: M3 introduced `LaneId` and `LaneKeyedPayload` in `src/main/common/LaneContracts.scala`. `BackendIssue.SELECTED_PIPE_BY_LANE.lane0` now mirrors the existing selected-pipe metadata as the first non-critical lane-keyed payload use; the canonical behavior-driving payload remains `BackendIssue.SELECTED_PIPE`.
 - 2026-05-02: M3 validation passed with `sbt compile`.
+- 2026-05-02: M4 replaced the manual lane-1 issue-capture assignment block with `buildLaneIssueSlot(laneId, ...)`, preserving `BackendPipe.select(..., preferAlu1 = laneId == LaneId.Lane1)`. Conditional branch classification is now shared by lane-0 boundary, lane-1 preview, lane-1 candidate, and older-dispatch checks.
+- 2026-05-02: M4 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.
