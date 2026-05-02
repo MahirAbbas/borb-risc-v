@@ -4,6 +4,7 @@ import spinal.core._
 import spinal.lib.misc.pipeline._
 import borb.core.CpuConfig
 import borb.dispatch.{IssuePropertyBundle, RegFileWrite}
+import borb.common.LaneKeyedPayload
 import borb.common.MicroCode
 import borb.common.MicroCode._
 
@@ -86,6 +87,7 @@ object BackendPipe extends SpinalEnum {
 
 object BackendIssue extends AreaObject {
   val SELECTED_PIPE = Payload(BackendPipe()).setName("BACKEND_SELECTED_PIPE")
+  val SELECTED_PIPE_BY_LANE = LaneKeyedPayload("BACKEND_SELECTED_PIPE_BY_LANE", HardType(BackendPipe()))
 }
 
 object RetireQueue {

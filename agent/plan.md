@@ -40,10 +40,10 @@ Acceptance:
 
 ### M3: Add Lane-Keyed Payload Infrastructure
 
-- Add lane ids `0` and `1`.
-- Add minimal helpers around SpinalHDL keyed payload access.
-- Define which payloads are lane-local versus global.
-- Do not change behavior yet.
+- [x] Add lane ids `0` and `1`.
+- [x] Add minimal helpers around SpinalHDL keyed payload access.
+- [x] Define which payloads are lane-local versus global.
+- [x] Do not change behavior yet.
 
 Lane-local payloads:
 - decode valid/instruction/micro-op/register fields,
@@ -60,9 +60,9 @@ Global payloads:
 - PC sequencing where shared.
 
 Acceptance:
-- `sbt compile` passes.
-- Existing behavior is unchanged.
-- New helpers are used by at least one non-critical payload path to prove the pattern.
+- [x] `sbt compile` passes.
+- [x] Existing behavior is unchanged.
+- [x] New helpers are used by at least one non-critical payload path to prove the pattern.
 
 ### M4: Convert Decode And Issue To Lane-Keyed Structure
 
@@ -183,7 +183,7 @@ Debug-only:
 ## Verification Checklist
 
 - [x] M1 docs policy review complete.
-- [ ] `sbt compile`
+- [x] `sbt compile`
 - [ ] `sbt "runMain borb.SoC"`
 - [x] Frozen ACT4 subset via `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
 - [x] Focused ACT4 subset demonstrating run-scoped selection.
@@ -198,3 +198,5 @@ Debug-only:
 - 2026-05-02: M2 uses a deterministic repo-local ACT4 workdir scope when `--extensions` or `--exclude` is present. The scope key includes profile, extension filter, and exclusion filter, so focused runs build and run from their own `verif/act4/work/run-scopes/<hash>` tree while full telemetry keeps the historical `verif/act4/work` tree.
 - 2026-05-02: The first scoped `I` ACT4 run built 204 selected ELFs in the scoped workdir, then exposed stale Verilator dependency files in `verif/borb-sim/build/obj_dir` that still referenced the old RISCOF simulator tree. `verif/borb-sim/sim/Makefile` now deletes generated `.d` files before rerunning Verilator so the simulator rebuild uses current local paths.
 - 2026-05-02: M2 validation passed: `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` ran from `verif/act4/work/run-scopes/2485ff50a4ca/.../elfs` and passed `51/51`; `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --skip-build --run-only --sim-jobs 10 --sim-threads 1` reran the same scoped selection and passed `51/51`.
+- 2026-05-02: M3 introduced `LaneId` and `LaneKeyedPayload` in `src/main/common/LaneContracts.scala`. `BackendIssue.SELECTED_PIPE_BY_LANE.lane0` now mirrors the existing selected-pipe metadata as the first non-critical lane-keyed payload use; the canonical behavior-driving payload remains `BackendIssue.SELECTED_PIPE`.
+- 2026-05-02: M3 validation passed with `sbt compile`.

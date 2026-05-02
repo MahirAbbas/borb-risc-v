@@ -1,6 +1,24 @@
 package borb.common
 
 import spinal.core._
+import spinal.lib.misc.pipeline._
+
+object LaneId {
+  val Lane0 = 0
+  val Lane1 = 1
+  val Count = 2
+}
+
+case class LaneKeyedPayload[T <: Data](baseName: String, dataType: HardType[T]) {
+  val lanes = Seq.tabulate(LaneId.Count) { laneId =>
+    Payload(dataType()).setName(s"${baseName}_L$laneId")
+  }
+
+  def apply(laneId: Int): Payload[T] = lanes(laneId)
+
+  def lane0: Payload[T] = lanes(LaneId.Lane0)
+  def lane1: Payload[T] = lanes(LaneId.Lane1)
+}
 
 object LaneContracts {
   val slotCountWidth = 2

@@ -136,6 +136,7 @@ case class Dispatch(
     down(LANE_SEL) := False
     down(IssueSemantics.PROPS) := issueProps
     down(BackendIssue.SELECTED_PIPE) := Mux(up(Decoder.VALID), selectedPipe, BackendPipe.None)
+    down(BackendIssue.SELECTED_PIPE_BY_LANE.lane0) := Mux(up(Decoder.VALID), selectedPipe, BackendPipe.None)
 
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)
