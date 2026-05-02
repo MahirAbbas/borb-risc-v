@@ -569,27 +569,51 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lane1OlderStageValid &&
       (dispatchCtrl.up(borb.fetch.Fetch.FETCH_SEQ) === lane1PairOlderSeq)
     val lane1OlderProps = dispatchCtrl(IssueSemantics.PROPS)
-    val lane1OlderIsConditionalBranch = isConditionalBranch(dispatchCtrl(Decoder.MicroCode))
-    val lane1OlderPairable =
-      !lane1OlderProps.pairBarrier &&
-      (!lane1OlderProps.isControlFlow || lane1OlderIsConditionalBranch)
-    val lane1Rs1Busy = lane1IssueProps.readsIntRs1 &&
-      (lane1Decoded.rs1Addr =/= 0) &&
-      dispatcher.hcs.regBusy(lane1Decoded.rs1Addr.asUInt)
-    val lane1Rs2Busy = lane1IssueProps.readsIntRs2 &&
-      (lane1Decoded.rs2Addr =/= 0) &&
-      dispatcher.hcs.regBusy(lane1Decoded.rs2Addr.asUInt)
-    val lane1SameCycleRaw = lane1OlderProps.writesIntRd &&
-      (dispatchCtrl(Decoder.RD_ADDR) =/= 0) &&
+    case class LaneIssueView(
+        props: IssuePropertyBundle,
+        microCode: borb.common.MicroCode.C,
+        rdAddr: Bits,
+        rs1Addr: Bits,
+        rs2Addr: Bits
+    )
+    val issueLane0 = LaneIssueView(
+      lane1OlderProps,
+      dispatchCtrl(Decoder.MicroCode),
+      dispatchCtrl(Decoder.RD_ADDR),
+      dispatchCtrl(Decoder.RS1_ADDR),
+      dispatchCtrl(Decoder.RS2_ADDR)
+    )
+    val issueLane1 = LaneIssueView(
+      lane1IssueProps,
+      lane1Decoded.microCode,
+      lane1Decoded.rdAddr,
+      lane1Decoded.rs1Addr,
+      lane1Decoded.rs2Addr
+    )
+    def issuePairable(view: LaneIssueView): Bool =
+      !view.props.pairBarrier && (!view.props.isControlFlow || isConditionalBranch(view.microCode))
+    def olderBusyReject(younger: LaneIssueView): Bool = {
+      val rs1Busy = younger.props.readsIntRs1 && (younger.rs1Addr =/= 0) && dispatcher.hcs.regBusy(younger.rs1Addr.asUInt)
+      val rs2Busy = younger.props.readsIntRs2 && (younger.rs2Addr =/= 0) && dispatcher.hcs.regBusy(younger.rs2Addr.asUInt)
+      rs1Busy || rs2Busy
+    }
+    def sameCycleRawReject(older: LaneIssueView, younger: LaneIssueView): Bool =
+      older.props.writesIntRd &&
+      (older.rdAddr =/= 0) &&
       (
-        (lane1IssueProps.readsIntRs1 && (lane1Decoded.rs1Addr === dispatchCtrl(Decoder.RD_ADDR))) ||
-        (lane1IssueProps.readsIntRs2 && (lane1Decoded.rs2Addr === dispatchCtrl(Decoder.RD_ADDR)))
+        (younger.props.readsIntRs1 && (younger.rs1Addr === older.rdAddr)) ||
+        (younger.props.readsIntRs2 && (younger.rs2Addr === older.rdAddr))
       )
-    val lane1SameCycleWaw = lane1OlderProps.writesIntRd &&
-      lane1IssueProps.writesIntRd &&
-      (dispatchCtrl(Decoder.RD_ADDR) =/= 0) &&
-      (lane1Decoded.rdAddr === dispatchCtrl(Decoder.RD_ADDR))
-    val lane1YoungerMemory = lane1IssueProps.isLoad || lane1IssueProps.isStore
+    def sameCycleWawReject(older: LaneIssueView, younger: LaneIssueView): Bool =
+      older.props.writesIntRd &&
+      younger.props.writesIntRd &&
+      (older.rdAddr =/= 0) &&
+      (younger.rdAddr === older.rdAddr)
+    val laneIssueMatrixOlderPairable = issuePairable(issueLane0)
+    val laneIssueMatrixYoungerBusy = olderBusyReject(issueLane1)
+    val laneIssueMatrixSameCycleRaw = sameCycleRawReject(issueLane0, issueLane1)
+    val laneIssueMatrixSameCycleWaw = sameCycleWawReject(issueLane0, issueLane1)
+    val laneIssueMatrixYoungerMemory = issueLane1.props.isLoad || issueLane1.props.isStore
     val lane1OlderMemory = lane1OlderProps.isLoad || lane1OlderProps.isStore
     val lane1OlderFp =
       lane1OlderProps.readsFpRs1 || lane1OlderProps.readsFpRs2 || lane1OlderProps.readsFpRs3 || lane1OlderProps.writesFpRd
@@ -597,15 +621,14 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lane1CandidateValid &&
       lane1Decoded.valid &&
       lane1IssueProps.lane1Compatible &&
-      !lane1YoungerMemory &&
+      !laneIssueMatrixYoungerMemory &&
       (!lane1IssueProps.isControlFlow || lane1IsConditionalBranch) &&
-      lane1OlderPairable &&
+      laneIssueMatrixOlderPairable &&
       !lane1OlderProps.pairBarrier &&
       !lane1IssueProps.pairBarrier &&
-      !lane1Rs1Busy &&
-      !lane1Rs2Busy &&
-      !lane1SameCycleRaw &&
-      !lane1SameCycleWaw
+      !laneIssueMatrixYoungerBusy &&
+      !laneIssueMatrixSameCycleRaw &&
+      !laneIssueMatrixSameCycleWaw
     val lane1PairRejected = lane1PairDecisionCycle && !lane1PairAccepted
 
     def copyLane1Header(dst: PipelineSlot, src: PipelineSlot): Unit = {

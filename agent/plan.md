@@ -80,17 +80,17 @@ Acceptance:
 
 ### M5: Centralize Lane-Aware Hazard And Pairing Logic
 
-- Replace special-case lane-1 RAW/WAW/busy checks with a shared two-lane issue matrix.
-- Represent pair barriers, lane compatibility, and older-in-flight hazards uniformly.
-- Preserve scalar fallback behavior exactly.
+- [x] Replace special-case lane-1 RAW/WAW/busy checks with a shared two-lane issue matrix.
+- [x] Represent pair barriers, lane compatibility, and older-in-flight hazards uniformly.
+- [x] Preserve scalar fallback behavior exactly.
 
 Acceptance:
-- Same-cycle RAW rejection still works.
-- Same-cycle WAW rejection still works.
-- Older busy register rejection still works.
-- Lane-1 unsupported classes still scalarize.
-- Frozen ACT4 subset passes.
-- CoreMark still passes.
+- [x] Same-cycle RAW rejection still works.
+- [x] Same-cycle WAW rejection still works.
+- [x] Older busy register rejection still works.
+- [x] Lane-1 unsupported classes still scalarize.
+- [x] Frozen ACT4 subset passes.
+- [x] CoreMark still passes.
 
 ### M6: Convert Source Read And Bypass To Lane-Keyed Structure
 
@@ -187,7 +187,7 @@ Debug-only:
 - [ ] `sbt "runMain borb.SoC"`
 - [x] Frozen ACT4 subset via `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
 - [x] Focused ACT4 subset demonstrating run-scoped selection.
-- [ ] `./run_coremark.sh --profile`
+- [x] `./run_coremark.sh --profile`
 - [ ] Full ACT4 telemetry via `./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
 - [ ] Code reduction audit for lane/backend/dispatch paths.
 
@@ -202,3 +202,5 @@ Debug-only:
 - 2026-05-02: M3 validation passed with `sbt compile`.
 - 2026-05-02: M4 replaced the manual lane-1 issue-capture assignment block with `buildLaneIssueSlot(laneId, ...)`, preserving `BackendPipe.select(..., preferAlu1 = laneId == LaneId.Lane1)`. Conditional branch classification is now shared by lane-0 boundary, lane-1 preview, lane-1 candidate, and older-dispatch checks.
 - 2026-05-02: M4 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.
+- 2026-05-02: M5 introduced `LaneIssueView` helpers for pairability, older busy-register rejection, same-cycle RAW rejection, and same-cycle WAW rejection. The lane-1 acceptance expression now consumes those matrix-style predicates while preserving the previous lane-1 compatibility, memory scalarization, barrier, and older-memory/FP wait behavior.
+- 2026-05-02: M5 validation passed. `./run_directed.sh verif/directed/asm/dual_issue_m32_integer_branch_smoke.S --march rv64gc_zicsr_zifencei --rebuild-sim` passed as debug-only targeted coverage for RAW/WAW/scalarization behavior. `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passed `51/51`. `./run_coremark.sh --profile` passed with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
