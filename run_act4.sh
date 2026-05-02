@@ -103,6 +103,15 @@ echo "Profile: $PROFILE"
 echo "Suite: $ARCH_TEST_DIR"
 echo "Config: $CONFIG_FILE"
 
+RUN_WORKDIR="$WORKDIR"
+if [[ -n "$EXTENSIONS" || -n "$EXCLUDE_EXTENSIONS" ]]; then
+  scope_key="profile=$PROFILE extensions=$EXTENSIONS exclude=$EXCLUDE_EXTENSIONS"
+  scope_hash="$(printf '%s' "$scope_key" | shasum -a 256 | awk '{print substr($1, 1, 12)}')"
+  RUN_WORKDIR="$WORKDIR/run-scopes/$scope_hash"
+  echo "ACT4 scope: $scope_key"
+  echo "Scoped workdir: $RUN_WORKDIR"
+fi
+
 if [[ "$RUN_ONLY" != true ]]; then
   if [[ "$SKIP_GEN" != true ]]; then
     echo "[1/3] Compiling SpinalHDL to Verilog (SoC)..."
@@ -111,14 +120,14 @@ if [[ "$RUN_ONLY" != true ]]; then
 
   echo "[2/3] Building ACT4 ELFs..."
   if [[ -z "$EXTENSIONS" ]]; then
-    vector_args=(-C "$ARCH_TEST_DIR" "WORKDIR=$WORKDIR")
+    vector_args=(-C "$ARCH_TEST_DIR" "WORKDIR=$RUN_WORKDIR")
     if [[ -n "$JOBS" ]]; then vector_args+=("-j$JOBS" "JOBS=$JOBS"); fi
     make "${vector_args[@]}" vector-tests
   fi
   make_args=(
     -C "$ARCH_TEST_DIR"
     "CONFIG_FILES=$CONFIG_FILE"
-    "WORKDIR=$WORKDIR"
+    "WORKDIR=$RUN_WORKDIR"
     "EXCLUDE_EXTENSIONS=$EXCLUDE_EXTENSIONS"
   )
   if [[ -n "$JOBS" ]]; then make_args+=("-j$JOBS" "JOBS=$JOBS"); fi
@@ -142,9 +151,12 @@ if [[ "$SKIP_BUILD" != true ]]; then
   "${sim_make[@]}"
 fi
 
-ELF_DIR="$WORKDIR/borb-RVA23S64/elfs"
+ELF_DIR="$RUN_WORKDIR/borb-RVA23S64/elfs"
 if [[ ! -d "$ELF_DIR" ]]; then
   echo "Error: ACT4 ELF directory not found: $ELF_DIR"
+  if [[ "$RUN_ONLY" = true && ( -n "$EXTENSIONS" || -n "$EXCLUDE_EXTENSIONS" ) ]]; then
+    echo "Hint: build this scoped ACT4 selection once without --run-only before rerunning it."
+  fi
   exit 1
 fi
 

@@ -24,13 +24,41 @@ sbt "runMain borb.SoC"
 
 ## Verification commands
 
-Full architectural gate:
+Hard cleanup gates use ACT4 subsets plus compile/elaboration and CoreMark. Full RVA23S64 remains telemetry until the missing-profile ledger is closed.
+
+Frozen current baseline:
+
+- Current claim: RV64GC-class scalar/profile subset with `M/S/U`, `Sv39`, scalar RVA23 companion extensions documented below, and directed-tested vector slices that are not full `V` claims.
+- Current lane policy: asymmetric two-wide in-order issue. Lane 0 owns the full scalar backend; lane 1 may pair only restricted integer ALU and conditional-branch work and must scalarize memory, AMO, FP, CSR/trap, vector, serializing, jump, and unsupported classes.
+- Current CoreMark profile baseline: `337,458` cycles / `2.9633317331341975 CoreMark/MHz` on `./run_coremark.sh --profile`.
+- Full RVA23S64 is roadmap telemetry, not a cleanup acceptance gate.
+
+Official cleanup regression path:
+
+```bash
+sbt compile
+sbt "runMain borb.SoC"
+./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+./run_coremark.sh --profile
+```
+
+Focused ACT4 subset examples:
+
+```bash
+./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+./run_act4.sh --profile rva23s64-full --extensions Zca --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+./run_act4.sh --profile rva23s64-full --extensions Zba,Zbb,Zbs --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+```
+
+Filtered ACT4 runs use a deterministic repo-local scoped workdir under `verif/act4/work/run-scopes/<hash>`, keyed by profile plus include/exclude filters. The same filter with `--skip-gen --skip-build --run-only` reruns the existing selected ELF set from that scoped workdir, so stale ELFs from earlier broader runs are not executed.
+
+Full RVA23S64 telemetry:
 
 ```bash
 ./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
 ```
 
-Directed assembly debug:
+Directed assembly is debug-only. Use it for custom repros, waveforms, traces, or lightweight performance probes; it is not a signoff path for this cleanup program.
 
 ```bash
 ./run_directed.sh verif/directed/asm/<test>.S --march rv64gc_zicsr_zifencei --trace

@@ -52,6 +52,7 @@ all: $(BUILD_DIR)/borb-sim
 
 $(BUILD_DIR)/borb-sim: borb_sim.cpp $(VERILOG)
 	$(Q)mkdir -p $(BUILD_DIR) $(OBJ_DIR)
+	$(Q)find $(OBJ_DIR) -name '*.d' -delete
 	$(Q)verilator -cc $(VERILOG) --top-module $(TOP) --exe borb_sim.cpp \
 		--Mdir $(OBJ_DIR) $(VERILATOR_TRACE_FLAG) $(VERILATOR_THREADS_FLAG) $(VERILATOR_JOBS_FLAG) \
 		--output-split $(OUTPUT_SPLIT) --output-split-cfuncs $(OUTPUT_SPLIT) \
