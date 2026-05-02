@@ -94,15 +94,15 @@ Acceptance:
 
 ### M6: Convert Source Read And Bypass To Lane-Keyed Structure
 
-- Replace hardcoded lane-1 regfile read plumbing with lane-indexed source read mapping.
-- Preserve current physical port allocation.
-- Keep integer bypass semantics unchanged.
-- Do not add FP/vector lane-1 reads.
+- [x] Replace hardcoded lane-1 regfile read plumbing with lane-indexed source read mapping.
+- [x] Preserve current physical port allocation.
+- [x] Keep integer bypass semantics unchanged.
+- [x] Do not add FP/vector lane-1 reads.
 
 Acceptance:
-- `sbt compile` passes.
-- Frozen ACT4 subset passes.
-- Existing integer pairing smoke coverage is represented through ACT4 subset coverage or debug-only directed repro.
+- [x] `sbt compile` passes.
+- [x] Frozen ACT4 subset passes.
+- [x] Existing integer pairing smoke coverage is represented through ACT4 subset coverage or debug-only directed repro.
 
 ### M7: Convert Execute, Writeback, And Retire
 
@@ -204,3 +204,5 @@ Debug-only:
 - 2026-05-02: M4 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.
 - 2026-05-02: M5 introduced `LaneIssueView` helpers for pairability, older busy-register rejection, same-cycle RAW rejection, and same-cycle WAW rejection. The lane-1 acceptance expression now consumes those matrix-style predicates while preserving the previous lane-1 compatibility, memory scalarization, barrier, and older-memory/FP wait behavior.
 - 2026-05-02: M5 validation passed. `./run_directed.sh verif/directed/asm/dual_issue_m32_integer_branch_smoke.S --march rv64gc_zicsr_zifencei --rebuild-sim` passed as debug-only targeted coverage for RAW/WAW/scalarization behavior. `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passed `51/51`. `./run_coremark.sh --profile` passed with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
+- 2026-05-02: M6 introduced an explicit lane-to-physical integer read-port map in `CPU.scala`: lane 0 remains ports `0/1`, lane 1 remains ports `2/3`. Lane-1 source read hookup and bypass resolution now go through `connectLaneIntReadPorts` / `resolveLaneIntRead` instead of hardcoded port literals.
+- 2026-05-02: M6 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.

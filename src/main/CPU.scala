@@ -672,23 +672,35 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lane1OlderMemory || lane1OlderFp
     )
 
-    srcPlugin.regfileread.regfile.io.reads(2).address := lane1s4.rs1Addr.asUInt
-    srcPlugin.regfileread.regfile.io.reads(2).valid := lane1s4.valid && lane1s4.issueProps.readsIntRs1
-    srcPlugin.regfileread.regfile.io.reads(3).address := lane1s4.rs2Addr.asUInt
-    srcPlugin.regfileread.regfile.io.reads(3).valid := lane1s4.valid && lane1s4.issueProps.readsIntRs2
+    case class LaneIntReadPorts(rs1: Int, rs2: Int)
+    val laneIntReadPorts = Seq(
+      LaneIntReadPorts(rs1 = 0, rs2 = 1),
+      LaneIntReadPorts(rs1 = 2, rs2 = 3)
+    )
+    def connectLaneIntReadPorts(laneId: Int, slot: PipelineSlot): Unit = {
+      val ports = laneIntReadPorts(laneId)
+      srcPlugin.regfileread.regfile.io.reads(ports.rs1).address := slot.rs1Addr.asUInt
+      srcPlugin.regfileread.regfile.io.reads(ports.rs1).valid := slot.valid && slot.issueProps.readsIntRs1
+      srcPlugin.regfileread.regfile.io.reads(ports.rs2).address := slot.rs2Addr.asUInt
+      srcPlugin.regfileread.regfile.io.reads(ports.rs2).valid := slot.valid && slot.issueProps.readsIntRs2
+    }
+    def resolveLaneIntRead(laneId: Int, slot: PipelineSlot, rs2: Boolean): Bits = {
+      val ports = laneIntReadPorts(laneId)
+      val readPort = if(rs2) ports.rs2 else ports.rs1
+      val readValid = slot.valid && (if(rs2) slot.issueProps.readsIntRs2 else slot.issueProps.readsIntRs1)
+      val readAddress = if(rs2) slot.rs2Addr.asUInt else slot.rs1Addr.asUInt
+      SrcPlugin.resolveIntRead(
+        readValid,
+        readAddress,
+        srcPlugin.regfileread.regfile.io.reads(readPort).data,
+        Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass)
+      )
+    }
 
-    val lane1Rs1Resolved = SrcPlugin.resolveIntRead(
-      lane1s4.valid && lane1s4.issueProps.readsIntRs1,
-      lane1s4.rs1Addr.asUInt,
-      srcPlugin.regfileread.regfile.io.reads(2).data,
-      Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass)
-    )
-    val lane1Rs2Resolved = SrcPlugin.resolveIntRead(
-      lane1s4.valid && lane1s4.issueProps.readsIntRs2,
-      lane1s4.rs2Addr.asUInt,
-      srcPlugin.regfileread.regfile.io.reads(3).data,
-      Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass)
-    )
+    connectLaneIntReadPorts(LaneId.Lane1, lane1s4)
+
+    val lane1Rs1Resolved = resolveLaneIntRead(LaneId.Lane1, lane1s4, rs2 = false)
+    val lane1Rs2Resolved = resolveLaneIntRead(LaneId.Lane1, lane1s4, rs2 = true)
     val lane1Imm = new IMM(lane1s4.decodedInstruction)
     val lane1ImmValue = Bits(64 bits)
     lane1ImmValue := B(0, 64 bits)
