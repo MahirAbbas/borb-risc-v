@@ -134,19 +134,19 @@ Acceptance:
 
 ### M9: Documentation And Final Validation
 
-- Update `documentation.md` with:
+- [x] Update `documentation.md` with:
   - final lane-keyed architecture,
   - frozen baseline gate,
   - ACT4 subset usage,
   - directed debug-only status,
   - full RVA23S64 telemetry status.
-- Record validation results.
+- [x] Record validation results.
 
 Acceptance:
-- Frozen ACT4 subset passes.
-- CoreMark profile passes.
-- Full ACT4 telemetry command still runs and reports current known failures without being treated as cleanup failure.
-- Documentation matches actual commands and behavior.
+- [x] Frozen ACT4 subset passes.
+- [x] CoreMark profile passes.
+- [x] Full ACT4 telemetry command still runs and reports current known failures without being treated as cleanup failure.
+- [x] Documentation matches actual commands and behavior.
 
 ## Test Plan
 
@@ -184,12 +184,12 @@ Debug-only:
 
 - [x] M1 docs policy review complete.
 - [x] `sbt compile`
-- [ ] `sbt "runMain borb.SoC"`
+- [x] `sbt "runMain borb.SoC"`
 - [x] Frozen ACT4 subset via `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
 - [x] Focused ACT4 subset demonstrating run-scoped selection.
 - [x] `./run_coremark.sh --profile`
-- [ ] Full ACT4 telemetry via `./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
-- [ ] Code reduction audit for lane/backend/dispatch paths.
+- [x] Full ACT4 telemetry via `./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1`
+- [x] Code reduction audit for lane/backend/dispatch paths.
 
 ## Implementation Notes
 
@@ -210,3 +210,5 @@ Debug-only:
 - 2026-05-02: M7 validation passed with `sbt "runMain borb.SoC"`, `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`, and `./run_coremark.sh --profile` passing with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
 - 2026-05-02: M8 removed stale lane-1 side-path bookkeeping (`lane1PairEpoch`, `lane1PairRejected`) and confirmed `rg "lane1s[0-9]|copyLane1Header"` has no active `src/main` implementation hits.
 - 2026-05-02: M8 validation passed with `sbt compile`. The M8 implementation cleanup diff in touched lane/backend/dispatch code is `src/main/CPU.scala | 4 ----`.
+- 2026-05-02: M9 documentation updated for the final lane-keyed cleanup state, scoped ACT4 subsets, directed debug-only status, and full RVA23S64 telemetry policy.
+- 2026-05-02: Final M9 validation passed for the hard gates: `sbt compile`, `sbt "runMain borb.SoC"`, frozen ACT4 `I` subset `51/51`, and `./run_coremark.sh --profile` with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`. Full ACT4 telemetry completed all `1512` ELFs and reported the expected roadmap baseline, `531 passed / 981 failed`, at `verif/act4/work/borb-RVA23S64/summary.log`.
