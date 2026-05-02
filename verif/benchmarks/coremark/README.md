@@ -6,7 +6,7 @@ This directory contains a bare-metal CoreMark integration for borb simulator.
 
 1. RISC-V GCC toolchain in `PATH` (`riscv64-unknown-elf-gcc`, `nm`, `objdump` or rv32 variants).
 2. CoreMark source checkout at `verif/benchmarks/coremark/coremark` (or pass `--coremark-dir`).
-3. Built borb simulator (`verif/riscof/borb/build/borb-sim`), or run with `--rebuild-sim`.
+3. Built borb simulator (`verif/borb-sim/build/obj_dir/VSoC`), or run with `--rebuild-sim`.
 
 Example setup:
 
@@ -33,4 +33,4 @@ Outputs are written under `verif/benchmarks/coremark/out/<run>_<timestamp>/`.
 ## Profiling behavior
 
 Performance profiling is **opt-in**. No perf report is generated unless `--profile` is passed.
-This keeps RISCOF and other existing flows unaffected.
+This keeps ACT4 and other existing flows unaffected.

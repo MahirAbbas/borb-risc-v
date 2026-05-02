@@ -18,7 +18,7 @@ DEFAULT_STATE = ROOT / "verif/automation/overnight_state.json"
 DEFAULT_QUEUE = ROOT / "verif/automation/overnight_queue.json"
 DEFAULT_STOP = ROOT / "verif/automation/STOP"
 RUNS_DIR = ROOT / "verif/automation/runs"
-BUDGET_FILE = ROOT / "verif/riscof/cycle_budgets.json"
+BUDGET_FILE = ROOT / "verif/borb-sim/cycle_budgets.json"
 
 LEVELS = ["local", "smoke", "medium", "wide"]
 
@@ -72,11 +72,10 @@ def ensure_family_state(state: Dict[str, Any], family: Dict[str, Any]) -> Dict[s
 def fingerprint_sources() -> str:
     roots = [
         ROOT / "src/main",
-        ROOT / "verif/riscof/borb/sim",
+        ROOT / "verif/borb-sim/sim",
         ROOT / "build.sbt",
         ROOT / "project",
-        ROOT / "run_riscof.sh",
-        ROOT / "verif/riscof/borb/riscof_borb.py",
+        ROOT / "run_act4.sh",
     ]
     h = hashlib.sha256()
     for root in roots:
@@ -118,33 +117,14 @@ def build_job_spec(family: Dict[str, Any], family_state: Dict[str, Any], args: a
     wide_tests = family.get("wide_tests", [])
 
     run_args = [
-        str(ROOT / "run_riscof.sh"),
-        "--cycle-budget-mode", "hybrid",
-        "--cycle-budget-file", str(BUDGET_FILE),
+        str(ROOT / "run_act4.sh"),
+        "--profile", "rva23s64-full",
+        "--verilate-jobs", "10",
+        "--sim-jobs", "8",
+        "--sim-threads", "1",
     ]
     if args.fast:
-        run_args += ["--skip-validate", "--fast-sim", "--sim-jobs", "8", "--no-clean-build"]
-
-    if level == "local":
-        run_args += ["--tests", ",".join(tests)]
-    elif level == "smoke":
-        run_args += ["--tests", ",".join(union_tests(smoke_tests, tests))]
-    elif level == "medium":
-        mode = family.get("medium_mode")
-        if mode == "fast-rv32f":
-            run_args += ["--fast-rv32f"]
-        elif mode == "fast-rv64f":
-            run_args += ["--fast-rv64f"]
-        else:
-            run_args += ["--tests", ",".join(union_tests(medium_tests, smoke_tests, tests))]
-    else:
-        mode = family.get("wide_mode")
-        if mode == "fast-rv32f":
-            run_args += ["--fast-rv32f"]
-        elif mode == "fast-rv64f":
-            run_args += ["--fast-rv64f"]
-        else:
-            run_args += ["--tests", ",".join(union_tests(wide_tests, medium_tests, smoke_tests, tests))]
+        run_args += ["--skip-gen", "--skip-build"]
 
     if family.get("extra_args"):
         run_args += list(family["extra_args"])
@@ -167,8 +147,7 @@ def classify_job_result(summary: Dict[str, Any], run_rc: int) -> str:
 
 
 def latest_workdir_summary() -> Tuple[Path | None, Dict[str, Any]]:
-    workdirs = sorted((ROOT / "verif/riscof").glob("riscof_work*"), key=lambda p: p.stat().st_mtime)
-    latest_workdir = workdirs[-1] if workdirs else None
+    latest_workdir = ROOT / "verif/act4/work/borb-RVA23S64"
     summary = {"counts": {}}
     if latest_workdir and (latest_workdir / "borb_run_summary.json").exists():
         summary = load_json(latest_workdir / "borb_run_summary.json", {"counts": {}})
@@ -315,9 +294,6 @@ def main() -> int:
         fam_state = ensure_family_state(state, family)
         fam_state["name"] = family["name"]
         level, cmd, _ = build_job_spec(family, fam_state, args, state)
-        if "--tests" in cmd and not cmd[cmd.index("--tests") + 1]:
-            family["status"] = "planned"
-            continue
 
         fingerprint = fingerprint_sources()
         if state["global"].get("last_build_fingerprint") == fingerprint:

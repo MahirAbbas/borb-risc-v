@@ -1,0 +1,390 @@
+{
+  "count": 55,
+  "missing_upstream_coverage": [
+    {
+      "extension": "S",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "privilege",
+      "profile_source": "RVA23S64 privileged",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "U",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "privilege",
+      "profile_source": "RVA23S64 privileged",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicsr",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-trap",
+      "profile_source": "RVA23S64 scalar control",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicntr",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-counters",
+      "profile_source": "RVA23S64 counters",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zihpm",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-counters",
+      "profile_source": "RVA23S64 counters",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zba",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "scalar-alu",
+      "profile_source": "RVA23S64 bitmanip",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zbb",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "scalar-alu",
+      "profile_source": "RVA23S64 bitmanip",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zbs",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "scalar-alu",
+      "profile_source": "RVA23S64 bitmanip",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zca",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "compressed-decode",
+      "profile_source": "RVA23S64 compressed",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zcb",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "compressed-decode",
+      "profile_source": "RVA23S64 compressed",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zfa",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "fp",
+      "profile_source": "RVA23S64 FP companion",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zfhmin",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "fp",
+      "profile_source": "RVA23S64 half-minimum scalar",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicbom",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-cmo",
+      "profile_source": "RVA23S64 CMO",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicbop",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-cmo",
+      "profile_source": "RVA23S64 CMO",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicboz",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-cmo",
+      "profile_source": "RVA23S64 CMO",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zic64b",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-pma-cache",
+      "profile_source": "RVA23S64 memory profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ziccif",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-pma-cache",
+      "profile_source": "RVA23S64 memory profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ziccrse",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-pma-cache",
+      "profile_source": "RVA23S64 memory profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ziccamoa",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-pma-cache",
+      "profile_source": "RVA23S64 memory profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zicclsm",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "memory-pma-cache",
+      "profile_source": "RVA23S64 memory profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Za64rs",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "atomic-lsu",
+      "profile_source": "RVA23S64 atomic profile",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zihintpause",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "decode-fence",
+      "profile_source": "RVA23S64 hints",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zihintntl",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "decode-hints",
+      "profile_source": "RVA23S64 hints",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zawrs",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "decode-hints",
+      "profile_source": "RVA23S64 wait-on-reservation",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zkt",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "timing-contract",
+      "profile_source": "RVA23S64 scalar timing",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "PMA",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "platform-memory",
+      "profile_source": "RVA23S64 platform memory attributes",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sv39",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Svnapot",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Svpbmt",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm-pma",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Svinval",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm-tlb",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Svade",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sstc",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-timer",
+      "profile_source": "RVA23S64 supervisor timer",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sscofpmf",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-counters",
+      "profile_source": "RVA23S64 counter overflow",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Supm",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "address-generation",
+      "profile_source": "RVA23S64 pointer masking",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ssnpm",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "address-generation",
+      "profile_source": "RVA23S64 pointer masking",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ssu64xl",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-privilege",
+      "profile_source": "RVA23S64 supervisor CSR",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ss1p13",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "privilege",
+      "profile_source": "RVA23S64 mandatory privileged architecture version",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Svbare",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm",
+      "profile_source": "RVA23S64 supervisor VM",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ssccptr",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vm-pmp",
+      "profile_source": "RVA23S64 supervisor VM/PMP",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sstvecd",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-privilege",
+      "profile_source": "RVA23S64 supervisor CSR",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sstvala",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-trap",
+      "profile_source": "RVA23S64 supervisor CSR",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sscounterenw",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "csr-counters",
+      "profile_source": "RVA23S64 supervisor counters",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "V",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vector",
+      "profile_source": "RVA23S64 vector base",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zvfhmin",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vector-fp",
+      "profile_source": "RVA23S64 vector half-minimum",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zvbb",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vector-alu",
+      "profile_source": "RVA23S64 vector bitmanip",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Zvkt",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "vector-timing",
+      "profile_source": "RVA23S64 vector timing",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "H",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor",
+      "profile_source": "RVA23S64 hypervisor",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Sha",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor",
+      "profile_source": "RVA23S64 hypervisor profile bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Ssstateen",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-csr",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shcounterenw",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-csr",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shvstvala",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-csr",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shtvala",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-csr",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shvstvecd",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-csr",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shvsatpa",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-vm",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    },
+    {
+      "extension": "Shgatpa",
+      "next_step": "M45 must map to an existing group, add a local backfill manifest entry, or keep a waiver/blocker.",
+      "owner_area": "hypervisor-vm",
+      "profile_source": "RVA23S64 Sha bundle",
+      "reason": "No directly named checked-in riscv-arch-test group was found by local discovery."
+    }
+  ]
+}

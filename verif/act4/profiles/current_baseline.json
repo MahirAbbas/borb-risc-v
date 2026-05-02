@@ -1,0 +1,46 @@
+{
+  "profile": "current",
+  "milestone": "M39",
+  "date_recorded": "2026-05-01",
+  "intent": "Freeze the known-good pre-RVA23S64-full subset as the regression floor.",
+  "act4": {
+    "command": "./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1",
+    "isa_yaml": "pre-act4/borb/borb_isa.yaml",
+    "isa": "RV64IMAFDCSUZicbom_Zicbop_Zicboz_Zicond_Zicntr_Zicsr_Zifencei_Zihintpause_Zihpm_Zimop_Zfa_Zfh_Zca_Zcb_Zcmop_Zba_Zbb_Zbs_Svnapot",
+    "last_recorded_result": {
+      "pass": 1540,
+      "build": 0,
+      "infra": 0,
+      "mismatch": 0,
+      "timeout": 0
+    },
+    "selection_policy": {
+      "suite_tests_checked_in": 4231,
+      "exclude_higher_vm_by_default": true,
+      "zfh_filter": "Only the locally verified Zfhmin conversion subset is selected from Zfh tests.",
+      "svnapot_filter": "vm_reserved_svnapot_S_mode.S is excluded because it is a negative test for cores without Svnapot."
+    }
+  },
+  "coremark": {
+    "command": "./run_coremark.sh --profile",
+    "last_recorded_result": {
+      "status": "PASS",
+      "tohost": "0x1",
+      "cycles": 337458,
+      "coremark_per_mhz": 2.9633317331341975,
+      "cpi": 4.24246,
+      "ipc": 0.235712
+    },
+    "previous_pre_retime_floor": {
+      "cycles": 323354,
+      "coremark_per_mhz": 3.0925858347198427
+    }
+  },
+  "known_waivers_and_non_claims": [
+    "This profile is the current scalar/profile-support subset, not full RVA23S64.",
+    "Full base V, vector profile support, Zvbb claimability, and Zvkt remain unclaimed despite directed-tested vector slices.",
+    "Zawrs, Sstc, Sscofpmf, Zic64b, Ziccif, Ziccrse, Ziccamoa, Zicclsm, Za64rs, and Svpbmt remain implemented-assumption or partial surfaces that are not declared in borb_isa.yaml.",
+    "Zfh is declared as a local riscv-config workaround for the implemented Zfhmin conversion subset required by Zfa tooling.",
+    "Linux/OpenSBI, guest bring-up, SMP, full hypervisor, and OS-level profile validation are not part of the current subset."
+  ]
+}

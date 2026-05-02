@@ -1,5 +1,7 @@
 *.class
 *.log
+__pycache__/
+*.pyc
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -39,14 +41,13 @@ verif/benchmarks/*
 !verif/benchmarks/coremark/port/*.h
 !verif/benchmarks/coremark/port/*.ld
 verif/benchmarks/coremark/out/
-!verif/riscof/
-verif/riscof/*
-!verif/riscof/borb/
-verif/riscof/borb/*
-!verif/riscof/borb/sim/
-verif/riscof/borb/sim/*
-!verif/riscof/borb/sim/borb_sim.cpp
-!verif/riscof/cycle_budgets.json
+!verif/borb-sim/
+verif/borb-sim/*
+!verif/borb-sim/cycle_budgets.json
+!verif/borb-sim/sim/
+verif/borb-sim/sim/*
+!verif/borb-sim/sim/Makefile
+!verif/borb-sim/sim/borb_sim.cpp
 !verif/automation/
 verif/automation/*
 !verif/automation/overnight_queue.json
@@ -54,6 +55,16 @@ verif/automation/*
 !verif/automation/smoke_presets.json
 !verif/automation/runs/
 verif/automation/runs/*
+!verif/act4/
+verif/act4/*
+!verif/act4/riscv-arch-test/
+!verif/act4/borb-rva23s64/
+verif/act4/borb-rva23s64/results/
+verif/act4/borb-rva23s64/probe_results/
+!verif/act4/profiles/
+!verif/act4/profiles/**
+verif/act4/work/
+verif/act4/cache/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
@@ -80,10 +91,12 @@ bin/
 *.cf
 *.json
 *.vcd
-!verif/riscof/cycle_budgets.json
 !verif/automation/overnight_queue.json
 !verif/automation/overnight_state.json
 !verif/automation/smoke_presets.json
+!verif/act4/borb-rva23s64/*.json
+!verif/act4/profiles/*.json
+!verif/borb-sim/cycle_budgets.json
 !tester/src/test/resources/*.vhd
 !bug_waves/
 !bug_waves/*.vcd

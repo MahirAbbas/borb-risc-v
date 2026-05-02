@@ -1,0 +1,508 @@
+{
+  "counts": {
+    "accepted_by_current_metadata": 29,
+    "missing_from_profile_metadata": 30,
+    "unsupported_by_current_riscv_config": 12
+  },
+  "declared_extensions": [],
+  "features": [
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "I",
+      "owner_area": "scalar",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "M",
+      "owner_area": "scalar",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "A",
+      "owner_area": "atomic-lsu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "F",
+      "owner_area": "fp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "D",
+      "owner_area": "fp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "C",
+      "owner_area": "frontend-decode",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-profile",
+      "extension": "B",
+      "owner_area": "scalar-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "S",
+      "owner_area": "privilege",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "U",
+      "owner_area": "privilege",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicsr",
+      "owner_area": "csr-trap",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zifencei",
+      "owner_area": "frontend-memory",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicntr",
+      "owner_area": "csr-counters",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zihpm",
+      "owner_area": "csr-counters",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zba",
+      "owner_area": "scalar-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zbb",
+      "owner_area": "scalar-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zbs",
+      "owner_area": "scalar-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicond",
+      "owner_area": "scalar-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zimop",
+      "owner_area": "decode-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zcmop",
+      "owner_area": "compressed-decode",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zca",
+      "owner_area": "compressed-decode",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zcb",
+      "owner_area": "compressed-decode",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zfa",
+      "owner_area": "fp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "tooling-workaround",
+      "extension": "Zfhmin",
+      "owner_area": "fp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicbom",
+      "owner_area": "memory-cmo",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicbop",
+      "owner_area": "memory-cmo",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zicboz",
+      "owner_area": "memory-cmo",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Zic64b",
+      "owner_area": "memory-pma-cache",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Ziccif",
+      "owner_area": "memory-pma-cache",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Ziccrse",
+      "owner_area": "memory-pma-cache",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Ziccamoa",
+      "owner_area": "memory-pma-cache",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Zicclsm",
+      "owner_area": "memory-pma-cache",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Za64rs",
+      "owner_area": "atomic-lsu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Zihintpause",
+      "owner_area": "decode-fence",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Zihintntl",
+      "owner_area": "decode-hints",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Zawrs",
+      "owner_area": "decode-hints",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Zkt",
+      "owner_area": "timing-contract",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "PMA",
+      "owner_area": "platform-memory",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "PMP",
+      "owner_area": "pmp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Sv39",
+      "owner_area": "vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "accepted_by_current_metadata",
+      "declaration_status": "declared-current",
+      "extension": "Svnapot",
+      "owner_area": "vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Svpbmt",
+      "owner_area": "vm-pma",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Svinval",
+      "owner_area": "vm-tlb",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Svade",
+      "owner_area": "vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Sstc",
+      "owner_area": "csr-timer",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "unsupported_by_current_riscv_config",
+      "declaration_status": "validator-unsupported",
+      "extension": "Sscofpmf",
+      "owner_area": "csr-counters",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Supm",
+      "owner_area": "address-generation",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Ssnpm",
+      "owner_area": "address-generation",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Ssu64xl",
+      "owner_area": "csr-privilege",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Ss1p13",
+      "owner_area": "privilege",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Svbare",
+      "owner_area": "vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Ssccptr",
+      "owner_area": "vm-pmp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Sstvecd",
+      "owner_area": "csr-privilege",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Sstvala",
+      "owner_area": "csr-trap",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Sscounterenw",
+      "owner_area": "csr-counters",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "V",
+      "owner_area": "vector",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Zvfhmin",
+      "owner_area": "vector-fp",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Zvbb",
+      "owner_area": "vector-alu",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Zvkt",
+      "owner_area": "vector-timing",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "H",
+      "owner_area": "hypervisor",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Sha",
+      "owner_area": "hypervisor",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Ssstateen",
+      "owner_area": "hypervisor-csr",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shcounterenw",
+      "owner_area": "hypervisor-csr",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shvstvala",
+      "owner_area": "hypervisor-csr",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shtvala",
+      "owner_area": "hypervisor-csr",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shvstvecd",
+      "owner_area": "hypervisor-csr",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shvsatpa",
+      "owner_area": "hypervisor-vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "missing",
+      "extension": "Shgatpa",
+      "owner_area": "hypervisor-vm",
+      "requirement": "mandatory"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "not-profile-claim",
+      "extension": "RV32 suites",
+      "owner_area": "act4-harness",
+      "requirement": "localized"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "not-profile-claim",
+      "extension": "Sv48/Sv57",
+      "owner_area": "vm",
+      "requirement": "out-of-scope"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "not-profile-claim",
+      "extension": "SMP",
+      "owner_area": "soc",
+      "requirement": "out-of-scope"
+    },
+    {
+      "classification": "missing_from_profile_metadata",
+      "declaration_status": "not-isa",
+      "extension": "Dhrystone",
+      "owner_area": "benchmarks",
+      "requirement": "optional"
+    }
+  ],
+  "isa_yaml": ""
+}

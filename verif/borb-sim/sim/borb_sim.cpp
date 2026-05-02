@@ -709,7 +709,7 @@ int main(int argc, char** argv) {
           << " s3_down_valid=0"
           << " s3_seq=" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_Fetch_FETCH_SEQ
           << " s3_epoch=" << rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_up_Common_SPEC_EPOCH
-          << " s3_dec_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_VALID
+          << " s3_dec_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_valid
           << " s3_insn=0x" << (uint32_t)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_3_down_Decoder_DECODED_INSTRUCTION
           << " x_valid=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Decoder_VALID
           << " x_lane=" << (int)rootp->SoC__DOT__area_cpu__DOT__coreArea_pipeline_ctrl_8_up_Common_LANE_SEL

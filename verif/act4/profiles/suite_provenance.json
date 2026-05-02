@@ -1,0 +1,10 @@
+{
+  "commit": "a7c99303516f4e668f7488f172043392e23b9dfd",
+  "dirty": true,
+  "generated_test_status": "No M44-generated upstream replacement tests are present; local directed tests live under verif/directed/asm.",
+  "local_patch_policy": "Do not edit upstream suite files in-place for profile work; add local generated/backfill tests outside the upstream tree or record patches explicitly here.",
+  "network_update_status": "Not attempted: current execution constraints require using only files already inside this repo.",
+  "suite_root": "verif/act4/riscv-arch-test",
+  "total_checked_in_asm_tests": 4231,
+  "upstream_url": "https://github.com/riscv/riscv-arch-test.git"
+}

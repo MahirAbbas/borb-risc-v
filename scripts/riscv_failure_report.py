@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import configparser
 import json
 import os
 import re
@@ -388,101 +387,6 @@ def _formal_reports(checks_dir: Path, xlen: int) -> int:
     return 0
 
 
-def _discover_riscof_workdirs(root: Path) -> List[Path]:
-    dirs = []
-    default = root / "verif" / "riscof" / "riscof_work"
-    if default.is_dir():
-        dirs.append(default)
-    dirs.extend(sorted((root / "verif" / "riscof").glob("riscof_work*"), key=lambda p: p.stat().st_mtime, reverse=True))
-    seen = set()
-    out = []
-    for d in dirs:
-        s = str(d.resolve())
-        if s not in seen and d.is_dir():
-            seen.add(s)
-            out.append(d)
-    return out
-
-
-def _riscof_reports(workdir: Optional[Path], xlen: int, rerun: bool) -> int:
-    repo_root = Path(__file__).resolve().parents[1]
-    workdirs = [workdir] if workdir else _discover_riscof_workdirs(repo_root)
-    if not workdirs:
-        print("[riscof] no workdir found")
-        return 0
-    target = workdirs[0]
-    generated = 0
-    for dut_sig in sorted(target.glob("**/dut/DUT-borb.signature")):
-        dut_dir = dut_sig.parent
-        test_dir = dut_dir.parent
-        ref_sigs = sorted((test_dir / "ref").glob("*.signature"))
-        if not ref_sigs:
-            continue
-        ref_sig = None
-        for s in ref_sigs:
-            n = s.name.lower()
-            if "reference" in n or "spike" in n:
-                ref_sig = s
-                break
-        if ref_sig is None:
-            ref_sig = ref_sigs[0]
-
-        sig_div = _compare_signatures(dut_sig, ref_sig)
-        if sig_div is None:
-            continue
-
-        if rerun:
-            dbg_script = repo_root / "verif" / "riscof" / "borb" / "riscof_debug_one.sh"
-            if dbg_script.exists():
-                _run_capture([str(dbg_script), str(dut_dir), "--xlen", str(xlen)])
-
-        debug_dir = dut_dir / "debug"
-        elf = dut_dir / "my.elf"
-        dump_path = debug_dir / "dut.dump"
-        dump_out = _objdump_elf(elf, xlen, dump_path)
-
-        dut_trace = debug_dir / f"{dut_dir.name}.trace.jsonl"
-        ref_trace = debug_dir / f"{dut_dir.name}.ref.trace.jsonl"
-        trace_div = _trace_first_divergence(dut_trace, ref_trace) if dut_trace.exists() and ref_trace.exists() else None
-
-        payload = {
-            "kind": "riscof",
-            "workdir": str(target),
-            "test_dir": str(test_dir),
-            "dut_signature": str(dut_sig),
-            "golden_signature": str(ref_sig),
-            "first_signature_divergence": sig_div,
-            "dut_trace": str(dut_trace) if dut_trace.exists() else None,
-            "golden_trace": str(ref_trace) if ref_trace.exists() else None,
-            "first_trace_divergence": trace_div,
-            "disassembly": dump_out,
-        }
-        md = [
-            f"# RISCOF Failure Report: {test_dir.name}",
-            "",
-            f"- Test dir: `{test_dir}`",
-            f"- DUT signature: `{dut_sig}`",
-            f"- Golden signature: `{ref_sig}`",
-            f"- Disassembly: `{dump_out or 'n/a'}`",
-            "",
-            "## First Signature Divergence",
-            f"- line_index: `{sig_div['line_index']}`",
-            f"- dut: `{sig_div['dut']}`",
-            f"- golden: `{sig_div['golden']}`",
-            "",
-            "## First Trace Divergence",
-        ]
-        if trace_div:
-            md.append(f"- index: `{trace_div.get('index')}`")
-            md.append(f"- fields: `{', '.join(trace_div.get('fields', []))}`")
-        else:
-            md.append("- no DUT/golden trace pair found in debug dir")
-        _write_json_and_md(debug_dir, "failure_report", payload, md)
-        generated += 1
-    print(f"[riscof] generated reports: {generated} (workdir={target})")
-    return 0
-
-
 def _discover_tenstorrent_summary(repo_root: Path) -> Optional[Path]:
     roots = sorted((repo_root / "verif" / "tenstorrent-riscv-arch-tests" / "out").glob("*/summary.json"), key=lambda p: p.stat().st_mtime, reverse=True)
     return roots[0] if roots else None
@@ -569,17 +473,12 @@ def _tenstorrent_reports(summary_path: Optional[Path], xlen: int) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Generate debugging artifacts for formal/RISCOF/Tenstorrent failures")
+    ap = argparse.ArgumentParser(description="Generate debugging artifacts for formal/Tenstorrent failures")
     sub = ap.add_subparsers(dest="mode", required=True)
 
     ap_formal = sub.add_parser("formal", help="Generate reports for riscv-formal failures")
     ap_formal.add_argument("--checks-dir", default="formal/cores/borb/checks")
     ap_formal.add_argument("--xlen", type=int, default=64, choices=[32, 64])
-
-    ap_riscof = sub.add_parser("riscof", help="Generate reports for RISCOF failures")
-    ap_riscof.add_argument("--workdir", default="")
-    ap_riscof.add_argument("--xlen", type=int, default=64, choices=[32, 64])
-    ap_riscof.add_argument("--no-rerun", action="store_true")
 
     ap_tt = sub.add_parser("tenstorrent", help="Generate reports for Tenstorrent failures")
     ap_tt.add_argument("--summary", default="")
@@ -589,9 +488,6 @@ def main() -> int:
 
     if args.mode == "formal":
         return _formal_reports(Path(args.checks_dir).resolve(), args.xlen)
-    if args.mode == "riscof":
-        wd = Path(args.workdir).resolve() if args.workdir else None
-        return _riscof_reports(wd, args.xlen, rerun=not args.no_rerun)
     if args.mode == "tenstorrent":
         summary = Path(args.summary).resolve() if args.summary else None
         return _tenstorrent_reports(summary, args.xlen)

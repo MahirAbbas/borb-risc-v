@@ -92,7 +92,7 @@ def main() -> int:
         ),
     )
     ap.add_argument("--workdir", default="verif/tenstorrent-riscv-arch-tests/out/borb", help="Output root")
-    ap.add_argument("--dut", default="verif/riscof/borb/build/borb-sim", help="Path to borb sim executable")
+    ap.add_argument("--dut", default="verif/borb-sim/build/borb-sim", help="Path to borb sim executable")
     ap.add_argument("--xlen", type=int, default=64, choices=[32, 64])
     ap.add_argument(
         "--march",

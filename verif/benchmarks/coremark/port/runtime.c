@@ -6,7 +6,7 @@ volatile uint64_t coremark_exit_code = 0;
 volatile uint64_t coremark_exit_tohost = 0;
 
 void _exit(int code) {
-  // Match RISCOF-like convention: 1 == pass, other non-zero values encode failure.
+  // Match ACT4-like convention: 1 == pass, other non-zero values encode failure.
   coremark_exit_code = (uint64_t)(uint32_t)code;
   coremark_exit_tohost = (code == 0) ? 1ULL : ((((uint64_t)(uint32_t)code) << 1) | 1ULL);
   tohost = coremark_exit_tohost;

@@ -1,0 +1,13 @@
+{
+  "current": {
+    "isa_yaml": "pre-act4/borb/borb_isa.yaml",
+    "platform_yaml": "pre-act4/borb/borb_platform.yaml",
+    "validation": "upstream-riscv-config"
+  },
+  "rva23s64-discovery": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"},
+  "rva23s64-scalar": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"},
+  "rva23s64-supervisor": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"},
+  "rva23s64-vector": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"},
+  "rva23s64-hypervisor": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"},
+  "rva23s64-full": {"isa_yaml": "pending-M47-staged", "platform_yaml": "pending-M47-staged", "validation": "local-profile-checker"}
+}

@@ -1,16 +1,15 @@
 # AGENTS
 
 Be aggressive on performance upgrades.
-Use `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim` for regression testing. It's better to waste cycles doing regression tests than wasting tokens on regression. 
+Use `./run_act4.sh --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` for architectural regression testing. It's better to waste cycles doing regression tests than wasting tokens on regression. 
 
 ## Tooling
 
-### `run_riscof.sh`
-- Purpose: Build and run the RISCOF compliance flow on borb.
-- Path: `/Users/mahir/fun/borb/run_riscof.sh`
+### `run_act4.sh`
+- Purpose: Build and run the ACT4 RVA23S64 architectural flow on borb.
+- Path: `/Users/mahir/fun/borb/run_act4.sh`
 - Notes:
-  - Supports subset runs with `--tests`.
-  - Auto-generates failure reports after each run.
+  - Supports focused extension runs with `--extensions`.
 
 ### `waveform-mcp`
 - Purpose: Waveform analysis helpers (signal browsing, transitions, WAL queries).
@@ -33,11 +32,10 @@ Use `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim
   - Auto-generates failure reports on formal failures.
 
 ### `scripts/riscv_failure_report.py`
-- Purpose: Unified failure artifact generator for formal, RISCOF, and Tenstorrent.
+- Purpose: Unified failure artifact generator for formal and Tenstorrent.
 - Path: `/Users/mahir/fun/borb/scripts/riscv_failure_report.py`
 - Modes:
   - `formal`: parses formal failure traces and extracts first RVFI/spec divergence.
-  - `riscof`: finds first DUT/reference signature divergence and adds disassembly.
   - `tenstorrent`: summarizes non-pass tests with tohost context and disassembly.
 
 ### `run_directed.sh` + `scripts/directed_asm_runner.py`
@@ -46,7 +44,7 @@ Use `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim
   - `/Users/mahir/fun/borb/run_directed.sh`
   - `/Users/mahir/fun/borb/scripts/directed_asm_runner.py`
 - Notes:
-  - Compiles `.S` with RISC-V toolchain (`gcc`) using `verif/riscof/borb/env/link.ld`.
+  - Compiles `.S` with RISC-V toolchain (`gcc`) using `verif/act4/borb-rva23s64/link.ld`.
   - Extracts `tohost`, `begin_signature`, `end_signature` from ELF (`nm`).
   - Runs borb sim with `--elf`, commit trace, signature dump, and optional FST.
   - Emits per-run artifact directory with `summary.json`, disassembly, traces, and signatures.
@@ -57,5 +55,4 @@ Use `./run_riscof.sh --verilate-jobs 10 --sim-jobs 10 --sim-threads 1 --fast-sim
 - Examples:
   - `./debug_failures.sh`
   - `./debug_failures.sh --formal`
-  - `./debug_failures.sh --riscof --workdir verif/riscof/riscof_work_subset_20260224_111512 --no-riscof-rerun`
   - `./debug_failures.sh --tenstorrent --summary verif/tenstorrent-riscv-arch-tests/out/borb/summary.json`

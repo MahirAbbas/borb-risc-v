@@ -6,4 +6,4 @@ Pipeline: 8-11 stage in-order
 Decode/issue: 2-wide
 CoreMark/MHz: 4
 Dhrystone DMIPS/MHz: 3-4
-Verification: RISCOF RVA23S64
+Verification: ACT4 RVA23S64

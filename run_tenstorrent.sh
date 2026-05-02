@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$ROOT_DIR/scripts/workspace_env.sh"
-SIM_DIR="$ROOT_DIR/verif/riscof/borb/sim"
+SIM_DIR="$ROOT_DIR/verif/borb-sim/sim"
 BLOOP_CONFIG="$ROOT_DIR/.bloop/projectname.json"
 
 run_scala_main() {
