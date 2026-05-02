@@ -3,13 +3,13 @@ Now implement the entire project end-to-end.
 Non-negotiable constraint
 
 * Do not stop after a milestone to ask me questions or wait for confirmation.
-* Proceed through every milestone in `plan2.md` until the whole project is complete and fully validated.
+* Proceed through every milestone in `plan.md` until the whole project is complete and fully validated.
 * Assume you are expected to work autonomously for the full session. Do not stop after one fix or one failed run.
 Iterate: reproduce, isolate, patch, validate, repeat.
 
 Execution rules (follow strictly)
 
-* Treat `plan2.md` as the source of truth. If anything is ambiguous, make a reasonable decision and record it in `plan2.md` before coding.
+* Treat `plan.md` as the source of truth. If anything is ambiguous, make a reasonable decision and record it in `plan.md` before coding.
 * Implement deliberately with small, reviewable commits. Avoid bundling unrelated changes.
 * After every milestone:
 
@@ -22,11 +22,11 @@ Execution rules (follow strictly)
   * write a failing test that reproduces it
   * fix the bug
   * confirm the test now passes
-  * record a short note in `plan2.md` under “Implementation Notes”
+  * record a short note in `plan.md` under “Implementation Notes”
 
 Validation requirements
 
-* Maintain a “verification checklist” section in `plan2.md` that stays accurate as the repo evolves.
+* Maintain a “verification checklist” section in `plan.md` that stays accurate as the repo evolves.
 
 Documentation requirements
 
@@ -34,7 +34,7 @@ Documentation requirements
 
 Completion criteria (do not stop until all are true)
 
-* All milestones in `plan2.md` are implemented and checked off.
+* All milestones in `plan.md` are implemented and checked off.
 * `documentation.md` is accurate and complete.
 
-Start now by reading `plan2.md` and beginning Milestone 10. Continue until everything is finished.
+Start now by reading `plan.md` and beginning Milestone 10. Continue until everything is finished.
