@@ -106,18 +106,18 @@ Acceptance:
 
 ### M7: Convert Execute, Writeback, And Retire
 
-- Convert lane-local ALU/branch results to keyed payloads.
-- Build lane retire packets from keyed payloads.
-- Preserve lane 0 full backend ownership.
-- Preserve lane 1 restricted ALU/conditional-branch execution.
-- Preserve precise trap and redirect squash behavior.
+- [x] Convert lane-local ALU/branch results to keyed payloads.
+- [x] Build lane retire packets from keyed payloads.
+- [x] Preserve lane 0 full backend ownership.
+- [x] Preserve lane 1 restricted ALU/conditional-branch execution.
+- [x] Preserve precise trap and redirect squash behavior.
 
 Acceptance:
-- Manual `lane1s4/lane1s5/lane1s6/lane1s7` style state is removed as primary state.
-- Manual lane-1 header copying is removed.
-- Retire packet vector remains ordered and two-wide.
-- Frozen ACT4 subset passes.
-- CoreMark passes.
+- [x] Manual `lane1s4/lane1s5/lane1s6/lane1s7` style state is removed as primary state.
+- [x] Manual lane-1 header copying is removed.
+- [x] Retire packet vector remains ordered and two-wide.
+- [x] Frozen ACT4 subset passes.
+- [x] CoreMark passes.
 
 ### M8: Delete Obsolete Side-Path Code And Reduce LOC
 
@@ -206,3 +206,5 @@ Debug-only:
 - 2026-05-02: M5 validation passed. `./run_directed.sh verif/directed/asm/dual_issue_m32_integer_branch_smoke.S --march rv64gc_zicsr_zifencei --rebuild-sim` passed as debug-only targeted coverage for RAW/WAW/scalarization behavior. `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passed `51/51`. `./run_coremark.sh --profile` passed with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
 - 2026-05-02: M6 introduced an explicit lane-to-physical integer read-port map in `CPU.scala`: lane 0 remains ports `0/1`, lane 1 remains ports `2/3`. Lane-1 source read hookup and bypass resolution now go through `connectLaneIntReadPorts` / `resolveLaneIntRead` instead of hardcoded port literals.
 - 2026-05-02: M6 validation passed with `sbt compile` and `./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`.
+- 2026-05-02: M7 replaced the four named `lane1s*` stage registers with a single `lane1Pipe` vector and named aliases for decode/source/execute/writeback slots. The obsolete `copyLane1Header` helper is gone; stage-local source, branch, result, and commit fields are assigned explicitly once to satisfy Spinal's no-overlap elaboration checks. Ordered retire remains `Vec(RetirePacket(config), 2)` with lane 0 at index 0 and lane 1 at index 1.
+- 2026-05-02: M7 validation passed with `sbt "runMain borb.SoC"`, `./run_act4.sh --profile rva23s64-full --extensions I --skip-gen --verilate-jobs 10 --sim-jobs 10 --sim-threads 1` passing `51/51`, and `./run_coremark.sh --profile` passing with tohost `0x1`, `337,458` cycles, and `2.9633317331341975 CoreMark/MHz`.
