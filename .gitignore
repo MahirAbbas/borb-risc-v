@@ -22,6 +22,7 @@ src_managed/
 project/boot/
 project/project
 project/plugins/project/
+project/
 riscof_work/
 CPU.sv
 formal/cores/borb/CPU.sv

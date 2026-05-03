@@ -21,6 +21,8 @@ object Decoder extends AreaObject {
   val IS_COMPRESSED = Payload(Bool())
   val IS_VEC = Payload(YESNO())
   val IS_FLOAT = Payload(YESNO())
+  val USES_LDQ = Payload(YESNO())
+  val USES_STQ = Payload(YESNO())
 
   val LEGAL = Payload(YESNO())
   val MicroCode = Payload(common.MicroCode())
@@ -67,7 +69,9 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
     LEGAL -> 0,
     IS_FLOAT -> 1,
     IS_VEC -> 2,
-    MicroCode -> 9
+    MicroCode -> 9,
+    USES_LDQ -> 12,
+    USES_STQ -> 13
   )
 
   val specs = payloads.map { case (payload, column) => (new DecodingSpec(payload), payload, column) }

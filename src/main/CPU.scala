@@ -166,7 +166,16 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.LEGAL).setAsReg().init(borb.frontend.YESNO.N)
     }
     pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_FLOAT).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_VEC).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USES_LDQ).setAsReg().init(borb.frontend.YESNO.N)
+    }
+    pipeline.ctrls.filter(_._1 >= 4).foreach {
+      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USES_STQ).setAsReg().init(borb.frontend.YESNO.N)
     }
     pipeline.ctrls.filter(_._1 >= 4).foreach {
       case (_, ctrl) => ctrl.up(borb.frontend.Decoder.MicroCode).setAsReg().init(borb.common.MicroCode.uopNOP)

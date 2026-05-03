@@ -70,6 +70,8 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val aluFire = stagePayloadValid && up(Dispatch.SENDTOALU)
     val faluFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Falu)
     val fmacFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Fmac)
+    val fpUsesLdq = (up(Decoder.IS_FLOAT) === borb.frontend.YESNO.Y) && (up(Decoder.USES_LDQ) === borb.frontend.YESNO.Y)
+    val fpUsesStq = (up(Decoder.IS_FLOAT) === borb.frontend.YESNO.Y) && (up(Decoder.USES_STQ) === borb.frontend.YESNO.Y)
 
     val isFlhOp = microCode === uopFLH
     val isFlwOp = microCode === uopFLW
@@ -339,19 +341,20 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val isFcvtDFromH = (insn(31 downto 25) === B"0100001") && (insn(24 downto 20) === B"00010")
     val isFcvtHFromD = (insn(31 downto 25) === B"0100010") && (insn(24 downto 20) === B"00001")
 
-    when(aguFire && isFshOp) {
+    when(aguFire && fpUsesStq && isFshOp) {
       lsu.logic.rawStoreData.allowOverride := fpRs2Data(15 downto 0).resize(64)
     }
-    when(aguFire && isFswOp) {
+    when(aguFire && fpUsesStq && isFswOp) {
       lsu.logic.rawStoreData.allowOverride := fpRs2Data(31 downto 0).resize(64)
     }
-    when(aguFire && isFsdOp) {
+    when(aguFire && fpUsesStq && isFsdOp) {
       lsu.logic.rawStoreData.allowOverride := fpRs2Data
     }
 
-    val flhWritebackFire = aguFire && isFlhOp && lsu.logic.responseArriving && !lsu.logic.suppress
-    val flwWritebackFire = aguFire && isFlwOp && lsu.logic.responseArriving && !lsu.logic.suppress
-    val fldWritebackFire = aguFire && isFldOp && lsu.logic.responseArriving && !lsu.logic.suppress
+    val fpLoadWritebackFire = aguFire && fpUsesLdq && lsu.logic.responseArriving && !lsu.logic.suppress
+    val flhWritebackFire = fpLoadWritebackFire && isFlhOp
+    val flwWritebackFire = fpLoadWritebackFire && isFlwOp
+    val fldWritebackFire = fpLoadWritebackFire && isFldOp
     when(flhWritebackFire) {
       fpWrite.valid := True
       fpWrite.address := flwRd
