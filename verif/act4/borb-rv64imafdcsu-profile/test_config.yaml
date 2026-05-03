@@ -1,0 +1,7 @@
+name: borb-RV64IMAFDCSU-Profile
+compiler_exe: riscv64-unknown-elf-gcc
+objdump_exe: riscv64-unknown-elf-objdump
+ref_model_exe: sail_riscv_sim
+udb_config: borb-rv64imafdcsu-profile.yaml
+linker_script: ../borb-rva23s64/link.ld
+dut_include_dir: ../borb-rva23s64

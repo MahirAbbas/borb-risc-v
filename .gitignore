@@ -59,6 +59,16 @@ verif/automation/runs/*
 verif/act4/*
 !verif/act4/riscv-arch-test/
 !verif/act4/borb-rva23s64/
+!verif/act4/borb-rv64imafdcsu-profile/
+verif/act4/**/results/
+verif/act4/**/probe_results/
+verif/act4/**/elfs/
+verif/act4/**/*.elf
+verif/act4/**/*.bin
+verif/act4/**/*.dump
+verif/act4/**/*.map
+verif/act4/**/*.signature
+verif/act4/**/tohost.txt
 verif/act4/borb-rva23s64/results/
 verif/act4/borb-rva23s64/probe_results/
 !verif/act4/profiles/

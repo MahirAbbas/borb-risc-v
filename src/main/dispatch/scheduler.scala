@@ -17,81 +17,6 @@ import scala.collection.immutable.LazyList.cons
 import scala.collection.mutable.ArrayBuffer
 import borb.common.MicroCode.uopADDI
 
-// object Dispatch extends AreaObject {
-//   val alu_valid = Payload(Bool())
-// }
-
-// class UopLayerSpec(val uop: MicroOp, val elImpl : LaneLayer) {
-
-// }
-
-// class LaneLayer(val name : String, var priority : Int) {
-
-// }
-
-/*
-How to detect RD->RSx hazards for a given candidate:
-0)  for each ctrl (pipeline deepness)
-      for each execute lane
-        decode if RD is readable or not
-1)  for each ctrl (pipeline deepness)
-      for each execute lane,
-        generate a hazard signal := ctrl.rd == RSx
-      Aggregate the lanes hazards
-2)  for each implementation slot
-      process if scheduled to that slot would produce hazards
-3)  schedule to the implementation slot with the best priority
-
- */
-
-// case class HazardChecker(hzRange: Seq[CtrlLink]) extends Area {
-//   // RAW Hazards
-//   // WAW hazard
-//   // Control hazards (branch not yet resolved)
-//   // Structural hazard
-
-//   // hzRange = rfRead -> rfWriteback
-
-//   // WAR hazard
-//   // intended : write RD after reading RS
-
-//   // something like
-//   // takes in range
-//   // gets Stage(1), Stage(2)
-//   // checks if RD /RS is same
-//   // then call functionally on whole range
-//   // if match, stallIt/Upper until hazard fixed
-
-//   // RAW hazard
-//   // if RD is hzRange(0) === RSx in hzRange(1 .. n-1)
-
-//   // hzRange.head(RD)
-//   // val rs1Hazard = for (stage <- hzRange.tail) {
-
-//   // }
-
-//   val isRs1Haz = hzRange.tail.map(e =>(hzRange.head(RS1_ADDR) =/= 0) &&(hzRange.head(RS1_ADDR) === e(RD_ADDR)) && e.up(borb.frontend.Decoder.RDTYPE) === (borb.frontend.REGFILE.RDTYPE.RD_INT))
-//   isRs1Haz.foreach(e => e.simPublic())
-//   // isRs1Haz.simPublic()
-
-//   // val isRS1Haz = hzRange.tail.map(e => hzRange.head(RS1_ADDR) === e(RD_ADDR)).orR
-
-//   // isRs1Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
-//   // hzRange.head.haltWhen(isRs1Haz.reduce(_ || _)).simPublic()
-//   // when (isRs1Haz.reduce(_ || _).simPublic()) {
-//   //   hzRange.head.haltIt()
-//   //   // hzRange.head.isReady := False
-//   // }
-
-//   val isRs2Haz = hzRange.tail.map(e => (hzRange.head(RS2_ADDR) =/= 0) && (hzRange.head(RS2_ADDR) === e(RD_ADDR)) &&e.up(borb.frontend.Decoder.RDTYPE) === (borb.frontend.REGFILE.RDTYPE.RD_INT))
-
-//   // isRs2Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
-
-//   // when(isRs2Haz.reduce(_ || _).simPublic()) {
-//   //   hzRange.head.haltIt()
-//   // }
-
-// }
 
 /*
 How to check if a instruction can schedule :
@@ -136,7 +61,6 @@ case class Dispatch(
     down(LANE_SEL) := False
     down(IssueSemantics.PROPS) := issueProps
     down(BackendIssue.SELECTED_PIPE) := Mux(up(Decoder.VALID), selectedPipe, BackendPipe.None)
-    down(BackendIssue.SELECTED_PIPE_BY_LANE.lane0) := Mux(up(Decoder.VALID), selectedPipe, BackendPipe.None)
 
     // when(up.isValid) {
     //   eus.foreach(f => f.SEL := False)

@@ -9,15 +9,16 @@ object LaneId {
   val Count = 2
 }
 
-case class LaneKeyedPayload[T <: Data](baseName: String, dataType: HardType[T]) {
-  val lanes = Seq.tabulate(LaneId.Count) { laneId =>
-    Payload(dataType()).setName(s"${baseName}_L$laneId")
+object LaneKey {
+  case object Lane0
+  case object Lane1
+
+  val all: Seq[Any] = Seq(Lane0, Lane1)
+
+  def apply(laneId: Int): Any = laneId match {
+    case LaneId.Lane0 => Lane0
+    case LaneId.Lane1 => Lane1
   }
-
-  def apply(laneId: Int): Payload[T] = lanes(laneId)
-
-  def lane0: Payload[T] = lanes(LaneId.Lane0)
-  def lane1: Payload[T] = lanes(LaneId.Lane1)
 }
 
 object LaneContracts {

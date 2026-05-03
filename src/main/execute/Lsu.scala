@@ -182,8 +182,10 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       default -> False
     )
 
-    // Raise trap on any misaligned memory access.
-    val localTrap = (misaligned || io.pmpFault) && (isStore || isLoad)
+    // Scalar integer/FP misaligned accesses are handled by the byte-mask path.
+    // AMOs remain architecturally trapped on misalignment.
+    val misalignedTrap = misaligned && isAmo
+    val localTrap = (misalignedTrap || io.pmpFault) && (isStore || isLoad)
 
     // Byte offset within doubleword (for alignment)
     val byteOffset = activeAddr(2 downto 0)
@@ -230,8 +232,8 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       default -> B(0, 8 bits)
     )
 
-    // Shifted mask for dBus
-    val writeMask = accessSizeMask |<< byteOffset
+    // DCache places the byte window using the address offset.
+    val writeMask = accessSizeMask
 
     def reverseBytesByMask(data: Bits, mask: Bits): Bits = {
       val out = Bits(64 bits)
@@ -251,7 +253,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       out
     }
 
-    // Align store data to the correct byte lanes
+    // Keep store bytes packed at byte lane zero; DCache places them by address.
     val rawStoreData = Bits(64 bits)
     rawStoreData := up(MicroCode).mux(
       uopSB -> (up(RS2)(7 downto 0)).resize(64),
@@ -267,7 +269,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       endianStoreData := reverseBytesByMask(rawStoreData, accessSizeMask)
     }
 
-    val storeData = endianStoreData |<< (byteOffset << 3)
+    val storeData = endianStoreData
     val cboZeroBeatOffset = UInt(64 bits)
     cboZeroBeatOffset := U(0, 64 bits)
     when(cboZeroActive) {
@@ -277,7 +279,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
     val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
-    val suppress = misaligned || illegalInsn || io.pmpFault || duplicateInWb
+    val suppress = misalignedTrap || illegalInsn || io.pmpFault || duplicateInWb
     val cboZeroStart = isCboZero && aguPayloadValid && epochMatches && !suppress && !cboZeroActive
     val cboZeroIssue = cboZeroStart || cboZeroActive
     // Firing logic
@@ -297,7 +299,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
 
     io.dBus.cmd.valid := ((isStoreBase || fireLoad) && aguPayloadValid && epochMatches && !suppress) || amoIssueLoad || amoIssueStore || cboZeroIssue
     io.dBus.cmd.payload.address := busAddr
-    io.dBus.cmd.payload.data := Mux(cboZeroIssue, B(0, 64 bits), Mux(amoIssueStore, amoStoreData |<< (byteOffset << 3), storeData))
+    io.dBus.cmd.payload.data := Mux(cboZeroIssue, B(0, 64 bits), Mux(amoIssueStore, amoStoreData, storeData))
     io.dBus.cmd.payload.mask := Mux(cboZeroIssue, B"11111111", writeMask)
     io.dBus.cmd.payload.id := Mux((isStoreBase || amoIssueStore || cboZeroIssue), U(0, 16 bits), nextId)
     io.dBus.cmd.payload.write := isStoreBase || amoIssueStore || cboZeroIssue
@@ -394,7 +396,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       } elsewhen(amoWaitingResponse) {
         when(amoResponseArriving) {
           val rspData = io.dBus.rsp.payload.data
-          val shifted = rspData >> (byteOffset << 3)
+          val shifted = rspData
           val shiftedEndian = Bits(64 bits)
           shiftedEndian := shifted
           when(io.bigEndian) {
@@ -472,7 +474,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // This is critical: on the cycle response arrives, we use live data since that's what gets captured
     val responseArriving = isLoadBase && aguPayloadValid && loadResponseArriving
     val rspData = Mux(responseArriving, io.dBus.rsp.payload.data, latchedRspData)
-    val shiftedLoadData = rspData >> (byteOffset << 3)
+    val shiftedLoadData = rspData
     val shiftedEndianLoadData = Bits(64 bits)
     shiftedEndianLoadData := shiftedLoadData
     when(io.bigEndian) {

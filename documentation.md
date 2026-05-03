@@ -24,13 +24,14 @@ sbt "runMain borb.SoC"
 
 ## Verification commands
 
-Hard cleanup gates use ACT4 subsets plus compile/elaboration and CoreMark. Full RVA23S64 remains telemetry until the missing-profile ledger is closed.
+Hard cleanup gates use the exact scalar ACT4 profile plus compile/elaboration and CoreMark. Full RVA23S64 remains telemetry until the missing-profile ledger is closed.
 
 Frozen current baseline:
 
 - Current claim: RV64GC-class scalar/profile subset with `M/S/U`, `Sv39`, scalar RVA23 companion extensions documented below, and directed-tested vector slices that are not full `V` claims.
 - Current lane policy: asymmetric two-wide in-order issue. Lane 0 owns the full scalar backend; lane 1 may pair only restricted integer ALU and conditional-branch work and must scalarize memory, AMO, FP, CSR/trap, vector, serializing, jump, and unsupported classes.
 - Current CoreMark profile baseline: `337,458` cycles / `2.9633317331341975 CoreMark/MHz` on `./run_coremark.sh --profile`.
+- Exact scalar ISA gate: `RV64IMAFDCSUZicbom_Zicbop_Zicboz_Zicond_Zicntr_Zicsr_Zifencei_Zihintpause_Zihpm_Zimop_Zfa_Zfh_Zca_Zcb_Zcmop_Zba_Zbb_Zbs_Svnapot`.
 - Full RVA23S64 is roadmap telemetry, not a cleanup acceptance gate.
 
 Official cleanup regression path:
@@ -38,7 +39,7 @@ Official cleanup regression path:
 ```bash
 sbt compile
 sbt "runMain borb.SoC"
-./run_act4.sh --profile rva23s64-full --extensions I --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+./run_act4.sh --profile rv64imafdcsu-profile --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
 ./run_coremark.sh --profile
 ```
 
@@ -84,7 +85,19 @@ Performance checks:
 ## Design file format overview
 
 - The main SoC and CPU implementations are authored in Scala/SpinalHDL under `src/main/`.
-- Architectural compliance intent is now expressed through the ACT4 RVA23S64 target configuration in `verif/act4/borb-rva23s64/`.
+- Architectural compliance intent is expressed through ACT4 target configurations under `verif/act4/`.
+- `verif/act4/borb-rv64imafdcsu-profile/` is the exact scalar ISA gate.
+- `verif/act4/borb-rva23s64/` is the broader RVA23S64 telemetry target.
+
+## Exact Scalar ACT4 Gate
+
+Use this profile when validating only the declared scalar ISA:
+
+```bash
+./run_act4.sh --profile rv64imafdcsu-profile --verilate-jobs 10 --sim-jobs 10 --sim-threads 1
+```
+
+This profile selects the requested ISA surface and intentionally excludes full `V`, vector `Zv*`, `H`, `Svpbmt`, `Zawrs`, `Sstc`, `Sscofpmf`, `Zic64b`, `Ziccif`, `Ziccrse`, `Ziccamoa`, `Zicclsm`, and `Za64rs`. The ACT4 UDB config includes `Sm`, `Zaamo`, `Zalrsc`, `Zcd`, and `Zfhmin` as framework-level decompositions of machine-mode execution, legacy `A`, legacy `C/D`, and `Zfh`; those names do not expand the public gate beyond the ISA string above.
 
 ## Current ACT4 RVA23S64 Target
 
@@ -108,7 +121,7 @@ The initial ledger has 69 rows: 65 mandatory, 1 localized, 1 optional, and 2 out
 
 The final acceptance policy is `verif/act4/profiles/acceptance_policy.md`. The ledger tool enforces the key rule: a mandatory feature with no evidence links is still reported as missing or blocked, even if its status fields look complete.
 
-M42 now resolves to the ACT4-only path. The active wrapper is `run_act4.sh --profile rva23s64-full`; legacy subset/profile options are intentionally not part of the current flow because upstream `riscv-arch-test` 4.0 is the RVA23S64 certification-test path.
+M42 now resolves to the ACT4-only path. The active wrapper supports both `run_act4.sh --profile rv64imafdcsu-profile` for the exact scalar gate and `run_act4.sh --profile rva23s64-full` for broader RVA23S64 telemetry.
 
 The ACT4 Borb path is:
 
@@ -118,7 +131,7 @@ The ACT4 Borb path is:
 
 `run_act4.sh` uses upstream `riscv-arch-test` commit `a7c99303516f4e668f7488f172043392e23b9dfd`, `verif/act4/borb-rva23s64/test_config.yaml`, repo-local Sail `0.11` under `verif/toolchains/sail-riscv-0.11`, and ACT4 vector generation before building ELFs. The current full ACT4 build produces 1512 self-checking Borb ELFs across scalar, privileged, PMP/VM, and vector groups. A focused RV64I ACT4 run passes `51/51` on Borb. The current full ACT4 regression loop runs all 1512 ELFs and reports `531 passed / 981 failed`, with the aggregate report at `verif/act4/work/borb-RVA23S64/summary.log`. Those failures are expected until the remaining mandatory RVA23S64 hardware features land.
 
-For the lane-keyed cleanup program, filtered ACT4 subsets are hard gates and the full command above is telemetry. Full-profile failures are expected roadmap data unless the frozen subset or CoreMark gates regress.
+For the lane-keyed cleanup program, the exact scalar profile is the hard ACT4 gate and the full RVA23S64 command above is telemetry. Full-profile failures are expected roadmap data unless the exact scalar profile or CoreMark gates regress.
 
 `profile_test_manifest.json` is the mandatory RVA23S64 coverage authority. It checks the profile-required feature list against ACT4/discovery coverage and the ledger. Current status is 59 mandatory profile requirements, 28 with selected coverage groups, 31 with no selected coverage group, and 0 missing ledger entries.
 

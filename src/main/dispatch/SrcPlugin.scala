@@ -100,6 +100,11 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
       64 bits
     ) | regfile.io.reads(1).data
 
+    for (port <- 2 until regfile.io.reads.length) {
+      regfile.io.reads(port).address := 0
+      regfile.io.reads(port).valid := False
+    }
+
   }
 
   val rs = new stage.Area {

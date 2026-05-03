@@ -62,8 +62,51 @@ case class DataSideCache(dBus: DataBus, axi: Axi4Shared) extends Area {
     out
   }
 
+  def mergeStoreWindow(oldData: Bits, storeData: Bits, storeMask: Bits, byteOffset: UInt, absoluteBase: Int): Bits = {
+    val out = Bits(64 bits)
+    val storeBytes = storeData.subdivideIn(8 bits)
+    for(i <- 0 until 8) {
+      val absolute = U(absoluteBase + i, 4 bits)
+      val offset = byteOffset.resize(4)
+      val rel = absolute - offset
+      val hit = (absolute >= offset) && (rel < U(8, 4 bits)) && storeMask(rel(2 downto 0))
+      out((i * 8 + 7) downto (i * 8)) := Mux(
+        hit,
+        storeBytes(rel(2 downto 0)),
+        oldData((i * 8 + 7) downto (i * 8))
+      )
+    }
+    out
+  }
+
   def lineWordAddress(tag: UInt, set: UInt, word: UInt): UInt =
     (tag.asBits ## set.asBits ## word.asBits ## B"000").asUInt
+
+  def readWindow(set: UInt, way: UInt, word: UInt, byteOffset: UInt): Bits = {
+    val current = cache(set)(way).data(word)
+    val nextWord = word + 1
+    val next = cache(set)(way).data(nextWord)
+    val out = Bits(64 bits)
+    for(i <- 0 until 8) {
+      val src = byteOffset.resize(wordWidth + 1 bits) + U(i, wordWidth + 1 bits)
+      val b = Bits(8 bits)
+      b := current((i * 8 + 7) downto (i * 8))
+      switch(src) {
+        for(j <- 0 until 8) {
+          is(U(j, wordWidth + 1 bits)) {
+            b := current((j * 8 + 7) downto (j * 8))
+          }
+        }
+        for(j <- 0 until 8) {
+          is(U(8 + j, wordWidth + 1 bits)) {
+            b := next((j * 8 + 7) downto (j * 8))
+          }
+        }
+      }
+      out((i * 8 + 7) downto (i * 8)) := b
+    }
+    out
+  }
 
   val lookupAddr = toPhys(dBus.cmd.payload.address)
   val lookupSet = lookupAddr(12 downto 6)
@@ -130,14 +173,25 @@ case class DataSideCache(dBus: DataBus, axi: Axi4Shared) extends Area {
       when(dBus.cmd.fire) {
         when(hit) {
           when(dBus.cmd.payload.write) {
-            cache(lookupSet)(hitWay).data(lookupWord) := mergeBytes(
+            cache(lookupSet)(hitWay).data(lookupWord) := mergeStoreWindow(
               cache(lookupSet)(hitWay).data(lookupWord),
               dBus.cmd.payload.data,
-              dBus.cmd.payload.mask
+              dBus.cmd.payload.mask,
+              lookupAddr(2 downto 0),
+              0
             )
+            when(lookupAddr(2 downto 0) =/= 0) {
+              cache(lookupSet)(hitWay).data(lookupWord + 1) := mergeStoreWindow(
+                cache(lookupSet)(hitWay).data(lookupWord + 1),
+                dBus.cmd.payload.data,
+                dBus.cmd.payload.mask,
+                lookupAddr(2 downto 0),
+                8
+              )
+            }
             cache(lookupSet)(hitWay).dirty := True
           } otherwise {
-            rspData := cache(lookupSet)(hitWay).data(lookupWord)
+            rspData := readWindow(lookupSet, hitWay, lookupWord, lookupAddr(2 downto 0))
             rspId := dBus.cmd.payload.id
             rspValid := True
           }
@@ -208,14 +262,25 @@ case class DataSideCache(dBus: DataBus, axi: Axi4Shared) extends Area {
           cache(activeSet)(activeWay).tag := activeTag
           replacePtr(activeSet) := activeWay + 1
           when(activeCmd.write) {
-            cache(activeSet)(activeWay).data(activeWord) := mergeBytes(
-              Mux(activeWord === beat, axi.r.data, missLoadData),
+            cache(activeSet)(activeWay).data(activeWord) := mergeStoreWindow(
+              cache(activeSet)(activeWay).data(activeWord),
               activeCmd.data,
-              activeCmd.mask
+              activeCmd.mask,
+              activeCmd.address(2 downto 0),
+              0
             )
+            when(activeCmd.address(2 downto 0) =/= 0) {
+              cache(activeSet)(activeWay).data(activeWord + 1) := mergeStoreWindow(
+                cache(activeSet)(activeWay).data(activeWord + 1),
+                activeCmd.data,
+                activeCmd.mask,
+                activeCmd.address(2 downto 0),
+                8
+              )
+            }
             cache(activeSet)(activeWay).dirty := True
           } otherwise {
-            rspData := Mux(activeWord === beat, axi.r.data, missLoadData)
+            rspData := readWindow(activeSet, activeWay, activeWord, activeCmd.address(2 downto 0))
             rspId := activeCmd.id
             rspValid := True
           }

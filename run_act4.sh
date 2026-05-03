@@ -5,7 +5,6 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/workspace_env.sh"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ARCH_TEST_DIR="$ROOT_DIR/verif/act4/riscv-arch-test"
-CONFIG_FILE="$ROOT_DIR/verif/act4/borb-rva23s64/test_config.yaml"
 WORKDIR="$ROOT_DIR/verif/act4/work"
 SIM_DIR="$ROOT_DIR/verif/borb-sim/sim"
 SIM_BIN="$ROOT_DIR/verif/borb-sim/build/obj_dir/VSoC"
@@ -26,7 +25,7 @@ MAX_CYCLES="${BORB_ACT4_MAX_CYCLES:-2000000}"
 
 usage() {
   echo "Usage: $0 [OPTIONS]"
-  echo "  --profile <name>       Only rva23s64-full is currently supported"
+  echo "  --profile <name>       rva23s64-full or rv64imafdcsu-profile"
   echo "  --extensions <list>    ACT4 comma-separated extension filter"
   echo "  --exclude <list>       ACT4 comma-separated exclusion filter"
   echo "  --jobs <n>             ACT4 ELF build jobs"
@@ -42,6 +41,14 @@ usage() {
   echo "  --fast-act             Disable ACT4 objdump generation"
   echo "  --debug-act            Enable ACT4 debug artifacts"
   echo "  -h, --help             Show this help"
+  echo ""
+  echo "Examples:"
+  echo "  Exact scalar ISA gate:"
+  echo "    $0 --profile rv64imafdcsu-profile --verilate-jobs 10 --sim-jobs 10 --sim-threads 1"
+  echo "  Fast rerun of existing exact-profile artifacts:"
+  echo "    $0 --profile rv64imafdcsu-profile --skip-gen --skip-build --run-only --sim-jobs 10 --sim-threads 1"
+  echo "  Full RVA23S64 telemetry:"
+  echo "    $0 --profile rva23s64-full --verilate-jobs 10 --sim-jobs 10 --sim-threads 1"
   exit 0
 }
 
@@ -67,10 +74,24 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ "$PROFILE" != "rva23s64-full" ]]; then
-  echo "Error: ACT4 wrapper currently supports --profile rva23s64-full"
-  exit 2
-fi
+case "$PROFILE" in
+  rva23s64-full)
+    CONFIG_FILE="$ROOT_DIR/verif/act4/borb-rva23s64/test_config.yaml"
+    CONFIG_NAME="borb-RVA23S64"
+    RESULT_ROOT="$ROOT_DIR/verif/act4/borb-rva23s64/results"
+    GENERATE_VECTOR_TESTS=true
+    ;;
+  rv64imafdcsu-profile)
+    CONFIG_FILE="$ROOT_DIR/verif/act4/borb-rv64imafdcsu-profile/test_config.yaml"
+    CONFIG_NAME="borb-RV64IMAFDCSU-Profile"
+    RESULT_ROOT="$ROOT_DIR/verif/act4/borb-rv64imafdcsu-profile/results"
+    GENERATE_VECTOR_TESTS=false
+    ;;
+  *)
+    echo "Error: ACT4 wrapper supports --profile rva23s64-full or rv64imafdcsu-profile"
+    exit 2
+    ;;
+esac
 
 for value in "$JOBS" "$SIM_JOBS" "$SIM_THREADS" "$VERILATE_JOBS" "$MAX_CYCLES"; do
   if [[ -n "$value" && ! "$value" =~ ^[1-9][0-9]*$ ]]; then
@@ -105,7 +126,7 @@ echo "Config: $CONFIG_FILE"
 
 RUN_WORKDIR="$WORKDIR"
 if [[ -n "$EXTENSIONS" || -n "$EXCLUDE_EXTENSIONS" ]]; then
-  scope_key="profile=$PROFILE extensions=$EXTENSIONS exclude=$EXCLUDE_EXTENSIONS"
+  scope_key="profile=$PROFILE config=$CONFIG_NAME extensions=$EXTENSIONS exclude=$EXCLUDE_EXTENSIONS"
   scope_hash="$(printf '%s' "$scope_key" | shasum -a 256 | awk '{print substr($1, 1, 12)}')"
   RUN_WORKDIR="$WORKDIR/run-scopes/$scope_hash"
   echo "ACT4 scope: $scope_key"
@@ -119,7 +140,7 @@ if [[ "$RUN_ONLY" != true ]]; then
   fi
 
   echo "[2/3] Building ACT4 ELFs..."
-  if [[ -z "$EXTENSIONS" ]]; then
+  if [[ "$GENERATE_VECTOR_TESTS" = true && -z "$EXTENSIONS" ]]; then
     vector_args=(-C "$ARCH_TEST_DIR" "WORKDIR=$RUN_WORKDIR")
     if [[ -n "$JOBS" ]]; then vector_args+=("-j$JOBS" "JOBS=$JOBS"); fi
     make "${vector_args[@]}" vector-tests
@@ -151,7 +172,7 @@ if [[ "$SKIP_BUILD" != true ]]; then
   "${sim_make[@]}"
 fi
 
-ELF_DIR="$RUN_WORKDIR/borb-RVA23S64/elfs"
+ELF_DIR="$RUN_WORKDIR/$CONFIG_NAME/elfs"
 if [[ ! -d "$ELF_DIR" ]]; then
   echo "Error: ACT4 ELF directory not found: $ELF_DIR"
   if [[ "$RUN_ONLY" = true && ( -n "$EXTENSIONS" || -n "$EXCLUDE_EXTENSIONS" ) ]]; then
@@ -160,7 +181,7 @@ if [[ ! -d "$ELF_DIR" ]]; then
   exit 1
 fi
 
-RUNNER_CMD="python3.11 $ROOT_DIR/scripts/act4_borb_elf_runner.py --sim $SIM_BIN --out-root $ROOT_DIR/verif/act4/borb-rva23s64/results --max-cycles $MAX_CYCLES"
+RUNNER_CMD="python3.11 $ROOT_DIR/scripts/act4_borb_elf_runner.py --sim $SIM_BIN --out-root $RESULT_ROOT --max-cycles $MAX_CYCLES"
 run_args=(python3.11 "$ARCH_TEST_DIR/run_tests.py")
 if [[ -n "$SIM_JOBS" ]]; then run_args+=("-j" "$SIM_JOBS"); fi
 run_args+=("$RUNNER_CMD" "$ELF_DIR")

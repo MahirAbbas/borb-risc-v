@@ -1597,8 +1597,8 @@ case class TrapCsrBackend(
 
     val trapFromVectorLoadMisalign = vectorMemoryTrapValid && !vectorMemoryTrapIsStore
     val trapFromVectorStoreMisalign = vectorMemoryTrapValid && vectorMemoryTrapIsStore
-    val trapFromLoadMisalign = (lsu.logic.misaligned && trapLoadAccess && !isAmoOp && dataAccessFire) || trapFromVectorLoadMisalign
-    val trapFromStoreMisalign = (lsu.logic.misaligned && trapStoreAccess && dataAccessFire) || trapFromVectorStoreMisalign
+    val trapFromLoadMisalign = (lsu.logic.misaligned && trapLoadAccess && isAmoOp && dataAccessFire) || trapFromVectorLoadMisalign
+    val trapFromStoreMisalign = (lsu.logic.misaligned && trapStoreAccess && isAmoOp && dataAccessFire) || trapFromVectorStoreMisalign
     val trapFromLoadAccess = pmpLoadFault
     val trapFromStoreAccess = pmpStoreFault
     val trapFromFetchAccess = pmpExecFault
