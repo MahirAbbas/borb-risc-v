@@ -90,7 +90,7 @@ object BackendIssue extends AreaObject {
 
 object RetireQueue {
   // Enough room for the planned fixed-latency FP pipes plus several frontend
-  // skid entries while the scalar path is still being migrated lane by lane.
+  // skid entries while the lane path is still being migrated lane by lane.
   val Depth = 8
   val Width = 2
 }

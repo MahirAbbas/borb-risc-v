@@ -3,6 +3,10 @@ package borb.core
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
+import borb.backend.RetirePacket
+import borb.dispatch.Dispatch
+import borb.execute.{Branch, Lsu}
+import borb.fetch.Fetch
 
 /**
   * Performance counters bundle - read-only output for observation.
@@ -97,6 +101,7 @@ case class PerfCountersBundle() extends Bundle {
   */
 case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   import borb.common.Common._
+import borb.common.LaneKey
   import borb.common.MicroCode._
   
   // Internal counter registers
@@ -185,32 +190,40 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   
   // instret: increments on commit
   val wbArea = new wbStage.Area {
-    when(up(COMMIT)) {
-      instret := instret + 1
+    def count(events: Seq[Bool]): UInt = events.map(_.asUInt.resize(2)).reduce(_ + _)
+    def committed(laneId: Int): Bool = up(COMMIT, LaneKey(laneId))
+    def microCode(laneId: Int) = up(borb.frontend.Decoder.MicroCode, LaneKey(laneId))
+    def isLoad(laneId: Int): Bool = microCode(laneId).mux(
+      uopLB -> True, uopLH -> True, uopLW -> True, uopLBU -> True, uopLHU -> True, uopLWU -> True, uopLD -> True, uopFLW -> True,
+      default -> False
+    )
+    def isStore(laneId: Int): Bool = microCode(laneId).mux(
+      uopSB -> True, uopSH -> True, uopSW -> True, uopSD -> True, uopFSW -> True,
+      default -> False
+    )
+    def isJump(laneId: Int): Bool = microCode(laneId).mux(
+      uopJAL -> True, uopJALR -> True,
+      default -> False
+    )
+    def isCsr(laneId: Int): Bool = microCode(laneId).mux(
+      uopCSRRW -> True, uopCSRRS -> True, uopCSRRC -> True, uopCSRRWI -> True, uopCSRRSI -> True, uopCSRRCI -> True,
+      default -> False
+    )
+    def isMulDiv(laneId: Int): Bool = microCode(laneId).mux(
+      uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True, uopDIV -> True, uopDIVU -> True, uopREM -> True, uopREMU -> True,
+      uopMULW -> True, uopDIVW -> True, uopDIVUW -> True, uopREMW -> True, uopREMUW -> True,
+      default -> False
+    )
 
-      switch(up(borb.frontend.Decoder.MicroCode)) {
-        is(uopLB, uopLH, uopLW, uopLBU, uopLHU, uopLWU, uopLD, uopFLW) {
-          loads := loads + 1
-        }
-        is(uopSB, uopSH, uopSW, uopSD, uopFSW) {
-          stores := stores + 1
-        }
-        is(uopJAL, uopJALR) {
-          jumps := jumps + 1
-        }
-        is(uopCSRRW, uopCSRRS, uopCSRRC, uopCSRRWI, uopCSRRSI, uopCSRRCI) {
-          csrOps := csrOps + 1
-        }
-        is(
-          uopMUL, uopMULH, uopMULHSU, uopMULHU, uopDIV, uopDIVU, uopREM, uopREMU,
-          uopMULW, uopDIVW, uopDIVUW, uopREMW, uopREMUW
-        ) {
-          mulDivOps := mulDivOps + 1
-        }
-      }
-      when(up(TRAP)) {
-        trapCommits := trapCommits + 1
-      }
+    val commitCount = count((0 until borb.frontend.Decoder.LANES).map(committed))
+    when(commitCount =/= 0) {
+      instret := instret + commitCount.resized
+      loads := loads + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && isLoad(laneId))).resized
+      stores := stores + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && isStore(laneId))).resized
+      jumps := jumps + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && isJump(laneId))).resized
+      csrOps := csrOps + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && isCsr(laneId))).resized
+      mulDivOps := mulDivOps + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && isMulDiv(laneId))).resized
+      trapCommits := trapCommits + count((0 until borb.frontend.Decoder.LANES).map(laneId => committed(laneId) && up(TRAP, LaneKey(laneId)))).resized
     }
   }
   
@@ -286,6 +299,146 @@ case class PerfCountersPlugin(wbStage: CtrlLink) extends Area {
   val branchExecuted = Bool()
   val branchTaken    = Bool()
   val pipelineFlush  = Bool()
+
+  def wireFromCore(
+      pipeline: StageCtrlPipeline,
+      decodeStageId: Int,
+      wbStageId: Int,
+      dispatchCtrl: CtrlLink,
+      srcCtrl: CtrlLink,
+      execStage: CtrlLink,
+      dispatcher: Dispatch,
+      fetch: Fetch,
+      lsu: Lsu,
+      branch: Branch,
+      retirePackets: Vec[RetirePacket],
+      controlHazardBusy: Bool,
+      flushPipeline: Bool
+  ): Unit = {
+    import borb.frontend.Decoder
+
+    val hazardStall = dispatcher.hcs.writes.hazard
+    val fetchStall = !fetch.beatValid
+    val memStall = lsu.logic.waitingResponse
+    val lsuReplayOrWait = lsu.logic.waitingResponse ||
+      lsu.logic.amoWaitingResponse ||
+      lsu.logic.amoStorePending ||
+      lsu.logic.cboZeroActive
+    val committedThisCycle = retirePackets(0).valid || retirePackets(1).valid
+    val writeCtrl = wbStage
+    def laneActive(ctrl: CtrlLink, laneId: Int, hasLaneSel: Boolean = true): Bool = {
+      val laneKey = LaneKey(laneId)
+      ctrl(Decoder.VALID, laneKey) && (if(hasLaneSel) ctrl(LANE_SEL, laneKey) else True)
+    }
+    def anyLaneActive(ctrl: CtrlLink, hasLaneSel: Boolean = true): Bool =
+      (0 until Decoder.LANES).map(laneId => laneActive(ctrl, laneId, hasLaneSel)).reduce(_ || _)
+    val dispatchValid = dispatchCtrl.up.isValid && anyLaneActive(dispatchCtrl, hasLaneSel = false)
+    val srcValid = srcCtrl.up.isValid && anyLaneActive(srcCtrl)
+    val execValid = execStage.up.isValid && anyLaneActive(execStage)
+    val writeValid = writeCtrl.up.isValid && anyLaneActive(writeCtrl)
+    val dispatchFire = dispatchCtrl.up.isFiring && anyLaneActive(dispatchCtrl, hasLaneSel = false)
+    val srcFire = srcCtrl.up.isFiring && anyLaneActive(srcCtrl)
+    val execFire = execStage.up.isFiring && anyLaneActive(execStage)
+    val writeFire = writeCtrl.up.isFiring && anyLaneActive(writeCtrl)
+    val backendOccCount = UInt(3 bits)
+    backendOccCount := dispatchValid.asUInt.resize(3) +
+      srcValid.asUInt.resize(3) +
+      execValid.asUInt.resize(3) +
+      writeValid.asUInt.resize(3)
+    val writebackStall = writeValid && !committedThisCycle
+    def laneMulDiv(laneId: Int): Bool = {
+      val laneKey = LaneKey(laneId)
+      laneActive(execStage, laneId) && execStage(Decoder.MicroCode, laneKey).mux(
+        uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True,
+        uopDIV -> True, uopDIVU -> True, uopREM -> True, uopREMU -> True,
+        uopMULW -> True, uopDIVW -> True, uopDIVUW -> True, uopREMW -> True, uopREMUW -> True,
+        default -> False
+      )
+    }
+    val mulDivBusy = execValid && (0 until Decoder.LANES).map(laneMulDiv).reduce(_ || _)
+    val mulDivBusyStall = mulDivBusy && !committedThisCycle
+    val commitStall = execValid && !writeValid && !hazardStall && !fetchStall && !lsuReplayOrWait
+    val dispatchToSrcStall = dispatchValid && !srcValid && !hazardStall && !fetchStall
+    val srcToExecStall = srcValid && !execValid && !hazardStall && !fetchStall && !controlHazardBusy
+    val execToWriteStall = execValid && !writeValid && !lsuReplayOrWait
+    val backendActive = Array.range(decodeStageId, wbStageId + 1).map { idx =>
+      val ctrl = pipeline.ctrl(idx)
+      ctrl.up.isValid && anyLaneActive(ctrl, hasLaneSel = idx >= 5)
+    }.reduce(_ || _)
+    val backendStall = backendActive && !committedThisCycle && !hazardStall && !fetchStall && !memStall
+
+    this.hazardStall := hazardStall
+    this.fetchStall := fetchStall
+    this.memStall := memStall
+    this.backendStall := backendStall
+    this.writebackStall := writebackStall
+    this.commitStall := commitStall
+    this.mulDivBusyStall := mulDivBusyStall
+    this.lsuReplayOrWaitStall := lsuReplayOrWait
+    this.dispatchToSrcStall := dispatchToSrcStall
+    this.srcToExecStall := srcToExecStall
+    this.execToWriteStall := execToWriteStall
+    this.dispatchValid := dispatchValid
+    this.srcValid := srcValid
+    this.execValid := execValid
+    this.writeValid := writeValid
+    this.dispatchFire := dispatchFire
+    this.srcFire := srcFire
+    this.execFire := execFire
+    this.writeFire := writeFire
+    this.frontendPendingReq := fetch.perf.pendingReq
+    this.frontendBeat0Valid := fetch.perf.beat0Valid
+    this.frontendBeat1Valid := fetch.perf.beat1Valid
+    this.frontendReqIssuedEvent := fetch.perf.reqIssued
+    this.frontendRspAcceptedEvent := fetch.perf.rspAccepted
+    this.frontendNeedCurrentReqEvent := fetch.perf.needCurrentReq
+    this.frontendNeedNextReqEvent := fetch.perf.needNextReq
+    this.frontendPrefetchReqEvent := fetch.perf.prefetchReq
+    this.frontendWaitCurBeatEvent := fetch.perf.waitCurBeat
+    this.frontendWaitNextBeatEvent := fetch.perf.waitNextBeat
+    this.frontendTakeInsnEvent := fetch.perf.takeInsn
+    this.frontendCurBeatHitEvent := fetch.perf.curBeatHit
+    this.frontendNextBeatHitEvent := fetch.perf.nextBeatHit
+    this.frontendCmdValidCycleEvent := fetch.perf.cmdValid
+    this.frontendPrefetchWindowEvent := fetch.perf.prefetchWindow
+    this.frontendPrefetchBlockedNoCmdEvent := fetch.perf.prefetchBlockedNoCmd
+    this.frontendPrefetchBlockedPendingEvent := fetch.perf.prefetchBlockedPending
+    this.frontendPrefetchBlockedNextHitEvent := fetch.perf.prefetchBlockedNextHit
+    this.frontendLoopPredictUsedEvent := fetch.perf.loopPredictUsed
+    this.frontendLoopPredictHitEvent := fetch.perf.loopPredictHit
+    this.frontendFastPredictHitEvent := fetch.perf.fastPredictHit
+    this.frontendMainPredictHitEvent := fetch.perf.mainPredictHit
+    this.frontendIndirectPredictHitEvent := fetch.perf.indirectPredictHit
+    this.frontendRasUseEvent := fetch.perf.rasUse
+    this.frontendRasRepairEvent := fetch.perf.rasRepair
+    this.frontendFtqAllocEvent := fetch.perf.ftqAlloc
+    this.frontendFtqRestoreEvent := fetch.perf.ftqRestore
+    this.frontendPredictedRedirectEvent := fetch.perf.predictedRedirect
+    this.frontendMissCurrentBlockEvent := fetch.perf.missCurrentBlock
+    this.frontendMissNextBlockEvent := fetch.perf.missNextBlock
+    this.frontendMissPrefetchEvent := fetch.perf.missPrefetch
+    this.frontendReqBlockedOutstandingEvent := fetch.perf.reqBlockedOutstanding
+    this.frontendPacketQueueFullCycleEvent := fetch.perf.packetQueueFull
+    this.frontendStraddlePacketEvent := fetch.perf.straddlePacket
+    this.frontendSecondBlockUsedEvent := fetch.perf.secondBlockUsed
+    this.frontendSecondBlockLateEvent := fetch.perf.secondBlockLate
+    this.frontendWrongPathBeatEvent := fetch.perf.wrongPathBeat
+    this.frontendWrongPathInsnEvent := fetch.perf.wrongPathInsn
+    this.l1iBankConflictCycleEvent := fetch.perf.l1iBankConflict
+    this.l1iBankBusyCycleEvent := fetch.perf.l1iBankBusy
+    this.l1iCrossBankDualFetchSuccessEvent := fetch.perf.l1iDualFetch
+    this.backendOcc0 := backendOccCount === U(0, 3 bits)
+    this.backendOcc1 := backendOccCount === U(1, 3 bits)
+    this.backendOcc2 := backendOccCount === U(2, 3 bits)
+    this.backendOcc3 := backendOccCount === U(3, 3 bits)
+    this.backendOcc4 := backendOccCount === U(4, 3 bits)
+    this.backendOverlapDispatchSrcEvent := dispatchValid && srcValid
+    this.backendOverlapSrcExecEvent := srcValid && execValid
+    this.backendOverlapExecWriteEvent := execValid && writeValid
+    this.branchExecuted := branch.actualIsBranch && branch.branchResolved
+    this.branchTaken := branch.actualTaken
+    this.pipelineFlush := flushPipeline
+  }
   
   // Increment on events
   when(hazardStall)    { stallsHazard  := stallsHazard + 1 }

@@ -6,18 +6,14 @@ import spinal.lib._
 case class FrontendControl(config: FrontendConfig) extends Component {
   val io = new Bundle {
     val flush = in Bool()
-    val redirectValid = in Bool()
-    val redirectPc = in UInt(config.addressWidth bits)
-    val redirectEpoch = in UInt(config.epochWidth bits)
+    val recover = slave(Flow(FrontendRecoverUpdate(config)))
     val commandValid = in Bool()
     val commandPc = in UInt(config.addressWidth bits)
     val commandEpoch = in UInt(config.epochWidth bits)
     val bundleAccepted = in Bool()
     val bundleNextPc = in UInt(config.addressWidth bits)
     val ownsSequencing = out Bool()
-    val activeValid = out Bool()
-    val startPc = out UInt(config.addressWidth bits)
-    val epoch = out UInt(config.epochWidth bits)
+    val active = master(Flow(FrontendPcState(config.addressWidth, config.epochWidth)))
   }
 
   val activeValid = RegInit(False)
@@ -25,10 +21,10 @@ case class FrontendControl(config: FrontendConfig) extends Component {
   val activeEpoch = Reg(UInt(config.epochWidth bits)) init(0)
   val bootstrapped = RegInit(False)
 
-  when(io.redirectValid) {
+  when(io.recover.valid) {
     activeValid := True
-    activePc := io.redirectPc
-    activeEpoch := io.redirectEpoch
+    activePc := io.recover.payload.redirectTarget
+    activeEpoch := io.recover.payload.epoch
     bootstrapped := True
   } otherwise {
     when(io.bundleAccepted) {
@@ -45,7 +41,7 @@ case class FrontendControl(config: FrontendConfig) extends Component {
   }
 
   io.ownsSequencing := bootstrapped
-  io.activeValid := activeValid && !io.redirectValid && !io.flush
-  io.startPc := activePc
-  io.epoch := activeEpoch
+  io.active.valid := activeValid && !io.recover.valid && !io.flush
+  io.active.payload.pc := activePc
+  io.active.payload.epoch := activeEpoch
 }

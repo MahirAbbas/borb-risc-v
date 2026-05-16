@@ -5,7 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.core.CpuConfig
 import borb.core.PerfCountersBundle
-import borb.execute.{Branch, Lsu}
+import borb.execute.{Branch, FunctionalUnit, Lsu}
 import borb.execute.WriteBack
 import borb.fetch.Fetch
 import borb.fetch.PC
@@ -14,11 +14,34 @@ import borb.frontend.DecodeTable
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.frontend.RVC
+import borb.frontend.ExecutionUnitEnum
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.common.MicroCode._
 import borb.vector.VectorHartContext
 import spinal.lib.logic.Masked
 import spinal.lib.logic.Symplify
+
+object TrapCsrBackend {
+  val SupportedUops = Seq(
+    uopCSRRW,
+    uopCSRRS,
+    uopCSRRC,
+    uopCSRRWI,
+    uopCSRRSI,
+    uopCSRRCI,
+    uopFENCE,
+    uopFENCE_I,
+    uopECALL,
+    uopEBREAK,
+    uopSRET,
+    uopMRET,
+    uopSFENCEVMA,
+    uopVSETVLI,
+    uopVSETIVLI,
+    uopVSETVL
+  )
+}
 
 case class TrapCsrBackend(
     execStage: CtrlLink,
@@ -30,7 +53,9 @@ case class TrapCsrBackend(
     branch: Branch,
     lsu: Lsu,
     perfCounters: PerfCountersBundle
-) extends Area {
+) extends FunctionalUnit(ExecutionUnitEnum.ALU) {
+  TrapCsrBackend.SupportedUops.foreach(add)
+
   val fpFlagsSetValid = Bool()
   val fpFlagsSetBits = Bits(5 bits)
   val frm = Bits(3 bits)
@@ -51,7 +76,7 @@ case class TrapCsrBackend(
   csrIntResult.epoch := 0
 
   val logic = new execStage.Area {
-    val epochMatches = up(SPEC_EPOCH) === currentEpoch
+    val epochMatches = up(SPEC_EPOCH, LaneKey.Lane0) === currentEpoch
     val decodeMasks = collection.mutable.LinkedHashSet[Masked]()
     for ((instr, _) <- DecodeTable.X_table) {
       decodeMasks += Masked(instr)
@@ -616,7 +641,7 @@ case class TrapCsrBackend(
       ok
     }
 
-    val rawInsn = up(Decoder.INSTRUCTION)
+    val rawInsn = up(Decoder.INSTRUCTION, LaneKey.Lane0)
     val rawIsCompressed = if (config.cExtensionEnabled) rawInsn(1 downto 0) =/= B"11" else False
     val rawRvc = if (config.cExtensionEnabled) RVC(rawInsn(15 downto 0), xlen = config.xlen) else null
     val trapInsn = Bits(32 bits)
@@ -626,11 +651,11 @@ case class TrapCsrBackend(
         trapInsn := rawRvc.inst
       }
     }
-    val trapPcInRam = up(PC.PC) >= ARCH_BASE
+    val trapPcInRam = up(PC.PC, LaneKey.Lane0) >= ARCH_BASE
     val compressedIllegalInRam = if (config.cExtensionEnabled) rawIsCompressed && rawRvc.illegal && trapPcInRam else False
-    val fetchedPacketObserved = (up(Fetch.FETCH_SEQ) =/= 0) || (up(SPEC_EPOCH) =/= 0)
-    val decodedIllegalInRam = up(Decoder.DECODE_ILLEGAL) && trapPcInRam && fetchedPacketObserved
-    val decodedUnsupportedInRam = up.isValid && !up(Decoder.VALID) && trapPcInRam && fetchedPacketObserved
+    val fetchedPacketObserved = (up(Fetch.FETCH_SEQ, LaneKey.Lane0) =/= 0) || (up(SPEC_EPOCH, LaneKey.Lane0) =/= 0)
+    val decodedIllegalInRam = up(Decoder.DECODE_ILLEGAL, LaneKey.Lane0) && trapPcInRam && fetchedPacketObserved
+    val decodedUnsupportedInRam = up.isValid && !up(Decoder.VALID, LaneKey.Lane0) && trapPcInRam && fetchedPacketObserved
     val trapInsnDecodeIllegal = decodedIllegalInRam || (compressedIllegalInRam && fetchedPacketObserved)
     val trapInsnSupported = Symplify(trapInsn, decodeMasks)
     val trapInsnValid = trapInsnSupported && !trapInsnDecodeIllegal
@@ -638,19 +663,19 @@ case class TrapCsrBackend(
     // Legal instructions follow decoded packet validity, but architecturally
     // illegal encodings must still reach the trap path instead of being
     // silently converted into bubbles.
-    val trapInsnArrived = up.isValid && (up(Decoder.VALID) || illegalTrapPacket)
+    val trapInsnArrived = up.isValid && (up(Decoder.VALID, LaneKey.Lane0) || illegalTrapPacket)
 
     val csrAddr = trapInsn(31 downto 20).asUInt
     val csrOld = csrRead(csrAddr)
-    val csrRs1 = up(borb.dispatch.SrcPlugin.RS1)
+    val csrRs1 = up(borb.dispatch.SrcPlugin.RS1, LaneKey.Lane0)
     val csrZimm = B(59 bits, default -> False) ## trapInsn(19 downto 15)
     val csrWriteData = Bits(64 bits)
     csrWriteData := csrOld
     val csrWriteEn = Bool()
     csrWriteEn := False
 
-    val isCsrOp = up(Decoder.MicroCode) === uopCSRRW || up(Decoder.MicroCode) === uopCSRRS || up(Decoder.MicroCode) === uopCSRRC ||
-      up(Decoder.MicroCode) === uopCSRRWI || up(Decoder.MicroCode) === uopCSRRSI || up(Decoder.MicroCode) === uopCSRRCI
+    val isCsrOp = up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRW || up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRS || up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRC ||
+      up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRWI || up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRSI || up(Decoder.MicroCode, LaneKey.Lane0) === uopCSRRCI
     val csrPrivReq = csrAddr(9 downto 8)
     val csrReadOnly = csrAddr(11 downto 10) === U"2'b11"
     val counterShadowRead = (csrAddr(11 downto 8) === U"4'hC") &&
@@ -676,7 +701,7 @@ case class TrapCsrBackend(
       elementsAtM1 |<< vtype(1 downto 0).asUInt
     }
 
-    switch(up(Decoder.MicroCode)) {
+    switch(up(Decoder.MicroCode, LaneKey.Lane0)) {
       is(uopCSRRW) { csrWriteData := csrRs1; csrWriteEn := True }
       is(uopCSRRS) { csrWriteData := csrOld | csrRs1; csrWriteEn := csrRs1 =/= 0 }
       is(uopCSRRC) { csrWriteData := csrOld & ~csrRs1; csrWriteEn := csrRs1 =/= 0 }
@@ -689,7 +714,7 @@ case class TrapCsrBackend(
       (currentPriv === PRV_U || ((currentPriv === PRV_S) && csrMstatus(20)))
     val csrIllegal = trapInsnValid && isCsrOp && (!csrSupported(csrAddr) || (currentPriv < csrPrivReq) || (csrWriteEn && csrReadOnly) ||
       (counterShadowRead && (counterDisabledForS || counterDisabledForU)) || csrSatpIllegal)
-    val csrFire = up.isFiring && epochMatches && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isCsrOp
+    val csrFire = up.isFiring && epochMatches && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) && up(borb.dispatch.Dispatch.SENDTOALU, LaneKey.Lane0) && isCsrOp
 
     when(csrFire && !csrIllegal && csrWriteEn) {
       switch(csrAddr) {
@@ -859,11 +884,11 @@ case class TrapCsrBackend(
       }
     }
 
-    val isVsetvli = up(Decoder.MicroCode) === uopVSETVLI
-    val isVsetivli = up(Decoder.MicroCode) === uopVSETIVLI
-    val isVsetvl = up(Decoder.MicroCode) === uopVSETVL
+    val isVsetvli = up(Decoder.MicroCode, LaneKey.Lane0) === uopVSETVLI
+    val isVsetivli = up(Decoder.MicroCode, LaneKey.Lane0) === uopVSETIVLI
+    val isVsetvl = up(Decoder.MicroCode, LaneKey.Lane0) === uopVSETVL
     val isVectorConfigOp = isVsetvli || isVsetivli || isVsetvl
-    val vectorConfigFire = up.isFiring && epochMatches && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOALU) && isVectorConfigOp
+    val vectorConfigFire = up.isFiring && epochMatches && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) && up(borb.dispatch.Dispatch.SENDTOALU, LaneKey.Lane0) && isVectorConfigOp
     val vectorConfigImmediateVtype = Bits(64 bits)
     vectorConfigImmediateVtype := 0
     when(isVsetvli) {
@@ -874,17 +899,17 @@ case class TrapCsrBackend(
     val vectorConfigRequestedVtype = Bits(64 bits)
     vectorConfigRequestedVtype := vectorConfigImmediateVtype
     when(isVsetvl) {
-      vectorConfigRequestedVtype := up(borb.dispatch.SrcPlugin.RS2)
+      vectorConfigRequestedVtype := up(borb.dispatch.SrcPlugin.RS2, LaneKey.Lane0)
     }
     val vectorConfigLegalVtype = vectorVtypeLegal(vectorConfigRequestedVtype)
     val vectorConfigVlmax = vectorVlMax(vectorConfigRequestedVtype)
     val vectorConfigAvl = UInt(64 bits)
-    vectorConfigAvl := up(borb.dispatch.SrcPlugin.RS1).asUInt
+    vectorConfigAvl := up(borb.dispatch.SrcPlugin.RS1, LaneKey.Lane0).asUInt
     when(isVsetivli) {
       vectorConfigAvl := trapInsn(19 downto 15).asUInt.resized
-    } elsewhen(isVsetvli && (up(Decoder.RS1_ADDR) === B"00000")) {
+    } elsewhen(isVsetvli && (up(Decoder.RS1_ADDR, LaneKey.Lane0) === B"00000")) {
       vectorConfigAvl := vectorConfigVlmax
-    } elsewhen(isVsetvl && (up(Decoder.RS1_ADDR) === B"00000")) {
+    } elsewhen(isVsetvl && (up(Decoder.RS1_ADDR, LaneKey.Lane0) === B"00000")) {
       vectorConfigAvl := vectorConfigVlmax
     }
     val vectorConfigNextVl = UInt(64 bits)
@@ -903,15 +928,15 @@ case class TrapCsrBackend(
       markVectorDirty()
 
       csrIntResult.valid := True
-      csrIntResult.rd := up(Decoder.RD_ADDR).asUInt
+      csrIntResult.rd := up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
       csrIntResult.data := vectorConfigNextVl.asBits
       csrIntResult.writesRd := True
       csrIntResult.commitEligible := epochMatches
-      csrIntResult.epoch := up(SPEC_EPOCH)
+      csrIntResult.epoch := up(SPEC_EPOCH, LaneKey.Lane0)
 
-      down(WriteBack.RESULT).address.allowOverride := up(Decoder.RD_ADDR).asUInt
-      down(WriteBack.RESULT).data.allowOverride := Mux(up(Decoder.RD_ADDR).asUInt === 0, B(0, 64 bits), vectorConfigNextVl.asBits)
-      down(WriteBack.RESULT).valid.allowOverride := True
+      down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
+      down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := Mux(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt === 0, B(0, 64 bits), vectorConfigNextVl.asBits)
+      down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := True
     }
     when(vectorMemoryComplete && !vectorMemoryTrapValid) {
       csrVstart := 0
@@ -951,35 +976,35 @@ case class TrapCsrBackend(
 
     when(csrFire && !csrIllegal) {
       csrIntResult.valid := True
-      csrIntResult.rd := up(Decoder.RD_ADDR).asUInt
+      csrIntResult.rd := up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
       csrIntResult.data := csrOld
       csrIntResult.writesRd := True
       csrIntResult.commitEligible := epochMatches
-      csrIntResult.epoch := up(SPEC_EPOCH)
+      csrIntResult.epoch := up(SPEC_EPOCH, LaneKey.Lane0)
 
-      down(WriteBack.RESULT).address.allowOverride := up(Decoder.RD_ADDR).asUInt
-      down(WriteBack.RESULT).data.allowOverride := Mux(up(Decoder.RD_ADDR).asUInt === 0, B(0, 64 bits), csrOld)
-      down(WriteBack.RESULT).valid.allowOverride := True
+      down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
+      down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := Mux(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt === 0, B(0, 64 bits), csrOld)
+      down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := True
     }
 
     val trapFromBranch = branch.logic.willTrap
     val insn = trapInsn
     val duplicateInWb = wbStage.up.isValid &&
-      wbStage(Decoder.VALID) &&
-      wbStage(LANE_SEL) &&
-      (wbStage(Fetch.FETCH_SEQ) === up(Fetch.FETCH_SEQ))
-    val aguFire = sawNonZeroPc && up.isValid && up(Decoder.VALID) && up(LANE_SEL) && up(borb.dispatch.Dispatch.SENDTOAGU) && !duplicateInWb
-    val usesFpState = up(IssueSemantics.PROPS).readsFpRs1 || up(IssueSemantics.PROPS).readsFpRs2 ||
-      up(IssueSemantics.PROPS).readsFpRs3 || up(IssueSemantics.PROPS).writesFpRd
+      wbStage(Decoder.VALID, LaneKey.Lane0) &&
+      wbStage(LANE_SEL, LaneKey.Lane0) &&
+      (wbStage(Fetch.FETCH_SEQ) === up(Fetch.FETCH_SEQ, LaneKey.Lane0))
+    val aguFire = sawNonZeroPc && up.isValid && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) && up(borb.dispatch.Dispatch.SENDTOAGU, LaneKey.Lane0) && !duplicateInWb
+    val usesFpState = up(IssueSemantics.PROPS, LaneKey.Lane0).readsFpRs1 || up(IssueSemantics.PROPS, LaneKey.Lane0).readsFpRs2 ||
+      up(IssueSemantics.PROPS, LaneKey.Lane0).readsFpRs3 || up(IssueSemantics.PROPS, LaneKey.Lane0).writesFpRd
     val fpStateDisabledIllegal = usesFpState && (csrMstatus(14 downto 13) === B"00")
 
-    val stageExecFire = up.isValid && up.isFiring && ((up(LANE_SEL) && up(Decoder.VALID)) || illegalTrapPacket)
+    val stageExecFire = up.isValid && up.isFiring && ((up(LANE_SEL, LaneKey.Lane0) && up(Decoder.VALID, LaneKey.Lane0)) || illegalTrapPacket)
     when(illegalTrapPacket) {
-      up(Decoder.VALID).allowOverride := True
-      up(LANE_SEL).allowOverride := True
+      up(Decoder.VALID, LaneKey.Lane0).allowOverride := True
+      up(LANE_SEL, LaneKey.Lane0).allowOverride := True
     }
 
-    when(stageExecFire && (up(PC.PC) >= ARCH_BASE)) {
+    when(stageExecFire && (up(PC.PC, LaneKey.Lane0) >= ARCH_BASE)) {
       sawNonZeroPc := True
     }
 
@@ -1434,7 +1459,7 @@ case class TrapCsrBackend(
 
     val loadBytes = UInt(64 bits)
     loadBytes := U(1, 64 bits)
-    switch(up(Decoder.MicroCode)) {
+    switch(up(Decoder.MicroCode, LaneKey.Lane0)) {
       is(uopLH, uopLHU, uopFLH) { loadBytes := U(2, 64 bits) }
       is(uopLW, uopLWU, uopFLW) { loadBytes := U(4, 64 bits) }
       is(uopLD, uopFLD) { loadBytes := U(8, 64 bits) }
@@ -1442,18 +1467,18 @@ case class TrapCsrBackend(
 
     val storeBytes = UInt(64 bits)
     storeBytes := U(1, 64 bits)
-    switch(up(Decoder.MicroCode)) {
+    switch(up(Decoder.MicroCode, LaneKey.Lane0)) {
       is(uopSH, uopFSH) { storeBytes := U(2, 64 bits) }
       is(uopSW, uopFSW) { storeBytes := U(4, 64 bits) }
       is(uopSD, uopFSD) { storeBytes := U(8, 64 bits) }
       is(uopCBOZERO) { storeBytes := U(64, 64 bits) }
     }
 
-    val atomicWordAccess = up(Decoder.MicroCode).mux(
+    val atomicWordAccess = up(Decoder.MicroCode, LaneKey.Lane0).mux(
       uopAMOSWAPW -> True, uopAMOADDW -> True, uopAMOXORW -> True, uopAMOANDW -> True, uopAMOORW -> True,
       uopAMOMINW -> True, uopAMOMAXW -> True, uopAMOMINUW -> True, uopAMOMAXUW -> True, default -> False
     )
-    val atomicDoubleAccess = up(Decoder.MicroCode).mux(
+    val atomicDoubleAccess = up(Decoder.MicroCode, LaneKey.Lane0).mux(
       uopAMOSWAPD -> True, uopAMOADDD -> True, uopAMOXORD -> True, uopAMOANDD -> True, uopAMOORD -> True,
       uopAMOMIND -> True, uopAMOMAXD -> True, uopAMOMINUD -> True, uopAMOMAXUD -> True, default -> False
     )
@@ -1476,7 +1501,7 @@ case class TrapCsrBackend(
 
     val fetchTranslatePriv = UInt(2 bits)
     fetchTranslatePriv := instPriv
-    val vmFetch = vmTranslateSv39(up(PC.PC), instPriv, needX = True, needR = False, needW = False, accessBytes = fetchBytes, tlbKind = tlbKindI)
+    val vmFetch = vmTranslateSv39(up(PC.PC, LaneKey.Lane0), instPriv, needX = True, needR = False, needW = False, accessBytes = fetchBytes, tlbKind = tlbKindI)
     val vmFetchBeat = vmTranslateSv39(fetch.io.vmTranslateVirt, fetchTranslatePriv, needX = True, needR = False, needW = False, accessBytes = U(8, 64 bits), tlbKind = tlbKindI)
     val vmBranchFetch = vmTranslateSv39(branch.logic.target, instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits), tlbKind = tlbKindI)
     val vmLoad = vmTranslateSv39(lsu.logic.effectiveAddr, dataPriv, needX = False, needR = True, needW = False, accessBytes = loadBytes, tlbKind = tlbKindD)
@@ -1509,7 +1534,7 @@ case class TrapCsrBackend(
     }
 
     val fetchAddrForPerms = UInt(64 bits)
-    fetchAddrForPerms := up(PC.PC)
+    fetchAddrForPerms := up(PC.PC, LaneKey.Lane0)
     when(vmFetch.active && !vmFetch.pageFault && !vmFetch.accessFault) {
       fetchAddrForPerms := vmFetch.physAddr
     }
@@ -1536,7 +1561,7 @@ case class TrapCsrBackend(
       pmpAllow(fetchAddrForPerms, instPriv, needX = True, needR = False, needW = False, accessBytes = U(4, 64 bits))
     }
 
-    val isAmoOp = up(Decoder.MicroCode).mux(
+    val isAmoOp = up(Decoder.MicroCode, LaneKey.Lane0).mux(
       uopAMOSWAPW -> True, uopAMOADDW -> True, uopAMOXORW -> True, uopAMOANDW -> True, uopAMOORW -> True,
       uopAMOMINW -> True, uopAMOMAXW -> True, uopAMOMINUW -> True, uopAMOMAXUW -> True,
       uopAMOSWAPD -> True, uopAMOADDD -> True, uopAMOXORD -> True, uopAMOANDD -> True, uopAMOORD -> True,
@@ -1560,7 +1585,7 @@ case class TrapCsrBackend(
     val pmpExecFault = trapInsnArrived && !vmFetch.pageFault && (vmFetch.accessFault || !pmpExecAllowed || lowExecAccessFault)
     val zfhMemLoadInsn = (insn(6 downto 0) === B"7'b0000111") && (insn(14 downto 12) === B"3'b001")
     val zfhMemStoreInsn = (insn(6 downto 0) === B"7'b0100111") && (insn(14 downto 12) === B"3'b001")
-    val zfhMemAccessFire = sawNonZeroPc && up.isValid && up(Decoder.VALID) && up(LANE_SEL) &&
+    val zfhMemAccessFire = sawNonZeroPc && up.isValid && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) &&
       !duplicateInWb && (zfhMemLoadInsn || zfhMemStoreInsn)
     val dataAccessFire = (aguFire || zfhMemAccessFire) && trapPcInRam && !fpStateDisabledIllegal
     val trapLoadAccess = lsu.logic.isLoad || (zfhMemAccessFire && zfhMemLoadInsn)
@@ -1744,7 +1769,7 @@ case class TrapCsrBackend(
       }
     }
 
-    val pcRaw = up(PC.PC)
+    val pcRaw = up(PC.PC, LaneKey.Lane0)
     val branchTargetRaw = branch.logic.target
     val memAddrRaw = lsu.logic.effectiveAddr
     val pcArch = pcRaw
@@ -1875,6 +1900,6 @@ case class TrapCsrBackend(
     // Keep trap ownership instruction-local. Raw trap-source unions can stay
     // high for non-firing or stale-epoch execute occupants, which incorrectly
     // tags adjacent instructions in writeback as traps.
-    down(TRAP) := trapFire
+    down(TRAP, LaneKey.Lane0) := trapFire
   }
 }

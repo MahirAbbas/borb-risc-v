@@ -4,6 +4,7 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.fetch.{Fetch, PC}
 import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin
@@ -50,7 +51,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
   val order = Reg(UInt(64 bits)) init (0)
 
   val wb = new wbStage.Area {
-    val isCommitted = up(COMMIT)
+    val isCommitted = up(COMMIT, LaneKey.Lane0)
 
     // Increment order on VALID commit
     when(isCommitted) {
@@ -59,40 +60,40 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
 
     io.rvfi.valid := isCommitted
     io.rvfi.order := order
-    io.rvfi.insn := up(Decoder.DECODED_INSTRUCTION)
-    io.rvfi.trap := up(TRAP)
+    io.rvfi.insn := up(Decoder.DECODED_INSTRUCTION, LaneKey.Lane0)
+    io.rvfi.trap := up(TRAP, LaneKey.Lane0)
     io.rvfi.halt := False
     io.rvfi.intr := False
     io.rvfi.mode := B"11" // M-Mode
     io.rvfi.ixl := B"10" // 64-bit
 
-    val issueProps = up(borb.dispatch.IssueSemantics.PROPS)
+    val issueProps = up(borb.dispatch.IssueSemantics.PROPS, LaneKey.Lane0)
     val readsIntRs1 = issueProps.readsIntRs1
     val readsIntRs2 = issueProps.readsIntRs2
 
-    io.rvfi.rs1_addr := readsIntRs1 ? up(Decoder.RS1_ADDR).asUInt | U(0, 5 bits)
-    io.rvfi.rs2_addr := readsIntRs2 ? up(Decoder.RS2_ADDR).asUInt | U(0, 5 bits)
+    io.rvfi.rs1_addr := readsIntRs1 ? up(Decoder.RS1_ADDR, LaneKey.Lane0).asUInt | U(0, 5 bits)
+    io.rvfi.rs2_addr := readsIntRs2 ? up(Decoder.RS2_ADDR, LaneKey.Lane0).asUInt | U(0, 5 bits)
 
     // RVFI integer source operands are only meaningful for integer-register
     // reads. FP/other register classes must report x0/0 here.
-    io.rvfi.rs1_rdata := readsIntRs1 ? up(SrcPlugin.RS1) | B(0, 64 bits)
-    io.rvfi.rs2_rdata := readsIntRs2 ? up(SrcPlugin.RS2) | B(0, 64 bits)
+    io.rvfi.rs1_rdata := readsIntRs1 ? up(SrcPlugin.RS1, LaneKey.Lane0) | B(0, 64 bits)
+    io.rvfi.rs2_rdata := readsIntRs2 ? up(SrcPlugin.RS2, LaneKey.Lane0) | B(0, 64 bits)
 
-    val result = up(borb.execute.WriteBack.RESULT)
+    val result = up(borb.execute.WriteBack.RESULT, LaneKey.Lane0)
     // Retire Packet Logic for RD
     // If result.valid is set, it writes to RD.
 
     io.rvfi.rd_addr := (issueProps.writesIntRd && result.valid) ? result.address | U(0, 5 bits)
     io.rvfi.rd_wdata := (issueProps.writesIntRd && result.valid) ? result.data | B(0, 64 bits)
 
-    val currentPc = (up(Fetch.FETCH_BLOCK_PC) + up(Fetch.FETCH_BYTE_OFFSET).resized).resize(64)
+    val currentPc = (up(Fetch.FETCH_BLOCK_PC, LaneKey.Lane0) + up(Fetch.FETCH_BYTE_OFFSET, LaneKey.Lane0).resized).resize(64)
     io.rvfi.pc_rdata := currentPc.asBits
-    val microOp = up(Decoder.MicroCode)
-    val rs1S = up(SrcPlugin.RS1).asSInt
-    val rs2S = up(SrcPlugin.RS2).asSInt
-    val rs1U = up(SrcPlugin.RS1).asUInt
-    val rs2U = up(SrcPlugin.RS2).asUInt
-    val immS = up(SrcPlugin.IMMED).asSInt
+    val microOp = up(Decoder.MicroCode, LaneKey.Lane0)
+    val rs1S = up(SrcPlugin.RS1, LaneKey.Lane0).asSInt
+    val rs2S = up(SrcPlugin.RS2, LaneKey.Lane0).asSInt
+    val rs1U = up(SrcPlugin.RS1, LaneKey.Lane0).asUInt
+    val rs2U = up(SrcPlugin.RS2, LaneKey.Lane0).asUInt
+    val immS = up(SrcPlugin.IMMED, LaneKey.Lane0).asSInt
     val branchCondition = Bool()
     switch(microOp) {
       is(uopBEQ)  { branchCondition := rs1S === rs2S }
@@ -124,7 +125,7 @@ case class RvfiPlugin(wbStage: CtrlLink) extends Area {
       ((microOp === uopBGE) && branchCondition) ||
       ((microOp === uopBLTU) && branchCondition) ||
       ((microOp === uopBGEU) && branchCondition)
-    val sequentialPcStep = Mux(up(Decoder.IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
+    val sequentialPcStep = Mux(up(Decoder.IS_COMPRESSED, LaneKey.Lane0), U(2, 64 bits), U(4, 64 bits))
     io.rvfi.pc_wdata := Mux(branchTaken, branchTarget.asBits, (currentPc + sequentialPcStep).asBits)
 
     // Memory access signals from LSU

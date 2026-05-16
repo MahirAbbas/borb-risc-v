@@ -63,8 +63,8 @@ case class VectorCommand(cfg: VectorConfig) extends Bundle {
   val rs1 = UInt(5 bits)
   val rs2 = UInt(5 bits)
   val rs3 = UInt(5 bits)
-  val scalarRs1 = Bits(cfg.xlen bits)
-  val scalarRs2 = Bits(cfg.xlen bits)
+  val intRs1 = Bits(cfg.xlen bits)
+  val intRs2 = Bits(cfg.xlen bits)
   val funct3 = Bits(3 bits)
   val funct6 = Bits(6 bits)
   val vm = Bool()
@@ -75,9 +75,9 @@ case class VectorResponse(cfg: VectorConfig) extends Bundle {
   val hartId = UInt(cfg.hartIdWidth bits)
   val instruction = Bits(32 bits)
   val complete = Bool()
-  val writesScalar = Bool()
-  val scalarRd = UInt(5 bits)
-  val scalarData = Bits(cfg.xlen bits)
+  val writesInt = Bool()
+  val intRd = UInt(5 bits)
+  val intData = Bits(cfg.xlen bits)
   val exception = VectorException(cfg)
 }
 
@@ -370,7 +370,7 @@ case class DormantSharedVectorEngine(cfg: VectorConfig) extends Component {
   when(startMemory) {
     memIsStore := isVse32
     memRegIndex := commandVd
-    memBase := io.command.payload.scalarRs1.asUInt.resized
+    memBase := io.command.payload.intRs1.asUInt.resized
     memVl := memStartVl
     memElem := memStartElement(1 downto 0)
     memLoadData := Mux(isVse32, B(0, cfg.vlen bits), hart0Regs(commandVd))
@@ -461,9 +461,9 @@ case class DormantSharedVectorEngine(cfg: VectorConfig) extends Component {
   io.response.payload.hartId := 0
   io.response.payload.instruction := commandInsn
   io.response.payload.complete := io.response.valid
-  io.response.payload.writesScalar := io.response.valid
-  io.response.payload.scalarRd := commandVd
-  io.response.payload.scalarData := hart0Regs(commandVs2)(31 downto 0).asSInt.resize(cfg.xlen).asBits
+  io.response.payload.writesInt := io.response.valid
+  io.response.payload.intRd := commandVd
+  io.response.payload.intData := hart0Regs(commandVs2)(31 downto 0).asSInt.resize(cfg.xlen).asBits
   io.response.payload.exception.valid := False
   io.response.payload.exception.cause := VectorExceptionCause.None
   io.response.payload.exception.tval := 0

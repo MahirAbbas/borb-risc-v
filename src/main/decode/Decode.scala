@@ -10,11 +10,13 @@ import scala.collection.mutable
 import spinal.lib.cpu.riscv.impl.Alu
 import spinal.lib.logic.Symplify
 import _root_.borb.common
+import _root_.borb.common.LaneKey
 
 case class uop() extends Bundle {
   
 }
 object Decoder extends AreaObject {
+  val LANES = 2
 
   val INSTRUCTION = Payload(Bits(32 bits))
   val DECODED_INSTRUCTION = Payload(Bits(32 bits))
@@ -91,44 +93,50 @@ case class Decoder(stage: CtrlLink, withCompressed: Boolean = false, xlen: Int =
   import spinal.core.sim._
   val trap = new stage.Area {}
 
-  val decodeLane = new stage.Area {
-    val decodeInst = Bits(32 bits)
-    decodeInst := up(INSTRUCTION)
-    val isCompressed = up(INSTRUCTION)(1 downto 0) =/= B"11"
-    val rvc = RVC(up(INSTRUCTION)(15 downto 0), xlen = xlen)
+  class DecodeLaneArea(laneId: Int) extends stage.Area {
+    val laneKey = LaneKey(laneId)
+
+    def up[T <: Data](payload: Payload[T]): T = stage.up(payload, laneKey)
+    def down[T <: Data](payload: Payload[T]): T = stage.down(payload, laneKey)
+
+    val instruction = up(INSTRUCTION)
+    val decodedInstruction = Bits(32 bits)
+    decodedInstruction := instruction
+
+    val isCompressed = instruction(1 downto 0) =/= B"11"
+    val rvc = RVC(instruction(15 downto 0), xlen = xlen)
 
     if(withCompressed) {
       when(isCompressed) {
-        decodeInst := rvc.inst
+        decodedInstruction := rvc.inst
       }
     }
 
     val decodeIllegal = if(withCompressed) (isCompressed && rvc.illegal) else False
+    val decodeSupported = Symplify(decodedInstruction, all)
+    val laneValid = stage.up.isValid && stage.up(common.Common.LANE_MASK)(laneId)
+    val pcInRam = up(borb.fetch.PC.PC) >= U(BigInt("80000000", 16), 64 bits)
 
-    down(DECODED_INSTRUCTION) := decodeInst
+    down(DECODED_INSTRUCTION) := decodedInstruction
     if(withCompressed) {
       down(IS_COMPRESSED) := isCompressed && !rvc.illegal
     } else {
       down(IS_COMPRESSED) := False
     }
+    down(VALID) := laneValid && decodeSupported && !decodeIllegal
+    down(DECODE_ILLEGAL) := laneValid && decodeIllegal && pcInRam
 
-    val decodeSupported = Symplify(decodeInst, all)
-    val pcInRam = up(borb.fetch.PC.PC) >= U(BigInt("80000000", 16), 64 bits)
-    VALID := stage.up.isValid && decodeSupported && !decodeIllegal
-    down(DECODE_ILLEGAL) := stage.up.isValid && decodeIllegal && pcInRam
-
-    for ((spec, signal, _) <- specs) {
-      down(signal).assignFromBits(spec.build(decodeInst, all).asBits)
+    for ((signal, spec) <- specs.map { case (spec, signal, _) => signal -> spec }) {
+      down(signal).assignFromBits(spec.build(decodedInstruction, all).asBits)
     }
 
+    down(RD_ADDR) := decodedInstruction(11 downto 7)
+    down(RS1_ADDR) := decodedInstruction(19 downto 15)
+    down(RS2_ADDR) := decodedInstruction(24 downto 20)
+    down(RS3_ADDR) := decodedInstruction(31 downto 27)
   }
 
-  val logic = new stage.Area {
-    down(Decoder.RD_ADDR) := down(Decoder.DECODED_INSTRUCTION)(11 downto 7)
-    down(Decoder.RS1_ADDR) := down(Decoder.DECODED_INSTRUCTION)(19 downto 15)
-    down(Decoder.RS2_ADDR) := down(Decoder.DECODED_INSTRUCTION)(24 downto 20)
-    down(Decoder.RS3_ADDR) := down(Decoder.DECODED_INSTRUCTION)(31 downto 27)
-  }
+  val laneDecoding = for(laneId <- 0 until Decoder.LANES) yield new DecodeLaneArea(laneId)
 
   // branchResolved signal - set by branch.scala when a branch resolves
   // This was used by shadowLogic (now removed) but may be useful for future branch prediction

@@ -5,6 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.backend.TrapRedirectOutcome
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.fetch.PC
 import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin
@@ -101,29 +102,29 @@ case class DebugPlugin(
   val order = Reg(UInt(64 bits)) init (0)
 
   val wb = new wbStage.Area {
-    val stageValid = up.isValid && up(Decoder.VALID) && up(LANE_SEL)
-    val isCommitted = stageValid && up(COMMIT)
+    val stageValid = up.isValid && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0)
+    val isCommitted = stageValid && up(COMMIT, LaneKey.Lane0)
     when(isCommitted) {
       order := order + 1
     }
 
     io.dbg.commitValid := isCommitted
-    io.dbg.commitPulse := up(COMMIT)
-    io.dbg.duplicateRetire := up(borb.execute.WriteBack.DUPLICATE_RETIRE)
+    io.dbg.commitPulse := up(COMMIT, LaneKey.Lane0)
+    io.dbg.duplicateRetire := up(borb.execute.WriteBack.DUPLICATE_RETIRE, LaneKey.Lane0)
     io.dbg.commitOrder := order
-    io.dbg.commitSeq := up(borb.fetch.Fetch.FETCH_SEQ)
-    io.dbg.commitPc := up(PC.PC)
-    io.dbg.commitInsn := up(Decoder.DECODED_INSTRUCTION)
-    io.dbg.commitRs1 := up(Decoder.RS1_ADDR).asUInt
-    io.dbg.commitRs2 := up(Decoder.RS2_ADDR).asUInt
-    io.dbg.commitRs1Data := up(SrcPlugin.RS1)
-    io.dbg.commitRs2Data := up(SrcPlugin.RS2)
+    io.dbg.commitSeq := up(borb.fetch.Fetch.FETCH_SEQ, LaneKey.Lane0)
+    io.dbg.commitPc := up(PC.PC, LaneKey.Lane0)
+    io.dbg.commitInsn := up(Decoder.DECODED_INSTRUCTION, LaneKey.Lane0)
+    io.dbg.commitRs1 := up(Decoder.RS1_ADDR, LaneKey.Lane0).asUInt
+    io.dbg.commitRs2 := up(Decoder.RS2_ADDR, LaneKey.Lane0).asUInt
+    io.dbg.commitRs1Data := up(SrcPlugin.RS1, LaneKey.Lane0)
+    io.dbg.commitRs2Data := up(SrcPlugin.RS2, LaneKey.Lane0)
 
-    val result = up(borb.execute.WriteBack.RESULT)
+    val result = up(borb.execute.WriteBack.RESULT, LaneKey.Lane0)
     io.dbg.commitRd := result.valid ? result.address | U(0, 5 bits)
     io.dbg.commitWe := result.valid && isCommitted
     io.dbg.commitWdata := result.valid ? result.data | B(0, 64 bits)
-    io.dbg.commitTrap := up(TRAP)
+    io.dbg.commitTrap := up(TRAP, LaneKey.Lane0)
     io.dbg.commitTrapCause := trapRedirect.trapCause
     io.dbg.commitTrapTval := trapRedirect.trapTval
     io.dbg.redirectBranch := redirectProbe.branchRedirect
@@ -138,9 +139,9 @@ case class DebugPlugin(
     io.dbg.liveTrapCause := redirectProbe.liveTrapCause
     io.dbg.liveTrapTval := redirectProbe.liveTrapTval
 
-    io.dbg.squashed := !up(LANE_SEL) || up(TRAP)
+    io.dbg.squashed := !up(LANE_SEL, LaneKey.Lane0) || up(TRAP, LaneKey.Lane0)
 
-    io.dbg.wb_pc := up(PC.PC)
+    io.dbg.wb_pc := up(PC.PC, LaneKey.Lane0)
 
     io.dbg.memAddr := up(Lsu.MEM_ADDR)
     io.dbg.memRmask := up(Lsu.MEM_RMASK)
@@ -155,17 +156,17 @@ case class DebugPlugin(
   io.dbg.x_pc := pipeline.ctrl(8)(PC.PC) // Execute
   io.dbg.s4_valid := s4Stage.up.isValid
   io.dbg.s4_fire := s4Stage.up.isFiring
-  io.dbg.s4_seq := s4Stage.up(borb.fetch.Fetch.FETCH_SEQ)
+  io.dbg.s4_seq := s4Stage.up(borb.fetch.Fetch.FETCH_SEQ, LaneKey.Lane0)
   io.dbg.s5_valid := s5Stage.up.isValid
   io.dbg.s5_fire := s5Stage.up.isFiring
-  io.dbg.s5_lane := s5Stage.up(LANE_SEL)
-  io.dbg.s5_seq := s5Stage.up(borb.fetch.Fetch.FETCH_SEQ)
+  io.dbg.s5_lane := s5Stage.up(LANE_SEL, LaneKey.Lane0)
+  io.dbg.s5_seq := s5Stage.up(borb.fetch.Fetch.FETCH_SEQ, LaneKey.Lane0)
   io.dbg.s6_valid := s6Stage.up.isValid
   io.dbg.s6_fire := s6Stage.up.isFiring
-  io.dbg.s6_lane := s6Stage.up(LANE_SEL)
-  io.dbg.s6_seq := s6Stage.up(borb.fetch.Fetch.FETCH_SEQ)
+  io.dbg.s6_lane := s6Stage.up(LANE_SEL, LaneKey.Lane0)
+  io.dbg.s6_seq := s6Stage.up(borb.fetch.Fetch.FETCH_SEQ, LaneKey.Lane0)
   io.dbg.s7_valid := wbStage.up.isValid
   io.dbg.s7_fire := wbStage.up.isFiring
-  io.dbg.s7_lane := wbStage.up(LANE_SEL)
-  io.dbg.s7_seq := wbStage.up(borb.fetch.Fetch.FETCH_SEQ)
+  io.dbg.s7_lane := wbStage.up(LANE_SEL, LaneKey.Lane0)
+  io.dbg.s7_seq := wbStage.up(borb.fetch.Fetch.FETCH_SEQ, LaneKey.Lane0)
 }

@@ -4,16 +4,55 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.common.Common._
+import borb.common.LaneKey
+import borb.common.MicroCode
 import borb.common.MicroCode._
 import borb.dispatch.Dispatch
 import borb.dispatch.SrcPlugin
 import borb.execute.Lsu
 import borb.execute.WriteBack
-import borb.execute.fpu.{FpuAddSub, FpuCompareResult, FpuDivSqrt, FpuFma, FpuMinMaxResult, FpuMul, FpuRegisterFile, FpuScalarMisc, FpuSoftFloatUtils}
+import borb.execute.FunctionalUnit
+import borb.execute.fpu.{FpArithmetic, FpConvert, FpLoadStore, FpMisc, FpuRegisterFile, FpuSoftFloatUtils}
+import borb.execute.fpu.FpuFormatUtils._
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
+import borb.frontend.ExecutionUnitEnum
 
-case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bits) extends Area {
+object FpBackend {
+  val SupportedUops =
+    FpLoadStore.SupportedUops ++
+    FpArithmetic.SupportedUops ++
+    FpMisc.SupportedUops ++
+    Seq(
+      uopFCVTWS,
+      uopFCVTWUS,
+      uopFCVTLS,
+      uopFCVTLUS,
+      uopFCVTSW,
+      uopFCVTSWU,
+      uopFCVTSL,
+      uopFCVTSLU,
+      uopFCVTWD,
+      uopFCVTWUD,
+      uopFCVTLD,
+      uopFCVTLUD,
+      uopFCVTMODWD,
+      uopFCVTDW,
+      uopFCVTDWU,
+      uopFCVTDL,
+      uopFCVTDLU,
+      uopFCVTSD,
+      uopFCVTDS,
+      uopFCVTLH,
+      uopFCVTLUH,
+      uopFCVTHL,
+      uopFCVTHLU
+    )
+}
+
+case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bits) extends FunctionalUnit(ExecutionUnitEnum.FPU) {
+  FpBackend.SupportedUops.foreach(add)
+
   val fpWrite = FpWriteIntent()
   val fpFlags = FpFlagsIntent()
   val intResult = IntResultIntent()
@@ -36,7 +75,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
   suppressIntWriteback := False
 
   val logic = new execStage.Area {
-    val epochMatches = up(SPEC_EPOCH) === currentEpoch
+    val epochMatches = up(SPEC_EPOCH, LaneKey.Lane0) === currentEpoch
     val fpRegFile = FpuRegisterFile(flen = 64, readPorts = 3, writePorts = 1)
 
     fpRegFile.io.writes(0).valid := fpWrite.valid
@@ -49,11 +88,11 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       intResult.data := data
       intResult.writesRd := True
       intResult.commitEligible := epochMatches
-      intResult.epoch := up(SPEC_EPOCH)
+      intResult.epoch := up(SPEC_EPOCH, LaneKey.Lane0)
 
-      down(WriteBack.RESULT).address.allowOverride := rd
-      down(WriteBack.RESULT).data.allowOverride := Mux(rd === 0, B(0, 64 bits), data)
-      down(WriteBack.RESULT).valid.allowOverride := True
+      down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := rd
+      down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := Mux(rd === 0, B(0, 64 bits), data)
+      down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := True
     }
 
     def requestFlags(bits: Bits): Unit = {
@@ -63,105 +102,31 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       }
     }
 
-    val insn = up(Decoder.DECODED_INSTRUCTION)
-    val microCode = up(Decoder.MicroCode)
-    val stagePayloadValid = up.isValid && up(Decoder.VALID) && up(LANE_SEL)
-    val aguFire = stagePayloadValid && up(Dispatch.SENDTOAGU)
-    val aluFire = stagePayloadValid && up(Dispatch.SENDTOALU)
-    val faluFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Falu)
-    val fmacFire = aluFire && (up(BackendIssue.SELECTED_PIPE) === BackendPipe.Fmac)
-    val fpUsesLdq = (up(Decoder.IS_FLOAT) === borb.frontend.YESNO.Y) && (up(Decoder.USES_LDQ) === borb.frontend.YESNO.Y)
-    val fpUsesStq = (up(Decoder.IS_FLOAT) === borb.frontend.YESNO.Y) && (up(Decoder.USES_STQ) === borb.frontend.YESNO.Y)
+    def writeFp(rd: UInt, data: Bits): Unit = {
+      fpWrite.valid := True
+      fpWrite.address := rd
+      fpWrite.data := data
+    }
 
-    val isFlhOp = microCode === uopFLH
-    val isFlwOp = microCode === uopFLW
-    val isFldOp = microCode === uopFLD
-    val isFshOp = microCode === uopFSH
-    val isFswOp = microCode === uopFSW
-    val isFsdOp = microCode === uopFSD
-    val isFcvtWsOp = microCode === uopFCVTWS
-    val isFcvtWuSOp = microCode === uopFCVTWUS
-    val isFcvtLsOp = microCode === uopFCVTLS
-    val isFcvtLuSOp = microCode === uopFCVTLUS
-    val isFcvtSwOp = microCode === uopFCVTSW
-    val isFcvtSwuOp = microCode === uopFCVTSWU
-    val isFcvtSlOp = microCode === uopFCVTSL
-    val isFcvtSluOp = microCode === uopFCVTSLU
-    val isFcvtWdOp = microCode === uopFCVTWD
-    val isFcvtWuDOp = microCode === uopFCVTWUD
-    val isFcvtLdOp = microCode === uopFCVTLD
-    val isFcvtLuDOp = microCode === uopFCVTLUD
-    val isFcvtDwOp = microCode === uopFCVTDW
-    val isFcvtDwuOp = microCode === uopFCVTDWU
-    val isFcvtDlOp = microCode === uopFCVTDL
-    val isFcvtDluOp = microCode === uopFCVTDLU
-    val isFcvtSdOp = microCode === uopFCVTSD
-    val isFcvtDsOp = microCode === uopFCVTDS
-    val isFcvtLhOp = microCode === uopFCVTLH
-    val isFcvtLuHOp = microCode === uopFCVTLUH
-    val isFcvtHlOp = microCode === uopFCVTHL
-    val isFcvtHluOp = microCode === uopFCVTHLU
-    val isFaddSOp = microCode === uopFADDS
-    val isFsubSOp = microCode === uopFSUBS
-    val isFmulSOp = microCode === uopFMULS
-    val isFdivSOp = microCode === uopFDIVS
-    val isFsqrtSOp = microCode === uopFSQRTS
-    val isFaddDOp = microCode === uopFADDD
-    val isFsubDOp = microCode === uopFSUBD
-    val isFmulDOp = microCode === uopFMULD
-    val isFdivDOp = microCode === uopFDIVD
-    val isFsqrtDOp = microCode === uopFSQRTD
-    val isFmaddSOp = microCode === uopFMADDS
-    val isFmsubSOp = microCode === uopFMSUBS
-    val isFnmsubSOp = microCode === uopFNMSUBS
-    val isFnmaddSOp = microCode === uopFNMADDS
-    val isFmaddDOp = microCode === uopFMADDD
-    val isFmsubDOp = microCode === uopFMSUBD
-    val isFnmsubDOp = microCode === uopFNMSUBD
-    val isFnmaddDOp = microCode === uopFNMADDD
-    val isFmvXWOp = microCode === uopFMVXW
-    val isFmvWXOp = microCode === uopFMVWX
-    val isFmvXDOp = microCode === uopFMVXD
-    val isFmvDXOp = microCode === uopFMVDX
-    val isFclassSOp = microCode === uopFCLASSS
-    val isFclassDOp = microCode === uopFCLASSD
-    val isFsgnjSOp = microCode === uopFSGNJS
-    val isFsgnjnSOp = microCode === uopFSGNJNS
-    val isFsgnjxSOp = microCode === uopFSGNJXS
-    val isFsgnjDOp = microCode === uopFSGNJD
-    val isFsgnjnDOp = microCode === uopFSGNJND
-    val isFsgnjxDOp = microCode === uopFSGNJXD
-    val isFminSOp = microCode === uopFMINS
-    val isFmaxSOp = microCode === uopFMAXS
-    val isFminmSOp = microCode === uopFMINMS
-    val isFmaxmSOp = microCode === uopFMAXMS
-    val isFminDOp = microCode === uopFMIND
-    val isFmaxDOp = microCode === uopFMAXD
-    val isFminmDOp = microCode === uopFMINMD
-    val isFmaxmDOp = microCode === uopFMAXMD
-    val isFleSOp = microCode === uopFLES
-    val isFltSOp = microCode === uopFLTS
-    val isFeqSOp = microCode === uopFEQS
-    val isFleqSOp = microCode === uopFLEQS
-    val isFltqSOp = microCode === uopFLTQS
-    val isFleDOp = microCode === uopFLED
-    val isFltDOp = microCode === uopFLTD
-    val isFeqDOp = microCode === uopFEQD
-    val isFleqDOp = microCode === uopFLEQD
-    val isFltqDOp = microCode === uopFLTQD
-    val isFliSOp = microCode === uopFLIS
-    val isFliDOp = microCode === uopFLID
-    val isFroundSOp = microCode === uopFROUNDS
-    val isFroundnxSOp = microCode === uopFROUNDNXS
-    val isFroundDOp = microCode === uopFROUNDD
-    val isFroundnxDOp = microCode === uopFROUNDNXD
-    val isFcvtmodWdOp = microCode === uopFCVTMODWD
+    val insn = up(Decoder.DECODED_INSTRUCTION, LaneKey.Lane0)
+    val microCode = up(Decoder.MicroCode, LaneKey.Lane0)
+    val stagePayloadValid = up.isValid && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0)
+    val aguFire = stagePayloadValid && up(Dispatch.SENDTOAGU, LaneKey.Lane0)
+    val aluFire = stagePayloadValid && up(Dispatch.SENDTOALU, LaneKey.Lane0)
+    val faluFire = aluFire && (up(BackendIssue.SELECTED_PIPE, LaneKey.Lane0) === BackendPipe.Falu)
+    val fmacFire = aluFire && (up(BackendIssue.SELECTED_PIPE, LaneKey.Lane0) === BackendPipe.Fmac)
+    val fpUsesLdq = (up(Decoder.IS_FLOAT, LaneKey.Lane0) === borb.frontend.YESNO.Y) && (up(Decoder.USES_LDQ, LaneKey.Lane0) === borb.frontend.YESNO.Y)
+    val fpUsesStq = (up(Decoder.IS_FLOAT, LaneKey.Lane0) === borb.frontend.YESNO.Y) && (up(Decoder.USES_STQ, LaneKey.Lane0) === borb.frontend.YESNO.Y)
 
-    val flwRd = up(Decoder.RD_ADDR).asUInt
-    val fcvtSRd = up(Decoder.RD_ADDR).asUInt
-    val fpRs1Addr = up(Decoder.RS1_ADDR).asUInt
-    val fpRs2Addr = up(Decoder.RS2_ADDR).asUInt
-    val fpRs3Addr = up(Decoder.RS3_ADDR).asUInt
+    def isAny(options: MicroCode.E*): Bool = {
+      if(options.isEmpty) False else options.map(microCode === _).reduce(_ || _)
+    }
+
+    val flwRd = up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
+    val fcvtSRd = up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt
+    val fpRs1Addr = up(Decoder.RS1_ADDR, LaneKey.Lane0).asUInt
+    val fpRs2Addr = up(Decoder.RS2_ADDR, LaneKey.Lane0).asUInt
+    val fpRs3Addr = up(Decoder.RS3_ADDR, LaneKey.Lane0).asUInt
 
     fpRegFile.io.reads(0).valid := True
     fpRegFile.io.reads(0).address := fpRs1Addr
@@ -186,153 +151,6 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val fpRs2HValue = Mux(fpRs2HBoxed, fpRs2Data(15 downto 0), B"16'x7E00")
     val fpRs3HValue = Mux(fpRs3HBoxed, fpRs3Data(15 downto 0), B"16'x7E00")
 
-    def boxedS(data: Bits): Bits = B(BigInt("FFFFFFFF", 16), 32 bits) ## data
-    def boxedH(data: Bits): Bits = B(BigInt("FFFFFFFFFFFF", 16), 48 bits) ## data
-    def halfToSingle(data: Bits): Bits = {
-      val out = Bits(32 bits)
-      val sign = data(15)
-      val exp = data(14 downto 10).asUInt
-      val frac = data(9 downto 0)
-      val fracUInt = frac.asUInt
-      out := sign.asBits ## B(0, 31 bits)
-      when(exp === U(31, 5 bits)) {
-        out := sign.asBits ## B(255, 8 bits) ## B(0, 23 bits)
-        when(frac =/= B(0, 10 bits)) {
-          out := FpuSoftFloatUtils.canonicalNaN32
-        }
-      } elsewhen(exp =/= U(0, 5 bits)) {
-        out := sign.asBits ## (exp.resize(8) + U(112, 8 bits)).asBits ## frac ## B(0, 13 bits)
-      } elsewhen(frac =/= B(0, 10 bits)) {
-        val msbIdx = UInt(4 bits)
-        msbIdx := 0
-        for (i <- 0 until 10) {
-          when(frac(i)) {
-            msbIdx := i
-          }
-        }
-        val norm = (fracUInt |<< (U(9, 4 bits) - msbIdx).resized).resize(10).asBits
-        out := sign.asBits ## (msbIdx.resize(8) + U(103, 8 bits)).asBits ## norm(8 downto 0) ## B(0, 14 bits)
-      }
-      out
-    }
-    def singleToHalf(data: Bits, rm: Bits): (Bits, Bits) = {
-      val out = Bits(16 bits)
-      val flags = Bits(5 bits)
-      val sign = data(31)
-      val exp = data(30 downto 23).asUInt
-      val frac = data(22 downto 0)
-      val fracUInt = frac.asUInt
-      val isZero = (exp === U(0, 8 bits)) && (frac === B(0, 23 bits))
-      val isInf = (exp === U(255, 8 bits)) && (frac === B(0, 23 bits))
-      val isNaN = (exp === U(255, 8 bits)) && (frac =/= B(0, 23 bits))
-      val isSNaN = isNaN && !frac(22)
-      val sig = UInt(24 bits)
-      sig := (U(1, 1 bits) ## fracUInt).asUInt
-      when(exp === U(0, 8 bits)) {
-        sig := (U(0, 1 bits) ## fracUInt).asUInt
-      }
-      out := sign.asBits ## B(0, 15 bits)
-      flags := 0
-
-      when(isNaN) {
-        out := sign.asBits ## B(31, 5 bits) ## B(BigInt("200", 16), 10 bits)
-        when(isSNaN) {
-          flags(4) := True
-        }
-      } elsewhen(isInf) {
-        out := sign.asBits ## B(31, 5 bits) ## B(0, 10 bits)
-      } elsewhen(!isZero) {
-        when(exp >= U(113, 8 bits)) {
-          val trunc = UInt(11 bits)
-          trunc := sig(23 downto 13)
-          val rem = sig(12 downto 0)
-          val remNZ = rem =/= U(0, 13 bits)
-          val gtHalf = rem > U(4096, 13 bits)
-          val eqHalf = rem === U(4096, 13 bits)
-          val inc = FpuSoftFloatUtils.roundInc(rm, sign, remNZ, gtHalf, eqHalf, trunc(0))
-          val rounded = trunc.resize(12) + inc.asUInt.resize(12)
-          val carry = rounded(11)
-          val outExp = (exp - U(112, 8 bits)).resize(6) + carry.asUInt.resize(6)
-          val roundedSig = UInt(11 bits)
-          roundedSig := rounded(10 downto 0)
-          when(carry) {
-            roundedSig := (rounded |>> 1).resize(11)
-          }
-
-          when((exp >= U(143, 8 bits)) || (outExp >= U(31, 6 bits))) {
-            val toInf = (rm === B"000") || (rm === B"100") || (rm === B"010" && sign) || (rm === B"011" && !sign)
-            out := sign.asBits ## B(30, 5 bits) ## B(BigInt("3FF", 16), 10 bits)
-            when(toInf) {
-              out := sign.asBits ## B(31, 5 bits) ## B(0, 10 bits)
-            }
-            flags(2) := True
-            flags(0) := True
-          } otherwise {
-            out := sign.asBits ## outExp(4 downto 0).asBits ## roundedSig(9 downto 0).asBits
-            when(remNZ) {
-              flags(0) := True
-            }
-          }
-        } otherwise {
-          val shift = (U(126, 8 bits) - exp).resize(6)
-          val trunc = UInt(11 bits)
-          val remNZ = Bool()
-          val gtHalf = Bool()
-          val eqHalf = Bool()
-          trunc := 0
-          remNZ := sig =/= U(0, 24 bits)
-          gtHalf := False
-          eqHalf := False
-          when(shift < U(32, 6 bits)) {
-            val sig32 = sig.resize(32)
-            val mask = (U(1, 32 bits) |<< shift) - U(1, 32 bits)
-            val rem = sig32 & mask
-            val half = U(1, 32 bits) |<< (shift - U(1, 6 bits))
-            trunc := (sig32 |>> shift).resize(11)
-            remNZ := rem =/= U(0, 32 bits)
-            gtHalf := rem > half
-            eqHalf := rem === half
-          }
-          val inc = FpuSoftFloatUtils.roundInc(rm, sign, remNZ, gtHalf, eqHalf, trunc(0))
-          val rounded = trunc + inc.asUInt.resize(11)
-          when(rounded(10)) {
-            out := sign.asBits ## B(1, 5 bits) ## B(0, 10 bits)
-          } otherwise {
-            out := sign.asBits ## B(0, 5 bits) ## rounded(9 downto 0).asBits
-          }
-          when(remNZ) {
-            flags(0) := True
-            when(!rounded(10)) {
-              flags(1) := True
-            }
-          }
-        }
-      }
-      (out, flags)
-    }
-    def classifyH(in: Bits): Bits = {
-      val sign = in(15)
-      val exp = in(14 downto 10)
-      val frac = in(9 downto 0)
-      val isZero = (exp === B(0, 5 bits)) && (frac === B(0, 10 bits))
-      val isSub = (exp === B(0, 5 bits)) && (frac =/= B(0, 10 bits))
-      val isInf = (exp === B(31, 5 bits)) && (frac === B(0, 10 bits))
-      val isNaN = (exp === B(31, 5 bits)) && (frac =/= B(0, 10 bits))
-      val cls = Bits(10 bits)
-      cls := 0
-      when(isInf && sign) { cls(0) := True }
-      when(!isNaN && !isInf && !isZero && !isSub && sign) { cls(1) := True }
-      when(isSub && sign) { cls(2) := True }
-      when(isZero && sign) { cls(3) := True }
-      when(isZero && !sign) { cls(4) := True }
-      when(isSub && !sign) { cls(5) := True }
-      when(!isNaN && !isInf && !isZero && !isSub && !sign) { cls(6) := True }
-      when(isInf && !sign) { cls(7) := True }
-      when(isNaN && !frac(9)) { cls(8) := True }
-      when(isNaN && frac(9)) { cls(9) := True }
-      cls
-    }
-
     val isHalfFmt = insn(26 downto 25) === B"10"
     val isFmvXHInsn = insn(31 downto 25) === B"1110010"
     val isFmvHXInsn = insn(31 downto 25) === B"1111010"
@@ -341,89 +159,70 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val isFcvtDFromH = (insn(31 downto 25) === B"0100001") && (insn(24 downto 20) === B"00010")
     val isFcvtHFromD = (insn(31 downto 25) === B"0100010") && (insn(24 downto 20) === B"00001")
 
-    when(aguFire && fpUsesStq && isFshOp) {
-      lsu.logic.rawStoreData.allowOverride := fpRs2Data(15 downto 0).resize(64)
-    }
-    when(aguFire && fpUsesStq && isFswOp) {
-      lsu.logic.rawStoreData.allowOverride := fpRs2Data(31 downto 0).resize(64)
-    }
-    when(aguFire && fpUsesStq && isFsdOp) {
-      lsu.logic.rawStoreData.allowOverride := fpRs2Data
-    }
+    FpLoadStore(
+      microCode = microCode,
+      aguFire = aguFire,
+      fpUsesLdq = fpUsesLdq,
+      fpUsesStq = fpUsesStq,
+      fpRs2Data = fpRs2Data,
+      rd = flwRd,
+      lsu = lsu,
+      writeFp = writeFp,
+      clearIntWriteback = () => {
+      suppressIntWriteback := True
+      down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := 0
+      down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := 0
+      down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := False
+      }
+    )
 
-    val fpLoadWritebackFire = aguFire && fpUsesLdq && lsu.logic.responseArriving && !lsu.logic.suppress
-    val flhWritebackFire = fpLoadWritebackFire && isFlhOp
-    val flwWritebackFire = fpLoadWritebackFire && isFlwOp
-    val fldWritebackFire = fpLoadWritebackFire && isFldOp
-    when(flhWritebackFire) {
-      fpWrite.valid := True
-      fpWrite.address := flwRd
-      fpWrite.data := B(BigInt("FFFFFFFFFFFF", 16), 48 bits) ## lsu.logic.shiftedLoadData(15 downto 0)
-      suppressIntWriteback := True
-      down(WriteBack.RESULT).address.allowOverride := 0
-      down(WriteBack.RESULT).data.allowOverride := 0
-      down(WriteBack.RESULT).valid.allowOverride := False
-    }
-    when(flwWritebackFire) {
-      fpWrite.valid := True
-      fpWrite.address := flwRd
-      fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## lsu.logic.shiftedLoadData(31 downto 0)
-      suppressIntWriteback := True
-      down(WriteBack.RESULT).address.allowOverride := 0
-      down(WriteBack.RESULT).data.allowOverride := 0
-      down(WriteBack.RESULT).valid.allowOverride := False
-    }
-    when(fldWritebackFire) {
-      fpWrite.valid := True
-      fpWrite.address := flwRd
-      fpWrite.data := lsu.logic.shiftedLoadData
-      suppressIntWriteback := True
-      down(WriteBack.RESULT).address.allowOverride := 0
-      down(WriteBack.RESULT).data.allowOverride := 0
-      down(WriteBack.RESULT).valid.allowOverride := False
-    }
-
-    val fcvtFToIntFire = faluFire && (isFcvtWsOp || isFcvtWuSOp || isFcvtLsOp || isFcvtLuSOp)
-    val fcvtSToFpFire = faluFire && (isFcvtSwOp || isFcvtSwuOp || isFcvtSlOp || isFcvtSluOp)
-    val fcvtDToIntFire = faluFire && (isFcvtWdOp || isFcvtWuDOp || isFcvtLdOp || isFcvtLuDOp)
-    val fcvtmodWdFire = faluFire && isFcvtmodWdOp
-    val fcvtDToFpFire = faluFire && (isFcvtDwOp || isFcvtDwuOp || isFcvtDlOp || isFcvtDluOp)
-    val fcvtDToSFire = faluFire && isFcvtSdOp
-    val fcvtSToDFire = faluFire && isFcvtDsOp
-    val fcvtHToIntFire = faluFire && (isFcvtLhOp || isFcvtLuHOp)
-    val fcvtIntToHFire = faluFire && (isFcvtHlOp || isFcvtHluOp)
-    val fmvXWFire = faluFire && isFmvXWOp
-    val fmvWXFire = faluFire && isFmvWXOp
-    val fmvXDFire = faluFire && isFmvXDOp
-    val fmvDXFire = faluFire && isFmvDXOp
-    val faddsubSFire = faluFire && (isFaddSOp || isFsubSOp)
-    val fmulSFire = fmacFire && isFmulSOp
-    val fdivSFire = faluFire && isFdivSOp
-    val fsqrtSFire = faluFire && isFsqrtSOp
-    val faddsubDFire = faluFire && (isFaddDOp || isFsubDOp)
-    val fmulDFire = fmacFire && isFmulDOp
-    val fdivDFire = faluFire && isFdivDOp
-    val fsqrtDFire = faluFire && isFsqrtDOp
-    val fmaSFire = fmacFire && (isFmaddSOp || isFmsubSOp || isFnmsubSOp || isFnmaddSOp)
-    val fmaDFire = fmacFire && (isFmaddDOp || isFmsubDOp || isFnmsubDOp || isFnmaddDOp)
-    val fclassSFire = faluFire && isFclassSOp
-    val fclassDFire = faluFire && isFclassDOp
-    val fsgnjSFire = faluFire && (isFsgnjSOp || isFsgnjnSOp || isFsgnjxSOp)
-    val fsgnjDFire = faluFire && (isFsgnjDOp || isFsgnjnDOp || isFsgnjxDOp)
-    val fminmaxSFire = faluFire && (isFminSOp || isFmaxSOp || isFminmSOp || isFmaxmSOp)
-    val fminmaxDFire = faluFire && (isFminDOp || isFmaxDOp || isFminmDOp || isFmaxmDOp)
-    val fcmpSFire = faluFire && (isFleSOp || isFltSOp || isFeqSOp || isFleqSOp || isFltqSOp)
-    val fcmpDFire = faluFire && (isFleDOp || isFltDOp || isFeqDOp || isFleqDOp || isFltqDOp)
-    val fliSFire = faluFire && isFliSOp
-    val fliDFire = faluFire && isFliDOp
-    val froundSFire = faluFire && (isFroundSOp || isFroundnxSOp)
-    val froundDFire = faluFire && (isFroundDOp || isFroundnxDOp)
+    val fcvtFToIntFire = faluFire && isAny(uopFCVTWS, uopFCVTWUS, uopFCVTLS, uopFCVTLUS)
+    val fcvtSToFpFire = faluFire && isAny(uopFCVTSW, uopFCVTSWU, uopFCVTSL, uopFCVTSLU)
+    val fcvtDToIntFire = faluFire && isAny(uopFCVTWD, uopFCVTWUD, uopFCVTLD, uopFCVTLUD)
+    val fcvtmodWdFire = faluFire && (microCode === uopFCVTMODWD)
+    val fcvtDToFpFire = faluFire && isAny(uopFCVTDW, uopFCVTDWU, uopFCVTDL, uopFCVTDLU)
+    val fcvtDToSFire = faluFire && (microCode === uopFCVTSD)
+    val fcvtSToDFire = faluFire && (microCode === uopFCVTDS)
+    val fcvtHToIntFire = faluFire && isAny(uopFCVTLH, uopFCVTLUH)
+    val fcvtIntToHFire = faluFire && isAny(uopFCVTHL, uopFCVTHLU)
+    val fmvXWFire = faluFire && (microCode === uopFMVXW)
+    val fmvWXFire = faluFire && (microCode === uopFMVWX)
+    val fmvXDFire = faluFire && (microCode === uopFMVXD)
+    val fmvDXFire = faluFire && (microCode === uopFMVDX)
+    val faddsubSFire = faluFire && isAny(uopFADDS, uopFSUBS)
+    val fmulSFire = fmacFire && (microCode === uopFMULS)
+    val fdivSFire = faluFire && (microCode === uopFDIVS)
+    val fsqrtSFire = faluFire && (microCode === uopFSQRTS)
+    val faddsubDFire = faluFire && isAny(uopFADDD, uopFSUBD)
+    val fmulDFire = fmacFire && (microCode === uopFMULD)
+    val fdivDFire = faluFire && (microCode === uopFDIVD)
+    val fsqrtDFire = faluFire && (microCode === uopFSQRTD)
+    val fmaSFire = fmacFire && isAny(uopFMADDS, uopFMSUBS, uopFNMSUBS, uopFNMADDS)
+    val fmaDFire = fmacFire && isAny(uopFMADDD, uopFMSUBD, uopFNMSUBD, uopFNMADDD)
+    val fclassSFire = faluFire && (microCode === uopFCLASSS)
+    val fclassDFire = faluFire && (microCode === uopFCLASSD)
+    val fsgnjSFire = faluFire && isAny(uopFSGNJS, uopFSGNJNS, uopFSGNJXS)
+    val fsgnjDFire = faluFire && isAny(uopFSGNJD, uopFSGNJND, uopFSGNJXD)
+    val fminmaxSFire = faluFire && isAny(uopFMINS, uopFMAXS, uopFMINMS, uopFMAXMS)
+    val fminmaxDFire = faluFire && isAny(uopFMIND, uopFMAXD, uopFMINMD, uopFMAXMD)
+    val fcmpSFire = faluFire && isAny(uopFLES, uopFLTS, uopFEQS, uopFLEQS, uopFLTQS)
+    val fcmpDFire = faluFire && isAny(uopFLED, uopFLTD, uopFEQD, uopFLEQD, uopFLTQD)
+    val fliSFire = faluFire && (microCode === uopFLIS)
+    val fliDFire = faluFire && (microCode === uopFLID)
+    val froundSFire = faluFire && isAny(uopFROUNDS, uopFROUNDNXS)
+    val froundDFire = faluFire && isAny(uopFROUNDD, uopFROUNDNXD)
 
     val fcvtRmRaw = Mux(insn(14 downto 12) === B"111", frm, insn(14 downto 12))
     val fcvtRm = Bits(3 bits)
     fcvtRm := fcvtRmRaw
     when(fcvtRmRaw === B"101" || fcvtRmRaw === B"110" || fcvtRmRaw === B"111") {
       fcvtRm := B"001"
+    }
+
+    def writeFpSOrH(rd: UInt, data: Bits, flags: Bits): Unit = {
+      val half = singleToHalf(data, fcvtRm)
+      writeFp(rd, Mux(isHalfFmt, boxedH(half._1), boxedS(data)))
+      requestFlags(Mux(isHalfFmt, flags | half._2, flags))
     }
 
     val fcvtLSrc = fpRs1SValue
@@ -484,8 +283,8 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     val sMinMag = U(BigInt("8000000000000000", 16), 65 bits)
     val wSMax = U(BigInt("7FFFFFFF", 16), 65 bits)
     val wSMinMag = U(BigInt("80000000", 16), 65 bits)
-    val fcvtTarget32 = isFcvtWsOp || isFcvtWuSOp
-    val fcvtSigned = isFcvtWsOp || isFcvtLsOp
+    val fcvtTarget32 = isAny(uopFCVTWS, uopFCVTWUS)
+    val fcvtSigned = isAny(uopFCVTWS, uopFCVTLS)
     val fcvtLTooLarge32 = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(158, 8 bits))
     val fcvtLTooLarge64 = (!fcvtLIsZero) && (!fcvtLIsInf) && (!fcvtLIsNaN) && (fcvtLExp > U(191, 8 bits))
 
@@ -540,7 +339,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
         }
       }
 
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, fcvtLResult)
+      requestIntResult(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt, fcvtLResult)
       requestFlags(fcvtLFlags)
     }
 
@@ -595,8 +394,8 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
     fcvtDResult := 0
     val fcvtDFlags = Bits(5 bits)
     fcvtDFlags := 0
-    val fcvtDTarget32 = isFcvtWdOp || isFcvtWuDOp
-    val fcvtDSigned = isFcvtWdOp || isFcvtLdOp
+    val fcvtDTarget32 = isAny(uopFCVTWD, uopFCVTWUD)
+    val fcvtDSigned = isAny(uopFCVTWD, uopFCVTLD)
     val fcvtDTooLarge32 = (!fcvtDIsZero) && (!fcvtDIsInf) && (!fcvtDIsNaN) && (fcvtDExp > U(1054, 11 bits))
     val fcvtDTooLarge64 = (!fcvtDIsZero) && (!fcvtDIsInf) && (!fcvtDIsNaN) && (fcvtDExp > U(1086, 11 bits))
 
@@ -651,7 +450,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
         }
       }
 
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, fcvtDResult)
+      requestIntResult(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt, fcvtDResult)
       requestFlags(fcvtDFlags)
     }
 
@@ -682,7 +481,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       } elsewhen(fcvtDRemNZ) {
         flags(0) := True
       }
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, Mux(fcvtDIsNaN || fcvtDIsInf, B(0, 64 bits), result))
+      requestIntResult(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt, Mux(fcvtDIsNaN || fcvtDIsInf, B(0, 64 bits), result))
       requestFlags(flags)
     }
 
@@ -738,7 +537,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       result := 0
       val flags = Bits(5 bits)
       flags := 0
-      when(isFcvtLhOp) {
+      when(microCode === uopFCVTLH) {
         when(fcvtHIsNaN || fcvtHIsInf) {
           flags(4) := True
           when(fcvtHIsNaN) {
@@ -769,233 +568,36 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
           }
         }
       }
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, result)
+      requestIntResult(up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt, result)
       requestFlags(flags)
     }
 
     when(fcvtIntToHFire) {
-      val srcInt64 = up(SrcPlugin.RS1).asUInt
-      val srcSigned = isFcvtHlOp
-      val srcSign = srcSigned && srcInt64.msb
-      val srcMag = UInt(64 bits)
-      srcMag := srcInt64
-      when(srcSign) {
-        srcMag := ((~srcInt64) + U(1, 64 bits)).resized
-      }
-
-      val msbIdx = UInt(6 bits)
-      msbIdx := 0
-      for (i <- 0 until 64) {
-        when(srcMag(i)) {
-          msbIdx := i
-        }
-      }
-
-      val truncSig = UInt(11 bits)
-      truncSig := 0
-      val remNZ = Bool()
-      remNZ := False
-      val gtHalf = Bool()
-      gtHalf := False
-      val eqHalf = Bool()
-      eqHalf := False
-
-      when(srcMag =/= 0) {
-        when(msbIdx > U(10, 6 bits)) {
-          val rshift = (msbIdx - U(10, 6 bits)).resized
-          val mask = (U(1, 64 bits) |<< rshift) - U(1, 64 bits)
-          val rem = srcMag & mask
-          val half = U(1, 64 bits) |<< (rshift - U(1, 6 bits)).resized
-          truncSig := (srcMag |>> rshift).resize(11)
-          remNZ := rem =/= 0
-          gtHalf := rem > half
-          eqHalf := rem === half
-        } otherwise {
-          truncSig := (srcMag |<< (U(10, 6 bits) - msbIdx).resized).resize(11)
-        }
-      }
-
-      val inc = FpuSoftFloatUtils.roundInc(fcvtRm, srcSign, remNZ, gtHalf, eqHalf, truncSig(0))
-      val rounded = truncSig.resize(12) + inc.asUInt.resize(12)
-      val carry = rounded(11)
-      val normSig = UInt(11 bits)
-      normSig := rounded(10 downto 0)
-      when(carry) {
-        normSig := (rounded |>> 1).resize(11)
-      }
-
-      val outExp = UInt(7 bits)
-      outExp := 0
-      when(srcMag =/= 0) {
-        outExp := (msbIdx.resize(7) + U(15, 7 bits) + carry.asUInt.resize(7)).resized
-      }
-      val flags = Bits(5 bits)
-      flags := 0
-      val outHalf = Bits(16 bits)
-      outHalf := 0
-      when(srcMag === 0) {
-        outHalf := B(0, 16 bits)
-      } elsewhen(outExp >= U(31, 7 bits)) {
-        outHalf := srcSign.asBits ## B(31, 5 bits) ## B(0, 10 bits)
-        flags(2) := True
-        flags(0) := True
-      } otherwise {
-        outHalf := srcSign.asBits ## outExp(4 downto 0).asBits ## normSig(9 downto 0).asBits
-        when(remNZ) {
-          flags(0) := True
-        }
-      }
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := B(BigInt("FFFFFFFFFFFF", 16), 48 bits) ## outHalf
-      requestFlags(flags)
+      val converted = FpConvert.intToHalf(up(SrcPlugin.RS1, LaneKey.Lane0).asUInt, microCode === uopFCVTHL, fcvtRm)
+      writeFp(fcvtSRd, converted.data)
+      requestFlags(converted.flags)
     }
 
     when(fcvtSToFpFire) {
-      val srcInt64 = up(SrcPlugin.RS1).asUInt
-      val srcInt32 = up(SrcPlugin.RS1)(31 downto 0).asUInt
-      val srcFrom32 = isFcvtSwOp || isFcvtSwuOp
-      val srcSigned = isFcvtSwOp || isFcvtSlOp
-      val srcSign = srcSigned && Mux(srcFrom32, srcInt32.msb, srcInt64.msb)
-      val srcMag = UInt(64 bits)
-      srcMag := Mux(srcFrom32, srcInt32.resize(64), srcInt64)
-      when(srcSign) {
-        when(srcFrom32) {
-          srcMag := ((~srcInt32) + U(1, 32 bits)).resize(64)
-        } otherwise {
-          srcMag := ((~srcInt64) + U(1, 64 bits)).resized
-        }
-      }
-
-      val msbIdx = UInt(6 bits)
-      msbIdx := 0
-      for (i <- 0 until 64) {
-        when(srcMag(i)) {
-          msbIdx := i
-        }
-      }
-
-      val truncSig = UInt(24 bits)
-      truncSig := 0
-      val remNZ = Bool()
-      remNZ := False
-      val gtHalf = Bool()
-      gtHalf := False
-      val eqHalf = Bool()
-      eqHalf := False
-
-      when(srcMag =/= 0) {
-        when(msbIdx > U(23, 6 bits)) {
-          val rshift = (msbIdx - U(23, 6 bits)).resized
-          val mask = (U(1, 64 bits) |<< rshift) - U(1, 64 bits)
-          val rem = srcMag & mask
-          val half = U(1, 64 bits) |<< (rshift - U(1, 6 bits)).resized
-          truncSig := (srcMag |>> rshift).resize(24)
-          remNZ := rem =/= 0
-          gtHalf := rem > half
-          eqHalf := rem === half
-        } otherwise {
-          truncSig := (srcMag |<< (U(23, 6 bits) - msbIdx).resized).resize(24)
-        }
-      }
-
-      val inc = FpuSoftFloatUtils.roundInc(fcvtRm, srcSign, remNZ, gtHalf, eqHalf, truncSig(0))
-      val rounded = truncSig.resize(25) + inc.asUInt.resize(25)
-      val carry = rounded(24)
-      val normSig = UInt(24 bits)
-      normSig := rounded(23 downto 0)
-      when(carry) {
-        normSig := (rounded |>> 1).resize(24)
-      }
-
-      val outExp = UInt(8 bits)
-      outExp := 0
-      when(srcMag =/= 0) {
-        outExp := (msbIdx.resize(8) + U(127, 8 bits) + carry.asUInt.resize(8)).resized
-      }
-
-      val outFrac = normSig(22 downto 0).asBits
-      val outSign = srcSign && (srcMag =/= 0)
-      val outFp32 = outSign.asBits ## outExp.asBits ## outFrac
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := B(BigInt("FFFFFFFF", 16), 32 bits) ## outFp32
-      when(remNZ) {
-        requestFlags(B"00001")
-      }
+      val converted = FpConvert.intToSingle(
+        up(SrcPlugin.RS1, LaneKey.Lane0).asUInt,
+        isAny(uopFCVTSW, uopFCVTSWU),
+        isAny(uopFCVTSW, uopFCVTSL),
+        fcvtRm
+      )
+      writeFp(fcvtSRd, converted.data)
+      requestFlags(converted.flags)
     }
 
     when(fcvtDToFpFire) {
-      val srcInt64 = up(SrcPlugin.RS1).asUInt
-      val srcInt32 = up(SrcPlugin.RS1)(31 downto 0).asUInt
-      val srcFrom32 = isFcvtDwOp || isFcvtDwuOp
-      val srcSigned = isFcvtDwOp || isFcvtDlOp
-      val srcSign = srcSigned && Mux(srcFrom32, srcInt32.msb, srcInt64.msb)
-      val srcMag = UInt(64 bits)
-      srcMag := Mux(srcFrom32, srcInt32.resize(64), srcInt64)
-      when(srcSign) {
-        when(srcFrom32) {
-          srcMag := ((~srcInt32) + U(1, 32 bits)).resize(64)
-        } otherwise {
-          srcMag := ((~srcInt64) + U(1, 64 bits)).resized
-        }
-      }
-
-      val msbIdx = UInt(6 bits)
-      msbIdx := 0
-      for (i <- 0 until 64) {
-        when(srcMag(i)) {
-          msbIdx := i
-        }
-      }
-
-      val truncSig = UInt(53 bits)
-      truncSig := 0
-      val remNZ = Bool()
-      remNZ := False
-      val gtHalf = Bool()
-      gtHalf := False
-      val eqHalf = Bool()
-      eqHalf := False
-
-      when(srcMag =/= 0) {
-        when(msbIdx > U(52, 6 bits)) {
-          val rshift = (msbIdx - U(52, 6 bits)).resized
-          val mask = (U(1, 64 bits) |<< rshift) - U(1, 64 bits)
-          val rem = srcMag & mask
-          val half = U(1, 64 bits) |<< (rshift - U(1, 6 bits)).resized
-          truncSig := (srcMag |>> rshift).resize(53)
-          remNZ := rem =/= 0
-          gtHalf := rem > half
-          eqHalf := rem === half
-        } otherwise {
-          truncSig := (srcMag |<< (U(52, 6 bits) - msbIdx).resized).resize(53)
-        }
-      }
-
-      val inc = FpuSoftFloatUtils.roundInc(fcvtRm, srcSign, remNZ, gtHalf, eqHalf, truncSig(0))
-      val rounded = truncSig.resize(54) + inc.asUInt.resize(54)
-      val carry = rounded(53)
-      val normSig = UInt(53 bits)
-      normSig := rounded(52 downto 0)
-      when(carry) {
-        normSig := (rounded |>> 1).resize(53)
-      }
-
-      val outExp = UInt(11 bits)
-      outExp := 0
-      when(srcMag =/= 0) {
-        outExp := (msbIdx.resize(11) + U(1023, 11 bits) + carry.asUInt.resize(11)).resized
-      }
-
-      val outFrac = normSig(51 downto 0).asBits
-      val outSign = srcSign && (srcMag =/= 0)
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := outSign.asBits ## outExp.asBits ## outFrac
-      when(remNZ) {
-        requestFlags(B"00001")
-      }
+      val converted = FpConvert.intToDouble(
+        up(SrcPlugin.RS1, LaneKey.Lane0).asUInt,
+        isAny(uopFCVTDW, uopFCVTDWU),
+        isAny(uopFCVTDW, uopFCVTDL),
+        fcvtRm
+      )
+      writeFp(fcvtSRd, converted.data)
+      requestFlags(converted.flags)
     }
 
     when(fcvtSToDFire) {
@@ -1034,9 +636,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
         out := sign.asBits ## outExp.asBits ## frac.asBits ## B(0, 29 bits)
       }
 
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := out
+      writeFp(fcvtSRd, out)
       when(isFcvtHFromS) {
         val half = singleToHalf(fpRs1SValue, fcvtRm)
         fpWrite.data := boxedH(half._1)
@@ -1175,9 +775,7 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
         }
       }
 
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := boxedS(outFp32)
+      writeFp(fcvtSRd, boxedS(outFp32))
       val halfFromD = singleToHalf(outFp32, fcvtRm)
       when(isFcvtHFromD) {
         fpWrite.data := boxedH(halfFromD._1)
@@ -1185,241 +783,70 @@ case class FpBackend(execStage: CtrlLink, lsu: Lsu, currentEpoch: UInt, frm: Bit
       requestFlags(Mux(isFcvtHFromD, flags | halfFromD._2, flags))
     }
 
-    when(fmvXWFire) {
-      val moved = Mux(isFmvXHInsn, fpRs1Data(15 downto 0).asSInt.resize(64).asBits, fpRs1Data(31 downto 0).asSInt.resize(64).asBits)
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, moved)
-    }
-    when(fmvXDFire) {
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, fpRs1Data)
-    }
+    FpArithmetic(
+      microCode = microCode,
+      rd = up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt,
+      fcvtRm = fcvtRm,
+      isHalfFmt = isHalfFmt,
+      fpRs1Data = fpRs1Data,
+      fpRs2Data = fpRs2Data,
+      fpRs3Data = fpRs3Data,
+      fpRs1SValue = fpRs1SValue,
+      fpRs2SValue = fpRs2SValue,
+      fpRs3SValue = fpRs3SValue,
+      fpRs1HValue = fpRs1HValue,
+      fpRs2HValue = fpRs2HValue,
+      fpRs3HValue = fpRs3HValue,
+      faddsubSFire = faddsubSFire,
+      faddsubDFire = faddsubDFire,
+      fmulSFire = fmulSFire,
+      fmulDFire = fmulDFire,
+      fdivSFire = fdivSFire,
+      fdivDFire = fdivDFire,
+      fsqrtSFire = fsqrtSFire,
+      fsqrtDFire = fsqrtDFire,
+      fmaSFire = fmaSFire,
+      fmaDFire = fmaDFire,
+      writeFp = writeFp,
+      writeFpSOrH = writeFpSOrH,
+      requestFlags = requestFlags
+    )
 
-    when(faddsubSFire) {
-      val addSub = FpuAddSub.addSubS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), fcvtRm, isFsubSOp)
-      val half = singleToHalf(addSub.data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(addSub.data))
-      requestFlags(Mux(isHalfFmt, addSub.flags | half._2, addSub.flags))
-    }
-    when(faddsubDFire) {
-      val addSub = FpuAddSub.addSubD(fpRs1Data, fpRs2Data, fcvtRm, isFsubDOp)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := addSub.data
-      requestFlags(addSub.flags)
-    }
-
-    when(fmulSFire) {
-      val mul = FpuMul.mulS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), fcvtRm)
-      val half = singleToHalf(mul.data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(mul.data))
-      requestFlags(Mux(isHalfFmt, mul.flags | half._2, mul.flags))
-    }
-    when(fmulDFire) {
-      val mul = FpuMul.mulD(fpRs1Data, fpRs2Data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := mul.data
-      requestFlags(mul.flags)
-    }
-
-    when(fdivSFire) {
-      val div = FpuDivSqrt.divS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), fcvtRm)
-      val half = singleToHalf(div.data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(div.data))
-      requestFlags(Mux(isHalfFmt, div.flags | half._2, div.flags))
-    }
-    when(fdivDFire) {
-      val div = FpuDivSqrt.divD(fpRs1Data, fpRs2Data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := div.data
-      requestFlags(div.flags)
-    }
-
-    when(fsqrtSFire) {
-      val sqrt = FpuDivSqrt.sqrtS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), fcvtRm)
-      val half = singleToHalf(sqrt.data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(sqrt.data))
-      requestFlags(Mux(isHalfFmt, sqrt.flags | half._2, sqrt.flags))
-    }
-    when(fsqrtDFire) {
-      val sqrt = FpuDivSqrt.sqrtD(fpRs1Data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := sqrt.data
-      requestFlags(sqrt.flags)
-    }
-
-    when(fmaSFire) {
-      val fma = FpuFma.fmaS(
-        Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue),
-        Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue),
-        Mux(isHalfFmt, halfToSingle(fpRs3HValue), fpRs3SValue),
-        fcvtRm,
-        isFmsubSOp,
-        isFnmsubSOp,
-        isFnmaddSOp
-      )
-      val half = singleToHalf(fma.data, fcvtRm)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(fma.data))
-      requestFlags(Mux(isHalfFmt, fma.flags | half._2, fma.flags))
-    }
-    when(fmaDFire) {
-      val fma = FpuFma.fmaD(
-        fpRs1Data,
-        fpRs2Data,
-        fpRs3Data,
-        fcvtRm,
-        isFmsubDOp,
-        isFnmsubDOp,
-        isFnmaddDOp
-      )
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := fma.data
-      requestFlags(fma.flags)
-    }
-
-    when(fmvWXFire) {
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := Mux(isFmvHXInsn, boxedH(up(SrcPlugin.RS1)(15 downto 0)), boxedS(up(SrcPlugin.RS1)(31 downto 0)))
-    }
-    when(fmvDXFire) {
-      fpWrite.valid := True
-      fpWrite.address := fcvtSRd
-      fpWrite.data := up(SrcPlugin.RS1)
-    }
-
-    when(fclassSFire) {
-      val cls = Mux(isHalfFmt, classifyH(fpRs1HValue), FpuScalarMisc.classifyS(fpRs1SValue))
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, B(0, 54 bits) ## cls)
-    }
-    when(fclassDFire) {
-      val cls = FpuScalarMisc.classifyD(fpRs1Data)
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, B(0, 54 bits) ## cls)
-    }
-
-    when(fliSFire) {
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      val fli = FpuScalarMisc.fliS(insn(19 downto 15).asUInt)
-      val half = singleToHalf(fli, fcvtRm)
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(fli))
-    }
-    when(fliDFire) {
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := FpuScalarMisc.fliD(insn(19 downto 15).asUInt)
-    }
-
-    when(fsgnjSFire) {
-      val out = FpuScalarMisc.signInjectS(fpRs1SValue, fpRs2SValue, isFsgnjnSOp, isFsgnjxSOp)
-      val halfSign = Bool()
-      halfSign := fpRs2HValue(15)
-      when(isFsgnjnSOp) {
-        halfSign := !fpRs2HValue(15)
-      }
-      when(isFsgnjxSOp) {
-        halfSign := fpRs1HValue(15) ^ fpRs2HValue(15)
-      }
-      val outH = halfSign.asBits ## fpRs1HValue(14 downto 0)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := Mux(isHalfFmt, boxedH(outH), boxedS(out))
-    }
-    when(fsgnjDFire) {
-      val out = FpuScalarMisc.signInjectD(fpRs1Data, fpRs2Data, isFsgnjnDOp, isFsgnjxDOp)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := out
-    }
-
-    when(fcmpSFire) {
-      val cmp = FpuCompareResult(B(0, 64 bits), B(0, 5 bits))
-      when(isFleqSOp || isFltqSOp) {
-        val quiet = FpuScalarMisc.compareQuietS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), isFltqSOp, isFleqSOp)
-        cmp.result := quiet.result
-        cmp.flags := quiet.flags
-      } otherwise {
-        val normal = FpuScalarMisc.compareS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), isFeqSOp, isFltSOp, isFleSOp)
-        cmp.result := normal.result
-        cmp.flags := normal.flags
-      }
-      requestFlags(cmp.flags)
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, cmp.result)
-    }
-    when(fcmpDFire) {
-      val cmp = FpuCompareResult(B(0, 64 bits), B(0, 5 bits))
-      when(isFleqDOp || isFltqDOp) {
-        val quiet = FpuScalarMisc.compareQuietD(fpRs1Data, fpRs2Data, isFltqDOp, isFleqDOp)
-        cmp.result := quiet.result
-        cmp.flags := quiet.flags
-      } otherwise {
-        val normal = FpuScalarMisc.compareD(fpRs1Data, fpRs2Data, isFeqDOp, isFltDOp, isFleDOp)
-        cmp.result := normal.result
-        cmp.flags := normal.flags
-      }
-      requestFlags(cmp.flags)
-      requestIntResult(up(Decoder.RD_ADDR).asUInt, cmp.result)
-    }
-
-    when(fminmaxSFire) {
-      val minMax = FpuMinMaxResult(B(0, 32 bits), B(0, 5 bits))
-      when(isFminmSOp || isFmaxmSOp) {
-        val mag = FpuScalarMisc.minMaxMagS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), isFminmSOp)
-        minMax.data := mag.data
-        minMax.flags := mag.flags
-      } otherwise {
-        val normal = FpuScalarMisc.minMaxS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), Mux(isHalfFmt, halfToSingle(fpRs2HValue), fpRs2SValue), isFminSOp)
-        minMax.data := normal.data
-        minMax.flags := normal.flags
-      }
-      requestFlags(minMax.flags)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      val half = singleToHalf(minMax.data, fcvtRm)
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(minMax.data))
-    }
-    when(fminmaxDFire) {
-      val minMax = FpuMinMaxResult(B(0, 64 bits), B(0, 5 bits))
-      when(isFminmDOp || isFmaxmDOp) {
-        val mag = FpuScalarMisc.minMaxMagD(fpRs1Data, fpRs2Data, isFminmDOp)
-        minMax.data := mag.data
-        minMax.flags := mag.flags
-      } otherwise {
-        val normal = FpuScalarMisc.minMaxD(fpRs1Data, fpRs2Data, isFminDOp)
-        minMax.data := normal.data
-        minMax.flags := normal.flags
-      }
-      requestFlags(minMax.flags)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := minMax.data
-    }
-    when(froundSFire) {
-      val rounded = FpuScalarMisc.roundIntegralS(Mux(isHalfFmt, halfToSingle(fpRs1HValue), fpRs1SValue), fcvtRm, isFroundnxSOp)
-      requestFlags(rounded.flags)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      val half = singleToHalf(rounded.data, fcvtRm)
-      fpWrite.data := Mux(isHalfFmt, boxedH(half._1), boxedS(rounded.data))
-    }
-    when(froundDFire) {
-      val rounded = FpuScalarMisc.roundIntegralD(fpRs1Data, fcvtRm, isFroundnxDOp)
-      requestFlags(rounded.flags)
-      fpWrite.valid := True
-      fpWrite.address := up(Decoder.RD_ADDR).asUInt
-      fpWrite.data := rounded.data
-    }
+    FpMisc(
+      microCode = microCode,
+      insn = insn,
+      rd = up(Decoder.RD_ADDR, LaneKey.Lane0).asUInt,
+      srcInt = up(SrcPlugin.RS1, LaneKey.Lane0),
+      fcvtRm = fcvtRm,
+      isHalfFmt = isHalfFmt,
+      isFmvXHInsn = isFmvXHInsn,
+      isFmvHXInsn = isFmvHXInsn,
+      fpRs1Data = fpRs1Data,
+      fpRs2Data = fpRs2Data,
+      fpRs1SValue = fpRs1SValue,
+      fpRs2SValue = fpRs2SValue,
+      fpRs1HValue = fpRs1HValue,
+      fpRs2HValue = fpRs2HValue,
+      fmvXWFire = fmvXWFire,
+      fmvWXFire = fmvWXFire,
+      fmvXDFire = fmvXDFire,
+      fmvDXFire = fmvDXFire,
+      fclassSFire = fclassSFire,
+      fclassDFire = fclassDFire,
+      fliSFire = fliSFire,
+      fliDFire = fliDFire,
+      fsgnjSFire = fsgnjSFire,
+      fsgnjDFire = fsgnjDFire,
+      fcmpSFire = fcmpSFire,
+      fcmpDFire = fcmpDFire,
+      fminmaxSFire = fminmaxSFire,
+      fminmaxDFire = fminmaxDFire,
+      froundSFire = froundSFire,
+      froundDFire = froundDFire,
+      writeFp = writeFp,
+      writeFpSOrH = writeFpSOrH,
+      requestIntResult = requestIntResult,
+      requestFlags = requestFlags
+    )
   }
 }

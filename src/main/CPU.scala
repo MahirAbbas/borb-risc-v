@@ -5,21 +5,32 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.fetch._
 import borb.fetch.FrontendRedirectReason
-import borb.backend.{BackendIssue, BackendPipe, FpBackend, IntegerBackend, PipelineSlot, RetirePacket, TrapCsrBackend}
+import borb.backend.{
+  BackendIssue,
+  BackendPipe,
+  FpBackend,
+  IntegerBackend,
+  PipelineSlot,
+  RetirePacket,
+  TrapCsrBackend,
+  TrapRedirectOutcome
+}
 import borb.frontend.Decoder
 import borb.frontend.Decoder._
 import borb.dispatch._
 import borb.dispatch.IssueSemantics
 import borb.execute.IntAlu
 import borb.execute.IntAlu._
+import borb.execute.IntMisc
+import borb.execute.IntMulDiv
 import borb.execute.{DataBus, DataSideCache, WriteBack}
+import borb.execute.vector.VectorBackend
 import borb.dispatch.SrcPlugin
 import borb.dispatch.SrcPlugin._
 import borb.formal._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
 import borb.core.CpuConfig
-import borb.vector.{DormantSharedVectorEngine, VectorDecode, VectorExceptionCause, VectorMemOp}
 import spinal.lib.misc.plugin.PluginHost
 import borb.common.MicroCode._
 import borb.common.{LaneContracts, LaneKey}
@@ -81,177 +92,482 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
   val coreArea = new ClockingArea(coreClockDomain) {
     val pipeline = new StageCtrlPipeline()
+    private val pcStageId = 0
+    private val fetchCmdStageId = 1
+    private val fetchRspStageId = 2
+    private val decodeStageId = 3
+    private val dispatchStageId = 4
+    private val srcStageId = 5
+    private val execStageId = 6
+    private val wbStageId = 7
 
-    // Defaults for Execution Stages: LANE_SEL is False if not propagated (Bubble)
+    val pcCtrl = pipeline.ctrl(pcStageId)
+    val fetchCmdCtrl = pipeline.ctrl(fetchCmdStageId)
+    val fetchRspCtrl = pipeline.ctrl(fetchRspStageId)
+    val decodeCtrl = pipeline.ctrl(decodeStageId)
+    val dispatchCtrl = pipeline.ctrl(dispatchStageId)
+    val srcCtrl = pipeline.ctrl(srcStageId)
+    val execStage = pipeline.ctrl(execStageId)
+    val wbStage = pipeline.ctrl(wbStageId)
+
     import borb.common.Common._
-    pipeline.ctrls.filter(_._1 >= 7).foreach { 
-      case (id, ctrl) => ctrl.up(LANE_SEL).setAsReg().init(False)
-
-    }
-    pipeline.ctrls.filter(e => e._1 >= 7 && e._1 < 9).foreach { 
-      case(id, ctrl) => ctrl.up(COMMIT).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 9).foreach {
-      case (_, ctrl) => ctrl.up(SELF_REDIRECT).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 9).foreach {
-      case (_, ctrl) => ctrl.up(TRAP).setAsReg().init(False)
-    }
     val resetPcValue = BigInt("80000000", 16)
 
-    // Keep speculation epoch instruction-local across stalls/flushes.
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(SPEC_EPOCH).setAsReg().init(0)
+    private case class PipelinePayloadReg(
+        fromStage: Int,
+        untilStage: Int,
+        initPayload: CtrlLink => Unit
+    )
+
+    private def pipelinePayloadReg[T <: Data](
+        payload: Payload[T],
+        fromStage: Int,
+        untilStage: Int = Int.MaxValue
+    )(initPayload: T => Unit): PipelinePayloadReg = {
+      PipelinePayloadReg(
+        fromStage = fromStage,
+        untilStage = untilStage,
+        initPayload = ctrl => initPayload(ctrl.up(payload))
+      )
     }
-    pipeline.ctrls.filter(e => e._1 >= 1 && e._1 < 3).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(resetPcValue)
+
+    private def pipelinePayloadReg[T <: Data](
+        payload: Payload[T],
+        key: Any,
+        fromStage: Int,
+        untilStage: Int
+    )(initPayload: T => Unit): PipelinePayloadReg = {
+      PipelinePayloadReg(
+        fromStage = fromStage,
+        untilStage = untilStage,
+        initPayload = ctrl => initPayload(ctrl.up(payload, key))
+      )
     }
-    // Keep PC instruction-local across stalls/flushes so execute-stage control
-    // flow uses the PC that belongs to that instruction.
-    pipeline.ctrls.filter(_._1 >= 3).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.PC.PC).setAsReg().init(0)
+
+    private def pipelinePayloadReg[T <: Data](
+        payload: Payload[T],
+        key: Any,
+        fromStage: Int
+    )(initPayload: T => Unit): PipelinePayloadReg = {
+      pipelinePayloadReg(payload, key, fromStage, Int.MaxValue)(initPayload)
     }
-    // Keep fetched instruction instruction-local starting at the fetch
-    // response stage so mixed-width fetch cannot present a newer halfword
-    // boundary under an older PC at the stage-2/3 handoff.
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.INSTRUCTION).setAsReg().init(0)
+
+    private def registerPipelinePayload(spec: PipelinePayloadReg): Unit = {
+      pipeline.ctrls
+        .filter { case (id, _) =>
+          id >= spec.fromStage && id < spec.untilStage
+        }
+        .foreach { case (_, ctrl) =>
+          spec.initPayload(ctrl)
+        }
     }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SEQ).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_FTQ_IDX).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SLOT_IDX).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_SLOT_COUNT).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_BLOCK_PC).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_VALID).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(LANE_ID).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 2).foreach {
-      case (_, ctrl) => ctrl.up(LANE_MASK).setAsReg().init(B"00")
-    }
-    // Keep decode outputs instruction-local once they leave decode. Otherwise
-    // a stalled downstream instruction can observe a newer decode result while
-    // still carrying the older PC/epoch payloads.
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.DECODED_INSTRUCTION).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_COMPRESSED).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.LEGAL).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_FLOAT).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.IS_VEC).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USES_LDQ).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.USES_STQ).setAsReg().init(borb.frontend.YESNO.N)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.MicroCode).setAsReg().init(borb.common.MicroCode.uopNOP)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RD_ADDR).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS1_ADDR).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS2_ADDR).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.RS3_ADDR).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.VALID).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 4).foreach {
-      case (_, ctrl) => ctrl.up(borb.frontend.Decoder.DECODE_ILLEGAL).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
-      case (_, ctrl) => ctrl.up(IssueSemantics.PROPS).setAsReg().init(IssuePropertyBundle().getZero)
-    }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
-      case (_, ctrl) => ctrl.up(BackendIssue.SELECTED_PIPE).setAsReg().init(BackendPipe.None)
-    }
-    // Keep dispatch lane routing instruction-local once an instruction leaves
-    // dispatch. Otherwise a stalled backend instruction can observe a newer
-    // execution-unit selection and execute through the wrong side-effect path.
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOALU).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOBRANCH).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 7).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.Dispatch.SENDTOAGU).setAsReg().init(False)
-    }
-    // Keep resolved operands instruction-local once they leave the source
-    // stage. Otherwise a held execute-stage instruction can observe a newer
-    // regfile/bypass value and re-execute with different operands.
-    pipeline.ctrls.filter(_._1 >= 8).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS1).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 8).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.RS2).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 8).foreach {
-      case (_, ctrl) => ctrl.up(borb.dispatch.SrcPlugin.IMMED).setAsReg().init(0)
-    }
-    pipeline.ctrls.filter(_._1 >= 9).foreach {
-      case (_, ctrl) => ctrl.up(borb.execute.Branch.BRANCH_TAKEN).setAsReg().init(False)
-    }
-    pipeline.ctrls.filter(_._1 >= 9).foreach {
-      case (_, ctrl) => ctrl.up(borb.execute.Branch.BRANCH_TARGET).setAsReg().init(0)
-    }
+
+    Seq(
+      pipelinePayloadReg(LANE_ID, fetchRspStageId)(_.setAsReg().init(0)),
+      pipelinePayloadReg(LANE_MASK, fetchRspStageId)(_.setAsReg().init(B"00")),
+      pipelinePayloadReg(SELF_REDIRECT, LaneKey.Lane0, wbStageId)( _.setAsReg().init(False)),
+      pipelinePayloadReg(SELF_REDIRECT, LaneKey.Lane1, wbStageId)( _.setAsReg().init(False)),
+      pipelinePayloadReg(TRAP, LaneKey.Lane0, wbStageId)( _.setAsReg().init(False)),
+      pipelinePayloadReg(TRAP, LaneKey.Lane1, wbStageId)(
+        _.setAsReg().init(False)
+      ),
+      pipelinePayloadReg(COMMIT, LaneKey.Lane0, wbStageId)(
+        _.setAsReg().init(False)
+      ),
+      pipelinePayloadReg(COMMIT, LaneKey.Lane1, wbStageId)(
+        _.setAsReg().init(False)
+      ),
+
+      // Lane-qualified frontend payloads.
+      pipelinePayloadReg(borb.fetch.PC.PC, LaneKey.Lane0, decodeStageId)(
+        _.setAsReg().init(0)
+      ),
+      pipelinePayloadReg(borb.fetch.PC.PC, LaneKey.Lane1, decodeStageId)(
+        _.setAsReg().init(0)
+      ),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.INSTRUCTION,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.INSTRUCTION,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(SPEC_EPOCH, LaneKey.Lane0, decodeStageId)(
+        _.setAsReg().init(0)
+      ),
+      pipelinePayloadReg(SPEC_EPOCH, LaneKey.Lane1, decodeStageId)(
+        _.setAsReg().init(0)
+      ),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SEQ,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SEQ,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BUNDLE_SEQ,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BUNDLE_SEQ,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_FTQ_IDX,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_FTQ_IDX,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SLOT_IDX,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SLOT_IDX,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SLOT_COUNT,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_SLOT_COUNT,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BLOCK_PC,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BLOCK_PC,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BYTE_OFFSET,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_BYTE_OFFSET,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_VALID,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_VALID,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_TAKEN,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_TAKEN,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_TARGET,
+        LaneKey.Lane0,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.fetch.Fetch.FETCH_PREDICTED_TARGET,
+        LaneKey.Lane1,
+        decodeStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.DECODED_INSTRUCTION,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.DECODED_INSTRUCTION,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_COMPRESSED,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_COMPRESSED,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.LEGAL,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.LEGAL,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_FLOAT,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_FLOAT,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_VEC,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.IS_VEC,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.USES_LDQ,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.USES_LDQ,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.USES_STQ,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.USES_STQ,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.frontend.YESNO.N)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.MicroCode,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(borb.common.MicroCode.uopNOP)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.MicroCode,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(borb.common.MicroCode.uopNOP)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RD_ADDR,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RD_ADDR,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS1_ADDR,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS1_ADDR,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS2_ADDR,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS2_ADDR,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS3_ADDR,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.RS3_ADDR,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.VALID,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.VALID,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.DECODE_ILLEGAL,
+        LaneKey.Lane0,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.frontend.Decoder.DECODE_ILLEGAL,
+        LaneKey.Lane1,
+        dispatchStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(LANE_SEL, LaneKey.Lane0, srcStageId)(
+        _.setAsReg().init(False)
+      ),
+      pipelinePayloadReg(LANE_SEL, LaneKey.Lane1, srcStageId)(
+        _.setAsReg().init(False)
+      ),
+      pipelinePayloadReg(IssueSemantics.PROPS, LaneKey.Lane0, srcStageId)(
+        _.setAsReg().init(IssuePropertyBundle().getZero)
+      ),
+      pipelinePayloadReg(IssueSemantics.PROPS, LaneKey.Lane1, srcStageId)(
+        _.setAsReg().init(IssuePropertyBundle().getZero)
+      ),
+      pipelinePayloadReg(BackendIssue.SELECTED_PIPE, LaneKey.Lane0, srcStageId)(
+        _.setAsReg().init(BackendPipe.None)
+      ),
+      pipelinePayloadReg(BackendIssue.SELECTED_PIPE, LaneKey.Lane1, srcStageId)(
+        _.setAsReg().init(BackendPipe.None)
+      ),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOALU,
+        LaneKey.Lane0,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOALU,
+        LaneKey.Lane1,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOBRANCH,
+        LaneKey.Lane0,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOBRANCH,
+        LaneKey.Lane1,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOAGU,
+        LaneKey.Lane0,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.Dispatch.SENDTOAGU,
+        LaneKey.Lane1,
+        srcStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.RS1,
+        LaneKey.Lane0,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.RS1,
+        LaneKey.Lane1,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.RS2,
+        LaneKey.Lane0,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.RS2,
+        LaneKey.Lane1,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.IMMED,
+        LaneKey.Lane0,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.dispatch.SrcPlugin.IMMED,
+        LaneKey.Lane1,
+        execStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.execute.WriteBack.RESULT,
+        LaneKey.Lane0,
+        wbStageId
+      )(_.setAsReg().init(borb.dispatch.RegFileWrite().getZero)),
+      pipelinePayloadReg(
+        borb.execute.WriteBack.RESULT,
+        LaneKey.Lane1,
+        wbStageId
+      )(_.setAsReg().init(borb.dispatch.RegFileWrite().getZero)),
+      pipelinePayloadReg(
+        borb.execute.Branch.BRANCH_TAKEN,
+        LaneKey.Lane0,
+        wbStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.execute.Branch.BRANCH_TAKEN,
+        LaneKey.Lane1,
+        wbStageId
+      )(_.setAsReg().init(False)),
+      pipelinePayloadReg(
+        borb.execute.Branch.BRANCH_TARGET,
+        LaneKey.Lane0,
+        wbStageId
+      )(_.setAsReg().init(0)),
+      pipelinePayloadReg(
+        borb.execute.Branch.BRANCH_TARGET,
+        LaneKey.Lane1,
+        wbStageId
+      )(_.setAsReg().init(0))
+    ).foreach(registerPipelinePayload)
 
     // Global speculation epoch. Keep this wide enough to avoid wraparound
     // aliasing under branch-heavy tests.
     val currentEpoch = Reg(UInt(16 bits)) init 0
 
     val pc = new PC(
-      pipeline.ctrl(0),
+      pcCtrl,
       addressWidth = 64,
       withCompressed = config.cExtensionEnabled,
       resetPc = resetPcValue
     )
-    //pc.jump.setIdle()
+    // pc.jump.setIdle()
     pc.exception.setIdle()
     pc.flush.setIdle()
     pc.redirect.setIdle()
     val fetch = Fetch(
-      pipeline.ctrl(1),
-      pipeline.ctrl(2),
+      fetchCmdCtrl,
+      fetchRspCtrl,
       addressWidth = 64,
       dataWidth = 64,
       idWidth = config.fetchIdWidth,
@@ -266,193 +582,225 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     fetch.io.branchResolve.payload.assignDontCare()
     fetch.io.indirectResolve.valid.allowOverride := False
     fetch.io.indirectResolve.payload.assignDontCare()
-    fetch.io.scalarConsume.allowOverride := False
-    fetch.io.scalarSkip.allowOverride := False
-    fetch.io.scalarHold.allowOverride := False
-    fetch.io.scalarDeferRefill.allowOverride := False
+    fetch.io.bundleConsume.allowOverride := False
+    fetch.io.bundleHold.allowOverride := False
+    fetch.io.bundleDeferRefill.allowOverride := False
     fetch.io.suppressPrefetch.allowOverride := False
     pc.sequentialValid := fetch.io.pcAdvance
     pc.sequentialStep := fetch.io.pcStep
     // RAM is external (via io.iAxi/io.dAxi)
 
-    val decode = new Decoder(pipeline.ctrl(3), withCompressed = config.cExtensionEnabled, xlen = config.xlen)
-
-    val execStage = pipeline.ctrl(8)
-    val integerBackend = IntegerBackend(pipeline.ctrl(8), pipeline.ctrl(9))
-    val hazardRange = Array(6, 7, 8, 9).map(e => pipeline.ctrl(e)).toSeq
-    val dispatcher = new Dispatch(
-      pipeline.ctrl(6),
-      hazardRange,
-      pipeline,
-      intBypassReady = Seq(False, integerBackend.exeBypassReady, integerBackend.wbIntBypass.valid)
+    val decode = new Decoder(
+      decodeCtrl,
+      withCompressed = config.cExtensionEnabled,
+      xlen = config.xlen
     )
-    val srcPlugin = new SrcPlugin(pipeline.ctrl(7), Seq(integerBackend.exeIntBypass, integerBackend.wbIntBypass))
-    val intalu = new IntAlu(pipeline.ctrl(8))
-    val branch = new borb.execute.Branch(pipeline.ctrl(8), pc, withCompressed = config.cExtensionEnabled)
+
+    val integerBackend = IntegerBackend(execStage, wbStage)
+    // TODO(execute): build the shared issue backend that uses FunctionalUnit
+    // metadata to route lane-selected operands/results. FUs intentionally do
+    // not know about lanes.
+    val intalu = IntAlu()
+    val intMisc = IntMisc()
+    val intMulDiv = IntMulDiv()
+    val executeIssueDefaults = new execStage.Area {
+      for (laneId <- 0 until Decoder.LANES) {
+        val laneKey = LaneKey(laneId)
+        down(WriteBack.RESULT, laneKey).valid := False
+        down(WriteBack.RESULT, laneKey).address := 0
+        down(WriteBack.RESULT, laneKey).data := 0
+      }
+    }
+    val branch = new borb.execute.Branch(
+      execStage,
+      pc,
+      withCompressed = config.cExtensionEnabled
+    )
     val lsuKillOutstanding = RegInit(False)
     val lsuKillCboZero = Bool()
-    val lsu = new borb.execute.Lsu(pipeline.ctrl(8), pipeline.ctrl(9), currentEpoch, lsuKillOutstanding, lsuKillCboZero)
+    val lsu = new borb.execute.Lsu(
+      execStage,
+      wbStage,
+      currentEpoch,
+      lsuKillOutstanding,
+      lsuKillCboZero
+    )
 
-    val lastCommittedSeqValid = Reg(Bits(2 bits)) init(0)
-    val lastCommittedSeq0 = Reg(UInt(32 bits)) init(0)
-    val lastCommittedSeq1 = Reg(UInt(32 bits)) init(0)
+    val lastCommittedSeqValid = Reg(Bits(2 bits)) init (0)
+    val lastCommittedSeq0 = Reg(UInt(32 bits)) init (0)
+    val lastCommittedSeq1 = Reg(UInt(32 bits)) init (0)
 
     val lsuBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
 
-    val perfCounters = if (config.perfCountersEnabled) Some(new borb.core.PerfCountersPlugin(pipeline.ctrl(9))) else None
-    val perfCounterOutputs = perfCounters.map(_.counters).getOrElse(borb.core.PerfCountersBundle().getZero)
+    val perfCounters =
+      if (config.perfCountersEnabled)
+        Some(new borb.core.PerfCountersPlugin(wbStage))
+      else None
+    val perfCounterOutputs = perfCounters
+      .map(_.counters)
+      .getOrElse(borb.core.PerfCountersBundle().getZero)
     io.perf := perfCounterOutputs
 
-    val trapLogic = TrapCsrBackend(execStage, pipeline.ctrl(9), config, currentEpoch, pc, fetch, branch, lsu, perfCounterOutputs)
+    val trapLogic = TrapCsrBackend(
+      execStage,
+      wbStage,
+      config,
+      currentEpoch,
+      pc,
+      fetch,
+      branch,
+      lsu,
+      perfCounterOutputs
+    )
     val fpBackend = FpBackend(execStage, lsu, currentEpoch, trapLogic.frm)
-    val vectorEngine = DormantSharedVectorEngine(config.vectorConfig.copy(xlen = config.xlen, addressWidth = config.physicalAddrWidth))
+    val vectorBackend = VectorBackend(
+      execStage,
+      lsu,
+      lsuBus,
+      currentEpoch,
+      config,
+      trapLogic.vectorContext,
+      resetPcValue
+    )
+    val functionalUnits = Seq(
+      intalu,
+      intMisc,
+      intMulDiv,
+      branch,
+      lsu,
+      trapLogic,
+      fpBackend,
+      vectorBackend
+    )
+    for (fu <- functionalUnits; laneId <- 0 until Decoder.LANES) {
+      val laneKey = LaneKey(laneId)
+      pipeline.ctrls.filter(_._1 >= srcStageId).foreach { case (_, ctrl) =>
+        ctrl.up(fu.SEL, laneKey).setAsReg().init(False)
+      }
+    }
+    val hazardRange = Seq(dispatchCtrl, srcCtrl, execStage, wbStage)
+    val dispatcher = new Dispatch(
+      dispatchCtrl,
+      hazardRange,
+      pipeline,
+      functionalUnits = functionalUnits,
+      intBypassReady = Seq(
+        False,
+        integerBackend.exeBypassReady,
+        integerBackend.wbIntBypass.valid
+      )
+    )
+    val srcPlugin = new SrcPlugin(
+      srcCtrl,
+      integerBackend.exeIntBypasses ++ integerBackend.wbIntBypasses
+    )
 
     trapLogic.fpFlagsSetValid := fpBackend.fpFlags.valid
     trapLogic.fpFlagsSetBits := fpBackend.fpFlags.bits
-
-    val vectorExecInsn = execStage.up(Decoder.DECODED_INSTRUCTION)
-    val vectorExecMicroCode = execStage.up(Decoder.MicroCode)
-    val vectorExecContext = trapLogic.vectorContext
-    val vectorDecodedOp = execStage.up(Decoder.IS_VEC) === borb.frontend.YESNO.Y
-    val vectorExecPacket = execStage.up.isValid &&
-      (execStage.up(SPEC_EPOCH) === currentEpoch) &&
-      (execStage.up(PC.PC) >= resetPcValue) &&
-      execStage.up(Decoder.VALID) &&
-      execStage.up(LANE_SEL) &&
-      (execStage.up(BackendIssue.SELECTED_PIPE) === BackendPipe.Vector) &&
-      vectorDecodedOp
-    val vectorMemoryExec = (vectorExecMicroCode === uopVLE32) || (vectorExecMicroCode === uopVSE32)
-    val vectorMemoryActive = RegInit(False)
-    when(vectorExecPacket && vectorMemoryExec && !vectorMemoryActive) {
-      vectorMemoryActive := True
-    }
-    when(vectorMemoryActive && vectorEngine.io.memoryComplete) {
-      vectorMemoryActive := False
-    }
-    val vectorMemoryTrap = vectorMemoryActive && vectorEngine.io.memoryComplete && vectorEngine.io.memoryException.valid
-    trapLogic.vectorMemoryComplete := vectorMemoryActive && vectorEngine.io.memoryComplete
-    trapLogic.vectorMemoryTrapValid := vectorMemoryTrap
-    trapLogic.vectorMemoryTrapIsStore := vectorExecMicroCode === uopVSE32
-    trapLogic.vectorMemoryTrapTval := vectorEngine.io.memoryException.tval
-    trapLogic.vectorMemoryTrapElement := vectorEngine.io.memoryFaultElement.resized
-    vectorEngine.io.command.valid := vectorExecPacket || vectorMemoryActive
-    vectorEngine.io.command.payload.hartId := 0
-    vectorEngine.io.command.payload.pc := execStage.up(PC.PC)
-    vectorEngine.io.command.payload.instruction := vectorExecInsn
-    vectorEngine.io.command.payload.opClass := VectorDecode.classify(vectorExecInsn)
-    vectorEngine.io.command.payload.rd := vectorExecInsn(11 downto 7).asUInt
-    vectorEngine.io.command.payload.rs1 := vectorExecInsn(19 downto 15).asUInt
-    vectorEngine.io.command.payload.rs2 := vectorExecInsn(24 downto 20).asUInt
-    vectorEngine.io.command.payload.rs3 := vectorExecInsn(31 downto 27).asUInt
-    vectorEngine.io.command.payload.scalarRs1 := execStage.up(SrcPlugin.RS1)
-    vectorEngine.io.command.payload.scalarRs2 := execStage.up(SrcPlugin.RS2)
-    vectorEngine.io.command.payload.funct3 := vectorExecInsn(14 downto 12)
-    vectorEngine.io.command.payload.funct6 := vectorExecInsn(31 downto 26)
-    vectorEngine.io.command.payload.vm := vectorExecInsn(25)
-    vectorEngine.io.command.payload.context := vectorExecContext
-    vectorEngine.io.response.ready := True
-    execStage.haltWhen(vectorExecPacket && vectorMemoryExec && (!vectorMemoryActive || !vectorEngine.io.memoryComplete))
-    when(vectorEngine.io.response.valid && vectorEngine.io.response.payload.writesScalar) {
-      execStage.down(WriteBack.RESULT).address.allowOverride := vectorEngine.io.response.payload.scalarRd
-      execStage.down(WriteBack.RESULT).data.allowOverride := Mux(
-        vectorEngine.io.response.payload.scalarRd === 0,
-        B(0, config.xlen bits),
-        vectorEngine.io.response.payload.scalarData
-      )
-      execStage.down(WriteBack.RESULT).valid.allowOverride := True
-    }
-
-    val vectorMemId = U(65535, 16 bits)
-    val vectorMemSelected = vectorEngine.io.memReq.valid
-    lsuBus.cmd.valid := lsu.io.dBus.cmd.valid || vectorEngine.io.memReq.valid
-    lsuBus.cmd.payload.address := lsu.io.dBus.cmd.payload.address
-    lsuBus.cmd.payload.data := lsu.io.dBus.cmd.payload.data
-    lsuBus.cmd.payload.mask := lsu.io.dBus.cmd.payload.mask
-    lsuBus.cmd.payload.id := lsu.io.dBus.cmd.payload.id
-    lsuBus.cmd.payload.write := lsu.io.dBus.cmd.payload.write
-    when(vectorMemSelected) {
-      lsuBus.cmd.payload.address := vectorEngine.io.memReq.payload.address
-      lsuBus.cmd.payload.data := vectorEngine.io.memReq.payload.data(63 downto 0)
-      lsuBus.cmd.payload.mask := vectorEngine.io.memReq.payload.mask(7 downto 0)
-      lsuBus.cmd.payload.id := vectorMemId
-      lsuBus.cmd.payload.write := vectorEngine.io.memReq.payload.op === VectorMemOp.Store
-    }
-    lsu.io.dBus.cmd.ready := lsuBus.cmd.ready && !vectorMemSelected
-    vectorEngine.io.memReq.ready := lsuBus.cmd.ready
-
-    val vectorMemResponse = lsuBus.rsp.valid && (lsuBus.rsp.payload.id === vectorMemId)
-    lsu.io.dBus.rsp.valid := lsuBus.rsp.valid && !vectorMemResponse
-    lsu.io.dBus.rsp.payload.data := lsuBus.rsp.payload.data
-    lsu.io.dBus.rsp.payload.id := lsuBus.rsp.payload.id
-    vectorEngine.io.memResp.valid := vectorMemResponse
-    vectorEngine.io.memResp.payload.hartId := 0
-    vectorEngine.io.memResp.payload.data := lsuBus.rsp.payload.data.resize(config.vectorConfig.vlen)
-    vectorEngine.io.memResp.payload.exception.valid := False
-    vectorEngine.io.memResp.payload.exception.cause := VectorExceptionCause.None
-    vectorEngine.io.memResp.payload.exception.tval := 0
+    trapLogic.vectorMemoryComplete := vectorBackend.memoryComplete
+    trapLogic.vectorMemoryTrapValid := vectorBackend.memoryTrapValid
+    trapLogic.vectorMemoryTrapIsStore := vectorBackend.memoryTrapIsStore
+    trapLogic.vectorMemoryTrapTval := vectorBackend.memoryTrapTval
+    trapLogic.vectorMemoryTrapElement := vectorBackend.memoryTrapElement
 
     decode.branchResolved := branch.branchResolved
 
     val relaxIntProducerHazards = True
     val relaxControlFlowSerialization = True
 
-    val dispatchCtrl = pipeline.ctrl(6)
-    val srcCtrl = pipeline.ctrl(7)
-    val exeCtrl = pipeline.ctrl(8)
-    val wbCtrl = pipeline.ctrl(9)
-    val srcEpochMatches = srcCtrl.up(SPEC_EPOCH) === currentEpoch
-    val exeEpochMatchesForHazard = exeCtrl.up(SPEC_EPOCH) === currentEpoch
-    val srcHasControlFlow = srcCtrl.up.isValid &&
-      srcEpochMatches &&
-      srcCtrl(Decoder.VALID) &&
-      srcCtrl(borb.common.Common.LANE_SEL) &&
-      srcCtrl(IssueSemantics.PROPS).isControlFlow
-    val exeHasControlFlow = exeCtrl.up.isValid &&
-      exeEpochMatchesForHazard &&
-      exeCtrl(Decoder.VALID) &&
-      exeCtrl(borb.common.Common.LANE_SEL) &&
-      exeCtrl(IssueSemantics.PROPS).isControlFlow
+    val exeCtrl = execStage
+    val wbCtrl = wbStage
+    def laneIsLive(ctrl: CtrlLink, laneId: Int): Bool = {
+      val laneKey = LaneKey(laneId)
+      ctrl.up.isValid &&
+      (ctrl.up(SPEC_EPOCH, laneKey) === currentEpoch) &&
+      ctrl(Decoder.VALID, laneKey) &&
+      ctrl(borb.common.Common.LANE_SEL, laneKey)
+    }
+    val srcHasControlFlow = (0 until Decoder.LANES)
+      .map { laneId =>
+        laneIsLive(srcCtrl, laneId) && srcCtrl(
+          IssueSemantics.PROPS,
+          LaneKey(laneId)
+        ).isControlFlow
+      }
+      .reduce(_ || _)
+    val exeHasControlFlow = (0 until Decoder.LANES)
+      .map { laneId =>
+        laneIsLive(exeCtrl, laneId) && exeCtrl(
+          IssueSemantics.PROPS,
+          LaneKey(laneId)
+        ).isControlFlow
+      }
+      .reduce(_ || _)
     val controlHazardBusy = srcHasControlFlow || exeHasControlFlow
     when(!relaxControlFlowSerialization) {
-      Array(3, 4, 5, 6).map(pipeline.ctrl(_)).foreach { ctrl =>
-        ctrl.haltWhen(controlHazardBusy)
-      }
+      Array
+        .range(decodeStageId, dispatchStageId + 1)
+        .map(pipeline.ctrl(_))
+        .foreach { ctrl =>
+          ctrl.haltWhen(controlHazardBusy)
+        }
       srcCtrl.haltWhen(exeHasControlFlow)
     }
-    when(srcCtrl.up.isValid && (srcCtrl.up(SPEC_EPOCH) =/= currentEpoch)) {
-      srcCtrl.up(LANE_SEL).allowOverride := False
+    for (laneId <- 0 until Decoder.LANES) {
+      val laneKey = LaneKey(laneId)
+      when(
+        srcCtrl.up.isValid && (srcCtrl.up(SPEC_EPOCH, laneKey) =/= currentEpoch)
+      ) {
+        srcCtrl.up(LANE_SEL, laneKey).allowOverride := False
+      }
     }
-    when(
-      pipeline.ctrl(9).up.isValid &&
-      (pipeline.ctrl(9).up(SPEC_EPOCH) =/= currentEpoch) &&
-      !pipeline.ctrl(9).up(SELF_REDIRECT)
-    ) {
-      pipeline.ctrl(9).up(LANE_SEL).allowOverride := False
-      pipeline.ctrl(9).up(COMMIT).allowOverride := False
+    for (laneId <- 0 until Decoder.LANES) {
+      val laneKey = LaneKey(laneId)
+      when(
+        wbStage.up.isValid &&
+          (wbStage.up(SPEC_EPOCH, laneKey) =/= currentEpoch) &&
+          !wbStage.up(SELF_REDIRECT, laneKey)
+      ) {
+        wbStage.up(LANE_SEL, laneKey).allowOverride := False
+        wbStage.up(COMMIT, laneKey).allowOverride := False
+      }
     }
 
     val exeIntProducer = exeCtrl.up.isValid &&
-      exeCtrl(Decoder.VALID) &&
-      exeCtrl(borb.common.Common.LANE_SEL) &&
-      exeCtrl(IssueSemantics.PROPS).writesIntRd &&
-      (exeCtrl(Decoder.RD_ADDR) =/= 0)
-    val srcNeedsExeRdRs1 = srcCtrl(IssueSemantics.PROPS).readsIntRs1 &&
-      (srcCtrl(Decoder.RS1_ADDR) === exeCtrl(Decoder.RD_ADDR))
-    val srcNeedsExeRdRs2 = srcCtrl(IssueSemantics.PROPS).readsIntRs2 &&
-      (srcCtrl(Decoder.RS2_ADDR) === exeCtrl(Decoder.RD_ADDR))
+      exeCtrl(Decoder.VALID, LaneKey.Lane0) &&
+      exeCtrl(borb.common.Common.LANE_SEL, LaneKey.Lane0) &&
+      exeCtrl(IssueSemantics.PROPS, LaneKey.Lane0).writesIntRd &&
+      (exeCtrl(Decoder.RD_ADDR, LaneKey.Lane0) =/= 0)
+    val srcNeedsExeRdRs1 =
+      srcCtrl(IssueSemantics.PROPS, LaneKey.Lane0).readsIntRs1 &&
+        (srcCtrl(Decoder.RS1_ADDR, LaneKey.Lane0) === exeCtrl(
+          Decoder.RD_ADDR,
+          LaneKey.Lane0
+        ))
+    val srcNeedsExeRdRs2 =
+      srcCtrl(IssueSemantics.PROPS, LaneKey.Lane0).readsIntRs2 &&
+        (srcCtrl(Decoder.RS2_ADDR, LaneKey.Lane0) === exeCtrl(
+          Decoder.RD_ADDR,
+          LaneKey.Lane0
+        ))
     when(!relaxIntProducerHazards) {
       srcCtrl.haltWhen(exeIntProducer && (srcNeedsExeRdRs1 || srcNeedsExeRdRs2))
     }
 
     val wbIntProducer = wbCtrl.up.isValid &&
-      wbCtrl(Decoder.VALID) &&
-      wbCtrl(borb.common.Common.LANE_SEL) &&
-      wbCtrl(IssueSemantics.PROPS).writesIntRd &&
-      (wbCtrl(Decoder.RD_ADDR) =/= 0)
-    val srcNeedsWbRdRs1 = srcCtrl(IssueSemantics.PROPS).readsIntRs1 &&
-      (srcCtrl(Decoder.RS1_ADDR) === wbCtrl(Decoder.RD_ADDR))
-    val srcNeedsWbRdRs2 = srcCtrl(IssueSemantics.PROPS).readsIntRs2 &&
-      (srcCtrl(Decoder.RS2_ADDR) === wbCtrl(Decoder.RD_ADDR))
+      wbCtrl(Decoder.VALID, LaneKey.Lane0) &&
+      wbCtrl(borb.common.Common.LANE_SEL, LaneKey.Lane0) &&
+      wbCtrl(IssueSemantics.PROPS, LaneKey.Lane0).writesIntRd &&
+      (wbCtrl(Decoder.RD_ADDR, LaneKey.Lane0) =/= 0)
+    val srcNeedsWbRdRs1 =
+      srcCtrl(IssueSemantics.PROPS, LaneKey.Lane0).readsIntRs1 &&
+        (srcCtrl(Decoder.RS1_ADDR, LaneKey.Lane0) === wbCtrl(
+          Decoder.RD_ADDR,
+          LaneKey.Lane0
+        ))
+    val srcNeedsWbRdRs2 =
+      srcCtrl(IssueSemantics.PROPS, LaneKey.Lane0).readsIntRs2 &&
+        (srcCtrl(Decoder.RS2_ADDR, LaneKey.Lane0) === wbCtrl(
+          Decoder.RD_ADDR,
+          LaneKey.Lane0
+        ))
     when(!relaxIntProducerHazards) {
       srcCtrl.haltWhen(wbIntProducer && (srcNeedsWbRdRs1 || srcNeedsWbRdRs2))
     }
@@ -460,51 +808,82 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     val suppressPrefetchInTrapService = RegInit(False)
     when(trapLogic.redirect.trapFire) {
       suppressPrefetchInTrapService := True
-    } elsewhen(trapLogic.redirect.mretFire) {
+    } elsewhen (trapLogic.redirect.mretFire) {
       suppressPrefetchInTrapService := False
     }
     val suppressPrefetchBase =
       suppressPrefetchInTrapService ||
-      trapLogic.redirect.trapFire ||
-      trapLogic.redirect.mretFire
+        trapLogic.redirect.trapFire ||
+        trapLogic.redirect.mretFire
 
     // ========== Speculation Epoch Architecture ==========
-    // Clean, scalable speculation handling for in-order superscalar CPU
+    // Clean, scalable speculation handling for in-order dual-lane CPU
     //
     // Design:
     // - Global epoch counter maintained here, passed to Fetch
     // - Each instruction is tagged with SPEC_EPOCH when it enters the pipeline
     // - When a branch is TAKEN (flushPipeline), epoch increments
     // - All instructions with old epoch are flushed (their SPEC_EPOCH != currentEpoch)
-    
+
     // Flush Logic - fires when a non-stale branch/jump redirects.
-    val execEpochMatches = pipeline.ctrl(8)(SPEC_EPOCH) === currentEpoch
-    val execStageValid = pipeline.ctrl(8).up.isValid
+    val branchResolvedLane1 = branch.logic.selectedLane1
+    def selectedBranchPayload[T <: Data](payload: Payload[T]): T =
+      Mux(
+        branchResolvedLane1,
+        execStage.up(payload, LaneKey.Lane1),
+        execStage.up(payload, LaneKey.Lane0)
+      )
+
+    val execEpochMatches = selectedBranchPayload(SPEC_EPOCH) === currentEpoch
+    val execStageValid = execStage.up.isValid
     val fenceiRedirect = execStageValid &&
-      pipeline.ctrl(8).up.isFiring &&
-      execEpochMatches &&
-      pipeline.ctrl(8)(Decoder.VALID) &&
-      pipeline.ctrl(8)(borb.common.Common.LANE_SEL) &&
-      (pipeline.ctrl(8)(Decoder.MicroCode) === uopFENCE_I)
-    val predictedValid = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
-    val predictedTaken = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
-    val predictedTarget = pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
-    val frontendPredictedRedirectsEnabled = config.frontendConfig.predictedRedirectEnabled
-    val frontendPredictorTrainingEnabled = config.frontendConfig.predictorTrainingEnabled
+      execStage.up.isFiring &&
+      (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          (execStage(SPEC_EPOCH, laneKey) === currentEpoch) &&
+          execStage(Decoder.VALID, laneKey) &&
+          execStage(borb.common.Common.LANE_SEL, laneKey) &&
+          (execStage(Decoder.MicroCode, laneKey) === uopFENCE_I)
+        }
+        .reduce(_ || _)
+    val predictedValid = selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_PREDICTED_VALID
+    )
+    val predictedTaken = selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_PREDICTED_TAKEN
+    )
+    val predictedTarget = selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_PREDICTED_TARGET
+    )
+    val frontendPredictedRedirectsEnabled =
+      config.frontendConfig.predictedRedirectEnabled
+    val frontendPredictorTrainingEnabled =
+      config.frontendConfig.predictorTrainingEnabled
     val actualTaken = branch.actualTaken
     val actualTarget = branch.actualTarget
     val controlResolved = branch.branchResolved && execEpochMatches
     val branchMispredict = controlResolved && (
       (actualTaken =/= predictedTaken) ||
-      (actualTaken && predictedTaken && (actualTarget =/= predictedTarget))
+        (actualTaken && predictedTaken && (actualTarget =/= predictedTarget))
     )
     val branchRedirect = branchMispredict && !trapLogic.redirect.trapFire
     val flushPipeline = branchRedirect
-    val trapRedirect = execStageValid && trapLogic.redirect.trapFire && execEpochMatches
-    val mretRedirect = execStageValid && trapLogic.redirect.mretFire && execEpochMatches
-    val redirectPipeline = flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
-    pipeline.ctrl(8).down(SELF_REDIRECT) := branchRedirect || trapRedirect || mretRedirect || fenceiRedirect
-    val fenceiTarget = pipeline.ctrl(8)(borb.fetch.PC.PC) + U(4, 64 bits)
+    val trapRedirect =
+      execStageValid && trapLogic.redirect.trapFire && execEpochMatches
+    val mretRedirect =
+      execStageValid && trapLogic.redirect.mretFire && execEpochMatches
+    val redirectPipeline =
+      flushPipeline || trapRedirect || mretRedirect || fenceiRedirect
+    execStage.down(
+      SELF_REDIRECT,
+      LaneKey.Lane0
+    ) := (branchRedirect && !branchResolvedLane1) || trapRedirect || mretRedirect || fenceiRedirect
+    execStage.down(
+      SELF_REDIRECT,
+      LaneKey.Lane1
+    ) := branchRedirect && branchResolvedLane1
+    val fenceiTarget = selectedBranchPayload(borb.fetch.PC.PC) + U(4, 64 bits)
     val redirectEpochValue = (currentEpoch + 1).resized
 
     pc.redirect.valid.allowOverride := branchRedirect || mretRedirect || fenceiRedirect
@@ -520,7 +899,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pc.redirect.payload.reason := FrontendRedirectReason.branch
     when(mretRedirect) {
       pc.redirect.payload.reason := FrontendRedirectReason.mret
-    } elsewhen(fenceiRedirect) {
+    } elsewhen (fenceiRedirect) {
       pc.redirect.payload.reason := FrontendRedirectReason.fencei
     }
     pc.redirect.payload.epoch := redirectEpochValue
@@ -529,7 +908,7 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     pc.jump.payload.target := pc.redirect.payload.target
     pc.jump.payload.is_jump := mretRedirect || fenceiRedirect || branch.actualIsJump
     pc.jump.payload.is_branch := (!mretRedirect) && (!fenceiRedirect) && branch.actualIsBranch
-    
+
     // Increment epoch on taken branch
     when(branchRedirect) {
       currentEpoch := currentEpoch + 1
@@ -545,131 +924,232 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     }
     def stageDecodedValid(idx: Int): Bool = {
       val ctrl = pipeline.ctrl(idx)
-      ctrl.up.isValid && (if(idx == 3) ctrl(Decoder.VALID) else ctrl.up(Decoder.VALID))
+      ctrl.up.isValid && (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          if (idx == decodeStageId) ctrl(Decoder.VALID, laneKey)
+          else ctrl.up(Decoder.VALID, laneKey)
+        }
+        .reduce(_ || _)
     }
     def stageLogicallyLive(idx: Int): Bool = {
       val ctrl = pipeline.ctrl(idx)
-      val stageLaneLive = if(idx < 7) True else ctrl.up(LANE_SEL)
-      ctrl.up.isValid && stageDecodedValid(idx) && stageLaneLive
+      ctrl.up.isValid && (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          val decodedValid =
+            if (idx == decodeStageId) ctrl(Decoder.VALID, laneKey)
+            else ctrl.up(Decoder.VALID, laneKey)
+          val laneLive =
+            if (idx < srcStageId) True else ctrl.up(LANE_SEL, laneKey)
+          decodedValid && laneLive
+        }
+        .reduce(_ || _)
     }
-    val wbStageValidForRedirect = stageLogicallyLive(9)
+    val wbStageValidForRedirect = stageLogicallyLive(wbStageId)
     val redirectingBundleSeq = UInt(32 bits)
-    redirectingBundleSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
+    redirectingBundleSeq := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BUNDLE_SEQ
+    )
     val redirectingSlotIdx = UInt(2 bits)
-    redirectingSlotIdx := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX)
+    redirectingSlotIdx := selectedBranchPayload(borb.fetch.Fetch.FETCH_SLOT_IDX)
     val redirectingSeq = UInt(32 bits)
-    redirectingSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SEQ)
-    val wbBundleSeq = pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    val wbSlotIdx = pipeline.ctrl(9).up(borb.fetch.Fetch.FETCH_SLOT_IDX)
-    val redirectRspBubbleCounter = Reg(UInt(2 bits)) init(0)
+    redirectingSeq := selectedBranchPayload(borb.fetch.Fetch.FETCH_SEQ)
+    val wbLane1LiveForRedirect =
+      wbStage.up.isValid && wbStage.up(Decoder.VALID, LaneKey.Lane1) && wbStage
+        .up(LANE_SEL, LaneKey.Lane1)
+    val wbBundleSeq = Mux(
+      wbLane1LiveForRedirect,
+      wbStage.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ, LaneKey.Lane1),
+      wbStage.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ, LaneKey.Lane0)
+    )
+    val wbSlotIdx = Mux(
+      wbLane1LiveForRedirect,
+      wbStage.up(borb.fetch.Fetch.FETCH_SLOT_IDX, LaneKey.Lane1),
+      wbStage.up(borb.fetch.Fetch.FETCH_SLOT_IDX, LaneKey.Lane0)
+    )
+    val redirectRspBubbleCounter = Reg(UInt(2 bits)) init (0)
     val redirectCommitPending = RegInit(False)
-    val redirectCommitSeq = Reg(UInt(32 bits)) init(0)
-    val redirectCommitBundleSeq = Reg(UInt(32 bits)) init(0)
-    val redirectCommitSlotIdx = Reg(UInt(2 bits)) init(0)
+    val redirectCommitSeq = Reg(UInt(32 bits)) init (0)
+    val redirectCommitBundleSeq = Reg(UInt(32 bits)) init (0)
+    val redirectCommitSlotIdx = Reg(UInt(2 bits)) init (0)
     val rspOldEpoch = pipeline.ctrl(2).up.isValid &&
-      (pipeline.ctrl(2)(SPEC_EPOCH) =/= currentEpoch)
+      (0 until Decoder.LANES)
+        .map(laneId =>
+          pipeline.ctrl(2)(SPEC_EPOCH, LaneKey(laneId)) =/= currentEpoch
+        )
+        .reduce(_ || _)
     when(rspOldEpoch) {
       pipeline.ctrl(2).up.valid.allowOverride := False
     }
     val wbYoungerThanRedirect = wbStageValidForRedirect &&
-      pipeline.ctrl(8).up.isValid &&
-      pipeline.ctrl(8).up(Decoder.VALID) &&
-      LaneContracts.isYounger(wbBundleSeq, wbSlotIdx, redirectingBundleSeq, redirectingSlotIdx)
+      execStage.up.isValid &&
+      (0 until Decoder.LANES)
+        .map(laneId => execStage.up(Decoder.VALID, LaneKey(laneId)))
+        .reduce(_ || _) &&
+      LaneContracts.isYounger(
+        wbBundleSeq,
+        wbSlotIdx,
+        redirectingBundleSeq,
+        redirectingSlotIdx
+      )
     def stageIsRedirectOrigin(idx: Int): Bool = {
       val ctrl = pipeline.ctrl(idx)
       redirectCommitPending &&
       ctrl.up.isValid &&
-      LaneContracts.sameSlot(
-        ctrl.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ),
-        ctrl.up(borb.fetch.Fetch.FETCH_SLOT_IDX),
-        redirectCommitBundleSeq,
-        redirectCommitSlotIdx
-      )
+      (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          LaneContracts.sameSlot(
+            ctrl.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ, laneKey),
+            ctrl.up(borb.fetch.Fetch.FETCH_SLOT_IDX, laneKey),
+            redirectCommitBundleSeq,
+            redirectCommitSlotIdx
+          )
+        }
+        .reduce(_ || _)
     }
-    val youngerThanPendingRedirect = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
-      val ctrl = pipeline.ctrl(idx)
-      stageLogicallyLive(idx) &&
-      !stageIsRedirectOrigin(idx) &&
-      (ctrl.up(SPEC_EPOCH) =/= currentEpoch) &&
-      LaneContracts.isYounger(
-        ctrl.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ),
-        ctrl.up(borb.fetch.Fetch.FETCH_SLOT_IDX),
-        redirectCommitBundleSeq,
-        redirectCommitSlotIdx
-      )
-    }.reduce(_ || _)
-    val staleEpochBehindRedirect = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
-      val ctrl = pipeline.ctrl(idx)
-      stageLogicallyLive(idx) &&
-      !stageIsRedirectOrigin(idx) &&
-      (ctrl.up(SPEC_EPOCH) =/= currentEpoch)
-    }.reduce(_ || _)
+    val youngerThanPendingRedirect = Array
+      .range(decodeStageId, wbStageId + 1)
+      .map { idx =>
+        val ctrl = pipeline.ctrl(idx)
+        stageLogicallyLive(idx) &&
+        !stageIsRedirectOrigin(idx) &&
+        (0 until Decoder.LANES)
+          .map { laneId =>
+            val laneKey = LaneKey(laneId)
+            (ctrl.up(SPEC_EPOCH, laneKey) =/= currentEpoch) &&
+            LaneContracts.isYounger(
+              ctrl.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ, laneKey),
+              ctrl.up(borb.fetch.Fetch.FETCH_SLOT_IDX, laneKey),
+              redirectCommitBundleSeq,
+              redirectCommitSlotIdx
+            )
+          }
+          .reduce(_ || _)
+      }
+      .reduce(_ || _)
+    val staleEpochBehindRedirect = Array
+      .range(decodeStageId, wbStageId + 1)
+      .map { idx =>
+        val ctrl = pipeline.ctrl(idx)
+        stageLogicallyLive(idx) &&
+        !stageIsRedirectOrigin(idx) &&
+        (0 until Decoder.LANES)
+          .map(laneId => ctrl.up(SPEC_EPOCH, LaneKey(laneId)) =/= currentEpoch)
+          .reduce(_ || _)
+      }
+      .reduce(_ || _)
     when(redirectPipeline) {
       redirectRspBubbleCounter := U(2, redirectRspBubbleCounter.getWidth bits)
       redirectCommitPending := True
       redirectCommitSeq := redirectingSeq
       redirectCommitBundleSeq := redirectingBundleSeq
       redirectCommitSlotIdx := redirectingSlotIdx.resized
-    } elsewhen(redirectRspBubbleCounter =/= 0) {
+    } elsewhen (redirectRspBubbleCounter =/= 0) {
       redirectRspBubbleCounter := redirectRspBubbleCounter - 1
     }
     val rspResident = pipeline.ctrl(2).up.isValid
-    when(redirectCommitPending && !redirectPipeline && !rspResident && !rspOldEpoch && !staleEpochBehindRedirect && !youngerThanPendingRedirect) {
+    when(
+      redirectCommitPending && !redirectPipeline && !rspResident && !rspOldEpoch && !staleEpochBehindRedirect && !youngerThanPendingRedirect
+    ) {
       redirectCommitPending := False
     }
     val redirectRspPending = redirectRspBubbleCounter =/= 0
     val wbYoungerThanPendingRedirect = redirectCommitPending &&
       wbStageValidForRedirect &&
-      (pipeline.ctrl(9).up(SPEC_EPOCH) =/= currentEpoch) &&
-      LaneContracts.isYounger(wbBundleSeq, wbSlotIdx, redirectCommitBundleSeq, redirectCommitSlotIdx)
+      (0 until Decoder.LANES)
+        .map(laneId => wbStage.up(SPEC_EPOCH, LaneKey(laneId)) =/= currentEpoch)
+        .reduce(_ || _) &&
+      LaneContracts.isYounger(
+        wbBundleSeq,
+        wbSlotIdx,
+        redirectCommitBundleSeq,
+        redirectCommitSlotIdx
+      )
     lsuKillOutstanding := redirectPipeline || redirectCommitPending
     lsuKillCboZero := redirectPipeline
     when(
-      pipeline.ctrl(8).up.isValid &&
-      pipeline.ctrl(8).up(Decoder.VALID) &&
-      redirectCommitPending &&
-      (pipeline.ctrl(8).up(SPEC_EPOCH) =/= currentEpoch)
+      execStage.up.isValid &&
+        (0 until Decoder.LANES)
+          .map(laneId => execStage.up(Decoder.VALID, LaneKey(laneId)))
+          .reduce(_ || _) &&
+        redirectCommitPending &&
+        (0 until Decoder.LANES)
+          .map(laneId =>
+            execStage.up(SPEC_EPOCH, LaneKey(laneId)) =/= currentEpoch
+          )
+          .reduce(_ || _)
     ) {
-      pipeline.ctrl(8).up(LANE_SEL).allowOverride := False
+      for (laneId <- 0 until Decoder.LANES) {
+        execStage.up(LANE_SEL, LaneKey(laneId)).allowOverride := False
+      }
     }
     // A taken redirect discovered in execute can coincide with a wrong-path
     // younger instruction already sitting in writeback. Squash that commit in
     // the same cycle, then keep the existing next-cycle bubble to catch any
     // younger instruction that would otherwise slide forward one stage later.
-    val redirectCommitBubble = (redirectPipeline && wbYoungerThanRedirect) || wbYoungerThanPendingRedirect
+    val redirectCommitBubble =
+      (redirectPipeline && wbYoungerThanRedirect) || wbYoungerThanPendingRedirect
     // A redirecting stage-6 instruction can otherwise allow a younger
     // same-epoch payload to slide forward one stage before its redirect is
     // observed. Track the redirecting sequence so only younger instructions
     // are flushed; older lagging instructions must still be allowed to retire.
     val redirectExecuteBubble = redirectCommitPending &&
-      pipeline.ctrl(8).up.isValid &&
-      pipeline.ctrl(8).up(Decoder.VALID) &&
-      (pipeline.ctrl(8).up(SPEC_EPOCH) =/= currentEpoch) &&
-      LaneContracts.isYounger(
-        pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ),
-        pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX),
-        redirectCommitBundleSeq,
-        redirectCommitSlotIdx
-      )
-    
+      execStage.up.isValid &&
+      (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          execStage.up(Decoder.VALID, laneKey) &&
+          (execStage.up(SPEC_EPOCH, laneKey) =/= currentEpoch) &&
+          LaneContracts.isYounger(
+            execStage.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ, laneKey),
+            execStage.up(borb.fetch.Fetch.FETCH_SLOT_IDX, laneKey),
+            redirectCommitBundleSeq,
+            redirectCommitSlotIdx
+          )
+        }
+        .reduce(_ || _)
+
     // Connect epoch to Fetch so new instructions get tagged with current epoch
     fetch.io.currentEpoch := currentEpoch
     val branchBlockPc = UInt(64 bits)
-    branchBlockPc := pipeline.ctrl(8).up(borb.fetch.PC.PC)
-    if(config.frontendConfig.fetchBlockBytes > 1) {
-      branchBlockPc(log2Up(config.frontendConfig.fetchBlockBytes) - 1 downto 0) := 0
+    branchBlockPc := selectedBranchPayload(borb.fetch.PC.PC)
+    if (config.frontendConfig.fetchBlockBytes > 1) {
+      branchBlockPc(
+        log2Up(config.frontendConfig.fetchBlockBytes) - 1 downto 0
+      ) := 0
     }
-    val takenByteOffset = UInt(log2Up(config.frontendConfig.fetchBlockBytes max 2) bits)
-    takenByteOffset := pipeline.ctrl(8).up(borb.fetch.PC.PC)(log2Up(config.frontendConfig.fetchBlockBytes max 2) - 1 downto 0)
+    val takenByteOffset = UInt(
+      log2Up(config.frontendConfig.fetchBlockBytes max 2) bits
+    )
+    takenByteOffset := selectedBranchPayload(borb.fetch.PC.PC)(
+      log2Up(config.frontendConfig.fetchBlockBytes max 2) - 1 downto 0
+    )
     val isCall = branch.actualIsJump &&
       (
-        (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJAL && ((pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00101"))) ||
-        (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR && ((pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00101")))
+        (selectedBranchPayload(
+          Decoder.MicroCode
+        ) === uopJAL && ((selectedBranchPayload(
+          Decoder.RD_ADDR
+        ) === B"00001") || (selectedBranchPayload(
+          Decoder.RD_ADDR
+        ) === B"00101"))) ||
+          (selectedBranchPayload(
+            Decoder.MicroCode
+          ) === uopJALR && ((selectedBranchPayload(
+            Decoder.RD_ADDR
+          ) === B"00001") || (selectedBranchPayload(
+            Decoder.RD_ADDR
+          ) === B"00101")))
       )
-    val isReturn = (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR) &&
-      (pipeline.ctrl(8).up(Decoder.RD_ADDR) === B"00000") &&
-      ((pipeline.ctrl(8).up(Decoder.RS1_ADDR) === B"00001") || (pipeline.ctrl(8).up(Decoder.RS1_ADDR) === B"00101"))
-    val isIndirect = (pipeline.ctrl(8).up(Decoder.MicroCode) === uopJALR) && !isReturn
+    val isReturn = (selectedBranchPayload(Decoder.MicroCode) === uopJALR) &&
+      (selectedBranchPayload(Decoder.RD_ADDR) === B"00000") &&
+      ((selectedBranchPayload(
+        Decoder.RS1_ADDR
+      ) === B"00001") || (selectedBranchPayload(Decoder.RS1_ADDR) === B"00101"))
+    val isIndirect =
+      (selectedBranchPayload(Decoder.MicroCode) === uopJALR) && !isReturn
     fetch.io.recover.valid := redirectPipeline
     fetch.io.recover.payload.redirectTarget := Mux(
       trapRedirect,
@@ -687,28 +1167,48 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     fetch.io.recover.payload.redirectReason := FrontendRedirectReason.branch
     when(trapRedirect) {
       fetch.io.recover.payload.redirectReason := FrontendRedirectReason.trap
-    } elsewhen(mretRedirect) {
+    } elsewhen (mretRedirect) {
       fetch.io.recover.payload.redirectReason := FrontendRedirectReason.mret
-    } elsewhen(fenceiRedirect) {
+    } elsewhen (fenceiRedirect) {
       fetch.io.recover.payload.redirectReason := FrontendRedirectReason.fencei
     }
     fetch.io.recover.payload.epoch := redirectEpochValue
     fetch.io.recover.payload.invalidateIcache := fenceiRedirect
-    fetch.io.recover.payload.recovery.valid := pipeline.ctrl(8).up.isValid
-    fetch.io.recover.payload.recovery.ftqIndex := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
-    fetch.io.recover.payload.recovery.bundleSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    fetch.io.recover.payload.recovery.slotIdx := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
-    fetch.io.recover.payload.recovery.blockPc := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
-    fetch.io.recover.payload.recovery.byteOffsetInBlock := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
+    fetch.io.recover.payload.recovery.valid := execStage.up.isValid
+    fetch.io.recover.payload.recovery.ftqIndex := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_FTQ_IDX
+    ).resized
+    fetch.io.recover.payload.recovery.bundleSeq := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BUNDLE_SEQ
+    )
+    fetch.io.recover.payload.recovery.slotIdx := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_SLOT_IDX
+    ).resized
+    fetch.io.recover.payload.recovery.blockPc := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BLOCK_PC
+    )
+    fetch.io.recover.payload.recovery.byteOffsetInBlock := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BYTE_OFFSET
+    ).resized
 
     fetch.io.branchResolve.valid := branch.branchResolved && execEpochMatches
     fetch.io.branchResolve.payload.epoch := currentEpoch
-    fetch.io.branchResolve.payload.ftqIndex := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
-    fetch.io.branchResolve.payload.bundleSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    fetch.io.branchResolve.payload.slotIdx := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
-    fetch.io.branchResolve.payload.pc := pipeline.ctrl(8).up(borb.fetch.PC.PC)
-    fetch.io.branchResolve.payload.blockPc := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
-    fetch.io.branchResolve.payload.byteOffsetInBlock := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
+    fetch.io.branchResolve.payload.ftqIndex := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_FTQ_IDX
+    ).resized
+    fetch.io.branchResolve.payload.bundleSeq := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BUNDLE_SEQ
+    )
+    fetch.io.branchResolve.payload.slotIdx := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_SLOT_IDX
+    ).resized
+    fetch.io.branchResolve.payload.pc := selectedBranchPayload(borb.fetch.PC.PC)
+    fetch.io.branchResolve.payload.blockPc := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BLOCK_PC
+    )
+    fetch.io.branchResolve.payload.byteOffsetInBlock := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BYTE_OFFSET
+    ).resized
     fetch.io.branchResolve.payload.fallthrough := branch.fallthroughPc
     fetch.io.branchResolve.payload.actualTaken := actualTaken
     fetch.io.branchResolve.payload.actualTarget := actualTarget
@@ -724,146 +1224,224 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     fetch.io.indirectResolve.valid := branch.branchResolved && execEpochMatches && isIndirect && actualTaken
     fetch.io.indirectResolve.payload.epoch := currentEpoch
-    fetch.io.indirectResolve.payload.ftqIndex := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
-    fetch.io.indirectResolve.payload.bundleSeq := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    fetch.io.indirectResolve.payload.slotIdx := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
-    fetch.io.indirectResolve.payload.blockPc := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BLOCK_PC)
-    fetch.io.indirectResolve.payload.byteOffsetInBlock := pipeline.ctrl(8).up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
+    fetch.io.indirectResolve.payload.ftqIndex := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_FTQ_IDX
+    ).resized
+    fetch.io.indirectResolve.payload.bundleSeq := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BUNDLE_SEQ
+    )
+    fetch.io.indirectResolve.payload.slotIdx := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_SLOT_IDX
+    ).resized
+    fetch.io.indirectResolve.payload.blockPc := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BLOCK_PC
+    )
+    fetch.io.indirectResolve.payload.byteOffsetInBlock := selectedBranchPayload(
+      borb.fetch.Fetch.FETCH_BYTE_OFFSET
+    ).resized
     fetch.io.indirectResolve.payload.target := actualTarget
     fetch.io.indirectResolve.payload.history := 0
-    fetch.io.scalarHold := redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch
-    fetch.io.scalarDeferRefill := False
-    fetch.io.scalarSkip := False
-    fetch.io.scalarConsume := pipeline.ctrl(2).down.isFiring &&
+    fetch.io.bundleHold := redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch
+    fetch.io.bundleDeferRefill := False
+    fetch.io.bundleConsume := fetchRspCtrl.down.isFiring &&
       !(redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch)
-    
+
     // Flush fetch/decode/src younger stages on redirect so a new target beat
     // cannot be consumed against a stale stage-local PC offset.
     // Note: Stage 6 (Execute) is excluded from unconditional redirect kill -
     //       the redirecting instruction executes. Stage 7 is now explicitly
     //       seq-filtered below so younger wrong-path writeback occupants are
     //       dropped instead of merely having their commit suppressed.
-    pipeline.ctrl(1).throwWhen(redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch)
+    pipeline
+      .ctrl(1)
+      .throwWhen(
+        redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch
+      )
     // Stage 2 sits before sequence tagging becomes fully instruction-local, so
     // on a redirect it is always younger than execute and must be dropped
     // unconditionally. Hold it in bubble state until the seq-tracked younger
-    // backend stages are drained; otherwise a stale scalar fetched before the
+    // backend stages are drained; otherwise a stale fetch packet fetched before the
     // redirect can still slip forward after the short rsp-only bubble expires.
-    val stage2Kill = redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch
+    val stage2Kill =
+      redirectPipeline || redirectRspPending || redirectCommitPending || rspOldEpoch
     pipeline.ctrl(2).throwWhen(stage2Kill)
     when(stage2Kill) {
       pipeline.ctrl(2).up.valid.allowOverride := False
     }
-    Array(3, 4, 5, 6, 7).map(pipeline.ctrl(_)).foreach { ctrl =>
-      val stageDecodedValid = if(ctrl == pipeline.ctrl(3)) ctrl(Decoder.VALID) else ctrl.up(Decoder.VALID)
-      val stageOldEpoch = ctrl.up.isValid && (ctrl.up(SPEC_EPOCH) =/= currentEpoch)
-      val stageKill = redirectPipeline || redirectRspPending || redirectCommitPending || stageOldEpoch
-      ctrl.throwWhen(stageKill)
-      when(stageKill) {
-        ctrl.up.valid.allowOverride := False
-        stageDecodedValid.allowOverride := False
-        if(ctrl == pipeline.ctrl(7)) {
-          ctrl.up(LANE_SEL).allowOverride := False
+    Array.range(decodeStageId, srcStageId + 1).map(pipeline.ctrl(_)).foreach {
+      ctrl =>
+        val stageOldEpoch = ctrl.up.isValid && (0 until Decoder.LANES)
+          .map(laneId => ctrl.up(SPEC_EPOCH, LaneKey(laneId)) =/= currentEpoch)
+          .reduce(_ || _)
+        val stageKill =
+          redirectPipeline || redirectRspPending || redirectCommitPending || stageOldEpoch
+        ctrl.throwWhen(stageKill)
+        when(stageKill) {
+          ctrl.up.valid.allowOverride := False
+          for (laneId <- 0 until Decoder.LANES) {
+            val laneKey = LaneKey(laneId)
+            val stageDecodedValid =
+              if (ctrl == decodeCtrl) ctrl(Decoder.VALID, laneKey)
+              else ctrl.up(Decoder.VALID, laneKey)
+            stageDecodedValid.allowOverride := False
+            if (ctrl == srcCtrl) {
+              ctrl.up(LANE_SEL, laneKey).allowOverride := False
+            }
+          }
         }
+    }
+    val executeOldEpoch = execStage.up.isValid &&
+      (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          execStage.up(Decoder.VALID, laneKey) &&
+          (execStage.up(SPEC_EPOCH, laneKey) =/= currentEpoch)
+        }
+        .reduce(_ || _)
+    val wbOldEpoch = wbStage.up.isValid &&
+      (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          wbStage.up(Decoder.VALID, laneKey) &&
+          (wbStage.up(SPEC_EPOCH, laneKey) =/= currentEpoch) &&
+          !wbStage.up(SELF_REDIRECT, laneKey)
+        }
+        .reduce(_ || _)
+    val executeKill = redirectExecuteBubble || executeOldEpoch
+    val wbKill =
+      (redirectPipeline && wbYoungerThanRedirect) || wbYoungerThanPendingRedirect || wbOldEpoch
+    execStage.throwWhen(executeKill)
+    wbStage.throwWhen(wbKill)
+    when(executeKill) {
+      execStage.up.valid.allowOverride := False
+      for (laneId <- 0 until Decoder.LANES) {
+        val laneKey = LaneKey(laneId)
+        execStage.up(Decoder.VALID, laneKey).allowOverride := False
+        execStage.up(LANE_SEL, laneKey).allowOverride := False
       }
     }
-    val executeOldEpoch = pipeline.ctrl(8).up.isValid &&
-      pipeline.ctrl(8).up(Decoder.VALID) &&
-      (pipeline.ctrl(8).up(SPEC_EPOCH) =/= currentEpoch)
-    val wbOldEpoch = pipeline.ctrl(9).up.isValid &&
-      pipeline.ctrl(9).up(Decoder.VALID) &&
-      (pipeline.ctrl(9).up(SPEC_EPOCH) =/= currentEpoch) &&
-      !pipeline.ctrl(9).up(SELF_REDIRECT)
-    val executeKill = redirectExecuteBubble || executeOldEpoch
-    val wbKill = (redirectPipeline && wbYoungerThanRedirect) || wbYoungerThanPendingRedirect || wbOldEpoch
-    pipeline.ctrl(8).throwWhen(executeKill)
-    pipeline.ctrl(9).throwWhen(wbKill)
-    when(executeKill) {
-      pipeline.ctrl(8).up.valid.allowOverride := False
-      pipeline.ctrl(8).up(Decoder.VALID).allowOverride := False
-      pipeline.ctrl(8).up(LANE_SEL).allowOverride := False
-    }
     when(wbKill) {
-      pipeline.ctrl(9).up.valid.allowOverride := False
-      pipeline.ctrl(9).up(Decoder.VALID).allowOverride := False
-      pipeline.ctrl(9).up(LANE_SEL).allowOverride := False
-      pipeline.ctrl(9).up(COMMIT).allowOverride := False
-      pipeline.ctrl(9).up(TRAP).allowOverride := False
+      wbStage.up.valid.allowOverride := False
+      for (laneId <- 0 until Decoder.LANES) {
+        val laneKey = LaneKey(laneId)
+        wbStage.up(Decoder.VALID, laneKey).allowOverride := False
+        wbStage.up(LANE_SEL, laneKey).allowOverride := False
+        wbStage.up(COMMIT, laneKey).allowOverride := False
+        wbStage.up(TRAP, laneKey).allowOverride := False
+      }
     }
 
-    val writebackStage = pipeline.ctrl(9)
-    writebackStage.up(Decoder.RD_ADDR, LaneKey.Lane0) := writebackStage.up(Decoder.RD_ADDR)
-    writebackStage.up(Decoder.RS1_ADDR, LaneKey.Lane0) := writebackStage.up(Decoder.RS1_ADDR)
-    writebackStage.up(Decoder.RS2_ADDR, LaneKey.Lane0) := writebackStage.up(Decoder.RS2_ADDR)
-    writebackStage.up(IssueSemantics.PROPS, LaneKey.Lane0) := writebackStage.up(IssueSemantics.PROPS)
-    writebackStage.up(BackendIssue.SELECTED_PIPE, LaneKey.Lane0) := writebackStage.up(BackendIssue.SELECTED_PIPE)
-    writebackStage.up(SrcPlugin.RS1, LaneKey.Lane0) := writebackStage.up(SrcPlugin.RS1)
-    writebackStage.up(SrcPlugin.RS2, LaneKey.Lane0) := writebackStage.up(SrcPlugin.RS2)
-    writebackStage.up(WriteBack.RESULT, LaneKey.Lane0) := writebackStage.up(WriteBack.RESULT)
-    writebackStage.up(COMMIT, LaneKey.Lane0) := writebackStage.up(COMMIT)
-
-    val lane0Retire = RetirePacket(config)
-    lane0Retire.valid := writebackStage.up(COMMIT, LaneKey.Lane0)
-    lane0Retire.slot.valid := lane0Retire.valid
-    lane0Retire.slot.epoch := writebackStage.up(SPEC_EPOCH)
-    lane0Retire.slot.fetchSeq := writebackStage.up(borb.fetch.Fetch.FETCH_SEQ)
-    lane0Retire.slot.olderSeq := 0
-    lane0Retire.slot.bundleSeq := writebackStage.up(borb.fetch.Fetch.FETCH_BUNDLE_SEQ)
-    lane0Retire.slot.slotIdx := writebackStage.up(borb.fetch.Fetch.FETCH_SLOT_IDX).resized
-    lane0Retire.slot.slotCount := writebackStage.up(borb.fetch.Fetch.FETCH_SLOT_COUNT).resized
-    lane0Retire.slot.ftqIdx := writebackStage.up(borb.fetch.Fetch.FETCH_FTQ_IDX).resized
-    lane0Retire.slot.pc := writebackStage.up(borb.fetch.PC.PC)
-    lane0Retire.slot.blockPc := writebackStage.up(borb.fetch.Fetch.FETCH_BLOCK_PC)
-    lane0Retire.slot.byteOffset := writebackStage.up(borb.fetch.Fetch.FETCH_BYTE_OFFSET).resized
-    lane0Retire.slot.predictedValid := writebackStage.up(borb.fetch.Fetch.FETCH_PREDICTED_VALID)
-    lane0Retire.slot.predictedTaken := writebackStage.up(borb.fetch.Fetch.FETCH_PREDICTED_TAKEN)
-    lane0Retire.slot.predictedTarget := writebackStage.up(borb.fetch.Fetch.FETCH_PREDICTED_TARGET)
-    lane0Retire.slot.decodedInstruction := writebackStage.up(Decoder.DECODED_INSTRUCTION)
-    lane0Retire.slot.isCompressed := writebackStage.up(Decoder.IS_COMPRESSED)
-    lane0Retire.slot.legal := writebackStage.up(Decoder.LEGAL)
-    lane0Retire.slot.microCode := writebackStage.up(Decoder.MicroCode)
-    lane0Retire.slot.rdAddr := writebackStage.up(Decoder.RD_ADDR, LaneKey.Lane0)
-    lane0Retire.slot.rs1Addr := writebackStage.up(Decoder.RS1_ADDR, LaneKey.Lane0)
-    lane0Retire.slot.rs2Addr := writebackStage.up(Decoder.RS2_ADDR, LaneKey.Lane0)
-    lane0Retire.slot.rs3Addr := writebackStage.up(Decoder.RS3_ADDR)
-    lane0Retire.slot.issueProps := writebackStage.up(IssueSemantics.PROPS, LaneKey.Lane0)
-    lane0Retire.slot.waitForOlderCommit := False
-    lane0Retire.slot.selectedPipe := writebackStage.up(BackendIssue.SELECTED_PIPE, LaneKey.Lane0)
-    lane0Retire.slot.rs1 := writebackStage.up(SrcPlugin.RS1, LaneKey.Lane0)
-    lane0Retire.slot.rs2 := writebackStage.up(SrcPlugin.RS2, LaneKey.Lane0)
-    lane0Retire.slot.immed := 0
-    lane0Retire.slot.sendToAlu := False
-    lane0Retire.slot.sendToBranch := False
-    lane0Retire.slot.branchTaken := False
-    lane0Retire.slot.branchTarget := 0
-    lane0Retire.slot.branchIsBranch := False
-    lane0Retire.slot.branchIsJump := False
-    lane0Retire.slot.fallthrough := 0
-    lane0Retire.slot.result.valid := writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).valid
-    lane0Retire.slot.result.address := writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).address
-    lane0Retire.slot.result.data := writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).data
-    lane0Retire.slot.trap := trapLogic.redirect
-    lane0Retire.slot.commit := lane0Retire.valid
-    lane0Retire.intWrite.valid := lane0Retire.valid && writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).valid
-    lane0Retire.intWrite.address := writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).address
-    lane0Retire.intWrite.data := writebackStage.up(WriteBack.RESULT, LaneKey.Lane0).data
-    lane0Retire.fpWrite.valid := lane0Retire.valid && fpBackend.fpWrite.valid
-    lane0Retire.fpWrite.address := fpBackend.fpWrite.address
-    lane0Retire.fpWrite.data := fpBackend.fpWrite.data
-    lane0Retire.fpFlags.valid := lane0Retire.valid && fpBackend.fpFlags.valid
-    lane0Retire.fpFlags.bits := fpBackend.fpFlags.bits
-    lane0Retire.storeCommit := lane0Retire.valid && writebackStage.up(IssueSemantics.PROPS, LaneKey.Lane0).isStore
-    lane0Retire.trap := trapLogic.redirect
+    val writebackStage = wbStage
+    def buildRetirePacket(laneId: Int): RetirePacket = {
+      val laneKey = LaneKey(laneId)
+      val packet = RetirePacket(config)
+      val result = writebackStage.up(WriteBack.RESULT, laneKey)
+      packet.valid := writebackStage.up(COMMIT, laneKey)
+      packet.slot.valid := packet.valid
+      packet.slot.epoch := writebackStage.up(SPEC_EPOCH, laneKey)
+      packet.slot.fetchSeq := writebackStage.up(
+        borb.fetch.Fetch.FETCH_SEQ,
+        laneKey
+      )
+      packet.slot.olderSeq := 0
+      packet.slot.bundleSeq := writebackStage.up(
+        borb.fetch.Fetch.FETCH_BUNDLE_SEQ,
+        laneKey
+      )
+      packet.slot.slotIdx := writebackStage
+        .up(borb.fetch.Fetch.FETCH_SLOT_IDX, laneKey)
+        .resized
+      packet.slot.slotCount := writebackStage
+        .up(borb.fetch.Fetch.FETCH_SLOT_COUNT, laneKey)
+        .resized
+      packet.slot.ftqIdx := writebackStage
+        .up(borb.fetch.Fetch.FETCH_FTQ_IDX, laneKey)
+        .resized
+      packet.slot.pc := writebackStage.up(borb.fetch.PC.PC, laneKey)
+      packet.slot.blockPc := writebackStage.up(
+        borb.fetch.Fetch.FETCH_BLOCK_PC,
+        laneKey
+      )
+      packet.slot.byteOffset := writebackStage
+        .up(borb.fetch.Fetch.FETCH_BYTE_OFFSET, laneKey)
+        .resized
+      packet.slot.predictedValid := writebackStage.up(
+        borb.fetch.Fetch.FETCH_PREDICTED_VALID,
+        laneKey
+      )
+      packet.slot.predictedTaken := writebackStage.up(
+        borb.fetch.Fetch.FETCH_PREDICTED_TAKEN,
+        laneKey
+      )
+      packet.slot.predictedTarget := writebackStage.up(
+        borb.fetch.Fetch.FETCH_PREDICTED_TARGET,
+        laneKey
+      )
+      packet.slot.decodedInstruction := writebackStage.up(
+        Decoder.DECODED_INSTRUCTION,
+        laneKey
+      )
+      packet.slot.isCompressed := writebackStage.up(
+        Decoder.IS_COMPRESSED,
+        laneKey
+      )
+      packet.slot.legal := writebackStage.up(Decoder.LEGAL, laneKey)
+      packet.slot.microCode := writebackStage.up(Decoder.MicroCode, laneKey)
+      packet.slot.rdAddr := writebackStage.up(Decoder.RD_ADDR, laneKey)
+      packet.slot.rs1Addr := writebackStage.up(Decoder.RS1_ADDR, laneKey)
+      packet.slot.rs2Addr := writebackStage.up(Decoder.RS2_ADDR, laneKey)
+      packet.slot.rs3Addr := writebackStage.up(Decoder.RS3_ADDR, laneKey)
+      packet.slot.issueProps := writebackStage.up(IssueSemantics.PROPS, laneKey)
+      packet.slot.waitForOlderCommit := False
+      packet.slot.selectedPipe := writebackStage.up(
+        BackendIssue.SELECTED_PIPE,
+        laneKey
+      )
+      packet.slot.rs1 := writebackStage.up(SrcPlugin.RS1, laneKey)
+      packet.slot.rs2 := writebackStage.up(SrcPlugin.RS2, laneKey)
+      packet.slot.immed := 0
+      packet.slot.sendToAlu := writebackStage.up(
+        borb.dispatch.Dispatch.SENDTOALU,
+        laneKey
+      )
+      packet.slot.sendToBranch := writebackStage.up(
+        borb.dispatch.Dispatch.SENDTOBRANCH,
+        laneKey
+      )
+      packet.slot.branchTaken := False
+      packet.slot.branchTarget := 0
+      packet.slot.branchIsBranch := False
+      packet.slot.branchIsJump := False
+      packet.slot.fallthrough := 0
+      packet.slot.result := result
+      packet.slot.trap := (if (laneId == 0) trapLogic.redirect
+                           else TrapRedirectOutcome().getZero)
+      packet.slot.commit := packet.valid
+      packet.intWrite.valid := packet.valid && result.valid
+      packet.intWrite.address := result.address
+      packet.intWrite.data := result.data
+      packet.fpWrite.valid := (if (laneId == 0)
+                                 packet.valid && fpBackend.fpWrite.valid
+                               else False)
+      packet.fpWrite.address := fpBackend.fpWrite.address
+      packet.fpWrite.data := fpBackend.fpWrite.data
+      packet.fpFlags.valid := (if (laneId == 0)
+                                 packet.valid && fpBackend.fpFlags.valid
+                               else False)
+      packet.fpFlags.bits := fpBackend.fpFlags.bits
+      packet.storeCommit := packet.valid && writebackStage
+        .up(IssueSemantics.PROPS, laneKey)
+        .isStore
+      packet.trap := (if (laneId == 0) trapLogic.redirect
+                      else TrapRedirectOutcome().getZero)
+      packet
+    }
 
     val retirePackets = Vec(RetirePacket(config), 2)
-    retirePackets(0) := lane0Retire
-    retirePackets(1) := RetirePacket(config).getZero
+    retirePackets(0) := buildRetirePacket(0)
+    retirePackets(1) := buildRetirePacket(1)
 
-    srcPlugin.regfileread.regfile.io.writes(1).valid := False
-    srcPlugin.regfileread.regfile.io.writes(1).address := 0
-    srcPlugin.regfileread.regfile.io.writes(1).data := 0
-
-    val rvfiPlugin = new RvfiPlugin(pipeline.ctrl(9))
+    val rvfiPlugin = new RvfiPlugin(wbStage)
     io.rvfi := rvfiPlugin.io.rvfi
 
     val redirectProbe = borb.RedirectDebugProbe()
@@ -881,7 +1459,9 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
 
     val debugOutputs =
       if (config.debugEnabled) {
-        Some(new DebugPlugin(pipeline, trapLogic.redirect, redirectProbe).io.dbg)
+        Some(
+          new DebugPlugin(pipeline, trapLogic.redirect, redirectProbe).io.dbg
+        )
       } else {
         None
       }
@@ -894,166 +1474,95 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq0 := retirePackets(0).slot.fetchSeq
       lastCommittedSeq1 := retirePackets(1).slot.fetchSeq
-    } elsewhen(retirePackets(0).valid) {
+    } elsewhen (retirePackets(0).valid) {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq1 := lastCommittedSeq0
       lastCommittedSeq0 := retirePackets(0).slot.fetchSeq
-    } elsewhen(retirePackets(1).valid) {
+    } elsewhen (retirePackets(1).valid) {
       lastCommittedSeqValid := B"11"
       lastCommittedSeq1 := lastCommittedSeq0
       lastCommittedSeq0 := retirePackets(1).slot.fetchSeq
     }
-    Array(4, 5, 6, 7, 8, 9).foreach { idx =>
+    Array.range(dispatchStageId, wbStageId + 1).foreach { idx =>
       val ctrl = pipeline.ctrl(idx)
-      val decodedValid = ctrl.up(VALID)
-      val duplicateLiveSeq = Array.range(idx + 1, 10).map { laterIdx =>
-        val laterCtrl = pipeline.ctrl(laterIdx)
-        stageLogicallyLive(idx) &&
-        stageLogicallyLive(laterIdx) &&
-        (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === laterCtrl.up(borb.fetch.Fetch.FETCH_SEQ))
-      }.reduceOption(_ || _).getOrElse(False)
-      val staleCommittedSeq =
-        lastCommittedSeqValid.orR &&
-        ctrl.up.isValid &&
-        decodedValid &&
-        (
-          (lastCommittedSeqValid(0) && (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === lastCommittedSeq0)) ||
-          (lastCommittedSeqValid(1) && (ctrl.up(borb.fetch.Fetch.FETCH_SEQ) === lastCommittedSeq1))
-        )
+      val duplicateLiveSeq = (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          Array
+            .range(idx + 1, wbStageId + 1)
+            .map { laterIdx =>
+              val laterCtrl = pipeline.ctrl(laterIdx)
+              stageLogicallyLive(idx) &&
+              stageLogicallyLive(laterIdx) &&
+              ctrl.up(Decoder.VALID, laneKey) &&
+              laterCtrl.up(Decoder.VALID, laneKey) &&
+              (ctrl.up(borb.fetch.Fetch.FETCH_SEQ, laneKey) === laterCtrl.up(
+                borb.fetch.Fetch.FETCH_SEQ,
+                laneKey
+              ))
+            }
+            .reduceOption(_ || _)
+            .getOrElse(False)
+        }
+        .reduce(_ || _)
+      val staleCommittedSeq = (0 until Decoder.LANES)
+        .map { laneId =>
+          val laneKey = LaneKey(laneId)
+          lastCommittedSeqValid.orR &&
+          ctrl.up.isValid &&
+          ctrl.up(Decoder.VALID, laneKey) &&
+          (
+            (lastCommittedSeqValid(0) && (ctrl.up(
+              borb.fetch.Fetch.FETCH_SEQ,
+              laneKey
+            ) === lastCommittedSeq0)) ||
+              (lastCommittedSeqValid(1) && (ctrl.up(
+                borb.fetch.Fetch.FETCH_SEQ,
+                laneKey
+              ) === lastCommittedSeq1))
+          )
+        }
+        .reduce(_ || _)
       val duplicateSeqKill = staleCommittedSeq || duplicateLiveSeq
       ctrl.throwWhen(duplicateSeqKill)
       when(duplicateSeqKill) {
         ctrl.up.valid.allowOverride := False
-        ctrl.up(Decoder.VALID).allowOverride := False
-        if(idx >= 7) {
-          ctrl.up(LANE_SEL).allowOverride := False
-        }
-        if(idx >= 9) {
-          ctrl.up(COMMIT).allowOverride := False
-          ctrl.up(TRAP).allowOverride := False
+        for (laneId <- 0 until Decoder.LANES) {
+          val laneKey = LaneKey(laneId)
+          ctrl.up(Decoder.VALID, laneKey).allowOverride := False
+          if (idx >= srcStageId) {
+            ctrl.up(LANE_SEL, laneKey).allowOverride := False
+          }
+          if (idx >= wbStageId) {
+            ctrl.up(COMMIT, laneKey).allowOverride := False
+            ctrl.up(TRAP, laneKey).allowOverride := False
+          }
         }
       }
     }
-    // Wire event signals to performance counters
-    val hazardStall = dispatcher.hcs.writes.hazard
-    val fetchStall = !fetch.beatValid
-    val memStall = lsu.logic.waitingResponse
-    val lsuReplayOrWait = lsu.logic.waitingResponse || lsu.logic.amoWaitingResponse || lsu.logic.amoStorePending || lsu.logic.cboZeroActive
-    val srcCtrlPerf = pipeline.ctrl(7)
-    val committedThisCycle = retirePackets(0).valid || retirePackets(1).valid
-    val writeCtrl = pipeline.ctrl(9)
-    val dispatchValid = dispatchCtrl.up.isValid && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
-    val srcValid = srcCtrlPerf.up.isValid && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
-    val execValid = pipeline.ctrl(8).up.isValid && pipeline.ctrl(8)(VALID) && pipeline.ctrl(8)(LANE_SEL)
-    val writeValid = writeCtrl.up.isValid && writeCtrl(VALID) && writeCtrl(LANE_SEL)
-    val dispatchFire = dispatchCtrl.up.isFiring && dispatchCtrl(VALID) && dispatchCtrl(LANE_SEL)
-    val srcFire = srcCtrlPerf.up.isFiring && srcCtrlPerf(VALID) && srcCtrlPerf(LANE_SEL)
-    val execFire = pipeline.ctrl(8).up.isFiring && pipeline.ctrl(8)(VALID) && pipeline.ctrl(8)(LANE_SEL)
-    val writeFire = writeCtrl.up.isFiring && writeCtrl(VALID) && writeCtrl(LANE_SEL)
-    val backendOccCount = UInt(3 bits)
-    backendOccCount := dispatchValid.asUInt.resize(3) +
-      srcValid.asUInt.resize(3) +
-      execValid.asUInt.resize(3) +
-      writeValid.asUInt.resize(3)
-    val writebackStall = writeValid && !committedThisCycle
-    val mulDivBusy = execValid && pipeline.ctrl(8)(MicroCode).mux(
-      uopMUL -> True, uopMULH -> True, uopMULHSU -> True, uopMULHU -> True,
-      uopDIV -> True, uopDIVU -> True, uopREM -> True, uopREMU -> True,
-      uopMULW -> True, uopDIVW -> True, uopDIVUW -> True, uopREMW -> True, uopREMUW -> True,
-      default -> False
+    perfCounters.foreach(
+      _.wireFromCore(
+        pipeline = pipeline,
+        decodeStageId = decodeStageId,
+        wbStageId = wbStageId,
+        dispatchCtrl = dispatchCtrl,
+        srcCtrl = srcCtrl,
+        execStage = execStage,
+        dispatcher = dispatcher,
+        fetch = fetch,
+        lsu = lsu,
+        branch = branch,
+        retirePackets = retirePackets,
+        controlHazardBusy = controlHazardBusy,
+        flushPipeline = flushPipeline
+      )
     )
-    val mulDivBusyStall = mulDivBusy && !committedThisCycle
-    val commitStall = execValid && !writeValid && !hazardStall && !fetchStall && !lsuReplayOrWait
-    val dispatchToSrcStall = dispatchValid && !srcValid && !hazardStall && !fetchStall
-    val srcToExecStall = srcValid && !execValid && !hazardStall && !fetchStall && !controlHazardBusy
-    val execToWriteStall = execValid && !writeValid && !lsuReplayOrWait
-    val backendActive = Array(3, 4, 5, 6, 7, 8, 9).map { idx =>
-      val ctrl = pipeline.ctrl(idx)
-      ctrl.up.isValid && ctrl(VALID)
-    }.reduce(_ || _)
-    val backendStall = backendActive && !committedThisCycle && !hazardStall && !fetchStall && !memStall
 
-    perfCounters.foreach { counters =>
-      counters.hazardStall := hazardStall
-      counters.fetchStall := fetchStall
-      counters.memStall := memStall
-      counters.backendStall := backendStall
-      counters.writebackStall := writebackStall
-      counters.commitStall := commitStall
-      counters.mulDivBusyStall := mulDivBusyStall
-      counters.lsuReplayOrWaitStall := lsuReplayOrWait
-      counters.dispatchToSrcStall := dispatchToSrcStall
-      counters.srcToExecStall := srcToExecStall
-      counters.execToWriteStall := execToWriteStall
-      counters.dispatchValid := dispatchValid
-      counters.srcValid := srcValid
-      counters.execValid := execValid
-      counters.writeValid := writeValid
-      counters.dispatchFire := dispatchFire
-      counters.srcFire := srcFire
-      counters.execFire := execFire
-      counters.writeFire := writeFire
-      counters.frontendPendingReq := fetch.perfPendingReq
-      counters.frontendBeat0Valid := fetch.perfBeat0Valid
-      counters.frontendBeat1Valid := fetch.perfBeat1Valid
-      counters.frontendReqIssuedEvent := fetch.perfReqIssued
-      counters.frontendRspAcceptedEvent := fetch.perfRspAccepted
-      counters.frontendNeedCurrentReqEvent := fetch.perfNeedCurrentReq
-      counters.frontendNeedNextReqEvent := fetch.perfNeedNextReq
-      counters.frontendPrefetchReqEvent := fetch.perfPrefetchReq
-      counters.frontendWaitCurBeatEvent := fetch.perfWaitCurBeat
-      counters.frontendWaitNextBeatEvent := fetch.perfWaitNextBeat
-      counters.frontendTakeInsnEvent := fetch.perfTakeInsn
-      counters.frontendCurBeatHitEvent := fetch.perfCurBeatHit
-      counters.frontendNextBeatHitEvent := fetch.perfNextBeatHit
-      counters.frontendCmdValidCycleEvent := fetch.perfCmdValid
-      counters.frontendPrefetchWindowEvent := fetch.perfPrefetchWindow
-      counters.frontendPrefetchBlockedNoCmdEvent := fetch.perfPrefetchBlockedNoCmd
-      counters.frontendPrefetchBlockedPendingEvent := fetch.perfPrefetchBlockedPending
-      counters.frontendPrefetchBlockedNextHitEvent := fetch.perfPrefetchBlockedNextHit
-      counters.frontendLoopPredictUsedEvent := fetch.perfLoopPredictUsed
-      counters.frontendLoopPredictHitEvent := fetch.perfLoopPredictHit
-      counters.frontendFastPredictHitEvent := fetch.perfFastPredictHit
-      counters.frontendMainPredictHitEvent := fetch.perfMainPredictHit
-      counters.frontendIndirectPredictHitEvent := fetch.perfIndirectPredictHit
-      counters.frontendRasUseEvent := fetch.perfRasUse
-      counters.frontendRasRepairEvent := fetch.perfRasRepair
-      counters.frontendFtqAllocEvent := fetch.perfFtqAlloc
-      counters.frontendFtqRestoreEvent := fetch.perfFtqRestore
-      counters.frontendPredictedRedirectEvent := fetch.perfPredictedRedirect
-      counters.frontendMissCurrentBlockEvent := fetch.perfMissCurrentBlock
-      counters.frontendMissNextBlockEvent := fetch.perfMissNextBlock
-      counters.frontendMissPrefetchEvent := fetch.perfMissPrefetch
-      counters.frontendReqBlockedOutstandingEvent := fetch.perfReqBlockedOutstanding
-      counters.frontendPacketQueueFullCycleEvent := fetch.perfPacketQueueFull
-      counters.frontendStraddlePacketEvent := fetch.perfStraddlePacket
-      counters.frontendSecondBlockUsedEvent := fetch.perfSecondBlockUsed
-      counters.frontendSecondBlockLateEvent := fetch.perfSecondBlockLate
-      counters.frontendWrongPathBeatEvent := fetch.perfWrongPathBeat
-      counters.frontendWrongPathInsnEvent := fetch.perfWrongPathInsn
-      counters.l1iBankConflictCycleEvent := fetch.perfL1iBankConflict
-      counters.l1iBankBusyCycleEvent := fetch.perfL1iBankBusy
-      counters.l1iCrossBankDualFetchSuccessEvent := fetch.perfL1iDualFetch
-      counters.backendOcc0 := backendOccCount === U(0, 3 bits)
-      counters.backendOcc1 := backendOccCount === U(1, 3 bits)
-      counters.backendOcc2 := backendOccCount === U(2, 3 bits)
-      counters.backendOcc3 := backendOccCount === U(3, 3 bits)
-      counters.backendOcc4 := backendOccCount === U(4, 3 bits)
-      counters.backendOverlapDispatchSrcEvent := dispatchValid && srcValid
-      counters.backendOverlapSrcExecEvent := srcValid && execValid
-      counters.backendOverlapExecWriteEvent := execValid && writeValid
-      counters.branchExecuted := branch.logic.resolution.isBranch && branch.logic.up(LANE_SEL)
-      counters.branchTaken := branch.logic.doJump
-      counters.pipelineFlush := flushPipeline
-    }
-
-    val write = pipeline.ctrl(9)
-    //val dispCtrl = pipeline.ctrl(6)
-
+    val write = wbStage
     import borb.execute.WriteBack
     val writeback = new WriteBack(
-      pipeline.ctrl(9),
-      srcPlugin.regfileread.regfile.io.writes(0),
+      wbStage,
+      srcPlugin.regfileread.regfile.io.writes,
       currentEpoch,
       redirectCommitBubble,
       redirectCommitPending,
@@ -1081,32 +1590,8 @@ case class CPU(config: CpuConfig = CpuConfig.default) extends Component {
     // Do not withdraw an already-arbitrating fetch request under the shared AXI
     // arbiter. Suppressing new prefetches is enough; masking the outgoing valid
     // here can strand the arbiter on the fetch input while a store waits.
-    io.iAxi.arw.valid := fetch.io.iAxi.arw.valid
-    io.iAxi.arw.addr := fetch.io.iAxi.arw.addr
-    io.iAxi.arw.id := fetch.io.iAxi.arw.id
-    io.iAxi.arw.len := fetch.io.iAxi.arw.len
-    io.iAxi.arw.size := fetch.io.iAxi.arw.size
-    io.iAxi.arw.burst := fetch.io.iAxi.arw.burst
-    io.iAxi.arw.write := fetch.io.iAxi.arw.write
-    fetch.io.iAxi.arw.ready := io.iAxi.arw.ready
 
-    io.iAxi.w.valid := fetch.io.iAxi.w.valid
-    io.iAxi.w.data := fetch.io.iAxi.w.data
-    io.iAxi.w.strb := fetch.io.iAxi.w.strb
-    io.iAxi.w.last := fetch.io.iAxi.w.last
-    fetch.io.iAxi.w.ready := io.iAxi.w.ready
-
-    fetch.io.iAxi.b.valid := io.iAxi.b.valid
-    fetch.io.iAxi.b.id := io.iAxi.b.id
-    fetch.io.iAxi.b.resp := io.iAxi.b.resp
-    io.iAxi.b.ready := fetch.io.iAxi.b.ready
-
-    fetch.io.iAxi.r.valid := io.iAxi.r.valid
-    fetch.io.iAxi.r.data := io.iAxi.r.data
-    fetch.io.iAxi.r.id := io.iAxi.r.id
-    fetch.io.iAxi.r.resp := io.iAxi.r.resp
-    fetch.io.iAxi.r.last := io.iAxi.r.last
-    io.iAxi.r.ready := fetch.io.iAxi.r.ready
+    fetch.io.iAxi <> io.iAxi
 
     pipeline.ctrls.drop(1).foreach(e => e._2.throwWhen(clockDomain.reset))
     // Build the pipeline

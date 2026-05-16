@@ -221,7 +221,7 @@ case class FetchBundleMeta(config: FrontendConfig) extends Bundle {
   val predictedRedirectTarget = UInt(config.addressWidth bits)
   val recovery = FtqRecoveryPoint(config)
   val nextStartPc = UInt(config.addressWidth bits)
-  val scalarSeqBase = UInt(32 bits)
+  val fetchSeqBase = UInt(32 bits)
 }
 
 case class FetchBundle(config: FrontendConfig) extends Bundle {
@@ -235,26 +235,6 @@ case class FetchBundle(config: FrontendConfig) extends Bundle {
   val bundleMeta = FetchBundleMeta(config)
 }
 
-case class ScalarFetchEntry(config: FrontendConfig) extends Bundle {
-  val valid = Bool()
-  val scalarSeq = UInt(32 bits)
-  val bundleSeq = UInt(32 bits)
-  val slotCount = UInt(log2Up(config.bundleSlots + 1) bits)
-  val epoch = UInt(config.epochWidth bits)
-  val pc = UInt(config.addressWidth bits)
-  val insn = Bits(32 bits)
-  val isCompressed = Bool()
-  val nextPc = UInt(config.addressWidth bits)
-  val ftqIndex = UInt(config.ftqIndexWidth bits)
-  val slotIdx = UInt(config.bundleSlotIdxWidth bits)
-  val blockPc = UInt(config.addressWidth bits)
-  val byteOffsetInBlock = UInt(config.fetchBlockOffsetWidth bits)
-  val predictedValid = Bool()
-  val predictedTaken = Bool()
-  val predictedTarget = UInt(config.addressWidth bits)
-  val illegal = Bool()
-  val fetchFault = Bool()
-}
 
 case class BranchResolveUpdate(config: FrontendConfig) extends Bundle {
   val epoch = UInt(config.epochWidth bits)

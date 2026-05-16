@@ -6,7 +6,7 @@ case class FpuCompareResult(result: Bits, flags: Bits)
 case class FpuMinMaxResult(data: Bits, flags: Bits)
 case class FpuRoundResult(data: Bits, flags: Bits)
 
-object FpuScalarMisc {
+object FpuElementMisc {
   def classifyD(in: Bits): Bits = {
     val sign = in(63)
     val exp = in(62 downto 52)

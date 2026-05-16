@@ -8,7 +8,7 @@ case class FrontendBundleBuilder(config: FrontendConfig) extends Component {
     val traversal = in(TraversalRsp(config))
     val lookupRsps = in Vec(ICacheLookupRsp(config), config.lookupLanes)
     val bundleSeqBase = in UInt(32 bits)
-    val scalarSeqBase = in UInt(32 bits)
+    val fetchSeqBase = in UInt(32 bits)
     val bundle = master(Stream(FetchBundle(config)))
   }
 
@@ -352,7 +352,7 @@ case class FrontendBundleBuilder(config: FrontendConfig) extends Component {
   payload.bundleMeta.recovery.slotIdx := 0
   payload.bundleMeta.recovery.blockPc := slot0Block
   payload.bundleMeta.recovery.byteOffsetInBlock := io.traversal.startPc(config.fetchBlockOffsetWidth - 1 downto 0).resized
-  payload.bundleMeta.scalarSeqBase := io.scalarSeqBase
+  payload.bundleMeta.fetchSeqBase := io.fetchSeqBase
 
   val slot0Payload = FetchSlot(config)
   slot0Payload.valid := useSlot0

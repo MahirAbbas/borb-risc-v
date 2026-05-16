@@ -8,16 +8,28 @@ import borb.fetch.PC
 import borb.fetch.JumpCmd
 import borb.frontend.Decoder._
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.common.MicroCode._
 import borb.dispatch.SrcPlugin._
 import borb.dispatch.Dispatch._
 import borb.dispatch.IssueSemantics
 import borb.frontend.YESNO
 import borb.dispatch.RegFileWrite
+import borb.frontend.ExecutionUnitEnum
 
 object Branch extends AreaObject {
   val BRANCH_TAKEN = Payload(Bool())
   val BRANCH_TARGET = Payload(UInt(64 bits))
+  val SupportedUops = Seq(
+    uopBEQ,
+    uopBNE,
+    uopBLT,
+    uopBGE,
+    uopBLTU,
+    uopBGEU,
+    uopJAL,
+    uopJALR
+  )
 
   case class BranchResolution() extends Bundle {
     val condition = Bool()
@@ -76,8 +88,10 @@ object Branch extends AreaObject {
   }
 }
 
-case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) extends Area {
+case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) extends FunctionalUnit(ExecutionUnitEnum.BR) {
   import Branch._
+
+  Branch.SupportedUops.foreach(add)
 
   val branchResolved = Bool()
   val actualTaken = Bool()
@@ -86,47 +100,61 @@ case class Branch(node : CtrlLink, pc : PC, withCompressed: Boolean = false) ext
   val actualIsBranch = Bool()
   val fallthroughPc = UInt(64 bits)
   val logic = new node.Area {
-    val pcValue = up(PC.PC)
-    val resolution = Branch.resolve(up(MicroCode), up(RS1), up(RS2), pcValue, up(IMMED), withCompressed = withCompressed)
-    val condition = resolution.condition
-    val target = resolution.target
-    val isJump = resolution.isJump
-    val isBranch = resolution.isBranch
+    val execFire = up.isValid && up.isFiring
+    val laneResolved = Vec(Bool(), borb.frontend.Decoder.LANES)
+    val laneTaken = Vec(Bool(), borb.frontend.Decoder.LANES)
+    val laneTarget = Vec(UInt(64 bits), borb.frontend.Decoder.LANES)
+    val laneIsJump = Vec(Bool(), borb.frontend.Decoder.LANES)
+    val laneIsBranch = Vec(Bool(), borb.frontend.Decoder.LANES)
+    val laneFallthrough = Vec(UInt(64 bits), borb.frontend.Decoder.LANES)
+    val laneWillTrap = Vec(Bool(), borb.frontend.Decoder.LANES)
+
     // MAY_FLUSH should NOT prevent branches from executing - it only marks 
     // instructions that may be squashed. The flushing instruction completes normally
     // (stage 6 is excluded from self-throw in CPU.scala).
     // Redirect must be one-shot per actual execute-stage firing transaction.
-    val isBrUnit = up(IssueSemantics.PROPS).isControlFlow
-    val execFire = up.isValid && up.isFiring
-    val doJump = resolution.doJump &&
-      isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire
-    val fallthrough = pcValue + Mux(up(IS_COMPRESSED), U(2, 64 bits), U(4, 64 bits))
-    val willTrap = doJump && resolution.misaligned
+    for(laneId <- 0 until borb.frontend.Decoder.LANES) {
+      val laneKey = LaneKey(laneId)
+      val pcValue = up(PC.PC, laneKey)
+      val resolution = Branch.resolve(up(MicroCode, laneKey), up(RS1, laneKey), up(RS2, laneKey), pcValue, up(IMMED, laneKey), withCompressed = withCompressed)
+      val isBrUnit = up(IssueSemantics.PROPS, laneKey).isControlFlow
+      val laneFire = isBrUnit && up(LANE_SEL, laneKey) && up(SENDTOBRANCH, laneKey) && up(VALID, laneKey) && execFire
+      val doJump = resolution.doJump && laneFire
+      val fallthrough = pcValue + Mux(up(IS_COMPRESSED, laneKey), U(2, 64 bits), U(4, 64 bits))
+      val willTrap = doJump && resolution.misaligned
 
-    // down(TRAP) := willTrap // Moved to CPU.scala logic integration
-    down(BRANCH_TAKEN) := doJump && !willTrap
-    down(BRANCH_TARGET) := resolution.target
-    branchResolved := (resolution.isJump || resolution.isBranch) && isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire
-    actualTaken := doJump && !willTrap
-    actualTarget := resolution.target
-    actualIsJump := resolution.isJump
-    actualIsBranch := resolution.isBranch
-    fallthroughPc := fallthrough
+      down(BRANCH_TAKEN, laneKey) := doJump && !willTrap
+      down(BRANCH_TARGET, laneKey) := resolution.target
+      laneResolved(laneId) := (resolution.isJump || resolution.isBranch) && laneFire
+      laneTaken(laneId) := doJump && !willTrap
+      laneTarget(laneId) := resolution.target
+      laneIsJump(laneId) := resolution.isJump
+      laneIsBranch(laneId) := resolution.isBranch
+      laneFallthrough(laneId) := fallthrough
+      laneWillTrap(laneId) := willTrap
 
-    val jumpCmd = Flow(JumpCmd(pc.addressWidth))
-    jumpCmd.valid := doJump && !willTrap // Mask jump if trapping
-    jumpCmd.payload.target := resolution.target
-    jumpCmd.payload.is_jump := resolution.isJump
-    jumpCmd.payload.is_branch := resolution.isBranch
-    
-    when(isBrUnit && up(LANE_SEL) && up(SENDTOBRANCH) && up(VALID) && execFire) {
-      when(resolution.isJump) {
-        val isX0 = up(RD_ADDR).asUInt === 0
-        down(WriteBack.RESULT).address.allowOverride := up(RD_ADDR).asUInt
-        down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | fallthrough.asBits
-        // Squash writeback if trapping
-        down(WriteBack.RESULT).valid.allowOverride := (up(LEGAL) === YESNO.Y) && up(VALID) && !willTrap
+      when(laneFire && resolution.isJump) {
+        val isX0 = up(RD_ADDR, laneKey).asUInt === 0
+        down(WriteBack.RESULT, laneKey).address.allowOverride := up(RD_ADDR, laneKey).asUInt
+        down(WriteBack.RESULT, laneKey).data.allowOverride := isX0 ? B(0, 64 bits) | fallthrough.asBits
+        down(WriteBack.RESULT, laneKey).valid.allowOverride := (up(LEGAL, laneKey) === YESNO.Y) && up(VALID, laneKey) && !willTrap
       }
     }
+
+    val selectedLane1 = !laneResolved(0) && laneResolved(1)
+    branchResolved := laneResolved.asBits.orR
+    actualTaken := Mux(selectedLane1, laneTaken(1), laneTaken(0))
+    actualTarget := Mux(selectedLane1, laneTarget(1), laneTarget(0))
+    actualIsJump := Mux(selectedLane1, laneIsJump(1), laneIsJump(0))
+    actualIsBranch := Mux(selectedLane1, laneIsBranch(1), laneIsBranch(0))
+    fallthroughPc := Mux(selectedLane1, laneFallthrough(1), laneFallthrough(0))
+    val willTrap = Mux(selectedLane1, laneWillTrap(1), laneWillTrap(0))
+    val target = actualTarget
+
+    val jumpCmd = Flow(JumpCmd(pc.addressWidth))
+    jumpCmd.valid := actualTaken
+    jumpCmd.payload.target := actualTarget
+    jumpCmd.payload.is_jump := actualIsJump
+    jumpCmd.payload.is_branch := actualIsBranch
   }
 }

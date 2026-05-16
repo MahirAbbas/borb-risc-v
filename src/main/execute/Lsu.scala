@@ -8,8 +8,10 @@ import borb.frontend.Decoder
 import borb.dispatch.SrcPlugin._
 import borb.common.MicroCode._
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.dispatch.RegFileWrite
 import borb.fetch.Fetch
+import borb.frontend.ExecutionUnitEnum
 
 // Data Bus Command for Store operations
 case class DataBusCmd(addressWidth: Int, dataWidth: Int, idWidth: Int) extends Bundle {
@@ -44,11 +46,51 @@ object Lsu extends AreaObject {
   val MEM_WMASK = Payload(Bits(8 bits)).setName("LSU_MEM_WMASK")
   val MEM_RMASK = Payload(Bits(8 bits)).setName("LSU_MEM_RMASK")
   val MEM_RDATA = Payload(Bits(64 bits)).setName("LSU_MEM_RDATA")
+  val SupportedUops = Seq(
+    uopLB,
+    uopLBU,
+    uopLH,
+    uopLHU,
+    uopLW,
+    uopLWU,
+    uopLD,
+    uopSB,
+    uopSH,
+    uopSW,
+    uopSD,
+    uopFLH,
+    uopFLW,
+    uopFLD,
+    uopFSH,
+    uopFSW,
+    uopFSD,
+    uopAMOSWAPW,
+    uopAMOSWAPD,
+    uopAMOADDW,
+    uopAMOADDD,
+    uopAMOXORW,
+    uopAMOXORD,
+    uopAMOANDW,
+    uopAMOANDD,
+    uopAMOORW,
+    uopAMOORD,
+    uopAMOMINW,
+    uopAMOMIND,
+    uopAMOMAXW,
+    uopAMOMAXD,
+    uopAMOMINUW,
+    uopAMOMINUD,
+    uopAMOMAXUW,
+    uopAMOMAXUD,
+    uopCBOZERO
+  )
 }
 
-case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutstanding: Bool = False, killCboZero: Bool = False) extends Area {
+case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutstanding: Bool = False, killCboZero: Bool = False) extends FunctionalUnit(ExecutionUnitEnum.AGU) {
   import Lsu._
   import borb.dispatch.Dispatch._
+
+  Lsu.SupportedUops.foreach(add)
 
   val io = new Bundle {
     val dBus = DataBus(addressWidth = 64, dataWidth = 64, idWidth = 16)
@@ -63,38 +105,38 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
   }
 
   val logic = new stage.Area {
-    val epochMatches = up(SPEC_EPOCH) === currentEpoch
-    val amoSwapW = up(MicroCode) === uopAMOSWAPW
-    val amoSwapD = up(MicroCode) === uopAMOSWAPD
-    val amoAddW = up(MicroCode) === uopAMOADDW
-    val amoAddD = up(MicroCode) === uopAMOADDD
-    val amoXorW = up(MicroCode) === uopAMOXORW
-    val amoXorD = up(MicroCode) === uopAMOXORD
-    val amoAndW = up(MicroCode) === uopAMOANDW
-    val amoAndD = up(MicroCode) === uopAMOANDD
-    val amoOrW = up(MicroCode) === uopAMOORW
-    val amoOrD = up(MicroCode) === uopAMOORD
-    val amoMinW = up(MicroCode) === uopAMOMINW
-    val amoMinD = up(MicroCode) === uopAMOMIND
-    val amoMaxW = up(MicroCode) === uopAMOMAXW
-    val amoMaxD = up(MicroCode) === uopAMOMAXD
-    val amoMinuW = up(MicroCode) === uopAMOMINUW
-    val amoMinuD = up(MicroCode) === uopAMOMINUD
-    val amoMaxuW = up(MicroCode) === uopAMOMAXUW
-    val amoMaxuD = up(MicroCode) === uopAMOMAXUD
-    val isCboZero = up(MicroCode) === uopCBOZERO
+    val epochMatches = up(SPEC_EPOCH, LaneKey.Lane0) === currentEpoch
+    val amoSwapW = up(MicroCode, LaneKey.Lane0) === uopAMOSWAPW
+    val amoSwapD = up(MicroCode, LaneKey.Lane0) === uopAMOSWAPD
+    val amoAddW = up(MicroCode, LaneKey.Lane0) === uopAMOADDW
+    val amoAddD = up(MicroCode, LaneKey.Lane0) === uopAMOADDD
+    val amoXorW = up(MicroCode, LaneKey.Lane0) === uopAMOXORW
+    val amoXorD = up(MicroCode, LaneKey.Lane0) === uopAMOXORD
+    val amoAndW = up(MicroCode, LaneKey.Lane0) === uopAMOANDW
+    val amoAndD = up(MicroCode, LaneKey.Lane0) === uopAMOANDD
+    val amoOrW = up(MicroCode, LaneKey.Lane0) === uopAMOORW
+    val amoOrD = up(MicroCode, LaneKey.Lane0) === uopAMOORD
+    val amoMinW = up(MicroCode, LaneKey.Lane0) === uopAMOMINW
+    val amoMinD = up(MicroCode, LaneKey.Lane0) === uopAMOMIND
+    val amoMaxW = up(MicroCode, LaneKey.Lane0) === uopAMOMAXW
+    val amoMaxD = up(MicroCode, LaneKey.Lane0) === uopAMOMAXD
+    val amoMinuW = up(MicroCode, LaneKey.Lane0) === uopAMOMINUW
+    val amoMinuD = up(MicroCode, LaneKey.Lane0) === uopAMOMINUD
+    val amoMaxuW = up(MicroCode, LaneKey.Lane0) === uopAMOMAXUW
+    val amoMaxuD = up(MicroCode, LaneKey.Lane0) === uopAMOMAXUD
+    val isCboZero = up(MicroCode, LaneKey.Lane0) === uopCBOZERO
 
     val amoIsWord = amoSwapW || amoAddW || amoXorW || amoAndW || amoOrW || amoMinW || amoMaxW || amoMinuW || amoMaxuW
     val isAmo = amoIsWord || amoSwapD || amoAddD || amoXorD || amoAndD || amoOrD || amoMinD || amoMaxD || amoMinuD || amoMaxuD
 
     // Address Generation: RS1 + sign-extended immediate for normal loads/stores,
     // RS1 only for AMOs.
-    val rawAguAddr = Mux(isAmo, up(RS1).asUInt, (up(RS1).asSInt + up(IMMED).asSInt).asUInt)
-    val cboZeroBlockAddr = up(RS1).asUInt & U(BigInt("FFFFFFFFFFFFFFC0", 16), 64 bits)
+    val rawAguAddr = Mux(isAmo, up(RS1, LaneKey.Lane0).asUInt, (up(RS1, LaneKey.Lane0).asSInt + up(IMMED, LaneKey.Lane0).asSInt).asUInt)
+    val cboZeroBlockAddr = up(RS1, LaneKey.Lane0).asUInt & U(BigInt("FFFFFFFFFFFFFFC0", 16), 64 bits)
     val aguEffectiveAddr = Mux(isCboZero, cboZeroBlockAddr, rawAguAddr)
 
     // Extract funct3 from MicroCode to determine access size
-    val isStoreBase = up(MicroCode).mux(
+    val isStoreBase = up(MicroCode, LaneKey.Lane0).mux(
       uopSB -> True,
       uopSH -> True,
       uopSW -> True,
@@ -107,17 +149,17 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val isStore = (isStoreBase || isAmo || isCboZero).setName("LSU_isStore")
 
     // Load Logic
-    val isLoadBase = up(MicroCode).mux(
+    val isLoadBase = up(MicroCode, LaneKey.Lane0).mux(
       uopLB -> True, uopLH -> True, uopLW -> True, uopLD -> True,
       uopLBU -> True, uopLHU -> True, uopLWU -> True, uopFLH -> True, uopFLW -> True, uopFLD -> True,
       default -> False
     )
     val isLoad = (isLoadBase || isAmo).setName("LSU_isLoad")
-    val aguPayloadValid = up.isValid && up(VALID) && up(LANE_SEL) && up(SENDTOAGU)
-    val currentSeq = up(Fetch.FETCH_SEQ)
+    val aguPayloadValid = up.isValid && up(VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) && up(SENDTOAGU, LaneKey.Lane0)
+    val currentSeq = up(Fetch.FETCH_SEQ, LaneKey.Lane0)
     val duplicateInWb = wbStage.up.isValid &&
-      wbStage(VALID) &&
-      wbStage(LANE_SEL) &&
+      wbStage(VALID, LaneKey.Lane0) &&
+      wbStage(LANE_SEL, LaneKey.Lane0) &&
       (wbStage(Fetch.FETCH_SEQ) === currentSeq)
 
     val waitingResponse = RegInit(False)
@@ -146,7 +188,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     val effectiveAddr = activeAddr
 
     val misaligned = Bool()
-    misaligned := up(MicroCode).mux(
+    misaligned := up(MicroCode, LaneKey.Lane0).mux(
       uopLH -> (activeAddr(0) =/= False),
       uopLHU -> (activeAddr(0) =/= False),
       uopSH -> (activeAddr(0) =/= False),
@@ -182,7 +224,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       default -> False
     )
 
-    // Scalar integer/FP misaligned accesses are handled by the byte-mask path.
+    // Integer/FP misaligned accesses are handled by the byte-mask path.
     // AMOs remain architecturally trapped on misalignment.
     val misalignedTrap = misaligned && isAmo
     val localTrap = (misalignedTrap || io.pmpFault) && (isStore || isLoad)
@@ -192,7 +234,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
 
     // Generate access mask (Normalized / Unshifted) - for both Load and Store
     val accessSizeMask = Bits(8 bits)
-    accessSizeMask := up(MicroCode).mux(
+    accessSizeMask := up(MicroCode, LaneKey.Lane0).mux(
       uopSB -> B"00000001",
       uopSH -> B"00000011",
       uopSW -> B"00001111",
@@ -255,11 +297,11 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
 
     // Keep store bytes packed at byte lane zero; DCache places them by address.
     val rawStoreData = Bits(64 bits)
-    rawStoreData := up(MicroCode).mux(
-      uopSB -> (up(RS2)(7 downto 0)).resize(64),
-      uopSH -> (up(RS2)(15 downto 0)).resize(64),
-      uopSW -> (up(RS2)(31 downto 0)).resize(64),
-      uopSD -> up(RS2),
+    rawStoreData := up(MicroCode, LaneKey.Lane0).mux(
+      uopSB -> (up(RS2, LaneKey.Lane0)(7 downto 0)).resize(64),
+      uopSH -> (up(RS2, LaneKey.Lane0)(15 downto 0)).resize(64),
+      uopSW -> (up(RS2, LaneKey.Lane0)(31 downto 0)).resize(64),
+      uopSD -> up(RS2, LaneKey.Lane0),
       default -> B(0, 64 bits)
     )
 
@@ -278,7 +320,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
 
     // Drive Data Bus Command
     // Suppress memory side effects for traps (misaligned or illegal instruction).
-    val illegalInsn = up(Decoder.DECODED_INSTRUCTION)(1 downto 0) =/= B"11"
+    val illegalInsn = up(Decoder.DECODED_INSTRUCTION, LaneKey.Lane0)(1 downto 0) =/= B"11"
     val suppress = misalignedTrap || illegalInsn || io.pmpFault || duplicateInWb
     val cboZeroStart = isCboZero && aguPayloadValid && epochMatches && !suppress && !cboZeroActive
     val cboZeroIssue = cboZeroStart || cboZeroActive
@@ -403,11 +445,11 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
             shiftedEndian := reverseBytesByMask(shifted, accessSizeMask)
           }
           val oldWord = shiftedEndian(31 downto 0)
-          val rs2Word = up(RS2)(31 downto 0)
+          val rs2Word = up(RS2, LaneKey.Lane0)(31 downto 0)
           val oldWordS = oldWord.asSInt
           val rs2WordS = rs2Word.asSInt
           val oldD = shiftedEndian
-          val rs2D = up(RS2)
+          val rs2D = up(RS2, LaneKey.Lane0)
           val oldDS = oldD.asSInt
           val rs2DS = rs2D.asSInt
 
@@ -481,7 +523,7 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
       shiftedEndianLoadData := reverseBytesByMask(shiftedLoadData, accessSizeMask)
     }
     val loadResult = Bits(64 bits)
-    loadResult := up(MicroCode).mux(
+    loadResult := up(MicroCode, LaneKey.Lane0).mux(
        uopLB -> shiftedEndianLoadData(7 downto 0).asSInt.resize(64).asBits,
        uopLBU -> shiftedEndianLoadData(7 downto 0).resize(64),
        uopLH -> shiftedEndianLoadData(15 downto 0).asSInt.resize(64).asBits,
@@ -498,24 +540,24 @@ case class Lsu(stage: CtrlLink, wbStage: CtrlLink, currentEpoch: UInt, killOutst
     // Writeback Result
     // Decoder should set REG_WRITE for loads
     // Enforce x0 invariant: writes to x0 must have data=0 (RVFI expectation)
-    val rdAddr = up(borb.frontend.Decoder.RD_ADDR).asUInt
+    val rdAddr = up(borb.frontend.Decoder.RD_ADDR, LaneKey.Lane0).asUInt
     val isX0 = rdAddr === 0
     val maskedLoadResult = isX0 ? B(0, 64 bits) | loadResult
     
     when(isLoadBase && aguPayloadValid && !illegalInsn && !suppress) {
-        down(WriteBack.RESULT).data.allowOverride := maskedLoadResult
-        down(WriteBack.RESULT).valid.allowOverride := True 
-        down(WriteBack.RESULT).address.allowOverride := rdAddr
+        down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := maskedLoadResult
+        down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := True 
+        down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := rdAddr
     }
     when(isAmo && aguPayloadValid && !illegalInsn && !suppress && amoStorePending && io.dBus.cmd.ready) {
-      down(WriteBack.RESULT).data.allowOverride := isX0 ? B(0, 64 bits) | amoWbData
-      down(WriteBack.RESULT).valid.allowOverride := True
-      down(WriteBack.RESULT).address.allowOverride := rdAddr
+      down(WriteBack.RESULT, LaneKey.Lane0).data.allowOverride := isX0 ? B(0, 64 bits) | amoWbData
+      down(WriteBack.RESULT, LaneKey.Lane0).valid.allowOverride := True
+      down(WriteBack.RESULT, LaneKey.Lane0).address.allowOverride := rdAddr
     }
 
     // Propagate payloads for RVFI (Store & Load)
     // riscv-formal expects RAW/SHIFTED data and mask matching the address
-    val isSendToAgu = up(SENDTOAGU)
+    val isSendToAgu = up(SENDTOAGU, LaneKey.Lane0)
     // Suppress RVFI side-effects if misaligned
     down(MEM_ADDR) := Mux(aguPayloadValid && (isStore || isLoad), activeAddr, U(0, 64 bits))
     

@@ -3,7 +3,9 @@ package borb.dispatch
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
+import borb.common.{Common, LaneKey}
 import borb.frontend.Decoder._
+import borb.frontend.Decoder
 import borb.frontend.Imm_Select
 
 case class IMM(instruction: Bits) extends Area {
@@ -59,58 +61,49 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
 
   import spinal.core.sim._
 
-  val immsel = new stage.Area {
-    val sext = Bits(64 bits).simPublic()
-    sext := B(0, 64 bits)
-    val imm = new IMM(up(borb.frontend.Decoder.DECODED_INSTRUCTION))
-    switch(up(IssueSemantics.PROPS).immSel) {
-      is(Imm_Select.I_IMM) { sext := imm.i_sext.asBits }
-      is(Imm_Select.S_IMM) { sext := imm.s_sext.asBits }
-      is(Imm_Select.B_IMM) { sext := imm.b_sext.asBits }
-      is(Imm_Select.U_IMM) { sext := imm.u_sext.asBits }
-      is(Imm_Select.J_IMM) { sext := imm.j_sext.asBits }
-      default { sext := B(0, 64 bits) }
-    }
-  }
-
-  val rs1Reader = (new RegFileRead())
-  val rs2Reader = (new RegFileRead())
-
   val regfileread = new stage.Area {
-    val regfile = new IntRegFile(dataWidth = 64, readPorts = 4, writePorts = 2)
-
-    rs1Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs1 && up(VALID)
-    rs2Reader.valid := up.isValid && up(IssueSemantics.PROPS).readsIntRs2 && up(VALID)
-    rs1Reader.address := up(borb.frontend.Decoder.RS1_ADDR).asUInt
-    rs2Reader.address := up(borb.frontend.Decoder.RS2_ADDR).asUInt
-
-    regfile.io.reads(0).address := rs1Reader.address
-    regfile.io.reads(0).valid := rs1Reader.valid
-    // Enforce x0 invariant: reads from x0 must be 0
-    rs1Reader.data := (rs1Reader.address === 0) ? B(
-      0,
-      64 bits
-    ) | regfile.io.reads(0).data
-
-    regfile.io.reads(1).address := rs2Reader.address
-    regfile.io.reads(1).valid := rs2Reader.valid
-    // Enforce x0 invariant: reads from x0 must be 0
-    rs2Reader.data := (rs2Reader.address === 0) ? B(
-      0,
-      64 bits
-    ) | regfile.io.reads(1).data
-
-    for (port <- 2 until regfile.io.reads.length) {
-      regfile.io.reads(port).address := 0
-      regfile.io.reads(port).valid := False
-    }
-
+    val regfile = new IntRegFile(dataWidth = 64, readPorts = Decoder.LANES * 2, writePorts = 2)
   }
 
-  val rs = new stage.Area {
-    RS1.assignDontCare()
-    RS2.assignDontCare()
-    IMMED.assignDontCare()
+  class SourceLaneArea(laneId: Int) extends stage.Area {
+    val laneKey = LaneKey(laneId)
+
+    def up[T <: Data](payload: Payload[T]): T = stage.up(payload, laneKey)
+    def down[T <: Data](payload: Payload[T]): T = stage.down(payload, laneKey)
+
+    val immsel = new Area {
+      val sext = Bits(64 bits).simPublic()
+      sext := B(0, 64 bits)
+      val imm = new IMM(up(Decoder.DECODED_INSTRUCTION))
+      switch(up(IssueSemantics.PROPS).immSel) {
+        is(Imm_Select.I_IMM) { sext := imm.i_sext.asBits }
+        is(Imm_Select.S_IMM) { sext := imm.s_sext.asBits }
+        is(Imm_Select.B_IMM) { sext := imm.b_sext.asBits }
+        is(Imm_Select.U_IMM) { sext := imm.u_sext.asBits }
+        is(Imm_Select.J_IMM) { sext := imm.j_sext.asBits }
+        default { sext := B(0, 64 bits) }
+      }
+    }
+
+    val rs1Reader = RegFileRead()
+    val rs2Reader = RegFileRead()
+    val valid = stage.up.isValid && up(Common.LANE_SEL) && up(Decoder.VALID)
+
+    rs1Reader.valid := valid && up(IssueSemantics.PROPS).readsIntRs1
+    rs2Reader.valid := valid && up(IssueSemantics.PROPS).readsIntRs2
+    rs1Reader.address := up(Decoder.RS1_ADDR).asUInt
+    rs2Reader.address := up(Decoder.RS2_ADDR).asUInt
+
+    val rs1Port = laneId * 2
+    val rs2Port = laneId * 2 + 1
+
+    regfileread.regfile.io.reads(rs1Port).address := rs1Reader.address
+    regfileread.regfile.io.reads(rs1Port).valid := rs1Reader.valid
+    rs1Reader.data := (rs1Reader.address === 0) ? B(0, 64 bits) | regfileread.regfile.io.reads(rs1Port).data
+
+    regfileread.regfile.io.reads(rs2Port).address := rs2Reader.address
+    regfileread.regfile.io.reads(rs2Port).valid := rs2Reader.valid
+    rs2Reader.data := (rs2Reader.address === 0) ? B(0, 64 bits) | regfileread.regfile.io.reads(rs2Port).data
 
     val rs1Data =
       up(IssueSemantics.PROPS).readsIntRs1 ? SrcPlugin.resolveIntRead(rs1Reader.valid, rs1Reader.address, rs1Reader.data, bypassSources) | B(0, 64 bits)
@@ -121,4 +114,6 @@ case class SrcPlugin(stage: CtrlLink, bypassSources: Seq[IntBypassSource] = Seq.
     down(RS2) := rs2Data
     down(IMMED) := immsel.sext
   }
+
+  val lanes = for(laneId <- 0 until Decoder.LANES) yield new SourceLaneArea(laneId)
 }

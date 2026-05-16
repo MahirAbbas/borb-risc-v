@@ -4,7 +4,7 @@ import spinal.core._
 import spinal.lib._
 import spinal.core.sim._
 import spinal.lib.bus.amba4.axi._
-import borb.core.PerfCountersBundle
+import borb.core.{CpuConfig, PerfCountersBundle}
 
 case class SoC() extends Component {
   val io = new Bundle {
@@ -38,7 +38,7 @@ case class SoC() extends Component {
   )
 
   val area = new ClockingArea(socClockDomain) {
-    val cpu = CPU()
+    val cpu = CPU(CpuConfig.default.copy(debugEnabled = false))
     cpu.io.clk := io.clk
     cpu.io.clkEnable := io.clkEnable
     cpu.io.reset := io.reset
@@ -53,7 +53,7 @@ case class SoC() extends Component {
     )
     import spinal.core.sim._
     ram.ram.simPublic()
-    
+
     val iAxi = cpu.io.iAxi
     val dAxi = cpu.io.dAxi
 
@@ -64,14 +64,14 @@ case class SoC() extends Component {
     val writeArwSent = RegInit(False)
     val writeWSent = RegInit(False)
     val writeRouteIsData = RegInit(False)
-    val writeAddr = Reg(UInt(64 bits)) init(0)
-    val writeId = Reg(UInt(16 bits)) init(0)
-    val writeLen = Reg(UInt(8 bits)) init(0)
-    val writeSize = Reg(UInt(3 bits)) init(0)
-    val writeBurst = Reg(Bits(2 bits)) init(0)
-    val writeData = Reg(Bits(64 bits)) init(0)
-    val writeStrb = Reg(Bits(8 bits)) init(0)
-    val writeLast = Reg(Bool()) init(False)
+    val writeAddr = Reg(UInt(64 bits)) init (0)
+    val writeId = Reg(UInt(16 bits)) init (0)
+    val writeLen = Reg(UInt(8 bits)) init (0)
+    val writeSize = Reg(UInt(3 bits)) init (0)
+    val writeBurst = Reg(Bits(2 bits)) init (0)
+    val writeData = Reg(Bits(64 bits)) init (0)
+    val writeStrb = Reg(Bits(8 bits)) init (0)
+    val writeLast = Reg(Bool()) init (False)
 
     val iWriteReq = iAxi.arw.valid && iAxi.arw.write && iAxi.w.valid
     val dWriteReq = dAxi.arw.valid && dAxi.arw.write && dAxi.w.valid
@@ -136,7 +136,7 @@ case class SoC() extends Component {
       writeData := dAxi.w.data
       writeStrb := dAxi.w.strb
       writeLast := dAxi.w.last
-    } elsewhen(acceptInstrWrite) {
+    } elsewhen (acceptInstrWrite) {
       iAxi.arw.ready := True
       iAxi.w.ready := True
       writePending := True
@@ -188,7 +188,7 @@ case class SoC() extends Component {
         ram.io.axi.arw.burst := dAxi.arw.burst
         ram.io.axi.arw.write := False
         dAxi.arw.ready := ram.io.axi.arw.ready
-      } elsewhen(issueInstrRead) {
+      } elsewhen (issueInstrRead) {
         ram.io.axi.arw.valid := True
         ram.io.axi.arw.addr := iAxi.arw.addr.resized
         ram.io.axi.arw.id := routeId(False, iAxi.arw.id)

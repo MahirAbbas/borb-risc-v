@@ -5,6 +5,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 import borb.dispatch.RegFileWrite
 import borb.common.Common._
+import borb.common.LaneKey
 import borb.frontend.Decoder
 import borb.fetch.{Fetch, PC}
 import spinal.core.sim._
@@ -16,45 +17,73 @@ object WriteBack extends AreaObject {
 
 case class WriteBack(
     wbNode: CtrlLink,
-    writePort: RegFileWrite,
+    writePorts: Vec[RegFileWrite],
     currentEpoch: UInt,
     squashCycle: Bool = False,
     redirectPending: Bool = False,
     redirectSeq: UInt = U(0, 32 bits)
 ) extends Area {
+  require(writePorts.length >= 2, "2-wide writeback needs at least two integer write ports")
+
   val logic = new wbNode.Area {
-     val epochMatches = up(SPEC_EPOCH) === currentEpoch
-     val redirectingInsn = up(SELF_REDIRECT)
-     val stageValid = up.isValid && up(Decoder.VALID)
-     val olderThanPendingRedirect = redirectPending && (up(Fetch.FETCH_SEQ) < redirectSeq)
-     val olderInstructionMayRetire = olderThanPendingRedirect && !up(TRAP)
-     val retireReq = stageValid && up(LANE_SEL) && ((((epochMatches || olderInstructionMayRetire) && !squashCycle)) || redirectingInsn)
      val recentRetireValid = Reg(Bits(2 bits)) init(0)
      val recentRetireSeq0 = Reg(UInt(32 bits)) init(0)
      val recentRetireSeq1 = Reg(UInt(32 bits)) init(0)
-     val duplicateRetire =
-       retireReq &&
-       (
-         (recentRetireValid(0) && (up(Fetch.FETCH_SEQ) === recentRetireSeq0)) ||
-         (recentRetireValid(1) && (up(Fetch.FETCH_SEQ) === recentRetireSeq1))
-       )
-     val commitPulse = retireReq && !duplicateRetire
-     // Retire every lane-selected instruction (including traps).
-     // Traps still suppress register writeback via RESULT.valid path below.
-     up(COMMIT) := commitPulse
-     up(WriteBack.DUPLICATE_RETIRE) := duplicateRetire
-     when(commitPulse) {
+
+     val commitPulse = Vec(Bool(), 2)
+     val duplicateRetire = Vec(Bool(), 2)
+     val retireReq = Vec(Bool(), 2)
+     val fetchSeq = Vec(UInt(32 bits), 2)
+
+     for(laneId <- 0 until 2) {
+       val laneKey = LaneKey(laneId)
+       val epochMatches = up(SPEC_EPOCH, laneKey) === currentEpoch
+       val redirectingInsn = up(SELF_REDIRECT, laneKey)
+       val stageValid = up.isValid && up(Decoder.VALID, laneKey)
+       val olderThanPendingRedirect = redirectPending && (up(Fetch.FETCH_SEQ, laneKey) < redirectSeq)
+       val olderInstructionMayRetire = olderThanPendingRedirect && !up(TRAP, laneKey)
+       fetchSeq(laneId) := up(Fetch.FETCH_SEQ, laneKey)
+       retireReq(laneId) := stageValid &&
+         up(LANE_SEL, laneKey) &&
+         ((((epochMatches || olderInstructionMayRetire) && !squashCycle)) || redirectingInsn)
+       val sameCycleDuplicate = if(laneId == 1) commitPulse(0) && (fetchSeq(1) === fetchSeq(0)) else False
+       duplicateRetire(laneId) := retireReq(laneId) &&
+         (
+           (recentRetireValid(0) && (fetchSeq(laneId) === recentRetireSeq0)) ||
+           (recentRetireValid(1) && (fetchSeq(laneId) === recentRetireSeq1)) ||
+           sameCycleDuplicate
+         )
+       commitPulse(laneId) := retireReq(laneId) && !duplicateRetire(laneId)
+     }
+
+     // Preserve in-order lane retirement. Lane 1 can retire only if lane 0 is
+     // absent or also retires in the same cycle.
+     when(up.isValid && up(Decoder.VALID, LaneKey.Lane0) && up(LANE_SEL, LaneKey.Lane0) && !commitPulse(0)) {
+       commitPulse(1) := False
+     }
+
+     for(laneId <- 0 until 2) {
+       val laneKey = LaneKey(laneId)
+       up(COMMIT, laneKey) := commitPulse(laneId)
+       up(WriteBack.DUPLICATE_RETIRE, laneKey) := duplicateRetire(laneId)
+       writePorts(laneId).address := up(WriteBack.RESULT, laneKey).address
+       writePorts(laneId).data := up(WriteBack.RESULT, laneKey).data
+       writePorts(laneId).valid := up(WriteBack.RESULT, laneKey).valid && commitPulse(laneId)
+     }
+
+     when(commitPulse(0) && commitPulse(1)) {
+       recentRetireValid := B"11"
+       recentRetireSeq1 := fetchSeq(1)
+       recentRetireSeq0 := fetchSeq(0)
+     } elsewhen(commitPulse(0)) {
        recentRetireValid := B"11"
        recentRetireSeq1 := recentRetireSeq0
-       recentRetireSeq0 := up(Fetch.FETCH_SEQ)
+       recentRetireSeq0 := fetchSeq(0)
+     } elsewhen(commitPulse(1)) {
+       recentRetireValid := B"11"
+       recentRetireSeq1 := recentRetireSeq0
+       recentRetireSeq0 := fetchSeq(1)
      }
-     
-     // Drive write port
-     writePort.address := up(WriteBack.RESULT).address
-     writePort.data    := up(WriteBack.RESULT).data
-     
-     // Gated by COMMIT
-     writePort.valid   := up(WriteBack.RESULT).valid && commitPulse
 
      down.ready := True
 

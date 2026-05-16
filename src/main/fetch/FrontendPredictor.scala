@@ -5,9 +5,7 @@ import spinal.lib._
 
 case class FrontendPredictor(config: FrontendConfig) extends Component {
   val io = new Bundle {
-    val valid = in Bool()
-    val startPc = in UInt(config.addressWidth bits)
-    val epoch = in UInt(config.epochWidth bits)
+    val active = slave(Flow(FrontendPcState(config.addressWidth, config.epochWidth)))
     val accepted = slave(Flow(FrontendAcceptedTraversal(config)))
     val branchResolve = slave(Flow(BranchResolveUpdate(config)))
     val indirectResolve = slave(Flow(IndirectResolveUpdate(config)))
@@ -221,15 +219,17 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
   }
 
   val traversal = TraversalRsp(config)
-  traversal.valid := io.valid
-  traversal.startPc := io.startPc
-  traversal.epoch := io.epoch
+  traversal.valid := io.active.valid
+  traversal.startPc := io.active.payload.pc
+  traversal.epoch := io.active.payload.epoch
   traversal.predictedStopReason := FrontendStopReason.none
   traversal.predictedRedirectValid := False
   traversal.predictedRedirectTarget := 0
-  traversal.nextStartPc := io.startPc
+  traversal.nextStartPc := io.active.payload.pc
 
-  val block0Pc = alignedBlock(io.startPc)
+  val activeValid = io.active.valid
+  val activePc = io.active.payload.pc
+  val block0Pc = alignedBlock(activePc)
   val block0 = blockPrediction(block0Pc, speculativeHistory, {
     val ras = RasCheckpoint(config)
     ras.sp := rasSpecSp
@@ -237,7 +237,7 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
     ras
   }, ftqAllocPtr)
   traversal.blocks(0) := block0
-  traversal.blockCount := io.valid.asUInt.resize(traversal.blockCount.getWidth)
+  traversal.blockCount := io.active.valid.asUInt.resize(traversal.blockCount.getWidth)
 
   val histAfter0 = UInt(config.gshareHistoryWidth bits)
   histAfter0 := Mux(block0.valid && block0.isConditional, nextHistory(speculativeHistory, block0.predictedTaken), speculativeHistory)
@@ -260,7 +260,7 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
   if(config.maxBlocksPerCycle > 1) {
     val block1Pc = block0.fallthrough
     val block1 = blockPrediction(block1Pc, histAfter0, ras0, wrapFtq(ftqAllocPtr, 1))
-    val secondBlockTraversed = io.valid && !block0.predictedTaken
+    val secondBlockTraversed = activeValid && !block0.predictedTaken
     val block1Out = TraversalBlockDescriptor(config)
     block1Out := TraversalBlockDescriptor(config).getZero
     when(secondBlockTraversed) {
@@ -291,17 +291,17 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
       ras1.count := ras0.count - 1
     }
 
-    when(io.valid && block0.predictedTaken) {
+    when(activeValid && block0.predictedTaken) {
       traversal.predictedStopReason := FrontendStopReason.predictedTaken
       traversal.predictedRedirectValid := True
       traversal.predictedRedirectTarget := block0.target
       traversal.nextStartPc := block0.target
-    } elsewhen(io.valid && block1.valid && block1.predictedTaken) {
+    } elsewhen(activeValid && block1.valid && block1.predictedTaken) {
       traversal.predictedStopReason := FrontendStopReason.predictedTaken
       traversal.predictedRedirectValid := True
       traversal.predictedRedirectTarget := block1.target
       traversal.nextStartPc := block1.target
-    } elsewhen(io.valid && block1.valid) {
+    } elsewhen(activeValid && block1.valid) {
       traversal.nextStartPc := block1.fallthrough
     } otherwise {
       traversal.nextStartPc := block0.fallthrough
@@ -309,7 +309,7 @@ case class FrontendPredictor(config: FrontendConfig) extends Component {
 
   } else {
     traversal.blocks(1) := TraversalBlockDescriptor(config).getZero
-    when(io.valid && block0.predictedTaken) {
+    when(activeValid && block0.predictedTaken) {
       traversal.predictedStopReason := FrontendStopReason.predictedTaken
       traversal.predictedRedirectValid := True
       traversal.predictedRedirectTarget := block0.target
